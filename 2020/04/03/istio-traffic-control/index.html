@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Times New Roman:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"hulining.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="本文章为《云原生服务网格Istio：原理、实践、架构与源码解析》第 3 章读书笔记.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="istio非侵入的流量治理">
+<meta property="og:url" content="https://hulining.github.io/2020/04/03/istio-traffic-control/index.html">
+<meta property="og:site_name" content="纸盒人">
+<meta property="og:description" content="本文章为《云原生服务网格Istio：原理、实践、架构与源码解析》第 3 章读书笔记.">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-04-03T08:14:57.955Z">
+<meta property="article:modified_time" content="2020-04-26T08:46:56.021Z">
+<meta property="article:author" content="纸盒人">
+<meta property="article:tag" content="istio">
+<meta property="article:tag" content="读书笔记">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://hulining.github.io/2020/04/03/istio-traffic-control/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>istio非侵入的流量治理 | 纸盒人</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">纸盒人</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">纸小呆</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags<span class="badge">14</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories<span class="badge">8</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives<span class="badge">43</span></a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/hulining" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://hulining.github.io/2020/04/03/istio-traffic-control/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="纸盒人">
+      <meta itemprop="description" content="Keep it simple,Keep improving">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="纸盒人">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          istio非侵入的流量治理
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-04-03 16:14:57" itemprop="dateCreated datePublished" datetime="2020-04-03T16:14:57+08:00">2020-04-03</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E4%BA%91%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8/" itemprop="url" rel="index"><span itemprop="name">云原生应用</span></a>
+                </span>
+                  , 
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E4%BA%91%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8/istio/" itemprop="url" rel="index"><span itemprop="name">istio</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+          <!--添加字数统计-->
+          
+            <span class="post-letters-count">
+              &nbsp; | &nbsp;
+              <span>5.4k 字</span>
+              &nbsp; | &nbsp;
+              <span>21 min</span>
+             </span>
+           
+            <div class="post-description">本文章为《云原生服务网格Istio：原理、实践、架构与源码解析》第 3 章读书笔记.</div>
+
+
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><h2 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h2><p>以基础设施的方式提供给用户非侵入的流量治理能力,用户只需关注自己的业务逻辑开发,无须关注服务访问管理</p>
+<h2 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h2><ol>
+<li>管理员通过命令行或 API 创建流量规则</li>
+<li>Pilot 将流量规则转换为 Envoy 的标准格式,并下发给 Envoy(转向数据面)</li>
+<li>Envoy 拦截 Pod 上本地容器的 Inbound 流量和 Outbound 流量</li>
+<li>在流量经过 Envoy 时执行对应的流量规则,对流量进行治理</li>
+</ol>
+<h2 id="应用场景和功能"><a href="#应用场景和功能" class="headerlink" title="应用场景和功能"></a>应用场景和功能</h2><ul>
+<li>负载均衡</li>
+</ul>
+<p>服务注册: 各服务将服务名和服务实例的对应信息注册到服务注册中心<br>服务发现: 在客户端发起服务访问时,以同步或者异步的方式从服务注册中心获取服务对应的实例列表<br>负载均衡: 据配置的负载均衡算法从实例列表中选择一个服务实例.目前支持的负载均衡算法有轮询,随机和最小连接数算法</p>
+<ul>
+<li>服务熔断</li>
+</ul>
+<p>故障检测和处理逻辑,防止临时故障或意外导致系统整体不可用.最典型的场景是防止网络和服务调用故障级联发生,限制故障的影响范围,防止故障蔓延导致系统整体性能下降或雪崩</p>
+<ul>
+<li>故障注入</li>
+</ul>
+<p>主要用于测试其健壮性和应对故障的能力,例如异常处理,故障恢复等Istio 的故障注入是在网格中对特定的应用层协议进行故障注入,可以模拟出应用的故障场景.</p>
+<p>如注入 HTTP Code 503(服务端异常),请求延时(模拟响应慢)</p>
+<ul>
+<li>灰度发布</li>
+</ul>
+<p>新老版本同时在线,新版本只切分少量流量出来,在确认新版本没有问题后,再逐步加大流量比例</p>
+<p>其中灰度发布主要有金丝雀发布,蓝绿发布,AB 测试 3 种方式</p>
+<ul>
+<li>服务访问入口</li>
+</ul>
+<p>Istio 中通过 Ingress Gateway 访问网格内的服务,做四层到六层的端口,TLS配置等基本功能,VirtualService则定义七层路由等丰富内容</p>
+<ul>
+<li>外部接入服务治理</li>
+</ul>
+<p>Istio 通过 ServiceEntry 资源对象将网格外的服务注册到网格上,然后像对网格内的普通服务一样对网格外的服务访问进行治理.有时需<br>要有一个专门的 Egress Gateway 来提供统一的出口网关</p>
+<h1 id="VirtualService-路由规则配置"><a href="#VirtualService-路由规则配置" class="headerlink" title="VirtualService 路由规则配置"></a>VirtualService 路由规则配置</h1><p>VirtualService 定义了对特定目标服务的一组流量规则,它将满足条件的流量都转发到对应的服务后端,这个服务后端可以是一个服务,也可以是在 DestinationRule 中定义的服务的子集</p>
+<h2 id="HTTP路由-HTTPRoute"><a href="#HTTP路由-HTTPRoute" class="headerlink" title="HTTP路由(HTTPRoute)"></a>HTTP路由(HTTPRoute)</h2><p>满足 <code>HTTPMatchRequest</code> 条件的流量都被路由到 <code>HTTPRouteDestination</code>,执行重定向 <code>HTTPRedirect</code>,重写 <code>HTTPRewrite</code>,重试 <code>HTTPRetry</code>,故障注入 <code>HTTPFaultInjection</code>,跨站 <code>CorsPolicy</code> 等策略</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.istio.io/v1alpha3</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">VirtualService</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">forecast</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">hosts:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">forecast</span></span><br><span class="line">  <span class="attr">http:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">match:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">headers:</span></span><br><span class="line">        <span class="attr">location:</span></span><br><span class="line">          <span class="attr">exact:</span> <span class="string">north</span></span><br><span class="line">    <span class="attr">route:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">destination:</span></span><br><span class="line">        <span class="attr">host:</span> <span class="string">forecast</span></span><br><span class="line">        <span class="attr">subset:</span> <span class="string">v2</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">route:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">destination:</span></span><br><span class="line">        <span class="attr">host:</span> <span class="string">reviews</span></span><br><span class="line">        <span class="attr">subset:</span> <span class="string">v1</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>HTTPMatchRequest 定义匹配规则</p>
+</blockquote>
+<p>关键字: <code>match</code>,支持如下定义方式</p>
+<ul>
+<li><code>uri,scheme,method,authority,headers</code>: 支持 <code>exact(精确),prefix(前缀),regex(正则)</code> 方式的匹配</li>
+<li><code>port</code>: 端口</li>
+<li><code>sourceLabels</code>: 支持以特定的标签进行匹配,匹配满足该标签的 Pod 发送出来的流量</li>
+</ul>
+<blockquote>
+<p>HTTPRouteDestination 定义路由目标</p>
+</blockquote>
+<p>关键字: <code>route</code>,支持如下定义方式</p>
+<ul>
+<li><code>destination</code>: 表示请求的目标,最终的流量要被送到这个目标上.通过 <code>host,subnet,port</code> 三个属性来描述<ul>
+<li><code>host</code>: 必选字段,表示 istio 中注册的服务名.建议写全服务的全名 <code>&lt;hostname&gt;.&lt;namspace&gt;.svc.cluster.local</code></li>
+<li><code>subset</code>: 表示 host 上定义的一个子集,用于表示不同版本的服务</li>
+</ul>
+</li>
+<li><code>weight</code>: 表示请求流量分配的比例,当指定多个 destination 时需要配置,且weight 总和要求是 100</li>
+<li><code>headers</code>: 对请求和响应的请求头进行修改</li>
+</ul>
+<blockquote>
+<p>HTTPRedirect 定义重定向规则</p>
+</blockquote>
+<p>关键字: <code>redirect</code>,需要设置重定向的目标 <code>uri</code>.这里需要注意的是重定向的 <code>uri</code> 会替换原请求中完整的 uri 路径</p>
+<blockquote>
+<p>HTTPRewrite 定义 url 重写规则</p>
+</blockquote>
+<p>关键字: <code>rewrite</code>,需要设置重写的 <code>uri</code>.这里需要注意,与重定向不同,重写的 <code>uri</code> 只会会替换原请求中匹配部分的 uri</p>
+<blockquote>
+<p>HTTPRetry 定义请求失败时重试策略</p>
+</blockquote>
+<p>关键字 <code>retries</code>,需要设置重试次数(attempts),超时(perTryTimeout),重试条件(retryOn)等.</p>
+<ul>
+<li><code>attempts</code>: 必选字段,定义重试次数</li>
+<li><code>perTryTimeout</code>: 每次重试的超时时间,单位可以是 ms,s,m,h</li>
+<li><code>retryOn</code>: 进行重试的条件,以逗号分割.重试条件包含如下:<ul>
+<li>5xx: 上游服务返回5xx应答,或没有返回时</li>
+<li>gateway-error: 只对502,503和504应答码进行重试</li>
+<li>connect-failure：在连接上游服务失败时重试</li>
+<li>retriable-4xx：在上游服务返回可重试的4xx应答码时执行重试</li>
+<li>refused-stream：在上游服务使用REFUSED_STREAM错误码重置时执行重试</li>
+<li>cancelled：在gRPC应答的Header中状态码是cancelled时执行重试</li>
+<li>deadline-exceeded：在gRPC应答的Header中状态码是deadline-exceeded时执行重试</li>
+<li>internal：在gRPC应答的Header中状态码是internal时执行重试</li>
+<li>resource-exhausted：在gRPC应答的Header中状态码是resource-exhausted时执行重试</li>
+<li>unavailable：在gRPC应答的Header中状态码是unavailable时执行重试</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>Mirror 流量镜像</p>
+</blockquote>
+<p>关键字 <code>mirror</code>,指在将流量转发到原目标地址的同时将流量给另外一个目标地址镜像一份,用于真实流量请求</p>
+<blockquote>
+<p>HTTPFaultInjection 故障注入</p>
+</blockquote>
+<p>关键字 <code>fault</code>,支持 <code>delay</code> 和 <code>abort</code> 两个字段配置延时和中止两种故障</p>
+<ul>
+<li><code>delay</code>: 用于延迟故障注入,主要设置如下两个字段<ul>
+<li><code>fixedDelay</code>: 必选字段,表示延迟时间,单位可以是 ms,s,m,h</li>
+<li><code>percentage</code>: 延迟故障作用的请求比例</li>
+</ul>
+</li>
+<li><code>abort</code>: 用于中止故障注入,主要设置如下两个字段<ul>
+<li><code>httpStatus</code>: 必选字段,中止的 HTTP 状态码</li>
+<li><code>percentage</code>: 延迟故障作用的请求比例</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>CorsPolicy 跨域资源共享</p>
+</blockquote>
+<p>关键字 <code>corsPolicy</code>,用于通过跨域资源共享(Cross<br>Origin Resource Sharing)机制可允许 Web 应用服务器进行跨域访问控制,使跨域数据传输安全进行</p>
+<ul>
+<li><code>allowMethods</code>: 允许访问资源的 HTTP 方法列表,内容被序列化到 Access-Control-Allow-Methods 的<br>Header上</li>
+<li><code>allowHeaders</code>: 请求资源的 HTTP Header 列表,内容被序列化到 Access-Control-Allow-Headers 的 Header 上</li>
+<li><code>exposeHeaders</code>: 浏览器允许访问的 HTTP Header 的白名单,内容被序列化到 Access-Control-Expose-Headers 的 Header 上</li>
+<li><code>maxAge</code>: 请求缓存的时长,被转化为 Access-Control-Max-Age 的 Header</li>
+<li><code>allowCredentials</code>: 是否允许服务调用方使用凭据发起实际请求,被转化为 Access-Control-Allow-Credentials 的 Header</li>
+</ul>
+<h2 id="TLS路由-TLSRoute"><a href="#TLS路由-TLSRoute" class="headerlink" title="TLS路由(TLSRoute)"></a>TLS路由(TLSRoute)</h2><p>满足 <code>TLSMatchAttributes</code> 条件的 TLS 和 HTTPS 流量都被路由到 <code>RouteDestination</code></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.istio.io/v1alpha3</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">VirtualService</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">total-weather-tls</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">hosts:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">"*.weather.com"</span></span><br><span class="line">  <span class="attr">gateways:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">"ingress-gateway"</span></span><br><span class="line">  <span class="attr">tls:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">match:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">port:</span> <span class="number">443</span></span><br><span class="line">      <span class="attr">sniHosts:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">frontend.weather.com</span></span><br><span class="line">    <span class="attr">route:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">destination:</span></span><br><span class="line">        <span class="attr">host:</span> <span class="string">frontend</span></span><br><span class="line">        <span class="attr">subset:</span> <span class="string">v2</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">match:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">port:</span> <span class="number">443</span></span><br><span class="line">      <span class="attr">sniHosts:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">recommendation.weather.com</span></span><br><span class="line">    <span class="attr">route:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">destination:</span></span><br><span class="line">        <span class="attr">host:</span> <span class="string">recommendation</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>TLSMatchAttributes TLS匹配规则</p>
+</blockquote>
+<p>关键字 <code>match</code>,表示 TLS的匹配条件,支持如下定义方式:</p>
+<ul>
+<li><code>sniHosts</code>: 必选字段，用来匹配 TLS 请求的 SNI ,SNI 的值必须是 VirtualService 的 hosts 的子集</li>
+<li><code>port</code>: 访问的目标端口</li>
+<li><code>destinationSubnets</code>: 目标IP地址匹配的IP子网</li>
+<li><code>sourceLabels</code>: 匹配来源负载的标签</li>
+</ul>
+<p>一般用法是匹配 <code>sniHosts</code> 和 <code>port</code></p>
+<blockquote>
+<p>RouteDestination 定义路由目标</p>
+</blockquote>
+<p>关键字: <code>route</code>,包含如下两个属性,用法和约束同 <code>HTTPRouteDestination</code> 的对应字段</p>
+<ul>
+<li><code>destination</code>: 表示请求的目标,最终的流量要被送到这个目标上.通过 <code>host,subnet,port</code> 三个属性来描述<ul>
+<li><code>host</code>: 必选字段,表示 istio 中注册的服务名.建议写全服务的全名 <code>&lt;hostname&gt;.&lt;namspace&gt;.svc.cluster.local</code></li>
+<li><code>subset</code>: 表示 host 上定义的一个子集,用于表示不同版本的服务</li>
+</ul>
+</li>
+<li><code>weight</code>: 表示请求流量分配的比例,当指定多个 destination 时需要配置,且weight 总和要求是 100</li>
+</ul>
+<h2 id="TCP路由-TCPRoute"><a href="#TCP路由-TCPRoute" class="headerlink" title="TCP路由(TCPRoute)"></a>TCP路由(TCPRoute)</h2><p>所有不满足以上HTTP和TLS条件的流量都会应用TCP流量规则</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.istio.io/v1alpha3</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">VirtualService</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">forecast</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">hosts:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">forecast</span></span><br><span class="line">  <span class="attr">tcp:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">match:</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">23003</span></span><br><span class="line">    <span class="attr">route:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">destination:</span></span><br><span class="line">        <span class="attr">host:</span> <span class="string">inner-forecast</span></span><br><span class="line">        <span class="attr">port:</span></span><br><span class="line">          <span class="attr">number:</span> <span class="number">3003</span></span><br></pre></td></tr></table></figure>
+<p>==满足 TCP 特有的 4 层匹配规则 <code>L4MatchAttribute</code> 条件的流量转发到对应的目标后端==</p>
+<blockquote>
+<p>L4MatchAttribute 四层匹配规则</p>
+</blockquote>
+<p>关键字 <code>match</code>,支持以下匹配属性</p>
+<ul>
+<li><code>destinationSubnets</code>: 目标IP地址匹配的 IP 子网</li>
+<li><code>port</code>: 访问的目标端口<br><code>sourceLabels</code>：源工作负载标签</li>
+</ul>
+<blockquote>
+<p>RouteDestination 目标后端 与 TLS 定义方式相同</p>
+</blockquote>
+<h2 id="三种协议路由规则汇总"><a href="#三种协议路由规则汇总" class="headerlink" title="三种协议路由规则汇总"></a>三种协议路由规则汇总</h2><table>
+<thead>
+<tr>
+<th align="center">协议</th>
+<th align="center">路由规则</th>
+<th align="center">支持的流量匹配条件</th>
+<th align="center">条件属性</th>
+<th align="center">支持的流量操作</th>
+<th align="center">目标路由定义</th>
+<th align="center">目标路由属性</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">HTTP</td>
+<td align="center">HTTPRoute</td>
+<td align="center">HTTPMatchRequest</td>
+<td align="center">uri,scheme,method,port,sourceLabels</td>
+<td align="center">route,redirect,rewrite,retry,timeout,faultInjection,corsPolicy</td>
+<td align="center">HTTPRouteDestination</td>
+<td align="center">destination,weight,headers</td>
+</tr>
+<tr>
+<td align="center">TLS</td>
+<td align="center">TLSRoute</td>
+<td align="center">TLSMatchAttribute</td>
+<td align="center">sniHost,port,destinationSubnets,sourceLabels</td>
+<td align="center">route</td>
+<td align="center">RouteDestination</td>
+<td align="center">destination,weight</td>
+</tr>
+<tr>
+<td align="center">TCP</td>
+<td align="center">TCPRoute</td>
+<td align="center">L4MatchAttribute</td>
+<td align="center">destinationSubnets,port,sourceLabels</td>
+<td align="center">route</td>
+<td align="center">RouteDestination</td>
+<td align="center">destination,weight</td>
+</tr>
+</tbody></table>
+<h1 id="DestinationRule-目标规则配置"><a href="#DestinationRule-目标规则配置" class="headerlink" title="DestinationRule 目标规则配置"></a>DestinationRule 目标规则配置</h1><p>DestinationRule 定义了满足路由规则的流量到达后端后的访问策略.在 Istio 中可以配置目标服务的负载均衡策略,连接池大小,异常实例驱除规则等功能</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.istio.io/v1alph3</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">DestinationRule</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">forecast</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">host:</span> <span class="string">forecast</span></span><br><span class="line">  <span class="attr">subnet:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">v2</span></span><br><span class="line">    <span class="attr">labels:</span> </span><br><span class="line">      <span class="attr">version:</span> <span class="string">v2</span></span><br><span class="line">    <span class="attr">trafficPolicy:</span></span><br><span class="line">      <span class="attr">loadBalancer:</span></span><br><span class="line">        <span class="attr">simple:</span> <span class="string">ROUND_ROBIN</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">v1</span></span><br><span class="line">    <span class="attr">labels:</span> </span><br><span class="line">      <span class="attr">version:</span> <span class="string">v1</span></span><br><span class="line">    <span class="attr">trafficPolicy:</span></span><br><span class="line">      <span class="attr">loadBalancer:</span></span><br><span class="line">        <span class="attr">simple:</span> <span class="string">RANDON</span></span><br></pre></td></tr></table></figure>
+<p>DestinationRule 重要属性如下:</p>
+<ul>
+<li><code>host</code>: 必选字段,表示使用规则的对象,取值是在服务注册中心注册的服务名.host如果取短域名,则会根据规则所在的命名空间进行解析.所以尽量填写全名</li>
+<li><code>trafficPolicy</code>: 规则内容的定义,包括负载均衡,连接池策略,异常点检查等</li>
+<li><code>PortTrafficPolicy</code>: 需设定关键字 port 表示流量策略要应用的服务端口,其余和 TrafficPolicy 没有很大差别</li>
+<li><code>subsets</code>: 定义服务的一个子集,经常用来定义一个服务版本.包含如下重要属性<ul>
+<li><code>name</code>: 必选字段,subnet 名称</li>
+<li><code>labels</code>: Subset 上的标签,通过一组标签定义了属于这个 Subset 的服务实例</li>
+</ul>
+</li>
+<li><code>exportTo</code>: 控制 DestinationRule 跨名称空间的可见性.可选值为 “.” 或 “*”,表示当前名称空间或所有名称空间</li>
+</ul>
+<h2 id="TrafficPolicy-流量策略"><a href="#TrafficPolicy-流量策略" class="headerlink" title="TrafficPolicy 流量策略"></a>TrafficPolicy 流量策略</h2><p>流量策略包含以下 4 种重要配置</p>
+<table>
+<thead>
+<tr>
+<th align="center">关键字</th>
+<th align="center">类型</th>
+<th align="center">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">loadBalancer</td>
+<td align="center">LoadBalancerSettings</td>
+<td align="center">描述服务的负载均衡算法</td>
+</tr>
+<tr>
+<td align="center">connectionPool</td>
+<td align="center">ConnectionPoolSettings</td>
+<td align="center">描述服务的连接池配置</td>
+</tr>
+<tr>
+<td align="center">outlierDetection</td>
+<td align="center">OutlierDetection</td>
+<td align="center">描述服务的异常点检查</td>
+</tr>
+<tr>
+<td align="center">tls</td>
+<td align="center">TLSSettings</td>
+<td align="center">描述服务的TLS连接设置</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>loadBalancer 负载均衡设置</p>
+</blockquote>
+<p>负载均衡设置支持 <code>simple(简单)</code> 和 <code>consistentHash(一致性 hash)</code> 两个字段.其中,一致性哈希是一种高级的负载均衡策略,只对 HTTP 有效</p>
+<ul>
+<li><code>simple</code> 字段定义了 <code>ROUND_ROBIN(轮询,默认)</code>,<code>LEAST_CONN(最小连接)</code>,<code>RANDOM(随机)</code>,<code>PASSTHROUGH(直接转发)</code> 等几种负载均衡算法</li>
+<li><code>consistentHash</code> 定义了 <code>httpHeaderName(请求头)</code>,<code>httpCookie(cookie)</code>,<code>useSourceIp(源 IP)</code> 等几种负载均衡算法.还提供 <code>minimumRingSize(哈希环上虚拟节点数的最小值)</code> 属性,用于增加 hash 节点数量(节点数越多则负载均衡越精细)</li>
+</ul>
+<blockquote>
+<p>connectionPool 连接池设置</p>
+</blockquote>
+<p>Istio 连接池管理支持 <code>tcp(TCP流量)</code> 和 <code>http(HTTP流量)</code> 两个字段.</p>
+<p><code>tcp</code> 字段定义了如下属性</p>
+<ul>
+<li><code>maxConnections</code>: 表示为上游服务的所有实例建立的最大连接数,默认1024</li>
+<li><code>connectTimeout</code>: TCP连接超时,表示主机网络连接超时</li>
+<li><code>tcpKeepalive</code>: 设置TCP keepalives(TCP keepalive).它包含三个字段,如下<ul>
+<li><code>probes</code> 表示多少次探测没有应答则断开,默认是9</li>
+<li><code>time</code> 表示在发送探测前连接空闲了多长时间,默认2h</li>
+<li><code>interval</code> 表示探测间隔,默认 75s</li>
+</ul>
+</li>
+</ul>
+<p><code>http</code> 字段定义了如下属性</p>
+<ul>
+<li><code>http1MaxPendingRequests</code>: 最大等待 HTTP 请求数,默认1024</li>
+<li><code>http2MaxRequests</code>: 最大请求数,默认1024</li>
+<li><code>maxRequestsPerConnection</code>: 每个连接的最大请求数</li>
+<li><code>maxRetries</code>: 最大重试次数,默认3</li>
+<li><code>idleTimeout</code>: 空闲超时,在多长时间内没有活动请求则关闭连接</li>
+</ul>
+<blockquote>
+<p>outlierDetection 异常实例检查</p>
+</blockquote>
+<p>异常点检查就是定期考察被访问的服务实例的工作情况,如果连续出现访问异常,则将服务实例标记为异常并进行隔离,在一段时间内不为其分配流量,待恢复后重新恢复流量.可用于熔断模型</p>
+<p>异常实例检查可通过如下字段来控制检查驱逐的逻辑</p>
+<ul>
+<li><code>consecutiveErrors</code>: 实例被驱逐前的连续错误次数,默认5</li>
+<li><code>interval</code>: 驱逐的时间间隔,默认 10s</li>
+<li><code>baseEjectionTime</code>: 最小驱逐时间,默认30s.实例被驱逐的时间等于这个最小驱逐时间乘以驱逐的次数</li>
+<li><code>maxEjectionPercent</code>: 负载均衡池中可以被驱逐的故障实例的最大比例,默认是10%.避免太多实例被驱逐而导致整体服务能力下降</li>
+<li><code>minHealthPercent</code>: 最小健康比例,当可用实例数的比例小于这个比例时,异常点检查功能将被禁用.默认 50%</li>
+</ul>
+<blockquote>
+<p>tls TLS连接设置</p>
+</blockquote>
+<p>istio TLS 连接设置支持以下字段属性:</p>
+<ul>
+<li><code>mode</code>: tls 认证方式.支持如下4种模式<ul>
+<li><code>Disable</code>: 不使用 TLS 认证</li>
+<li><code>SIMPLE</code>: 单向认证</li>
+<li><code>MUTUAL</code>: 双向认证.需要应用程序提供客户端证书,在配置中指定证书文件路径</li>
+<li><code>ISTIO_MUTUAL</code>: 双向认证.证书由Istio自动生成,不用指定证书路径</li>
+</ul>
+</li>
+<li><code>privateKey</code>: 客户端私钥路径</li>
+<li><code>clientCertificate</code>: 客户端证书路径</li>
+<li><code>caCertificates</code>: 验证服务端证书的 CA 文件路径</li>
+</ul>
+<h1 id="Gateway-服务网关配置"><a href="#Gateway-服务网关配置" class="headerlink" title="Gateway 服务网关配置"></a>Gateway 服务网关配置</h1><p>Gateway 在网格边缘接收外部访问,并将流量转发到网格内的服务.Istio 通过 Gateway 将网格内的服务发布成外部可访问的服务,还可以通过 Gateway 配置外部访问的端口,协议及与内部服务的映射关系</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.istio.io/v1alpha3</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Gateway</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">istio-gateway</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span> </span><br><span class="line">    <span class="attr">istio:</span> <span class="string">ingressgateway</span></span><br><span class="line">  <span class="attr">servers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">port:</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line">      <span class="attr">number:</span> <span class="number">80</span></span><br><span class="line">      <span class="attr">protocol:</span> <span class="string">HTTP</span></span><br><span class="line">    <span class="attr">hosts:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">weather.com</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.istio.io/v1alpha3</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">VirtualService</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">frontend</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">hosts:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">frontend</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">weather.com</span></span><br><span class="line">  <span class="attr">gateways:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">istio.gateway.istio-system.svc.cluster.local</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">mesh</span></span><br><span class="line">  <span class="attr">http:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">match:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">headers:</span></span><br><span class="line">      <span class="attr">location:</span></span><br><span class="line">        <span class="attr">exact:</span> <span class="string">north</span></span><br><span class="line">    <span class="attr">route:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">destionation:</span></span><br><span class="line">        <span class="attr">host:</span> <span class="string">frontend</span></span><br><span class="line">        <span class="attr">subset:</span> <span class="string">v2</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">route:</span>  </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">destionation:</span></span><br><span class="line">        <span class="attr">host:</span> <span class="string">frontend</span></span><br><span class="line">        <span class="attr">subset:</span> <span class="string">v1</span></span><br></pre></td></tr></table></figure>
+<p>Gateway 定义了 <code>selector(标签选择)</code> 和 <code>servers(开放的服务列表)</code> 两个关键必选字段.</p>
+<blockquote>
+<p>server 后端服务</p>
+</blockquote>
+<p>server 真正定义了服务的访问入口,可通过如下字段来配置多个 server</p>
+<ul>
+<li><code>port</code>: 必选字段,描述服务在哪个端口开放,是对外监听的端口</li>
+<li><code>hosts</code>: 为 gateway 发布的服务地址,是一个 FQDN 域名</li>
+<li><code>defaultEndpoint</code>: 表示流量默认转发的后端</li>
+<li><code>tls</code>: 安全服务接口相关内容.可通过如下字段进行配置<ul>
+<li><code>httpsRedirect</code>: 是否要做 HTTPS 重定向</li>
+<li><code>mode</code>: TLS 模式,<code>PASSTHROUGH(不做处理,直接转发,TLS证书相关设置在后端负载),SIMPLE(单向认证),MUTUAL(双向认证),AUTO_PASSTHROUGH</code></li>
+<li><code>serverCertificate</code>: 服务端证书路径,在 SIMPLE,MUTUAL 时必须配置</li>
+<li><code>privateKey</code>: 服务端密钥路径,在 SIMPLE,MUTUAL 时必须配置</li>
+<li><code>caCertificates</code>: CA证书路径,在 MUTUAL 时必须配置</li>
+<li><code>credentialName</code>: Gateway 使用 <code>credentialName</code> 从远端的凭据存储(Kubernetes-Secrets)中获取证书和密钥,而不是挂载</li>
+<li><code>subjectAltNames</code>: SAN 列表</li>
+<li><code>minProtocolVersion</code>,<code>maxProtocolVersion</code>: TLS 协议最小,最大版本</li>
+<li><code>cipherSuites</code>: 指定加密套件,默认使用 Envoy 支持的加密套件</li>
+</ul>
+</li>
+</ul>
+<h2 id="Gateway-典型应用"><a href="#Gateway-典型应用" class="headerlink" title="Gateway 典型应用"></a>Gateway 典型应用</h2><blockquote>
+<ol>
+<li>将网格内的 HTTPS 服务发布为 HTTPS 外部访问</li>
+</ol>
+</blockquote>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.istio.io/v1alpha3</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Gateway</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">istio-gateway</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span> </span><br><span class="line">    <span class="attr">istio:</span> <span class="string">ingressgateway</span></span><br><span class="line">  <span class="attr">servers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">port:</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">https</span></span><br><span class="line">      <span class="attr">number:</span> <span class="number">443</span></span><br><span class="line">      <span class="attr">protocol:</span> <span class="string">HTTPS</span></span><br><span class="line">    <span class="attr">hosts:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">weather.com</span></span><br><span class="line">    <span class="attr">tls:</span></span><br><span class="line">      <span class="attr">mode:</span> <span class="string">PASSTHROUGH</span></span><br></pre></td></tr></table></figure>
+<p>这种场景下,后端服务需要配置证书,协议为 HTTPS.istio 只是提供了通道和机制,通过 Gateway 将一个内部的 HTTPS 服务发布出去.</p>
+<blockquote>
+<ol start="2">
+<li>将网格内的 HTTP 服务发布为 HTTPS 外部访问</li>
+</ol>
+</blockquote>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.istio.io/v1alpha3</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Gateway</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">istio-gateway</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span> </span><br><span class="line">    <span class="attr">istio:</span> <span class="string">ingressgateway</span></span><br><span class="line">  <span class="attr">servers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">port:</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">https</span></span><br><span class="line">      <span class="attr">number:</span> <span class="number">443</span></span><br><span class="line">      <span class="attr">protocol:</span> <span class="string">HTTPS</span></span><br><span class="line">    <span class="attr">hosts:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">weather.com</span></span><br><span class="line">    <span class="attr">tls:</span></span><br><span class="line">      <span class="attr">mode:</span> <span class="string">SIMPLE</span></span><br><span class="line">      <span class="comment"># 指定服务端证书路径,需要将证书文件挂载在 ingressgateway pod 中.可以通过证书文件创建 k8s-secrets 后进行挂载</span></span><br><span class="line">      <span class="attr">serverCertificate:</span> <span class="string">/etc/istio/gateway-weather-certs/tls.crt</span></span><br><span class="line">      <span class="attr">privateKey:</span> <span class="string">/etc/istio/gateway-weather-certs/tls.key</span></span><br><span class="line">      <span class="comment"># 直接指定 k8s-secrets 名称,istio 会自动配置对应的证书及密钥(推荐)</span></span><br><span class="line">      <span class="comment"># credentialName: weather-com-secrets</span></span><br></pre></td></tr></table></figure>
+<p>这种场景下,后端服务不需要配置证书,协议为 HTTP.istio 将证书配置在 Gateway 上,并通过 Gateway 将一个内部的 HTTP 服务以 HTTPS 方式发布出去.</p>
+<blockquote>
+<ol start="3">
+<li>将网格内的 HTTP 服务发布为双向 HTTPS 外部访问</li>
+</ol>
+</blockquote>
+<p>在某些场景下,比如调用入口服务的是另一个服务,在服务端需要对客户端进行身份校验,这就需要用到 TLS 的双向认证.应用场景如银行 APP</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.istio.io/v1alpha3</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Gateway</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">istio-gateway</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span> </span><br><span class="line">    <span class="attr">istio:</span> <span class="string">ingressgateway</span></span><br><span class="line">  <span class="attr">servers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">port:</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">https</span></span><br><span class="line">      <span class="attr">number:</span> <span class="number">443</span></span><br><span class="line">      <span class="attr">protocol:</span> <span class="string">HTTPS</span></span><br><span class="line">    <span class="attr">hosts:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">weather.com</span></span><br><span class="line">    <span class="attr">tls:</span></span><br><span class="line">      <span class="attr">mode:</span> <span class="string">MUTUAL</span></span><br><span class="line">      <span class="attr">serverCertificate:</span> <span class="string">/etc/istio/gateway-weather-certs/tls.crt</span></span><br><span class="line">      <span class="attr">privateKey:</span> <span class="string">/etc/istio/gateway-weather-certs/tls.key</span></span><br><span class="line">      <span class="comment"># 用于验证客户端证书</span></span><br><span class="line">      <span class="attr">caCertificates:</span> <span class="string">/etc/istio/gateway-weather-certs/ca.crt</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<ol start="4">
+<li>将网格内的 HTTP 服务发布为 HTTPS 外部访问 和HTTPS 内部访问</li>
+</ol>
+</blockquote>
+<p>此场景与场景2 中 Gateway 的 Manifest 完全相同,我们只需知道 istio 可以透明地给网格内的服务启用双向 TLS,并且自动维护证书和密钥.</p>
+<p>网关 Gateway 服务和后端 frontend 在这种场景下的工作机制如下</p>
+<ul>
+<li>frontend 服务自身还是HTTP,不涉及证书密钥的事情</li>
+<li>流量进入网格前,Gateway 作为 frontend 服务的入口网关,对外提供 HTTPS 的访问.外部访问到的是在 Gateway 上发布的 HTTPS 服务,使用 Gateway 上的配置提供服务端证书和密钥</li>
+<li>流量进入网格后,Gateway 作为客户端访问 frontend 服务的代理(Envoy,Sidecar),对 frontend 服务发起另一个 HTTPS 请求,使用的是 Citadel 分发和维护的客户端证书和密钥,与 frontend 服务代理(Envoy,Sidecar)的服务端证书和密钥进行双向 TLS 认证和通信.(该过程称为 mTLS 双向认证)</li>
+</ul>
+<h1 id="ServiceEntry-外部服务配置"><a href="#ServiceEntry-外部服务配置" class="headerlink" title="ServiceEntry 外部服务配置"></a>ServiceEntry 外部服务配置</h1><p>ServiceEntry 用于将网格外的服务加入网格中,并像网格内的服务一样进行管理,在实现上就是把外部服务加入 istio 的服务发现</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.istio.io/v1alpha3</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ServiceEntry</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">weather-external</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">hosts:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">www.weatherdb.com</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line">    <span class="attr">number:</span> <span class="number">80</span></span><br><span class="line">    <span class="attr">protocol:</span> <span class="string">HTTP</span></span><br><span class="line">  <span class="attr">resolution:</span> <span class="string">DNS</span></span><br><span class="line">  <span class="attr">location:</span> <span class="string">MESH_EXTERNAL</span></span><br></pre></td></tr></table></figure>
+<p>ServiceEntry 主要包含如下几个字段</p>
+<ul>
+<li><code>hosts</code>: 必选字段,表示与 ServiceEntry 相关的主机名.当 resolution 被设置为 DN S类型并且没有指定 endpoints 时,这个字段将用作后端的域名来进行路由</li>
+<li><code>ports</code>: 必选字段,表示与外部服务关联的端口</li>
+<li><code>resolution</code>: 必选字段,表示服务发现的模式,有以下3种模式可选<ul>
+<li><code>NONE</code>: 用于当连接的目标地址已经是一个明确 IP 的场景</li>
+<li><code>STATIC</code>: 用在已经用 endpoints 设置了服务实例的地址场景中,即不用解析</li>
+<li><code>DNS</code>: 表示用查询环境中的 DNS 进行解析.如果没有设置 endpoints,代理就会使用在<code>hosts</code>中指定的 DNS 地址进行解析</li>
+</ul>
+</li>
+<li><code>addresses</code>: 与服务关联的虚拟IP地址</li>
+<li><code>location</code>: <code>MESH_EXTERNAL</code>(网格外部) 或 <code>MESH_INTERNAL</code>(网格内部).当和网格外部服务通信时,mTLS 双向认证将被禁用,并且策略只能在客户端执行,不能在服务端执行.对于外部服务,我们不可能注入一个 Sidecar 来进行双向认证等操作</li>
+<li><code>endpoints</code>:表示与网格服务关联的网络地址,可以是一个IP,也可以是一个主机名.包含如下字段<ul>
+<li><code>address</code>: 必选字段,表示网络后端的地址.当 resolution 设置为 DNS 时,可以使用域名</li>
+<li><code>ports</code>: 端口列表</li>
+<li><code>labels</code>: 后端标签</li>
+<li><code>weight</code>: 权重</li>
+</ul>
+</li>
+</ul>
+<h2 id="ServiceEntry-典型应用"><a href="#ServiceEntry-典型应用" class="headerlink" title="ServiceEntry 典型应用"></a>ServiceEntry 典型应用</h2><blockquote>
+<p>通过配置 ServiceEntry + Egressgateway + VirtualService 访问外部服务</p>
+</blockquote>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 定义 www.weatherdb.com 外部服务</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.istio.io/v1alpha3</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ServiceEntry</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">weather-external</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">hosts:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">www.weatherdb.com</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line">    <span class="attr">number:</span> <span class="number">80</span></span><br><span class="line">    <span class="attr">protocol:</span> <span class="string">HTTP</span></span><br><span class="line">  <span class="attr">resolution:</span> <span class="string">DNS</span></span><br><span class="line">  <span class="attr">location:</span> <span class="string">MESH_EXTERNAL</span></span><br><span class="line"><span class="comment"># 定义 www.weatherdb.com 服务的 egress-gateway 网关出口</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.istio.io/v1alpha3</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Gateway</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">egress-gateway</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">istio-system</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span> </span><br><span class="line">    <span class="attr">istio:</span> <span class="string">egressgateway</span></span><br><span class="line">  <span class="attr">servers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">port:</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line">      <span class="attr">number:</span> <span class="number">80</span></span><br><span class="line">      <span class="attr">protocol:</span> <span class="string">HTTP</span></span><br><span class="line">    <span class="attr">hosts:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">www.weatherdb.com</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.istio.io/v1alpha3</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">VirtualService</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">egress-wearthdb</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">hosts:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">www.weatherdb.com</span></span><br><span class="line">  <span class="attr">gateways:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">egress-gateway.istio-system.svc.cluster.local</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">mesh</span></span><br><span class="line">  <span class="attr">http:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">match:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">gateways:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">mesh</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">    <span class="attr">route:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">destination:</span></span><br><span class="line">        <span class="attr">host:</span> <span class="string">egress-gateway.istio-system.svc.cluster.local</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">match:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">gateways:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">egress-gateway.istio-system.svc.cluster.local</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">    <span class="attr">route:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">destination:</span></span><br><span class="line">        <span class="attr">host:</span> <span class="string">www.weatherdb.com</span></span><br></pre></td></tr></table></figure>
+<p>在此场景中,定义了两个 route</p>
+<ul>
+<li>网格内流量: 这个 route 的 gateways 是 mesh,表示来自网格内的流量在访问 <a href="http://www.weatherdb.com" target="_blank" rel="noopener">www.weatherdb.com</a> 这个外部地址时,将被路由到 egressgateway 网关上</li>
+<li>网格外流量: 这个 route 的 gateways 是 egress,表示来自 egress 的流量在访问 <a href="http://www.weatherdb.com" target="_blank" rel="noopener">www.weatherdb.com</a> 这个外部地址时,将被路由到外部服务 <a href="http://www.weatherdb.com" target="_blank" rel="noopener">www.weatherdb.com</a> 上</li>
+</ul>
+<h1 id="Sidecar-代理规则配置"><a href="#Sidecar-代理规则配置" class="headerlink" title="Sidecar 代理规则配置"></a>Sidecar 代理规则配置</h1><p>用于对 istio数据面的行为进行更精细的控制</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.istio.io/v1alpha3</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">SideCar</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">default</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">weather</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">egress:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">hosts:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">"istio-system/*"</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">"news/*"</span></span><br></pre></td></tr></table></figure>
+<p>在Sidecar上主要通过三个字段来描述规则</p>
+<ul>
+<li><code>workloadSelector</code>: 表示工作负载的选择器(pod 标签选择器),如果为空,则应用到整个命名空间</li>
+<li><code>egress</code>: 配置 sidecar 对网格内其它服务的访问.如果没有配置,则只要名称空间可见,服务就可见<ul>
+<li><code>hosts</code>: 监听的服务,为 <code>namespace/dnsName</code> 格式,</li>
+<li><code>port</code>: 监听器关联的端口</li>
+<li><code>bind</code>: 监听器绑定的地址</li>
+<li><code>captureMode</code>: 配置如何捕获监听器的流量.有 <code>DEFAULT(默认),IPTABLES(基于 iptables 的流量拦截),NONE(没有流量拦截)</code>.</li>
+</ul>
+</li>
+<li><code>ingress</code>: 配置 Sidecar 对应工作负载的 Inbound流量.<ul>
+<li><code>port</code>: 必选字段,监听器关联的端口</li>
+<li><code>defaultEndpoint</code>: 必选字段,为流量转发的目标地址</li>
+<li><code>bind</code>: 监听器绑定的地址</li>
+<li><code>captureMode</code>: 配置如何捕获监听器的流量</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>Buy me a cup of coffee.</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    <!--Donate-->
+    赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="纸盒人 WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="纸盒人 Alipay">
+        <p>Alipay</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author:  </strong>纸盒人
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link: </strong>
+    <a href="https://hulining.github.io/2020/04/03/istio-traffic-control/" title="istio非侵入的流量治理">https://hulining.github.io/2020/04/03/istio-traffic-control/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/istio/" rel="tag"><i class="fa fa-tag"></i> istio</a>
+              <a href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" rel="tag"><i class="fa fa-tag"></i> 读书笔记</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/04/03/istio-first-step/" rel="prev" title="初识istio">
+      <i class="fa fa-chevron-left"></i> 初识istio
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/04/03/istio-adapter-configuration/" rel="next" title="istio可扩展的策略和遥测">
+      istio可扩展的策略和遥测 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          <!--Table of Contents-->
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          <!--Overview-->
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#原理"><span class="nav-number">1.</span> <span class="nav-text">原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#目标"><span class="nav-number">1.1.</span> <span class="nav-text">目标</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#流程"><span class="nav-number">1.2.</span> <span class="nav-text">流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#应用场景和功能"><span class="nav-number">1.3.</span> <span class="nav-text">应用场景和功能</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#VirtualService-路由规则配置"><span class="nav-number">2.</span> <span class="nav-text">VirtualService 路由规则配置</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#HTTP路由-HTTPRoute"><span class="nav-number">2.1.</span> <span class="nav-text">HTTP路由(HTTPRoute)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TLS路由-TLSRoute"><span class="nav-number">2.2.</span> <span class="nav-text">TLS路由(TLSRoute)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TCP路由-TCPRoute"><span class="nav-number">2.3.</span> <span class="nav-text">TCP路由(TCPRoute)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三种协议路由规则汇总"><span class="nav-number">2.4.</span> <span class="nav-text">三种协议路由规则汇总</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#DestinationRule-目标规则配置"><span class="nav-number">3.</span> <span class="nav-text">DestinationRule 目标规则配置</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#TrafficPolicy-流量策略"><span class="nav-number">3.1.</span> <span class="nav-text">TrafficPolicy 流量策略</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Gateway-服务网关配置"><span class="nav-number">4.</span> <span class="nav-text">Gateway 服务网关配置</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Gateway-典型应用"><span class="nav-number">4.1.</span> <span class="nav-text">Gateway 典型应用</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ServiceEntry-外部服务配置"><span class="nav-number">5.</span> <span class="nav-text">ServiceEntry 外部服务配置</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#ServiceEntry-典型应用"><span class="nav-number">5.1.</span> <span class="nav-text">ServiceEntry 典型应用</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Sidecar-代理规则配置"><span class="nav-number">6.</span> <span class="nav-text">Sidecar 代理规则配置</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="纸盒人"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">纸盒人</p>
+  <div class="site-description" itemprop="description">Keep it simple,Keep improving</div>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/hulining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;hulining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:loserkid@163.com" title="E-Mail → mailto:loserkid@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://music.163.com/#/user/home?id=71153860" title="网易云音乐 → https:&#x2F;&#x2F;music.163.com&#x2F;#&#x2F;user&#x2F;home?id&#x3D;71153860" rel="noopener" target="_blank"><i class="fa fa-fw fa-music"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.jianshu.com/u/ef49e4298b56" title="简书 → https:&#x2F;&#x2F;www.jianshu.com&#x2F;u&#x2F;ef49e4298b56" rel="noopener" target="_blank"><i class="fa fa-fw fa-book"></i></a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">纸盒人</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+    <div id="pjax">
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'a61ca599f9a038ebe5b3',
+      clientSecret: 'bcc9edf1847c09ad9452180f0fa44d69a11a4c9f',
+      repo        : 'https://github.com/hulining/hulining.github.io.git',
+      owner       : 'hulining',
+      admin       : ['hulining'],
+      id          : '5284f2cc75f5104f91e8e01d4a1f48e2',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

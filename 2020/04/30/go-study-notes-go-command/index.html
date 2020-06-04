@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Times New Roman:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"hulining.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="记录在学习 Go 过程中容易出错, 容易忘记的知识点, 主要包含 Go 提供的命令的常用使用方式, 以及在实际中应用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="go 学习笔记之 go 命令">
+<meta property="og:url" content="https://hulining.github.io/2020/04/30/go-study-notes-go-command/index.html">
+<meta property="og:site_name" content="纸盒人">
+<meta property="og:description" content="记录在学习 Go 过程中容易出错, 容易忘记的知识点, 主要包含 Go 提供的命令的常用使用方式, 以及在实际中应用">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-04-30T10:51:30.474Z">
+<meta property="article:modified_time" content="2020-05-02T00:15:51.313Z">
+<meta property="article:author" content="纸盒人">
+<meta property="article:tag" content="go">
+<meta property="article:tag" content="学习笔记">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://hulining.github.io/2020/04/30/go-study-notes-go-command/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>go 学习笔记之 go 命令 | 纸盒人</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">纸盒人</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">纸小呆</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>Tags<span class="badge">14</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>Categories<span class="badge">8</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>Archives<span class="badge">43</span></a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/hulining" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://hulining.github.io/2020/04/30/go-study-notes-go-command/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="纸盒人">
+      <meta itemprop="description" content="Keep it simple,Keep improving">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="纸盒人">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          go 学习笔记之 go 命令
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-04-30 18:51:30" itemprop="dateCreated datePublished" datetime="2020-04-30T18:51:30+08:00">2020-04-30</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+          <!--添加字数统计-->
+          
+            <span class="post-letters-count">
+              &nbsp; | &nbsp;
+              <span>4.5k 字</span>
+              &nbsp; | &nbsp;
+              <span>18 min</span>
+             </span>
+           
+            <div class="post-description">记录在学习 Go 过程中容易出错, 容易忘记的知识点, 主要包含 Go 提供的命令的常用使用方式, 以及在实际中应用</div>
+
+
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>安装配置好 Go 语言环境之后, 让我们先来看一看 go 为我们提供了哪些命令, 以及这些命令可以做什么吧</p>
+<p>查看 go 命令行帮助可以了解到 <code>go</code> 是用于管理 Go 代码的命令行工具.</p>
+<p>它提供了很多子命令来实现各种功能. 使用方式为 <code>go &lt;command&gt; [arguments]</code>, 使用 <code>go help &lt;command&gt;</code> 可以查看子命令的帮助信息</p>
+<p>以下是 go 的子命令及其简单描述</p>
+<table>
+<thead>
+<tr>
+<th align="center">子命令</th>
+<th align="left">简单解释</th>
+<th align="left">详细描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">bug</td>
+<td align="left">bug/issue 报告</td>
+<td align="left">它会收集当前系统及 Go 语言信息, 在 <code>github/golang/go</code> 代码仓库中帮助你创建一个 issues</td>
+</tr>
+<tr>
+<td align="center">build</td>
+<td align="left">编译软件包和依赖</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="center">clean</td>
+<td align="left">删除旧的对象文件和缓存文件</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="center">doc</td>
+<td align="left">显示包及其内容或符号的帮助文档</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="center">env</td>
+<td align="left">打印当前 Go 环境信息</td>
+<td align="left">包括 <code>GO111MODULE</code>, <code>GOARCH</code>, <code>GOBIN</code>, <code>GOHOSTARCH</code>, <code>GOHOSTOS</code>, <code>GOPATH</code>, <code>GOPROXY</code>, <code>GOROOT</code>, <code>GOTOOLDIR</code>,<code>GOMOD</code> 等环境变量</td>
+</tr>
+<tr>
+<td align="center">fix</td>
+<td align="left">更新软件包以使用新的 API</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="center">fmt</td>
+<td align="left">用于格式化 go 源代码</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="center">generate</td>
+<td align="left">通过预处理源生成 Go 代码文件</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="center">get</td>
+<td align="left">将依赖项添加到当前模块并安装它们</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="center">install</td>
+<td align="left">编译并安装软件包和依赖</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="center">list</td>
+<td align="left">列出软件包或模块</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="center">mod</td>
+<td align="left">提供对模块的操作</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="center">run</td>
+<td align="left">编译并运行 Go 程序</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="center">test</td>
+<td align="left">测试包</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="center">tool</td>
+<td align="left">运行指定的 go 工具</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="center">version</td>
+<td align="left">打印 Go 版本信息</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="center">vet</td>
+<td align="left">报告包中可能的错误</td>
+<td align="left">一些语法上虽然没有错误, 但是逻辑上可能存在问题的错误, 如死循环</td>
+</tr>
+</tbody></table>
+<p>它还提供了一些额外的话题帮助. 使用 <code>go help &lt;topic&gt;</code> 可以查看关于该话题的更多帮助.</p>
+<table>
+<thead>
+<tr>
+<th align="left">topic</th>
+<th align="left">简单描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">buildmode</td>
+<td align="left">构建模式</td>
+</tr>
+<tr>
+<td align="left">c</td>
+<td align="left">Go 与 C 语言间的调用</td>
+</tr>
+<tr>
+<td align="left">cache</td>
+<td align="left">简历并测试缓存</td>
+</tr>
+<tr>
+<td align="left">environment</td>
+<td align="left">环境变量</td>
+</tr>
+<tr>
+<td align="left">filetype</td>
+<td align="left">文件类型</td>
+</tr>
+<tr>
+<td align="left">go.mod</td>
+<td align="left">go.mod 文件, 该文件保存了项目依赖的模块, 类似于依赖包的集合(python 中的 requirements.txt 文件)</td>
+</tr>
+<tr>
+<td align="left">gopath</td>
+<td align="left"><code>GOPATH</code> 环境变量</td>
+</tr>
+<tr>
+<td align="left">gopath-get</td>
+<td align="left">早期的 go get 的 GOPATH</td>
+</tr>
+<tr>
+<td align="left">goproxy</td>
+<td align="left">访问 go module 的代理</td>
+</tr>
+<tr>
+<td align="left">importpath</td>
+<td align="left">import 导入包路径的语法</td>
+</tr>
+<tr>
+<td align="left">modules</td>
+<td align="left">模块, 模块版本等</td>
+</tr>
+<tr>
+<td align="left">module-get</td>
+<td align="left">go get 的模块感知</td>
+</tr>
+<tr>
+<td align="left">module-auth</td>
+<td align="left">使用 go.sum 进行身份认证</td>
+</tr>
+<tr>
+<td align="left">module-private</td>
+<td align="left">非公共模块的相关配置</td>
+</tr>
+<tr>
+<td align="left">packages</td>
+<td align="left">包</td>
+</tr>
+<tr>
+<td align="left">testflag</td>
+<td align="left">测试的标志</td>
+</tr>
+<tr>
+<td align="left">testfunc</td>
+<td align="left">测试函数</td>
+</tr>
+</tbody></table>
+<h1 id="go-build"><a href="#go-build" class="headerlink" title="go build"></a><code>go build</code></h1><p>构建编译包及其依赖, 但是不会安装</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">go</span> <span class="selector-tag">build</span> <span class="selector-attr">[-o output]</span> <span class="selector-attr">[-i]</span> <span class="selector-attr">[build flags]</span> <span class="selector-attr">[packages]</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>如果要构建的参数是单个目录中的 <code>.go</code> 列表文件, 则 build 会将其视为指定单个程序包的源文件列表</li>
+<li>编译软件包时, build 会忽略以 <code>_test.go</code> 结尾的文件</li>
+<li>编译单个 main 包时, build 将生成的可执行文件输出为第一个源代码文件名或源代码目录名文件(如 <code>go build ed.go rx.go</code> 生成 <code>ed</code>/<code>ed.exe</code>, <code>go build unix/sam</code> 生成 <code>sam</code>/<code>sam.exe</code>). 编译 Windows 系统可以执行文件时, 会添加 “.exe” 后缀 </li>
+<li>编译多个软件包或单个非 main 软件包时, build 会编译软件包, 但是会丢弃生成的对象. 仅用作检查是否可以构建软件包</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="center">标志</th>
+<th align="left">作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><code>-o</code></td>
+<td align="left">将生成的可执行文件或对象输出为指定的文件名或输出到指定目录</td>
+</tr>
+<tr>
+<td align="center"><code>-i</code></td>
+<td align="left">安装依赖的软件包</td>
+</tr>
+</tbody></table>
+<p>以下标志是 <code>build</code>, <code>clean</code>, <code>get</code>, <code>install</code>, <code>list</code>, <code>run</code>, <code>test</code> 命令共享的</p>
+<table>
+<thead>
+<tr>
+<th align="center">标志</th>
+<th align="left">解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><code>-a</code></td>
+<td align="left">强制重新构建编译已更新的软件包</td>
+</tr>
+<tr>
+<td align="center"><code>-n</code></td>
+<td align="left">打印命令, 但不运行</td>
+</tr>
+<tr>
+<td align="center"><code>-p n</code></td>
+<td align="left">可以并行运行的程序数量, 默认是可用的 CPU 数量</td>
+</tr>
+<tr>
+<td align="center"><code>-race</code></td>
+<td align="left">启用数据竞争检测, 仅支持 linux/amd64, freebsd/amd64, darwin/amd64 和 windows/amd64</td>
+</tr>
+<tr>
+<td align="center"><code>-msan</code></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="center"><code>-v</code></td>
+<td align="left">在编译时打印软件包名称</td>
+</tr>
+<tr>
+<td align="center"><code>-work</code></td>
+<td align="left">打印临时工作目录名, 退出时不要删除它</td>
+</tr>
+<tr>
+<td align="center"><code>-x</code></td>
+<td align="left">打印命令</td>
+</tr>
+<tr>
+<td align="center"><code>-asm</code></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="center"><code>-buildmode mode</code></td>
+<td align="left">构建的模式选择, 可选模式为 <code>archive</code>, <code>c-archive</code>, <code>c-shared</code>, <code>default</code>, <code>shared</code>, <code>exe</code>, <code>pie</code>, <code>plugin</code>. 详见 <code>go help buildmode</code></td>
+</tr>
+<tr>
+<td align="center"><code>-compiler name</code></td>
+<td align="left">编译器的名称 如 <code>runtime.Compiler</code>(gccgo 或 gc)</td>
+</tr>
+<tr>
+<td align="center"><code>-mod mode</code></td>
+<td align="left">模块的下载模式: readonly 或 vendor</td>
+</tr>
+<tr>
+<td align="center"><code>-pkgdir dir</code></td>
+<td align="left">从指定目录安装和加载所有软件包, 在非标准配置进行构建时, 使用 -pkgdir 将生成的软件包保存在单独的位置</td>
+</tr>
+<tr>
+<td align="center"><code>-tags tag,list</code></td>
+<td align="left">以逗号分割的构建标记列表</td>
+</tr>
+</tbody></table>
+<h1 id="go-clean"><a href="#go-clean" class="headerlink" title="go clean"></a><code>go clean</code></h1><p>从软件包源目录中删除目标文件</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">go</span> <span class="selector-tag">clean</span> <span class="selector-attr">[clean flags]</span> <span class="selector-attr">[build flags]</span> <span class="selector-attr">[packages]</span></span><br></pre></td></tr></table></figure>
+<p>go 命令在临时目录中构建大多数对象, 因此 <code>go clean</code> 主要与其它工具或手动调用 <code>go build</code> 留下的对象文件有关</p>
+<table>
+<thead>
+<tr>
+<th align="center">标志</th>
+<th align="left">解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><code>-i</code></td>
+<td align="left">删除相应的已安装的归档文件或二进制文件</td>
+</tr>
+<tr>
+<td align="center"><code>-n</code></td>
+<td align="left">打印即将执行的删除命令, 但不运行</td>
+</tr>
+<tr>
+<td align="center"><code>-r</code></td>
+<td align="left">递归应用于包的所有依赖项</td>
+</tr>
+<tr>
+<td align="center"><code>-x</code></td>
+<td align="left">在执行删除命令时打印它们</td>
+</tr>
+<tr>
+<td align="center"><code>-cache</code></td>
+<td align="left">删除所有 <code>go build</code> 缓存</td>
+</tr>
+<tr>
+<td align="center"><code>-modcache</code></td>
+<td align="left">删除所有模块下载缓存, 包括源代码的版本依赖</td>
+</tr>
+</tbody></table>
+<h1 id="go-doc"><a href="#go-doc" class="headerlink" title="go doc"></a><code>go doc</code></h1><p>显示帮助文档</p>
+<figure class="highlight inform7"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go doc <span class="comment">[-u]</span> <span class="comment">[-c]</span> <span class="comment">[package|<span class="comment">[package.]</span>symbol<span class="comment">[.methodOrField]</span>]</span></span><br></pre></td></tr></table></figure>
+
+<p>打印指定对象的注释文档(package, const, func, type, var, method, struct), 然后打印其下属对象的单行摘要</p>
+<table>
+<thead>
+<tr>
+<th align="center">标志</th>
+<th align="left">解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><code>-all</code></td>
+<td align="left">显示包所有的帮助文档</td>
+</tr>
+<tr>
+<td align="center"><code>-c</code></td>
+<td align="left">匹配符号时要注意大小写</td>
+</tr>
+<tr>
+<td align="center"><code>-cmd</code></td>
+<td align="left">将 command (package main) 视为常规程序包, 否则, 显示软件包的顶级文档时, 软件包主要的导出符号将被隐藏</td>
+</tr>
+<tr>
+<td align="center"><code>-src</code></td>
+<td align="left">显示该链接的完整源代码</td>
+</tr>
+<tr>
+<td align="center"><code>-u</code></td>
+<td align="left">显示未导出以及已导出符号, 方法和字段的文档</td>
+</tr>
+</tbody></table>
+<h1 id="go-env"><a href="#go-env" class="headerlink" title="go env"></a><code>go env</code></h1><p>输出 Go 环境变量信息</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">go</span> <span class="selector-tag">env</span> <span class="selector-attr">[-json]</span> <span class="selector-attr">[-u]</span> <span class="selector-attr">[-w]</span> <span class="selector-attr">[var ...]</span></span><br></pre></td></tr></table></figure>
+
+<p>默认情况下, env 将信息作为 shell 脚本输出(在 Windows 中为批处理文件). 如果给定一个或多个变量的名称作为参数, 则输出每个变量的值</p>
+<table>
+<thead>
+<tr>
+<th align="center">标志</th>
+<th align="left">解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><code>-json</code></td>
+<td align="left">以 JSON 格式输出环境变量</td>
+</tr>
+<tr>
+<td align="center"><code>-u &lt;arg&gt; ...</code></td>
+<td align="left">会取消 <code>go env -w NAME=VALUE</code> 设置的指定环境变量</td>
+</tr>
+<tr>
+<td align="center"><code>-w &lt;NAME=VALUE&gt; ...</code></td>
+<td align="left">修改默认环境变量值(不能新添自定义环境变量)</td>
+</tr>
+</tbody></table>
+<h1 id="go-fix"><a href="#go-fix" class="headerlink" title="go fix"></a><code>go fix</code></h1><p>更新软件包以使用新的 API</p>
+<figure class="highlight maxima"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">go</span> <span class="built_in">fix</span> [packages]</span><br></pre></td></tr></table></figure>
+
+<h1 id="go-fmt"><a href="#go-fmt" class="headerlink" title="go fmt"></a><code>go fmt</code></h1><p>格式化 go 代码包, 在指定包中运行 <code>gofmt -l -w</code>. 返回已修改文件的名称</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">go</span> <span class="selector-tag">fmt</span> <span class="selector-attr">[-n]</span> <span class="selector-attr">[-x]</span> <span class="selector-attr">[packages]</span></span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th align="center">标志</th>
+<th align="left">解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><code>-n</code></td>
+<td align="left">只打印将要执行的命令</td>
+</tr>
+<tr>
+<td align="center"><code>-x</code></td>
+<td align="left">打印并执行命令</td>
+</tr>
+</tbody></table>
+<h1 id="go-get"><a href="#go-get" class="headerlink" title="go get"></a><code>go get</code></h1><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">go</span> <span class="selector-tag">get</span> <span class="selector-attr">[-d]</span> <span class="selector-attr">[-f]</span> <span class="selector-attr">[-t]</span> <span class="selector-attr">[-u]</span> <span class="selector-attr">[-v]</span> <span class="selector-attr">[-fix]</span> <span class="selector-attr">[-insecure]</span> <span class="selector-attr">[build flags]</span> <span class="selector-attr">[packages]</span></span><br></pre></td></tr></table></figure>
+
+<p>下载指定包及其依赖项, 然后安装它</p>
+<table>
+<thead>
+<tr>
+<th align="center">标志</th>
+<th align="left">解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><code>-d</code></td>
+<td align="left">只下载包, 不要安装</td>
+</tr>
+<tr>
+<td align="center"><code>-f</code></td>
+<td align="left">仅在 <code>-u</code> 设置后才有效, 强制 <code>-u</code> 不验证每个包是否已从其导入路径所隐含的代码仓库导出. 如果是本地的 fork 源文件将很有用</td>
+</tr>
+<tr>
+<td align="center"><code>-fix</code></td>
+<td align="left">在解决依赖关系或构建代码之前, 先对下载的包运行 fix 工具</td>
+</tr>
+<tr>
+<td align="center"><code>-insecure</code></td>
+<td align="left">允许使用非安全方式从代码库中获取信息并解析自定义域名. 谨慎使用</td>
+</tr>
+<tr>
+<td align="center"><code>-t</code></td>
+<td align="left">对包生成测试所需的模块</td>
+</tr>
+<tr>
+<td align="center"><code>-u</code></td>
+<td align="left">使用网络更新指定的包及其依赖关系. 默认情况下, 使用网络检查丢失的软件包, 而不使用它来查找对现有包的更新</td>
+</tr>
+<tr>
+<td align="center"><code>-v</code></td>
+<td align="left">启用输出详细进度和调试信息</td>
+</tr>
+</tbody></table>
+<p>checkout 新的包时, get 将创建目录 <code>GOPATH/src/&lt;import-path&gt;</code>. 如果 <code>GOPATH</code> 包含多个条目, 则默认使用第一个. 详见 <code>go help gopath</code>.</p>
+<p>在 checkout 或更新软件包时, get 查找与本地安装的 Go 版本匹配的 brach 或 tag. 如果不存在这样的版本, 将获取包的默认分支.</p>
+<p>当 go get checkout 或更新 git 仓库时, 它还会更新该存储库引用的所有 git 子模块</p>
+<p>get 永远不会 checkout 或更新保存在 vendor 目录中的代码</p>
+<h1 id="go-install"><a href="#go-install" class="headerlink" title="go install"></a><code>go install</code></h1><p>编译并安装指定的软件包</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">go</span> <span class="selector-tag">install</span> <span class="selector-attr">[-i]</span> <span class="selector-attr">[build flags]</span> <span class="selector-attr">[packages]</span></span><br></pre></td></tr></table></figure>
+
+<p>可执行文件安装在环境变量 <code>GOBIN</code> 所命名的目录中, 默认为 <code>$GOPATH/bin</code>. 如果没有设置 <code>GOPATH</code>, 则设置为 <code>$HOME/go/bin</code>. <code>$GOROOT</code> 中的可执行文件安装在 <code>$GOROOT/bin</code> 或 <code>$GOTOOLDIR</code> 中, 而不是 <code>$GOBIN</code>.</p>
+<p>禁用 module-aware, 其它包安装在 <code>$GOPATH/pkg/$GOOS_$GOARCH</code>. 启用 module-aware, 将构建并缓存其它包, 但不安装.</p>
+<table>
+<thead>
+<tr>
+<th align="center">标志</th>
+<th align="left">解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><code>-i</code></td>
+<td align="left">同时安装指定包的依赖</td>
+</tr>
+</tbody></table>
+<h2 id="go-list"><a href="#go-list" class="headerlink" title="go list"></a><code>go list</code></h2><p>列出指定包或其子包包名，每行一个</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">go</span> <span class="selector-tag">list</span> <span class="selector-attr">[-f format]</span> <span class="selector-attr">[-json]</span> <span class="selector-attr">[-m]</span> <span class="selector-attr">[list flags]</span> <span class="selector-attr">[build flags]</span> <span class="selector-attr">[packages]</span></span><br></pre></td></tr></table></figure>
+
+<p>默认打印包的导入路径, 每行一个. 使用 <code>...</code> 可以输出指定包及其子包. 如 <code>go list net/...</code> 列出 “net” 及其子包的导入路径, 每行一个</p>
+<table>
+<thead>
+<tr>
+<th align="center">标志</th>
+<th align="left">解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><code>-f</code></td>
+<td align="left">使用包模版的语法指定列出包的输出格式</td>
+</tr>
+<tr>
+<td align="center"><code>-json</code></td>
+<td align="left">使用 json 格式输出列出的包的信息</td>
+</tr>
+<tr>
+<td align="center"><code>-deps</code></td>
+<td align="left">遍历包名及其依赖, 依赖以深度优先的后续遍历访问它们.</td>
+</tr>
+<tr>
+<td align="center"><code>-export</code></td>
+<td align="left">将给定包的信息导出到包的 <code>Export</code> 字段设置的文件名</td>
+</tr>
+<tr>
+<td align="center"><code>-find</code></td>
+<td align="left">列出指定的包, 但不解析其依赖关系, <code>Imports</code> 和 <code>Deps</code> 列表为空</td>
+</tr>
+<tr>
+<td align="center"><code>-test</code></td>
+<td align="left">列出指定的包及其测试二进制文件, 以将测试二进制文件的确切构造传达给代码分析工具</td>
+</tr>
+<tr>
+<td align="center"><code>-m</code></td>
+<td align="left">列出模块 , 而不是包</td>
+</tr>
+</tbody></table>
+<p>最常用的标志是 <code>-f</code> , 它根据包和模块定义信息, 按照指定格式输出所需信息. 如 <code>&#39;\{\{ .ImportPath }}&#39;</code>(删除反斜线) 显示包的导入路径(默认), <code>&#39;\{\{ .Name }}&#39;</code>(删除反斜线)显示包的名称等. </p>
+<p>包的详细定义信息见如下结构体</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Package <span class="keyword">struct</span> &#123;</span><br><span class="line">        Dir           <span class="keyword">string</span>   <span class="comment">// 包含包源代码的目录</span></span><br><span class="line">        ImportPath    <span class="keyword">string</span>   <span class="comment">// 包在目录中的导入路径, `go list` 的默认输出格式 </span></span><br><span class="line">        ImportComment <span class="keyword">string</span>   <span class="comment">// package语句的import注释中的路径</span></span><br><span class="line">        Name          <span class="keyword">string</span>   <span class="comment">// 包名称</span></span><br><span class="line">        Doc           <span class="keyword">string</span>   <span class="comment">// 包文档字符串</span></span><br><span class="line">        Target        <span class="keyword">string</span>   <span class="comment">// 安装路径</span></span><br><span class="line">        Shlib         <span class="keyword">string</span>   <span class="comment">// 包含此包的共享库（仅在-linkshared时设置）</span></span><br><span class="line">        Goroot        <span class="keyword">bool</span>     <span class="comment">// 这个包在GOROOT目录下吗?</span></span><br><span class="line">        Standard      <span class="keyword">bool</span>     <span class="comment">// 这个包是标准go库的一部分吗?</span></span><br><span class="line">        Stale         <span class="keyword">bool</span>     <span class="comment">// `go install`对这个包有什么作用码?</span></span><br><span class="line">        StaleReason   <span class="keyword">string</span>   <span class="comment">// explanation for Stale==true</span></span><br><span class="line">        Root          <span class="keyword">string</span>   <span class="comment">// 包含这个包的GOROOT或GOPATH目录</span></span><br><span class="line">        ConflictDir   <span class="keyword">string</span>   <span class="comment">// $GOPATH中的这个目录shadows dir</span></span><br><span class="line">        BinaryOnly    <span class="keyword">bool</span>     <span class="comment">// binary-only package (no longer supported)</span></span><br><span class="line">        ForTest       <span class="keyword">string</span>   <span class="comment">// package is only for use in named test</span></span><br><span class="line">        Export        <span class="keyword">string</span>   <span class="comment">// file containing export data (when using -export)</span></span><br><span class="line">        Module        *Module  <span class="comment">// info about package's containing module, if any (can be nil)</span></span><br><span class="line">        Match         []<span class="keyword">string</span> <span class="comment">// command-line patterns matching this package</span></span><br><span class="line">        DepOnly       <span class="keyword">bool</span>     <span class="comment">// package is only a dependency, not explicitly listed</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// Source files</span></span><br><span class="line">        GoFiles         []<span class="keyword">string</span> <span class="comment">// .go source files (excluding CgoFiles, TestGoFiles, XTestGoFiles)</span></span><br><span class="line">        CgoFiles        []<span class="keyword">string</span> <span class="comment">// .go source files that import "C"</span></span><br><span class="line">        CompiledGoFiles []<span class="keyword">string</span> <span class="comment">// .go files presented to compiler (when using -compiled)</span></span><br><span class="line">        IgnoredGoFiles  []<span class="keyword">string</span> <span class="comment">// .go source files ignored due to build constraints</span></span><br><span class="line">        CFiles          []<span class="keyword">string</span> <span class="comment">// .c source files</span></span><br><span class="line">        CXXFiles        []<span class="keyword">string</span> <span class="comment">// .cc, .cxx and .cpp source files</span></span><br><span class="line">        MFiles          []<span class="keyword">string</span> <span class="comment">// .m source files</span></span><br><span class="line">        HFiles          []<span class="keyword">string</span> <span class="comment">// .h, .hh, .hpp and .hxx source files</span></span><br><span class="line">        FFiles          []<span class="keyword">string</span> <span class="comment">// .f, .F, .for and .f90 Fortran source files</span></span><br><span class="line">        SFiles          []<span class="keyword">string</span> <span class="comment">// .s source files</span></span><br><span class="line">        SwigFiles       []<span class="keyword">string</span> <span class="comment">// .swig files</span></span><br><span class="line">        SwigCXXFiles    []<span class="keyword">string</span> <span class="comment">// .swigcxx files</span></span><br><span class="line">        SysoFiles       []<span class="keyword">string</span> <span class="comment">// .syso object files to add to archive</span></span><br><span class="line">        TestGoFiles     []<span class="keyword">string</span> <span class="comment">// _test.go files in package</span></span><br><span class="line">        XTestGoFiles    []<span class="keyword">string</span> <span class="comment">// _test.go files outside package</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// Cgo directives</span></span><br><span class="line">        CgoCFLAGS    []<span class="keyword">string</span> <span class="comment">// cgo: flags for C compiler</span></span><br><span class="line">        CgoCPPFLAGS  []<span class="keyword">string</span> <span class="comment">// cgo: flags for C preprocessor</span></span><br><span class="line">        CgoCXXFLAGS  []<span class="keyword">string</span> <span class="comment">// cgo: flags for C++ compiler</span></span><br><span class="line">        CgoFFLAGS    []<span class="keyword">string</span> <span class="comment">// cgo: flags for Fortran compiler</span></span><br><span class="line">        CgoLDFLAGS   []<span class="keyword">string</span> <span class="comment">// cgo: flags for linker</span></span><br><span class="line">        CgoPkgConfig []<span class="keyword">string</span> <span class="comment">// cgo: pkg-config names</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// Dependency information</span></span><br><span class="line">        Imports      []<span class="keyword">string</span>          <span class="comment">// import paths used by this package</span></span><br><span class="line">        ImportMap    <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span> <span class="comment">// map from source import to ImportPath (identity entries omitted)</span></span><br><span class="line">        Deps         []<span class="keyword">string</span>          <span class="comment">// all (recursively) imported dependencies</span></span><br><span class="line">        TestImports  []<span class="keyword">string</span>          <span class="comment">// imports from TestGoFiles</span></span><br><span class="line">        XTestImports []<span class="keyword">string</span>          <span class="comment">// imports from XTestGoFiles</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// Error information</span></span><br><span class="line">        Incomplete <span class="keyword">bool</span>            <span class="comment">// this package or a dependency has an error</span></span><br><span class="line">        Error      *PackageError   <span class="comment">// error loading package</span></span><br><span class="line">        DepsErrors []*PackageError <span class="comment">// errors loading dependencies</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>模块的详细定义信息见如下结构体:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Module <span class="keyword">struct</span> &#123;</span><br><span class="line">    Path      <span class="keyword">string</span>       <span class="comment">// 模块路径</span></span><br><span class="line">    Version   <span class="keyword">string</span>       <span class="comment">// 模块版本</span></span><br><span class="line">    Versions  []<span class="keyword">string</span>     <span class="comment">// 可用的模块版本 (with -versions)</span></span><br><span class="line">    Replace   *Module      <span class="comment">// 替换为指定模块</span></span><br><span class="line">    Time      *time.Time   <span class="comment">// 创建的时间版本信息</span></span><br><span class="line">    Update    *Module      <span class="comment">// 可用的任何更新 (with -u)</span></span><br><span class="line">    Main      <span class="keyword">bool</span>         <span class="comment">// 是否是主模块</span></span><br><span class="line">    Indirect  <span class="keyword">bool</span>         <span class="comment">// 是否只是主模块的间接依赖吗?</span></span><br><span class="line">    Dir       <span class="keyword">string</span>       <span class="comment">// 模块的保存文件目录</span></span><br><span class="line">    GoMod     <span class="keyword">string</span>       <span class="comment">// go.mod 文件路径</span></span><br><span class="line">    GoVersion <span class="keyword">string</span>       <span class="comment">// 模块使用的 Go 版本信息</span></span><br><span class="line">    Error     *ModuleError <span class="comment">// 加载模块的错误</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> ModuleError <span class="keyword">struct</span> &#123;</span><br><span class="line">	Err <span class="keyword">string</span> <span class="comment">// 错误信息</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="go-mod"><a href="#go-mod" class="headerlink" title="go mod"></a><code>go mod</code></h1><p>提供对模块的操作</p>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go <span class="keyword">mod</span> &lt;<span class="keyword">command</span>&gt; [<span class="title">arguments</span>]</span><br></pre></td></tr></table></figure>
+
+<p>包含如下子命令</p>
+<table>
+<thead>
+<tr>
+<th align="center">command</th>
+<th align="left">解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">download</td>
+<td align="left">下载模块到本地缓存(默认为 GOPATH/pkg/mod 目录)</td>
+</tr>
+<tr>
+<td align="center">edit</td>
+<td align="left">通过工具或脚本编辑 go.mod</td>
+</tr>
+<tr>
+<td align="center">graph</td>
+<td align="left">打印模块依赖图</td>
+</tr>
+<tr>
+<td align="center">init</td>
+<td align="left">在当前目录下初始化新模块, 创建 go.mod</td>
+</tr>
+<tr>
+<td align="center">tidy</td>
+<td align="left">增加缺少的包,删除没有用到的包</td>
+</tr>
+<tr>
+<td align="center">vendor</td>
+<td align="left">将依赖复制到 vendor 目录下</td>
+</tr>
+<tr>
+<td align="center">verify</td>
+<td align="left">校验依赖</td>
+</tr>
+<tr>
+<td align="center">why</td>
+<td align="left">解释为什么需要软件包或模块</td>
+</tr>
+</tbody></table>
+<h2 id="download"><a href="#download" class="headerlink" title="download"></a><code>download</code></h2><p>下载指定模块, 这些模块是主模块依赖的模块, 也可以是 <code>path@version</code> 形式的模块查询. 如果没有参数, 则下载主模块的所有依赖.</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">go</span> <span class="selector-tag">mod</span> <span class="selector-tag">download</span> <span class="selector-attr">[-json]</span> <span class="selector-attr">[modules]</span></span><br></pre></td></tr></table></figure>
+
+<p>go 命令在正常执行期间根据需要自动下载模块. <code>go mod download</code> 命令主要用于预填充本地缓存或得到 go 模块代理的响应</p>
+<table>
+<thead>
+<tr>
+<th align="center">标志</th>
+<th align="left">解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><code>-json</code></td>
+<td align="left">打印一系列 json 对象到标准输出, 模数每个下载的模块信息. 与下面 Go Module 结构体相对应</td>
+</tr>
+</tbody></table>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Module <span class="keyword">struct</span> &#123;</span><br><span class="line">    Path     <span class="keyword">string</span> <span class="comment">// module path</span></span><br><span class="line">    Version  <span class="keyword">string</span> <span class="comment">// module version</span></span><br><span class="line">    Error    <span class="keyword">string</span> <span class="comment">// error loading module</span></span><br><span class="line">    Info     <span class="keyword">string</span> <span class="comment">// absolute path to cached .info file</span></span><br><span class="line">    GoMod    <span class="keyword">string</span> <span class="comment">// absolute path to cached .mod file</span></span><br><span class="line">    Zip      <span class="keyword">string</span> <span class="comment">// absolute path to cached .zip file</span></span><br><span class="line">    Dir      <span class="keyword">string</span> <span class="comment">// absolute path to cached source root directory</span></span><br><span class="line">    Sum      <span class="keyword">string</span> <span class="comment">// checksum for path, version (as in go.sum)</span></span><br><span class="line">    GoModSum <span class="keyword">string</span> <span class="comment">// checksum for go.mod (as in go.sum)</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="edit"><a href="#edit" class="headerlink" title="edit"></a><code>edit</code></h2><p>提供了一个用于编辑 go.mod 的命令行界面, 主要供工具或脚本使用. 它只读取 go.mod, 不查找所涉及的模块信息.</p>
+<p>默认情况下, edit 读写主模块的 go.mod 文件,但可以指定其它目标文件</p>
+<table>
+<thead>
+<tr>
+<th align="center">标志</th>
+<th align="left">解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><code>-fmt</code></td>
+<td align="left">重新格式化 go.mod 文件, 而不进行其它更改</td>
+</tr>
+<tr>
+<td align="center"><code>-module</code></td>
+<td align="left">更改模块的路径</td>
+</tr>
+<tr>
+<td align="center"><code>-require=path@version</code>/<code>-droprequire=path</code></td>
+<td align="left">添加给定的 <code>path@version</code> 的模块/删除指定 path 的模块</td>
+</tr>
+<tr>
+<td align="center"><code>-exclude=path@version</code>/<code>-dropexclude=path@version</code></td>
+<td align="left">为给定的 <code>path@version</code> 模块添加/删除 exclude 信息</td>
+</tr>
+<tr>
+<td align="center"><code>-replace=old[@v]=new[@v]</code>/<code>-dropreplace=old[@v]</code></td>
+<td align="left">添加和删除对给定 <code>path@version</code> 模块的替换</td>
+</tr>
+<tr>
+<td align="center"><code>-go=version</code></td>
+<td align="left">设置预期的 Go 语言版本</td>
+</tr>
+<tr>
+<td align="center"><code>-print</code></td>
+<td align="left">以文本格式打印最终的 go.mod, 而不是将其写回到 go.mod</td>
+</tr>
+<tr>
+<td align="center"><code>-json</code></td>
+<td align="left">以 JSON 格式打印最终的 go.mod, 而不是将其写回到 go.mod. JSON 格式对应的 Go 结构体如下</td>
+</tr>
+</tbody></table>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Module <span class="keyword">struct</span> &#123;</span><br><span class="line">    Path <span class="keyword">string</span></span><br><span class="line">    Version <span class="keyword">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> GoMod <span class="keyword">struct</span> &#123;</span><br><span class="line">	Module  Module</span><br><span class="line">    Go      <span class="keyword">string</span></span><br><span class="line">    Require []Require</span><br><span class="line">    Exclude []Module</span><br><span class="line">    Replace []Replace</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Require <span class="keyword">struct</span> &#123;</span><br><span class="line">    Path <span class="keyword">string</span></span><br><span class="line">    Version <span class="keyword">string</span></span><br><span class="line">    Indirect <span class="keyword">bool</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Replace <span class="keyword">struct</span> &#123;</span><br><span class="line">    Old Module</span><br><span class="line">    New Module</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="init"><a href="#init" class="headerlink" title="init"></a><code>init</code></h2><p>初始化一个新的 go.mod 保存在当前目录, 实际上是创建了一个以当前目录为 <code>/</code> 的新模块. go.mod 文件必须不存在</p>
+<figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go mod init [<span class="class"><span class="keyword">module</span>]</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="tidy"><a href="#tidy" class="headerlink" title="tidy"></a><code>tidy</code></h3><figure class="highlight maxima"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">go</span> <span class="built_in">mod</span> tidy [-v]</span><br></pre></td></tr></table></figure>
+
+<p>确保 go.mod 与模块中的源代码匹配, 它添加了构建当前模块的程序包和依赖项所需的所有缺少的模块, 并删除程序包的未使用模块. 它还会将所有缺少的条目添加到 go.sum 中, 并删除所有不必要的条目.</p>
+<p><code>-v</code> 标志将有关已删除模块的信息打印为标准错误</p>
+<h2 id="vendor"><a href="#vendor" class="headerlink" title="vendor"></a><code>vendor</code></h2><figure class="highlight maxima"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">go</span> <span class="built_in">mod</span> vendor [-v]</span><br></pre></td></tr></table></figure>
+
+<p>用于重置主模块的 vendor 目录, 以使其包含主模块构建和测试所需要的所有包. 它不包括已 vendored 软件包的测试代码.</p>
+<p><code>-v</code> 标志将已 vendored 模块和包因为到标准错误</p>
+<h1 id="go-run"><a href="#go-run" class="headerlink" title="go run"></a><code>go run</code></h1><p>编译并运行指定的 Go 主程序包</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">go</span> <span class="selector-tag">run</span> <span class="selector-attr">[build flags]</span> <span class="selector-attr">[-exec xprog]</span> <span class="selector-tag">package</span> <span class="selector-attr">[arguments...]</span></span><br></pre></td></tr></table></figure>
+
+<p>通常, 该软件包被指定为来自单个目录的 .go 源文件列表, 但也可以是导入路径, 文件系统路径或模式匹配单个已知包.</p>
+<p>默认情况下, <code>go run</code> 直接运行编译的二进制文件. 如果添加 <code>-exec</code> 标志, 那么 <code>go run</code> 使用 xprog 调用二进制文件. 如果未提供 <code>-exec</code> 标志, 则 GOOS 或 <code>GOARCH</code> 与系统不同的情况下, 可以找到名为 <code>go_$GOOS_$GOARCH_exec</code> 的程序文件</p>
+<h1 id="go-test"><a href="#go-test" class="headerlink" title="go test"></a><code>go test</code></h1><p>自动测试由导入路径命名的包, 输出测试结果的摘要信息</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go <span class="built_in">test</span> [build/<span class="built_in">test</span> flags] [packages] [build/<span class="built_in">test</span> flags &amp; <span class="built_in">test</span> binary flags]</span><br></pre></td></tr></table></figure>
+
+<p><code>go test</code> 重新编译每个包以及文件名与 <code>*_test.go</code> 模式匹配的文件. 这些附加文件可以包含测试函数,压力测试和示例函数. 每个列出的包都会导致执行单独的测试二进制文件. 文件名以 <code>_</code> 或 <code>.</code> 开头的文件(包括<code>_test.go</code>)将被忽略</p>
+<p>用后缀 <code>_test</code> 声明包的测试文件将被编译为单独的包, 然后与主测试二进制链接并运行. go 工具将会忽略名为 testdata 的目录, 使其可以保存测试所需的辅助数据</p>
+<p>go test 有两种不同的运行模式:</p>
+<ul>
+<li>本地目录模式: 在没有指定 package 包参数的情况下调用 go test 采用的模式. 在此模式下, go test 编译当前目录中包的源码和测试文件, 然后运行生成的二进制测试文件. 在此模式下, 将禁用缓存. 测试完成后, 输出测试的摘要信息, 包括测试状态(ok 或 FAIL), 包名和测试时间</li>
+<li>包列表模式: 在显示指定 package 包参数的情况下调用 go test 采用的模式. 在此模式下, go test 编译并测试命令行中列出的每个包, 如果测试通过, 则只输出 ok 摘要行. 否则, 输出完整的测试输出.</li>
+</ul>
+<p>在包列表模式下, go test 缓存成功的测试结果, 避免运行不必要的重复测试. </p>
+<table>
+<thead>
+<tr>
+<th align="center">标志</th>
+<th align="left">解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><code>-args</code></td>
+<td align="left">将命令行其余部分(-args 之后的所有内容)传递给测试二进制文件. 一般放在所有参数最后</td>
+</tr>
+<tr>
+<td align="center"><code>-c</code></td>
+<td align="left">将测试二进制文件编译为 <code>pkg.test</code>, 但不运行它(pkg 是包导入路径的最后一个元素). 可以使用 <code>-o</code> 更改文件名</td>
+</tr>
+<tr>
+<td align="center"><code>-exec xprog</code></td>
+<td align="left">使用 xprog 运行测试二进制文件</td>
+</tr>
+<tr>
+<td align="center"><code>-i</code></td>
+<td align="left">安装测试依赖项的包, 不运行测试</td>
+</tr>
+<tr>
+<td align="center"><code>-json</code></td>
+<td align="left">将测试输出转换为适合自动处理的 JSON 文本</td>
+</tr>
+<tr>
+<td align="center"><code>-o file</code></td>
+<td align="left">将测试二进制文件编译为指定命名的文件, 仍然运行测试(除非指定了 -c 或 -i)</td>
+</tr>
+</tbody></table>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>Buy me a cup of coffee.</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    <!--Donate-->
+    赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="纸盒人 WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="纸盒人 Alipay">
+        <p>Alipay</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author:  </strong>纸盒人
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link: </strong>
+    <a href="https://hulining.github.io/2020/04/30/go-study-notes-go-command/" title="go 学习笔记之 go 命令">https://hulining.github.io/2020/04/30/go-study-notes-go-command/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/go/" rel="tag"><i class="fa fa-tag"></i> go</a>
+              <a href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="tag"><i class="fa fa-tag"></i> 学习笔记</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/04/30/go-study-notes-concurrency/" rel="prev" title="go 学习笔记之并发">
+      <i class="fa fa-chevron-left"></i> go 学习笔记之并发
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/04/30/go-study-notes-package/" rel="next" title="go 学习笔记之包管理">
+      go 学习笔记之包管理 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          <!--Table of Contents-->
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          <!--Overview-->
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#go-build"><span class="nav-number">1.</span> <span class="nav-text">go build</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#go-clean"><span class="nav-number">2.</span> <span class="nav-text">go clean</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#go-doc"><span class="nav-number">3.</span> <span class="nav-text">go doc</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#go-env"><span class="nav-number">4.</span> <span class="nav-text">go env</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#go-fix"><span class="nav-number">5.</span> <span class="nav-text">go fix</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#go-fmt"><span class="nav-number">6.</span> <span class="nav-text">go fmt</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#go-get"><span class="nav-number">7.</span> <span class="nav-text">go get</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#go-install"><span class="nav-number">8.</span> <span class="nav-text">go install</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#go-list"><span class="nav-number">8.1.</span> <span class="nav-text">go list</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#go-mod"><span class="nav-number">9.</span> <span class="nav-text">go mod</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#download"><span class="nav-number">9.1.</span> <span class="nav-text">download</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#edit"><span class="nav-number">9.2.</span> <span class="nav-text">edit</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#init"><span class="nav-number">9.3.</span> <span class="nav-text">init</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#tidy"><span class="nav-number">9.3.1.</span> <span class="nav-text">tidy</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#vendor"><span class="nav-number">9.4.</span> <span class="nav-text">vendor</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#go-run"><span class="nav-number">10.</span> <span class="nav-text">go run</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#go-test"><span class="nav-number">11.</span> <span class="nav-text">go test</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="纸盒人"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">纸盒人</p>
+  <div class="site-description" itemprop="description">Keep it simple,Keep improving</div>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/hulining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;hulining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:loserkid@163.com" title="E-Mail → mailto:loserkid@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://music.163.com/#/user/home?id=71153860" title="网易云音乐 → https:&#x2F;&#x2F;music.163.com&#x2F;#&#x2F;user&#x2F;home?id&#x3D;71153860" rel="noopener" target="_blank"><i class="fa fa-fw fa-music"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.jianshu.com/u/ef49e4298b56" title="简书 → https:&#x2F;&#x2F;www.jianshu.com&#x2F;u&#x2F;ef49e4298b56" rel="noopener" target="_blank"><i class="fa fa-fw fa-book"></i></a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">纸盒人</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+    <div id="pjax">
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'a61ca599f9a038ebe5b3',
+      clientSecret: 'bcc9edf1847c09ad9452180f0fa44d69a11a4c9f',
+      repo        : 'https://github.com/hulining/hulining.github.io.git',
+      owner       : 'hulining',
+      admin       : ['hulining'],
+      id          : '4c57b09bc7190393b9cdad58252b6bf2',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>
