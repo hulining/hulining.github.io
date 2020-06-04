@@ -1,5 +1,6 @@
 ---
 title: go 学习笔记之 go 命令
+date: 2020/05/02
 tags:
   - go
   - 学习笔记

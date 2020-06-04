@@ -1,5 +1,6 @@
 ---
 title: 自定义kube-prometheus添加etcd监控
+date: 2020/04/03
 tags:
   - kubernetes
   - prometheus

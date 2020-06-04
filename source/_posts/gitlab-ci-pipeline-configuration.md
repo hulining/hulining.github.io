@@ -1,5 +1,6 @@
 ---
 title: GitLab CI/CD 管道配置详解
+date: 2020/05/22
 tags:
   - GitLab
   - CI/CD

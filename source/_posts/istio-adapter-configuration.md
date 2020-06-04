@@ -1,5 +1,6 @@
 ---
 title: istio可扩展的策略和遥测
+date: 2020/04/03
 tags:
   - istio
   - 读书笔记

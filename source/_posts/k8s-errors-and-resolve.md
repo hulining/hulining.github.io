@@ -1,5 +1,6 @@
 ---
 title: kubernetes相关错误及其解决
+date: 2020/04/03
 tags:
   - kubernetes
   - etcd

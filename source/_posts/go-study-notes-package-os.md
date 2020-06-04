@@ -1,5 +1,6 @@
 ---
 title: go 学习笔记之 os 包
+date: 2020/05/04
 tags:
   - go
   - 学习笔记
