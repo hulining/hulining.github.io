@@ -1,12 +1,13 @@
 ---
-title: docker 必须知道的知识点
-date: 2020/05/29
+title: 运维面试题之 docker
+date: 2020/06/04
 tags:
   - docker
 categories:
+  - 面试
   - docker
-abbrlink: 7303
-description: 本文章介绍了 docker 的基本配置,底层原理,网络模型及 Dockerfile 的使用方式.重点需要掌握的是在使用 Dockerfile 构建 docker 镜像时,构建出优雅的 docker 镜像.
+abbrlink: 
+description: 总结整理常见 docker 面试题,以作备忘
 ---
 
 ## docker 配置
