@@ -18,7 +18,7 @@ cache:
 
 #在构建之前安装hexo环境
 before_install:
-  - mv /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+  - export  TZ='Asia/Shanghai'
   - npm install -g hexo-cli
 
 #安装git插件和搜索功能插件
