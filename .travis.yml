@@ -18,6 +18,7 @@ cache:
 
 #在构建之前安装hexo环境
 before_install:
+  - ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
   - npm install -g hexo-cli
 
 #安装git插件和搜索功能插件
@@ -35,7 +36,6 @@ before_script:
 script:
   - hexo clean
   - hexo generate
-  - echo ${ENV_TEST}
   - hexo deploy
 
 # configure notifications (email, IRC, campfire etc)
