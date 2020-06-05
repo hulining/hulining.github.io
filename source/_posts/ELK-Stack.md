@@ -28,13 +28,13 @@ description: '本文章主要包含 ELK 或 EFK 相关技术的基本介绍,各�
 
 Logstash 通过输入插件从多种数据源获取数据,经过过滤插件对数据进行筛选,格式化,然后通过输出插件输出到 Elasticsearch 中,通过 Kibana 展示.
 
-![最简单架构](ELK-Stack/the-simplest-architecture.png)
+![最简单架构](https://raw.githubusercontent.com/hulining/hulining.github.io/hexo/source/_posts/ELK-Stack/the-simplest-architecture.png)
 
 这种架构十分简单,使用场景也有限.初学者可以通过此架构了解 ELK 如何工作
 
 ### 多个 LogStash 用于数据收集
 
-![多个 LogStash 用于数据收集](ELK-Stack/multi-logstash.png)
+![多个 LogStash 用于数据收集](https://raw.githubusercontent.com/hulining/hulining.github.io/hexo/source/_posts/ELK-Stack/multi-logstash.png)
 
 这种架构需要在各个服务器上部署 Logstash,而 Logstash 比较重量级,服务器性能会有所下降,甚至可能导致应用无法正常工作
 
@@ -42,7 +42,7 @@ Logstash 通过输入插件从多种数据源获取数据,经过过滤插件对�
 
 Beats 将搜集到的数据发送到 Logstash,经 Logstash 解析,过滤后，将其发送到 Elasticsearch 存储,并由 Kibana 呈现给用户.
 
-![Beats 作为日志收集器](ELK-Stack/beat-for-data-collection.png)
+![Beats 作为日志收集器](https://raw.githubusercontent.com/hulining/hulining.github.io/hexo/source/_posts/ELK-Stack/beat-for-data-collection.png)
 
 这种方式解决了 Logstash 在各个服务器上占用系统资源过高的情况,相比于 Logstash,Beats 更加轻量,系统资源占用也比较低.且支持 SSL 加密传输,保证通信安全
 
@@ -50,7 +50,7 @@ Beats 将搜集到的数据发送到 Logstash,经 Logstash 解析,过滤后，�
 
 无论是 Beat 还是 Logstash 均支持消息队列的输入输出,目前支持 Kafka,Redis,RabbitMQ 等常见消息队列.可以由 Beats 收集数据后,通过消息队列输出插件将数据写入到消息队列中,然后 Logstash 通过消息队列输入插件从消息队列中读取数据进行处理后传入到 Elasticsearch 存储,并由 Kibana 呈现给用户.
 
-![引入消息队列机制](ELK-Stack/introduce-message-queue.png)
+![引入消息队列机制](https://raw.githubusercontent.com/hulining/hulining.github.io/hexo/source/_posts/ELK-Stack/introduce-message-queue.png)
 
 当数据量较大时,可在合适的位置添加消息队列,减少 Logstash 的负荷.引入消息队列,可以降低由于数据量过大而导致某些组件的性能瓶颈,降低了数据丢失的可能性.同时,Elasticsearch 可以做成集群模式或增加节点数量,以便增加其性能.
 

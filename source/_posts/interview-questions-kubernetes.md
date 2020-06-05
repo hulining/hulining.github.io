@@ -44,7 +44,7 @@ Kubernetes 各个组件中的通信都是以 HTTPS 方式进程的.Kubernetes �
 4. kube-scheduler 收到信号后进行调度,包括预选/优选调度,并将结果返回给 API Server,后写入 etcd.如果资源不够,资源对象会进入 Pending 等待状态
 5. kubelet 根据调度结果调用 CRI(Container Runtime Interface)执行 Pod 资源创建/回收操作.
 
-![what-happens-when-k8s](interview-questions-kubernetes/what-happens-when-k8s.svg)
+![what-happens-when-k8s](https://raw.githubusercontent.com/hulining/hulining.github.io/hexo/source/_posts/interview-questions-kubernetes/what-happens-when-k8s.svg)
 
 ### Kubernetes 容器间通信方式
 
