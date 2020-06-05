@@ -1,5 +1,5 @@
 ---
-title: LVS Nginx HaProxy 负载均衡器对比分析
+title: LVS Nginx HAProxy 负载均衡器对比分析
 date: 2020/06/04
 tags:
   - Linux
@@ -9,7 +9,7 @@ tags:
 categories:
   - Linux
 abbrlink: 
-description: 本文章主要介绍目前常用的三种负载均衡器 LVS Nginx HaProxy 的特性及区别
+description: 本文章主要介绍目前常用的三种负载均衡器 LVS Nginx HAProxy 的特性及区别
 ---
 
 > LVS
@@ -24,7 +24,7 @@ description: 本文章主要介绍目前常用的三种负载均衡器 LVS Nginx
 - 高性能,可承担高并发压力
 - 同时也是功能强大的 Web 应用服务器
 
-> HaProxy
+> HAProxy
 
 - 专业级负载均衡软件,工作在 OSI 模型第 4/7 层
 - 相较于 Nginx 有更出色的负载均衡速度,在并发处理上也优于 Nginx.但在正则表达式支持上较弱

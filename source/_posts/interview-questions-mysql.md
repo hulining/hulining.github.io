@@ -7,7 +7,6 @@ categories:
   - 面试题
   - MySQL
 abbrlink: 
-abbrlink: 
 description: 总结整理常见 MySQL 面试题,以作备忘
 ---
 
