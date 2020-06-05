@@ -1,13 +1,13 @@
 ---
-title: 运维面试题之 linux/bash
+title: 运维面试题之 Bash
 date: 2020/06/04
 tags:
-  - bash
+  - Bash
 categories:
   - 面试题
-  - bash
+  - Bash
 abbrlink: 
-description: 总结整理常见 Linux 下 bash 面试题,以作备忘
+description: 总结整理常见 Linux 下 Bash 面试题,以作备忘
 ---
 
 ## 进程的有效用户与实际用户

@@ -1,13 +1,13 @@
 ---
-title: 运维面试题之 docker
+title: 运维面试题之 Docker
 date: 2020/06/04
 tags:
-  - docker
+  - Docker
 categories:
   - 面试
-  - docker
+  - Docker
 abbrlink: 
-description: 总结整理常见 docker 面试题,以作备忘
+description: 总结整理常见 Docker 面试题,以作备忘
 ---
 
 ## docker 配置
