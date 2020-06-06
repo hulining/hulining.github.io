@@ -24,6 +24,7 @@ Sidecar Injector 是 Istio 中实现自动注入 Sidecar 的组件,它是以 Kub
 Sidecar Injector 只在创建 Pod 时进行 Sidecar 容器注入,在 Pod 的创建请求到达 kube-apiserver 后,首先进行认证鉴权,然后在准入控制阶段,kube-apiserver 以 REST 的方式同步调用 Sidecar Injector Webhook 服务进行 init 与 istio-proxy 容器的注入,最后将 Pod 对象持久化存储到 etcd 中
 
 Istio中的 MutatingWebhook 配置如下
+
 ```yaml
 apiVersion: admissionregistration.k8s.io/v1beta1
 kind: MutatingWebhookConfiguration
@@ -52,14 +53,14 @@ webhooks:
         istio-injection: enabled
 
 ```
+
 由以上配置可见, Sidecar Injector 只对标签匹配 `istio-injection：enabled` 的命名空间下的Pod资源对象的创建生效
 
 # Sidecar 流量拦截
 
 Sidecar 流量拦截基于 iptables 规则(init 容器启动时设置规则),拦截应用容器 Inbound/Outbound 的流量
 
-
-![istio 流量流向](https://raw.githubusercontent.com/hulining/hulining.github.io/hexo/source/_posts/istio-sidecar/istio_traffic_flow.png)
+![istio 流量流向](https://raw.githubusercontent.com/hulining/hulining.github.io/hexo/source/_posts/images/istio-sidecar/istio_traffic_flow.png)
 
 1. Inbound 流量在进入 Pod 的网络协议栈时首先被 iptables 规则拦截
 2. iptables 规则将数据包转发给 Envoy
@@ -73,6 +74,7 @@ Sidecar 流量拦截基于 iptables 规则(init 容器启动时设置规则),拦
 Istio中,流量拦截的实现依赖 initContainer iptables 规则的设置,目前有 `REDIRECT` 和 `TPROXY` 两种流量拦截模式.
 
 `REDIRECT` 模式虽然会进行源地址转换,但依旧是默认的设置.原因如下:
+
 - 配合 Istio 提供的遥测数据依然可以进行调用链分析
 - Kubernetes 平台上 Pod 及其 IP 地址并不是持久不变的
 

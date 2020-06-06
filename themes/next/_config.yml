@@ -122,6 +122,9 @@ menu:
   tags: /tags/ || tags
   categories: /categories/ || th
   archives: /archives/ || archive
+  go: /go/ || folder
+  leetcode: /leetcode/ || folder
+  interviews: /interviews/ || folder
   #schedule: /schedule/ || calendar
   #sitemap: /sitemap.xml || sitemap
   #commonweal: /404/ || heartbeat

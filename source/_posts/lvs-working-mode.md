@@ -14,9 +14,9 @@ description: 本文章主要介绍 LVS(Linux Virtual Server)的三种工作模�
 
 LVS(Linux Virtual Server) 是由章文嵩博士主导的开源负载均衡项目,在 2.6 的及以后内核版本中已将 LVS 集成于内核模块中.该项目在 Linux 内核中实现了基于 IP 的数据请求负载均衡调度方案,其应用场景如图 1 所示:
 
-{% asset_img lvs-working-mode/lvs-use-cases.jpg LVS 应用场景 %}
+![LVS 应用场景](https://raw.githubusercontent.com/hulining/hulining.github.io/hexo/source/_posts/images/lvs-working-mode/lvs-use-cases.jpg)
 
-终端互联网用户从外部访问公司的外部负载均衡服务器,终端用户的 Web 请求会发送给LVS调度器,调度器根据自己预设的算法决定将该请求发送给后端的某台 Web 服务器,比如,轮询算法可以将外部的请求平均分发给后端的所有服务器,终端用户访问 LVS 调度器虽然会被转发到后端真实的服务器,但如果真实服务器连接的是相同的存储,提供的服务也是相同的服务,最终用户不管是访问哪台真实服务器,得到的服务内容都是一样的,整个集群对用户而言都是透明的.最后根据 LVS 工作模式的不同,真实服务器会选择不同的方式将用户需要的数据发送到终端用户,LVS工作模式分为 NAT 模式,IP 隧道(TUN)模式,以及直接路由(DR)模式.
+互联网用户从外部访问公司的外部负载均衡服务器,终端用户的 Web 请求会发送给 LVS 调度器,调度器根据自己预设的算法决定将该请求发送给后端的某台 Web 服务器,比如,轮询算法可以将外部的请求平均分发给后端的所有服务器,终端用户访问 LVS 调度器虽然会被转发到后端真实的服务器,但如果真实服务器连接的是相同的存储,提供的服务也是相同的服务,最终用户不管是访问哪台真实服务器,得到的服务内容都是一样的,整个集群对用户而言都是透明的.根据 LVS 工作模式的不同,真实服务器会选择不同的方式将用户需要的数据发送到终端用户.LVS 工作模式分为 NAT 模式,IP 隧道(TUN)模式,以及直接路由(DR)模式.
 
 Linux 操作系统提供了 `ipvsadm` 管理工具来管理 LVS 规则.其常用选项及参数有:
 
@@ -47,18 +47,25 @@ Linux 操作系统提供了 `ipvsadm` 管理工具来管理 LVS 规则.其常用
 
 ## LVS 三种工作模式
 
+- DS：Director Server 前端负载均衡器节点
+- RS：Real Server 后端真实的工作服务器
+- VIP：DS 上的虚拟 IP 地址,直接面向用户请求
+- DIP：DS 内网 IP 地址,主要用于和内部主机通讯
+- RIP：Real Server IP，后端服务器的 IP 地址
+- CIP：Client IP，访问客户端的IP地址
+
 ### NAT 模式
 
-NAT(Network Address Translation)即网络地址转换,包括 SNAT(源地址转换) 与 DNAT(目标地址转换).它通过修改数据报头中源地址或目标地址,使得企业内部的私有 IP 地址可以访问外网,以及外部用户可以访问位于公司内部的私有 IP 主机,并具有隐藏并保护企业内部私有 IP 主机的作用.
+NAT(Network Address Translation)即网络地址转换,包括 SNAT(源地址转换) 与 DNAT(目标地址转换).它通过修改请求报文的目标 IP 地址(同时可能会修改目标端口)挑选出某台 Real Server 的 RIP 地址实现转发.在请求与响应过程中期间,无论是进来的流量,还是出去的流量,都必须经过 LVS 负载均衡器.
 
-1. 客户端将请求发往负载均衡器,请求报文源地址是 CIP(客户端地址),目标地址为 VIP(负载均衡器地址)
-2. 负载均衡器通过地址转换,将客户端发来的数据包转发至后端 RIP(Real Server 的 IP 地址)
+1. 客户端将请求发往负载均衡器,请求报文源地址是 CIP,目标地址为 VIP
+2. 负载均衡器通过地址转换,将客户端发来的数据包转发至后端 RIP
 3. RS 处理完成后响应对负载均衡器返回响应数据
 4. 负载均衡器通过地址转换,将 RS 的响应数据响应给客户端
 
-![LVS NAT](https://raw.githubusercontent.com/hulining/hulining.github.io/hexo/source/_posts/lvs-working-mode/lvs-NAT.jpg)
+![LVS NAT](https://raw.githubusercontent.com/hulining/hulining.github.io/hexo/source/_posts/images/lvs-working-mode/lvs-NAT.jpg)
 
-> 注意: 在请求与响应过程中期间,无论是进来的流量,还是出去的流量,都必须经过 LVS 负载均衡器.
+> 注意: RIP 与 DIP 需要在同一网络,且 RIP 网关必须指向 DIP
 
 - 优点: 只需要暴露出一个 VIP 地址即可,对用户来说后端服务器是完全透明的
 - 缺点: 当 RS 节点增长过多时,负载均衡器将成为性能瓶颈,速度会变慢
@@ -71,9 +78,7 @@ NAT(Network Address Translation)即网络地址转换,包括 SNAT(源地址转�
 2. 负载均衡器将在客户端请求报文的首部再封装一层 IP 报文,将源地址改为DIP,目标地址改为RIP,并通过 IP 隧道技术将报文发给 RS
 3. RS 收到后,先把数据包头解开,还原数据包,处理后,直接返回给客户端,不需要再经过负载均衡器
 
-![LVS TUN](https://raw.githubusercontent.com/hulining/hulining.github.io/hexo/source/_posts/lvs-working-mode/lvs-TUN.jpg)
-
-> 注意: 由于 RS 需要对负载均衡器发过来的数据包进行还原,所以 RS 必须支持 IPTUNNEL 协议.因此,在 RS 的内核中,必须编译支持 IPTUNNEL 这个选项
+![LVS TUN](https://raw.githubusercontent.com/hulining/hulining.github.io/hexo/source/_posts/images/lvs-working-mode/lvs-TUN.jpg)
 
 - 优点: 减少负载均衡器压力,负载均衡器不再是系统的瓶颈,能够处理更多的请求流量
 - 缺点: RS 节点需要合法 IP,且需要所有服务器支持 `IP Tunneling`(IP Encapsulation)协议,因此服务器可能只局限于部分 Linux 系统上
@@ -86,7 +91,7 @@ NAT(Network Address Translation)即网络地址转换,包括 SNAT(源地址转�
 2. 负载均衡器将客户端请求报文的源 MAC 地址改为自己的 MAC 地址,目标 MAC 改为了 RS 的 MAC 地址,并将此包发送给 RS
 3. 处理完请求报文后,由于 RS 与 负载均衡器有具有同一 VIP,会将响应报文直接发送给客户端
 
-![LVS DR](https://raw.githubusercontent.com/hulining/hulining.github.io/hexo/source/_posts/lvs-working-mode/lvs-DR.jpg)
+![LVS DR](https://raw.githubusercontent.com/hulining/hulining.github.io/hexo/source/_posts/images/lvs-working-mode/lvs-DR.jpg)
 
 - 优点: 与隧道模式一样,负载均衡器也只是分发请求,应答包通过单独的路由方法返回给客户端.同时,不需要隧道结构,可以使用大多数服务器作为 RS
 - 缺点：要求 VIP 必须与物理网卡在一个物理段上,否则 ARP 不能寻到不同网段的 MAC 地址.也就是说所有 RS 节点和调度器 LB 只能在一个局域网里面

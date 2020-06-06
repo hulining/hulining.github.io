@@ -40,6 +40,7 @@ func main() {
 - Kind(种类) 指反射类型所属的种类, 它仅包含 Go 语言中原生数据种类. 获取方式为 `reflect.Type` 的 `Kind()` 方法, 返回 `reflect.Kind` 类型的常量
 
 在如下示例中, `stu` 对象的反射类型名称为自定义的 `Student`, 而其所属的反射种类为 `struct`.
+
 ```go
 import (
     "fmt"
@@ -201,7 +202,7 @@ func main() {
 }
 ```
 
-![实际类型与反射间的转换](go-study-notes-reflect/conversion_between_actual_type_and_reflection.jpg)
+![实际类型与反射间的转换](https://raw.githubusercontent.com/hulining/hulining.github.io/hexo/source/_posts/images/go-study-notes-reflect/conversion_between_actual_type_and_reflection.jpg)
 
 通过以上可以看得出, 实际类型对象将自身通过接口方式传入 `reflect.ValueOf(i interface{})` 方法, 返回 `reflect.Value` 对象. `reflect.Value` 对象通过调用自身 `Interface()` 方法, 返回接口类型, 该接口类型可通过类型断言转化为实际类型对象.
 
