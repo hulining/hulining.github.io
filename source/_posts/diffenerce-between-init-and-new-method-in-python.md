@@ -24,10 +24,23 @@ description: 简述 Python 中 __init__ 与 __new__ 两个函数的区别
 
 - 如果 `__new__` 创建的是当前类的实例,会自动调用_ `__init__` 函数进行初始化,否则后面的 `__init__` 函数不会被调用
 
+```python
+class A(object):
+    def __new__(cls, *args, **kwargs):
+        print('__new__ method in class A')
+        return super(A, cls).__new__(cls)
+
+    def __init__(self, name):
+        print('__init__ method in class A')
+        self.name = name
+
+a = A("name")
+```
+
 [牛客网](https://www.nowcoder.com/profile/701230/myFollowings/detail/5726157)上有关区别的一道题:
 
 ```text
-__new__和__init__的区别，说法正确的是？
+__new__和__init__的区别，说法正确的是？ ABCD
 
 A. __new__ 是一个静态方法,而 __init__ 是一个实例方法
 B. __new__ 方法会返回一个创建的实例,而 __init__ 什么都不返回
