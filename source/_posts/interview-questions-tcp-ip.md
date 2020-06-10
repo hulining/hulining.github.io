@@ -38,19 +38,39 @@ TCP/IP 从上到下依次是 应用层 -> 传输层 -> IP层 -> 网络接口层
 
 ## TCP 三次握手,四次挥手过程
 
-TCP 三次握手
+### TCP 三次握手
 
-1. 客户端发送 `SYN(syn=x)` 包到服务器,并进入 `SYN_SEND` 状态,等待服务端确认
-2. 服务端收到后,回传一个带有 `ACK(ack=x+1)` 标志的数据包以示传达确认信息,同时自己也发送一个 `SYN(syn=y)` 数据包,此时服务器进入 `SYN_RECV` 状态
-3. 客户端收服务端的 SYN+ACK 包,向服务器发送 `ACK(ack=y+1)` 包.随后,客户端与服务端建立连接,进入 `ESTABLISHED` 状态,完成三次握手
+![TCP 建立连接](https://raw.githubusercontent.com/hulining/hulining.github.io/hexo/source/_posts/images/interview-questions-tcp-ip/tcp-establish-connection.jpg)
 
-TCP 四次挥手
+1. 客户端发送连接请求报文(`SYN=1,seq=x`)到服务器,并进入 `SYN_SEND` 状态,等待服务端确认
+2. 服务端收到后,回传一个确认报文(`SYN=1,seq=y,ACK=1,ack=x+1`)以示传达确认信息,此时服务器进入 `SYN_RECV` 状态
+3. 客户端接收服务端的确认包,向服务器发送确认包(`ACK=1,seq=x+1,ack=y+1`).随后,客户端与服务端建立连接,进入 `ESTABLISHED` 状态,完成三次握手
+
+握手过程中状态码如下
+
+```text
+SYN = 1,ACK = 0,seq = x;
+SYN = 1,ACK = 1,seq = y,ack = x+1;
+SYN = 0,ACK = 1,seq = x+1,ack=y+1
+```
+
+### TCP 四次挥手
+
+![TCP 断开连接](https://raw.githubusercontent.com/hulining/hulining.github.io/hexo/source/_posts/images/interview-questions-tcp-ip/tcp-release-connection.jpg)
 
 1. 客户端发送连接释放报文(`FIN=1,seq=u`),并停止发送数据,客户端进入 `FIN_WAIT_1` 状态
-2. 服务器收到连接释放报文,发出确认报文(`ACK=1,ack=u+1,seq=v`),服务器进入 `CLOSE_WAIT` 状态
-3. 客户端接收到服务器的确认请求后,客户端进入`FIN_WAIT_2` 状态,等待服务器发送连接释放报文.此时客户端不再向服务端发送数据,若服务端发送数据,客户端依然接受.
-4. 服务端将最后的数据发送完毕后,向客户端发送释放报文(`FIN=1,seq=w`),服务端进入 `LAST_ACK` 状态.
-5. 客户端收到服务端连接释放报文后,必须回复确认(`ACK=1,ack=w+1,seq=u+1`),客户端进入 `TIME_WAIT` 状态,时长为 2∗MSL(报文最长寿命).
+2. 服务器收到连接释放报文,发出确认报文(`ACK=1,seq=v,ack=u+1`),服务器进入 `CLOSE_WAIT` 状态.客户端接收到服务器的确认请求后,客户端进入`FIN_WAIT_2` 状态,等待服务器发送连接释放报文.此时客户端不再向服务端发送数据,若服务端发送数据,客户端依然接受.
+3. 服务端将最后的数据发送完毕后,向客户端发送释放报文(`FIN=1,ACK=1,seq=w,ack =u+1`),服务端进入 `LAST_ACK` 状态.
+4. 客户端收到服务端连接释放报文后,必须回复确认(`ACK=1,seq=u+1,ack=w+1`),客户端进入 `TIME_WAIT` 状态,时长为 2∗MSL(报文最长寿命).
+
+挥手过程中状态码如下
+
+```text
+1. FIN = 1,seq = u;
+2. ACK = 1,seq = v,ack = u+1;
+3. FIN = 1,ACK = 1,seq = w,ack =u+1;
+4. ACK = 1,seq = u+1,ack = w+1
+```
 
 ### 为什么最后要等待 2 * MSL
 
