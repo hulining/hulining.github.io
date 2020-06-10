@@ -343,7 +343,7 @@ www[01:50].example.com
 db-[a:f].example.com
 ```
 
-### 3.1.2 主机变量与组变量
+#### 3.1.2 主机变量与组变量
 
 ```bash
 # - 主机变量
@@ -361,7 +361,7 @@ ntp_server=ntp.magedu.com
 nfs_server=nfs.magedu.com
 ```
 
-### 3.1.3 组嵌套
+#### 3.1.3 组嵌套
 
 ```bash
 [apache]
@@ -380,7 +380,7 @@ nginx
 ntp_server=ntp.magedu.com
 ```
 
-### 3.1.4 inventory参数
+#### 3.1.4 inventory 参数
 
 ansible 基于 ssh 连接 inventory 中指定的远程主机时,还可以通过参数指定其交互方式.这些参数如下所示
 
@@ -399,15 +399,15 @@ ansible_python_interpreter: 目标系统的python路径
 
 变量命名仅能由字母,数字和下划线组成,且只能以字母开头
 
-### 3.2.1 facts
+#### 3.2.1 facts
 
 facts 是由正在通信的远程目标主机发回的信息,这些信息被保存在 ansible 变量中.可使用 `setup` 模块对 facts 变量进行查看获取 `ansible hostname -m setup`
 
-### 3.2.2 通过命令行传递变量
+#### 3.2.2 通过命令行传递变量
 
-在运行playbook的时候也可以使用 `--extra-vars` 传递一些变量供 playbook 使用,如 `ansible-playbook test.yml --extra-vars "hosts=www user=mageedu"`
+在运行 playbook 的时候也可以使用 `--extra-vars` 传递一些变量供 playbook 使用,如 `ansible-playbook test.yml --extra-vars "hosts=www user=mageedu"`
 
-### 3.2.3 通过roles传递变量
+#### 3.2.3 通过 roles 传递变量
 
 当给一个主机应用角色的时候可以传递变量,然后在角色内使用这些变量.如
 
@@ -419,11 +419,11 @@ facts 是由正在通信的远程目标主机发回的信息,这些信息被保�
   - { role: foo_app_instance, dir: '/web/htdocs/a.com',  port: 8080 }
 ```
 
-### 3.2.4 Inventory 文件中定义的变量
+#### 3.2.4 Inventory 文件中定义的变量
 
 详见 3.1.2 主机变量与组变量 小节
 
-### 3.2.5 PlayBook中使用var关键字定义的变量
+#### 3.2.5 PlayBook 中使用 var 关键字定义的变量
 
 ```yaml
 - hosts: webservers
@@ -433,12 +433,12 @@ facts 是由正在通信的远程目标主机发回的信息,这些信息被保�
   # ...
 ```
 
-> 变量的优先级为 命令行 `-e` -> playbook -> 主机清单 -> `setup`
+> 变量的优先级为: 命令行 `-e` -> playbook -> inventory 主机变量 -> `setup`
 
 ## 4 Playbook
 
 playbook 是由一个或多个 "play" 组成的列表,play 的主要功能在于将事先归并为一组的主机装扮成事先通过 ansible 中的 task 定义好的角色.
-从根本上来讲,所有 task 无非是调用 ansible 的一个 module,将多 个play 组织在一个 playbook 中,即可以让他们连同起来按事先编排的机制去完成某些任务.
+从根本上来讲,所有 task 无非是调用 ansible 的一个 module,将多个 play 组织在一个 playbook 中,即可以让他们连同起来按事先编排的机制去完成某些任务.
 
 ```yaml
 # playbook示例
@@ -492,11 +492,11 @@ ansible会使用 `<remote_user>` 定义的用户对 `<hosts>` 中的主机进行
 
 ### 4.2 Task列表
 
-每一个play中包含了一个Task列表,所有的host会获取到相同顺序(按照定义的顺序)的Task指令.一个task在其所对应的所有主机上执行完毕之后,下一个task才会执行
+每一个play中包含了一个 Task 列表,所有的 host 会获取到相同顺序(按照定义的顺序)的 Task 指令.一个 task 在其所对应的所有主机上执行完毕之后,下一个 task 才会执行
 
-当运行PlayBook时,具有失败任务的主机将从整个PlayBook的调度轮询中删除.如果有失败,所有已执行任务都将回滚,所以只需要更正PlayBook并重新运行即可.且模块执行是幂等的,多次运行的结果一致,这意味着多次执行是安全的.
+当运行PlayBook时,具有失败任务的主机将从整个 PlayBook 的调度轮询中删除.如果有失败,所有已执行任务都将回滚,所以只需要更正 PlayBook 并重新运行即可.且模块执行是幂等的,多次运行的结果一致,这意味着多次执行是安全的.
 
-每个任务的目标都是执行一个带有非常具体参数的模块,常见的有 shell, serivce, script, copy等
+每个任务的目标都是执行一个带有非常具体参数的模块,常见的有 shell, serivce, script, copy 等
 
 ```yaml
 tasks:
@@ -636,7 +636,7 @@ tasks:
 
 ### 5.4 Tags 标签
 
-ansible playbook 应用于有一个大型的playbook,但仅仅运行指定的tasks的场景.在执行playbook时,可以使用 `--tags` 或 `--skip-tags`运行或不运行带有指定标签的 tasks
+ansible playbook 应用于有一个大型的 playbook,但仅仅运行指定的 tasks 的场景.在执行playbook时,可以使用 `--tags` 或 `--skip-tags` 运行或不运行带有指定标签的 tasks
 
 ```yaml
 tasks:
@@ -669,7 +669,7 @@ tasks:
 
 ansilbe自1.2版本引入的新特性,用于层次性,结构化地组织playbook
 
-简单来讲,roles就是通过分别将变量,文件,任务,模块及处理器放置于单独的目录中,并根据层次型结构自动装载它们.
+简单来讲,roles 就是通过分别将变量,文件,任务,模块及处理器放置于单独的目录中,并根据层次型结构自动装载它们.
 
 ```bash
 # roles 的目录结构

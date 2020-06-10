@@ -101,4 +101,30 @@ upstream bakend {
 // 可选的 `two` 参数随机选择两个后端服务器,然后使用指定的 `method` 选择一个后端服务器.默认方法是 `least_conn`,将请求传递给活动连接数最少的服务器
 ```
 
-## 
+## Nginx location 匹配的顺序是什么?
+
+Nginx location 按照如下优先级顺序进行匹配
+
+- 精确匹配: `location = /path`
+- 以某个常规字符串开头: `location ^~ /prefix_path`,且 `prefix_path` 路径长者优先匹配
+- 以正则表达式进行匹配: `location ~ regex_path` 或 `location ~* regex_path`(`~*` 表示忽略大小写).不管正则表达式如何进行锚定匹配,首先按照定义的顺序进行匹配.见如下示例
+
+```conf
+# 如下情况 uri=/image/.jpg 返回 /image
+location ~ /image {
+    return 200 '/image';
+}
+location ~ \.jpg {
+    return 200 '.jpg';
+}
+
+# 如下情况 uri=/image/.jpg 返回 .jpg
+location ~ \.jpg {
+    return 200 '.jpg';
+}
+location ~ /image {
+    return 200 '/image';
+}
+```
+
+- 通用匹配: `location /path`,且 path 路径长者优先匹配
