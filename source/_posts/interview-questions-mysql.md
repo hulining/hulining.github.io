@@ -2,9 +2,9 @@
 title: 运维面试题之 MySQL
 date: 2020/06/04
 tags:
+  - 面试题
   - MySQL
 categories:
-  - 面试题
   - MySQL
 abbrlink: 
 description: 总结整理常见 MySQL 面试题,以作备忘

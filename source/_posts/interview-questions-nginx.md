@@ -2,9 +2,9 @@
 title: 运维面试题之 Nginx
 date: 2020/06/06
 tags:
+  - 面试题
   - Nginx
 categories:
-  - 面试题
   - Nginx
 abbrlink: 
 description: 总结整理常见 Nginx 面试题,以作备忘

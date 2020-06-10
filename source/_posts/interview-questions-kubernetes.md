@@ -2,9 +2,9 @@
 title: 运维面试题之 Kubernetes
 date: 2020/06/04
 tags:
+  - 面试题
   - Kubernetes
 categories:
-  - 面试题
   - Kubernetes
 abbrlink: 
 description: 总结整理常见 Kubernetes 面试题,以作备忘

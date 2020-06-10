@@ -2,9 +2,9 @@
 title: 运维面试题之 Redis
 date: 2020/06/04
 tags:
+  - 面试题
   - Redis
 categories:
-  - 面试题
   - Redis
 abbrlink: 
 description: 本文章主要介绍 Redis 开发运维过程中必须知道的几个知识点,尤其对于在开发运维中如何提高效率,减少问题的发生及出现问题的解决办法等.

@@ -3,9 +3,8 @@ title: Ansible 简单介绍
 date: 2020/06/10
 tags:
   - Ansible
-  - 算法
 categories:
-  - 算法与数据结构
+  - Ansible
 abbrlink: 
 description: 简单介绍 Ansible 的基本部署,相关概念及相关模块的基本使用.简单介绍了 ansible-playbook 的使用方式
 ---
@@ -305,6 +304,8 @@ state   present,latest表示安装,absent表示卸载
 # 每个被管理节点在接受并运行管理命令之前,会将自己主机相关信息,如操作系统版本,IP地址等报告给远程的 ansible 主机
 # ansible all -m setup
 ```
+
+- 更多模块参见[官方文档](https://docs.ansible.com/ansible/latest/modules/modules_by_category.html)
 
 ## 3 Ansible基础元素
 

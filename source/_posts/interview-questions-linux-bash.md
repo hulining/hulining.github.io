@@ -2,10 +2,10 @@
 title: 运维面试题之 Bash
 date: 2020/06/04
 tags:
-  - Bash
-categories:
   - 面试题
   - Bash
+categories:
+  - Linux
 abbrlink: 
 description: 总结整理常见 Linux 下 Bash 面试题,以作备忘
 ---

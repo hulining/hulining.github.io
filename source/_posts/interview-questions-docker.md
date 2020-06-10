@@ -2,9 +2,9 @@
 title: 运维面试题之 Docker
 date: 2020/06/04
 tags:
+  - 面试题
   - Docker
 categories:
-  - 面试题
   - Docker
 abbrlink: 
 description: 总结整理常见 Docker 面试题,以作备忘
