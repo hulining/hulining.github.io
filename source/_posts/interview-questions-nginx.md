@@ -128,3 +128,172 @@ location ~ /image {
 ```
 
 - 通用匹配: `location /path`,且 path 路径长者优先匹配
+
+## Nginx 调优
+
+### 合理设置 Nginx worker 进程数,并绑定到不同 CPU
+
+一般情况下,应将 worker 进程数设置为 CPU 核数,或设置为 `auto` 根据系统 CPU 自动配置.
+
+可以通过 `worker_cpu_affinity` 将 Nginx worker 进程绑定到不同的 CPU 上,避免多个进程竞争同一个 CPU 资源,充分利用 CPU 多核资源.
+
+```conf
+worker_processes  4;
+worker_cpu_affinity 0001 0010 0100 1000;
+```
+
+### 使用 epoll 事件驱动模型,合理设置单个进程的最大连接数及最大打开文件数量
+
+> 进程最大连接数受系统最大打开文件数限制,因此需要使用 `ulimit` 设置打开的文件数.或在 `/etc/security/limits.conf`, `/etc/security/limits.d/nginx.conf` 进行配置.配置如下
+
+```bash
+ulimit -n $max_open_files # 设置系统最大打开文件数
+cat /etc/security/limits.d/nginx.conf
+*       soft    nproc   131072
+*       hard    nproc   131072
+*       soft    nofile  131072
+*       hard    nofile  131072
+```
+
+```conf
+events {
+    use epoll;
+    worker_connections 15000;
+    worker_rlimit_nofile 65535;
+}
+```
+
+### 优化服务器域名的散列表大小
+
+如果在 server_name 中配置了长域名,可能会出现如下错误.
+
+```text
+nginx: [emerg] could not build the server_names_hash, you should increase server_names_hash_bucket_size: 64
+nginx: configuration file /usr/local/nginx/conf/nginx.conf test failed
+```
+
+此时需要对 `http` 配置段 `server_names_hash_bucket_size` 进行调整,如下:
+
+```conf
+http {
+    # ...
+    server_names_hash_bucket_size  512;
+}
+```
+
+### 开启高效文件传输模式,开启或 gzip 压缩
+
+- `http` 配置段 `sendfile` 参数用于开启文件高效传输模式
+- `http` 配置段`gzip` 参数可用于开启压缩功能
+
+```conf
+http {
+    gzip  on;
+    sendfile on;
+}
+```
+
+### 优化 Nginx 连接超时时间
+
+- `http` 配置段 `keepalive_timeout` 参数用于设置客户端连接保持会话的超时时间,超过这个时间服务器会关闭该连接
+- `http` 配置段 `client_header_timeout` 参数用于设置读取客户端请求头数据的超时时间.如果读取请求头超时,服务器将返回 "Request time out (408)" 错误.
+- `http` 配置段 `client_body_timeout` 参数用于设置读取客户端请求主体数据的超时时间.如果读取请求体超时,服务器将返回 "Request time out (408)" 错误.
+- `http` 配置段 `send_timeout` 参数用于指定响应客户端的超时时间,如果超时,Nginx 将会关闭连接.
+
+```conf
+http {
+    # 在大并发时,需要合理调小如下参数
+    keepalive_timeout  65;
+    client_header_timeout 15;
+    client_body_timeout 15;
+    send_timeout 25;
+}
+```
+
+### 限制上传文件大小
+
+- `http` 配置段 `send_timeout` 参数用于设置客户端最大请求体大小.如果超过出,客户端会收到 413 错误,即请求体过大
+
+```conf
+http {
+    client_max_body_size 8m;    # 设置客户端最大请求体大小为8M
+}
+```
+
+### 合理配置 Nginx expires 缓存
+
+- `expires` 参数用于设置用户访问内容的缓存时间.用户会在本地浏览器中缓存这些内容,直到超过缓存时间.多用于配置静态内容
+
+```conf
+location ~ .*\.(gif|jpg|jpeg|png|bmp|swf|js|css)$ {
+    expires     3650d;
+}
+```
+
+## Nginx 安全
+
+### 隐藏/修改 Nginx 响应头 Server 信息
+
+在配置文件 `http` 配置段中添加 `server_tokens off;` 配置项,即可隐藏 Nginx 版本号
+
+要修改 Nginx 响应头部 Server 信息,需要对 `src/core/nginx.h` 源码文件进行修改,再按照需求进行编译.慎重!
+
+```c
+// src/core/nginx.h
+#define nginx_version      1018000
+#define NGINX_VERSION      "version"
+#define NGINX_VER          "server/" NGINX_VERSION
+```
+
+修改完成后,响应头部如下:
+
+```text
+HTTP/1.1 200 OK
+Server: server/version
+...
+```
+
+### 只允许指定客户端访问
+
+- `allow`,`deny` 参数用于配置可以/禁止访问 Nginx 指定内容的客户端.可配置在 `http, server, location, limit_except` 配置段中
+
+```conf
+location / {
+    allow 192.168.1.1/24;
+    deny all;
+}
+```
+
+### 配置 Nginx 防盗链
+
+防盗链：简单地说，就是某些不法网站未经许可，通过在其自身网站程序里非法调用其他网站的资源，然后在自己的网站上显示这些调用的资源，使得被盗链的那一端消耗带宽资源
+
+- 根据 HTTP `referer` 字段实现防盗链: referer 是 HTTP的一个首部字段,用于指明用户请求的 URL 是从哪个页面通过链接跳转过来的
+- 根据 cookie 实现防盗链: cookie 是服务器贴在客户端身上的 "标签",服务器用它来识别客户端
+
+```conf
+location ~ .*\.(gif|jpg|jpeg|png|bm|swf|flv|rar|zip|gz|bz2)$ {
+    valid_referers  none  blocked  *.test.com  *.abc.com; # 表示这些地址可以访问上面的媒体资源
+    if ($invalid_referer) {
+        # 如果不是从以上域名访问,则返回 403
+        return 403
+    }
+```
+
+### Nginx 错误页面优雅显示
+
+- 使用 `error_page` 参数可对指定错误码返回的页面
+
+```conf
+location / {
+    root   html/www;
+    index  index.html index.htm;
+    error_page 400 401 402 403 404 405 408 410 412 413 414 415 500 501 502 503 506 = http://www.xxxx.com/error.html;
+}
+```
+
+---
+
+参考:
+
+- [Nginx 调优](https://www.cnblogs.com/zhichaoma/p/7989655.html)
