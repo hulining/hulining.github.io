@@ -100,7 +100,9 @@ overlay2 采用三层结构:
 
 - 尽量使用 `ENV` 和 `ARG` 让人不改或者少改 Dockerfile 即可做构建对应版本的镜像
 
-- 尽量减少 Dockerfile 中单独的 RUN 命令的数量来减少镜像的层数
+- 尽量减少 Dockerfile 中单独的 `RUN` 命令的数量来减少镜像的层数.
+
+> Dockerfile 中指令 `RUN`,`COPY`,`ADD` 会创建新的镜像层,之后镜像层的操作不会影响上一层.因此即便 Dockerfile 中包含 `RUN rm -rf xxx` 镜像大小也不会减小.
 
 ```Dockerfile
 RUN mkdir /data
