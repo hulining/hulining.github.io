@@ -3,7 +3,6 @@ title: go 学习笔记之 net 包
 date: 2020/05/10
 tags:
   - go
-  - 学习笔记
 categories:
   - go
 abbrlink: 63612
@@ -49,6 +48,7 @@ status, err := bufio.NewReader(conn).ReadString('\n')
 
 Unix 系统上,可以使用纯 Go 解析器将 DNS 请求直接发送到 `/etc/resolv.conf` 列出的两个 DNS 服务器,也可以使用 cgo 的解析器调用 C 语言库,如 getaddrinfo 和 getnameinfo.
 默认情况下使用纯 Go 解释器,可通过如下方式进行修改
+
 ```bash
 export GODEBUG=netdns=go    # 强制使用 Go 解析器
 export GODEBUG=netdns=cgo   # 强制使用 cgo 解析器
@@ -56,7 +56,7 @@ export GODEBUG=netdns=cgo   # 强制使用 cgo 解析器
 
 Windows 系统上,解析器始终调用 C 语言库函数,如 GetAddrInfo 和 DnsQuery
 
-# 常用类型定义
+## 常用类型定义
 
 ```go
 // 表示网络端点地址
@@ -85,9 +85,10 @@ type Listener interface {
     Addr() Addr  // 返回监听者的地址
 }
 ```
-# 常用函数
 
-# `net` 包函数
+## 常用函数
+
+## `net` 包函数
 
 ```go
 // 向给定的 network, address 发起连接
@@ -103,7 +104,7 @@ func LookupIP(host string) ([]IP, error)
 func ParseIP(s string) IP
 ```
 
-# 示例
+## 示例
 
 ## 简单通信
 
@@ -170,5 +171,3 @@ func main() {
     fmt.Printf("recv response: %v", string(buf[:n]))
 }
 ```
-
-

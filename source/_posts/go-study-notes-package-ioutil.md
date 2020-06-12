@@ -3,7 +3,6 @@ title: go 学习笔记之 ioutil 包
 date: 2020/05/05
 tags:
   - go
-  - 学习笔记
 categories:
   - go
 abbrlink: 10272
@@ -12,7 +11,7 @@ description: 本文章主要包含 Go ioutil 包及其内置类型和方法的�
 
 `ioutil` 包是 `io` 包的子包,它提供了一些基本 IO 操作的函数.导入方式为 `import "io/ioutil"`
 
-# 常用函数
+## 常用函数
 
 以下是 `ioutil` 包中常用的函数
 
@@ -36,9 +35,9 @@ func TempFile(dir, pattern string) (f *os.File, err error)
 func WriteFile(filename string, data []byte, perm os.FileMode) error
 ```
 
-# 示例
+## 示例
 
-## 拷贝文件
+### 拷贝文件
 
 ```go
 import (
@@ -60,7 +59,7 @@ func main() {
 }
 ```
 
-## 读取指定目录及其子目录所有文件
+### 读取指定目录及其子目录所有文件
 
 ```go
 import (

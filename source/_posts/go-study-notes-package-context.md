@@ -3,7 +3,6 @@ title: go 学习笔记之 context 包
 date: 2020/05/05
 tags:
   - go
-  - 学习笔记
 categories:
   - go
 abbrlink: 2915
@@ -20,22 +19,23 @@ context 包定义了 Context 类型,该类型在 API 边界之间及进程基建
 
 `WithCancel`,`WithDeadline` 和 `WithTimeout` 函数接受 Context(parent)对象并返回派生的 `Context`(child)对象和 `CancelFunc`.调用 `CancelFunc` 会取消该子上下文及其子上下文,删除 parent 上下文对 child 上下文的引用,并停止所有关联计时器.
 
-# 遵循规则
+## 遵循规则
 
 使用 Contexts 上下文的程序都应该遵循以下规则,使各个包之间的接口保持一致:
 
 - 不要将上下文存储在结构体类型,而是将上下文显式传递给需要它的函数.且 Context 应该是第一个参数,通常命名为 `ctx`:
+
 ```go
 func DoSomething(ctx context.Context, arg Arg) error {
     // ... use ctx ...
 }
 ```
+
 - 即使函数支持,也不要传递 nil 上下文对象.如果不确定使用哪个上下文,请使用 `context.TODO`
 - 仅将上下文中的值用于传递过程和 API 的请求范围的数据,而不是作为可选参数传递给函数
 - 可以将相同的上下文传递给在不同 goroutine 中运行的函数.上下文对于由多个 goroutine 同时使用是安全的
 
-
-# 类型定义
+## 类型定义
 
 ```go
 // 取消函数,会取消其上下文.多个 goroutine 可同时调用 CancelFunc,在第一个调用之后,随后对其调用将什么也不做
@@ -54,12 +54,12 @@ type Context interface {
 }
 ```
 
-# 常用函数
+## 常用函数
 
 ```go
 // 返回具有新 Done 通道的 parent 上下文副本.
 // 当调用返回的 cancel 函数或关闭 parent 上下文的 Done 通道时,关闭返回的上下文的 Done 通道
-func WithCancel(parent Context) (ctx Context, cancel CancelFunc) 
+func WithCancel(parent Context) (ctx Context, cancel CancelFunc)
 
 // 返回带有取消时间的 parent 上下文的副本
 // 如果 parent 上下文的截止时间早于 d,则该函数返回的上下文在语义上等同于 parent.
@@ -78,4 +78,3 @@ func func TODO() Context
 // 返回与 parent 上下文关联的副本,其中包含 key=val 变量
 func WithValue(parent Context, key, val interface{}) Context  
 ```
-

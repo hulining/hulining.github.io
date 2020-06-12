@@ -3,7 +3,6 @@ title: go 学习笔记之类型
 date: 2020/04/30
 tags:
   - go
-  - 学习笔记
 categories:
   - go
 abbrlink: 14282
@@ -11,18 +10,18 @@ description: '记录在学习 Go 过程中容易出错, 容易忘记的知识点
 ---
 
 
-# Go 中支持的数据类型有哪些?
+## Go 中支持的数据类型有哪些
 
 类型 | 长度 | 默认值 | 说明
 :---: | :---: | :---: | :---:
-bool | 1 | false | 
+bool | 1 | false |
 byte | 1 | 0 | uint8 (alias for uint8)
 int, uint | 4,8 | 0 | 默认整数类型,根据目标平台 32 位或 64 位置
 int8, uint8 | 1 | 0 | -127 ~ 128, 0 ~ 255
 int16, uint16 | 2 | 0 | -32768 ~ 32767, 0 ~ 65535
 int32, uint32 | 4 | 0 | -2^31 ~ 2^31 -1, 0~2^32
 int64, uint64 | 8 | 0 |
-float32 | 4 | 0.0 | 
+float32 | 4 | 0.0 |
 float64 | 8 | 0.0 | 默认浮点类型数据
 complex64 | 8 |  |
 complex128 | 16 |  |
@@ -37,7 +36,7 @@ map | | nil | 字典, 引用类型
 slice | | nil | 切片, 引用类型
 channel | | nil | 通道, 引用类型
 
-# 常量和变量有什么不同
+## 常量和变量有什么不同
 
 - 常量在定义的时候必须初始化
 - 常量在相同作用域下是唯一且不可修改的. 一经声明并赋值后, 常量变为"只读"
@@ -52,12 +51,12 @@ import (
 const name string = "name"
 func main() {
     age := 1
-    fmt.Printf("%p", &name)  // cannot take the address of name 
+    fmt.Printf("%p", &name)  // cannot take the address of name
     fmt.Printf("%v", &age)  // ok
 }
 ```
 
-# `iota` 是什么? 如何使用?
+## `iota` 是什么? 如何使用
 
 `iota` 是 Go 语言的常量计数器, 只能在 `const` 常量声明中使用, 多用于 `const` 常量声明块(`const ()` 定义多个常量的格式). 它有如下特点:
 
@@ -69,10 +68,10 @@ func main() {
 - 每次 `const` 出现时, `iota` 初始化为0
 
 ```go
-const a = iota // a = 0 
+const a = iota // a = 0
 const (
-	b = iota // b = 0 
-	c        // c = 1   相当于 c = iota
+    b = iota // b = 0
+    c        // c = 1   相当于 c = iota
 )
 ```
 
@@ -86,9 +85,9 @@ const (
     d = iota  // iota = 3, d = 3
 )
 const (
-	A, B = iota + 1, iota + 2 // iota = 0, A = 1, B = 2
-	C, D                      // iota = 1, C, D = iota + 1, iota + 2, C, D = 2, 3
-	E, F                      // iota = 2, E, F = iota + 1, iota + 2, E, F = 3, 4
+    A, B = iota + 1, iota + 2 // iota = 0, A = 1, B = 2
+    C, D                      // iota = 1, C, D = iota + 1, iota + 2, C, D = 2, 3
+    E, F                      // iota = 2, E, F = iota + 1, iota + 2, E, F = 3, 4
 )
 ```
 
@@ -107,30 +106,30 @@ const (
 type ByteSize float64
 
 const (
-	_           = iota             // ignore first value by assigning to blank identifier
-	KB ByteSize = 1 << (10 * iota) // 1 << (10*1)
-	MB                             // 1 << (10*2)
-	GB                             // 1 << (10*3)
-	TB                             // 1 << (10*4)
-	PB                             // 1 << (10*5)
-	EB                             // 1 << (10*6)
-	ZB                             // 1 << (10*7)
-	YB                             // 1 << (10*8)
+    _           = iota             // ignore first value by assigning to blank identifier
+    KB ByteSize = 1 << (10 * iota) // 1 << (10*1)
+    MB                             // 1 << (10*2)
+    GB                             // 1 << (10*3)
+    TB                             // 1 << (10*4)
+    PB                             // 1 << (10*5)
+    EB                             // 1 << (10*6)
+    ZB                             // 1 << (10*7)
+    YB                             // 1 << (10*8)
 )
 
 const (
-	Sunday = iota
-	Monday
-	Tuesday
-	Wednesday
-	Thursday
-	Friday
-	Saturday
-	numberOfDays // 这个常量没有导出
+    Sunday = iota
+    Monday
+    Tuesday
+    Wednesday
+    Thursday
+    Friday
+    Saturday
+    numberOfDays // 这个常量没有导出
 )
 ```
 
-# 引用类型
+## 引用类型
 
 引用类型包括 `slice`, `map`, `channel` 这 3 种数据类型
 
@@ -146,14 +145,14 @@ const (
 
 同理, 在进行拷贝操作时, 值类型和引用类型会将变量的值进行拷贝, 值类型中变量的值是真实的数据, 因此可以理解为深拷贝. 引用类型中变量的值是真实存储数据的内存地址, 拷贝后变量的值也是该内存地址, 二者仍然共享同一底层数据, 因此可以理解为浅拷贝.
 
-# 自定义类型
+## 自定义类型
 
 使用 `type` 关键字自定义类型, 包括现有基础类型创建, 结构体, 函数类型等.
 
 即便自定义类型使用了基础类型, 如 `type integer int`, 也只表明它们有相同的底层数据结构, 两者之间不存在任何关系, 属于完全不同的两种数据类型.
 除操作符外, 自定义类型不会继承基础类型的其它信息(包括方法). 不能视作别名, 不能隐式转换, 不能直接用于比较表达式.
 
-# 未命名类型(匿名类型)
+## 未命名类型(匿名类型)
 
 与有明确标识符 `bool`, `int`, `string` 等类型相比, `array`, `slice`, `map`, `channel` 等类型与具体元素类型或长度等属性有关, 故称作未命名类型
 

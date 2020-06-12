@@ -6,13 +6,13 @@ tags:
   - prometheus
   - etcd
 categories:
-  - 云原生应用
   - prometheus
 abbrlink: 43867
 description: kube-prometheus 默认不包含对 etcd 的监控, 本文章使用 kube-prometheus 为 etcd 添加监控
 ---
 
-# 安装依赖
+## 安装依赖
+
 ```bash
 yum install -y go
 go get github.com/jsonnet-bundler/jsonnet-bundler/cmd/jb # jsonnet 的包管理器
@@ -22,17 +22,21 @@ cd ~/go/bin/
 cp jb gojsontoyaml /usr/local/bin/
 ```
 
-# 自定义 jsonnet
+## 自定义 jsonnet
+
 ```bash
 cd my-kube-prometheus # 在 自定义 kube-prometheus
 jb init  # 创建初始化空文件 jsonnetfile.json
 # 安装 kube-prometheus 依赖.花费时间较长
 # 该版本较老,推荐使用 github.com/coreos/kube-prometheus/jsonnet/kube-prometheus@master
-jb install github.com/coreos/kube-prometheus/jsonnet/kube-prometheus@release-0.1 
+jb install github.com/coreos/kube-prometheus/jsonnet/kube-prometheus@release-0.1
 jb update
 ```
-# 编译
+
+## 编译
+
 使用 `build.sh` 进行编译,以 `etcd.jsonnet` 为例
+
 ```bash
 #!/bin/bash
 
@@ -76,14 +80,17 @@ local kp = (import 'kube-prometheus/kube-prometheus.libsonnet') +
 { ['grafana-' + name]: kp.grafana[name] for name in std.objectFields(kp.grafana) }
 ```
 
-# 应用 
+## 应用
+
 重新应用编译后产生的 `manifests`
+
 ```bash
 kubectl apply -f manifests/setup
 kubectl apply -f manifests/
 ```
 
 如果想要在已有 `kube-prometheus` 的基础上作出修改,只需要执行如下命令
+
 ```bash
 jb init
 jb update

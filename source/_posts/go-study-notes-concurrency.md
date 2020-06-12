@@ -3,7 +3,6 @@ title: go 学习笔记之并发
 date: 2020/04/30
 tags:
   - go
-  - 学习笔记
 categories:
   - go
 abbrlink: 9125
@@ -12,15 +11,14 @@ description: >-
   等待协程执行完毕, 简单描述了 channel 的使用
 ---
 
-# 定义
+## 定义
 
 首先理解一下并发(concurrency) 与并行(parallesim)
 
 - 并发: 在一段时间内交替做不同事情的能力, 可以理解为单线程(协程)/多线程运行在单核处理器上, 如果有其中一个任务/线程阻塞, CPU 立即切换, 执行另一个任务/线程的代码逻辑
 - 并行: 在同一时刻做不同事情的能力, 可以理解为多线程运行在多核处理器上, 一个线程绑定一个 CPU, 多个 CPU 同时处理代码逻辑
 
-
-我们通常所说的程序是并发设计的, 允许多个任务同时执行. 但实际上,在单核处理器上, 某一时刻, 一个 CPU 只能处理一个任务. 而多个任务是以切换方式进行的, 只不过切换时间非常短, 我们无法感知. 
+我们通常所说的程序是并发设计的, 允许多个任务同时执行. 但实际上,在单核处理器上, 某一时刻, 一个 CPU 只能处理一个任务. 而多个任务是以切换方式进行的, 只不过切换时间非常短, 我们无法感知.
 
 而并行依赖多核处理器, 让多个任务真正在同一时刻进行. 因此多线程或多进程是并行的基本条件.
 
@@ -45,27 +43,27 @@ import (
 var c int
 
 func counter() int {
-	c++
-	return c
+    c++
+    return c
 }
 
 func main() {
-	a := 100
-	fmt.Printf("main: %p,%v\n", &a, a)
-	go func(x, y int) {
-		time.Sleep(time.Second)                // 让 goroutine 在 mian 逻辑之后执行
-		fmt.Printf("go: %p,%v,%v\n", &x, x, y) // 立即计算并复制参数
-	}(a, counter())
+    a := 100
+    fmt.Printf("main: %p,%v\n", &a, a)
+    go func(x, y int) {
+        time.Sleep(time.Second)                // 让 goroutine 在 mian 逻辑之后执行
+        fmt.Printf("go: %p,%v,%v\n", &x, x, y) // 立即计算并复制参数
+    }(a, counter())
 
-	a += 100
-	fmt.Printf("main: %p,%v,%v\n", &a, a, counter())
-	time.Sleep(time.Second * 3) // 等待 goroutine 结束
+    a += 100
+    fmt.Printf("main: %p,%v,%v\n", &a, a, counter())
+    time.Sleep(time.Second * 3) // 等待 goroutine 结束
 }
 // 输出
 // main: 0xc000062090,100
 // main: 0xc000062090,200,2
 // go: 0xc00000a038,100,1
-// 可以看到 goroutine 中 a 的内存地址与 main 中不一样, 说明传入 goroutine 中的参数是复制后的对象 
+// 可以看到 goroutine 中 a 的内存地址与 main 中不一样, 说明传入 goroutine 中的参数是复制后的对象
 ```
 
 以上代码只能通过 `time.sleep()` 的方式等待 `goroutine` 执行完毕, 我们不能判断 `goroutine` 中的任务何时执行结束, `main` 函数 `sleep` 的时间也就不能确定.
@@ -80,18 +78,18 @@ import (
 )
 
 func main() {
-	exit := make(chan struct{}) // 创建 channel
-	go func() {
-		time.Sleep(time.Second)
-		fmt.Println("goroutine done")
-		close(exit) // 关闭 channel, 发出信号
-	}()
-	fmt.Println("main...")
-	<-exit // 如果 channel 关闭, 解除阻塞
-	fmt.Println("main exit...")
+    exit := make(chan struct{}) // 创建 channel
+    go func() {
+        time.Sleep(time.Second)
+        fmt.Println("goroutine done")
+        close(exit) // 关闭 channel, 发出信号
+    }()
+    fmt.Println("main...")
+    <-exit // 如果 channel 关闭, 解除阻塞
+    fmt.Println("main exit...")
 }
 ```
- 
+
 如果要等待多个任务结束, 推荐使用 `sync.WaitGroup`. 通过设定计数器, 让每个 goroutine 在退出时递减, 直到归 0 时解除阻塞.
 
  ```go
@@ -102,28 +100,28 @@ import (
 )
 
 func main() {
-	var wg sync.WaitGroup
+    var wg sync.WaitGroup
 
-	for i := 0; i < 10; i++ {
-		wg.Add(1) // 每次新创建一个 goroutine, 计数器加 1
-		go func(id int) {
-			defer wg.Done() // 每个 goroutine 执行完成后, 计数器减 1
-			time.Sleep(time.Second)
-			fmt.Printf("goroutine %v done\n", id)
-		}(i)
-	}
+    for i := 0; i < 10; i++ {
+        wg.Add(1) // 每次新创建一个 goroutine, 计数器加 1
+        go func(id int) {
+            defer wg.Done() // 每个 goroutine 执行完成后, 计数器减 1
+            time.Sleep(time.Second)
+            fmt.Printf("goroutine %v done\n", id)
+        }(i)
+    }
 
-	fmt.Println("main...")
-	wg.Wait() // 阻塞, 直到计数器归 0
-	fmt.Println("main exit...")
+    fmt.Println("main...")
+    wg.Wait() // 阻塞, 直到计数器归 0
+    fmt.Println("main exit...")
 }
 ```
 
 `WaitGroup.Add` 实现了原子操作, 但仍然建议在 goroutine 外累加计数器, 防止累加(Add)操作尚未执行, 阻塞(Wait)已经退出
 
-# `channel`
+## `channel`
 
-## 定义
+### 定义
 
 Go 鼓励使用 CSP(Communicating Sequential Process) channel, 以通信来代替内存共享, 实现并发安全.
 
@@ -153,54 +151,54 @@ import (
 
 func putNum(intChan chan int) {
     defer close(intChan)  // 关闭 intChan
-	for i := 2; i <= 1000; i++ {
-		intChan <- i  // 向 intChan 发送数据
-	}
+    for i := 2; i <= 1000; i++ {
+        intChan <- i  // 向 intChan 发送数据
+    }
 }
 
 func isPrime(value int) bool {
-	if value <= 3 {
-		return value >= 2
-	}
-	if value%2 == 0 || value%3 == 0 {
-		return false
-	}
-	for i := 5; i*i <= value; i += 6 {
-		if value%i == 0 || value%(i+2) == 0 {
-			return false
-		}
-	}
-	return true
+    if value <= 3 {
+        return value >= 2
+    }
+    if value%2 == 0 || value%3 == 0 {
+        return false
+    }
+    for i := 5; i*i <= value; i += 6 {
+        if value%i == 0 || value%(i+2) == 0 {
+            return false
+        }
+    }
+    return true
 }
 
 func getNum(intChan chan int, outChan chan int, wg *sync.WaitGroup) {
     defer wg.Done()
-	for value := range intChan {  // 通过 for-range 遍历 intChan 中的数据
-		if isPrime(value) {
-			outChan <- value  // 向 outChan 发送数据
-		}
-	}
+    for value := range intChan {  // 通过 for-range 遍历 intChan 中的数据
+        if isPrime(value) {
+            outChan <- value  // 向 outChan 发送数据
+        }
+    }
 }
 
 func main() {
-	var inChannel = make(chan int, 10)
-	var outChannel = make(chan int, 1000)
-	var wg sync.WaitGroup
+    var inChannel = make(chan int, 10)
+    var outChannel = make(chan int, 1000)
+    var wg sync.WaitGroup
 
-	go putNum(inChannel)
-	for i := 0; i < 10; i++ {
-		wg.Add(1)
-		go getNum(inChannel, outChannel, &wg)
-	}
-	wg.Wait()
-	close(outChannel)
-	for x := range outChannel {
-		fmt.Println(x)
-	}
+    go putNum(inChannel)
+    for i := 0; i < 10; i++ {
+        wg.Add(1)
+        go getNum(inChannel, outChannel, &wg)
+    }
+    wg.Wait()
+    close(outChannel)
+    for x := range outChannel {
+        fmt.Println(x)
+    }
 }
 ```
 
-## 单向 channel
+### 单向 channel
 
 channel 默认是双向的, 并不区分发送和接收端. 但我们可在定义时, 指定其为单向 channel, 且不能在单向 channel 上做逆向操作
 
@@ -213,7 +211,7 @@ var recv <-chan int = make(chan int, 10)
 
 ### `select` 选择
 
-如要同时处理多个 channel, 可选用 `select` 语句. 
+如要同时处理多个 channel, 可选用 `select` 语句.
 
 `select` 语句与 `switch` 语句类似, 它要求每个 case 必须是一个通信操作, 要么发送要么接收. 它会随机执行一个可运行的 case. 如果没有 case 可运行, 则会执行 default 或一直阻塞
 
@@ -224,42 +222,42 @@ import (
 )
 
 func main() {
-	var wg sync.WaitGroup
-	wg.Add(2)
-	a, b := make(chan int), make(chan int)
-    
-	go func() {
-		defer wg.Done()
-		for {
-			var (
-				name string
-				x    int
-				ok   bool
-			)
-			select {
-			case x, ok = <-a:
-				name = "a"
-			case x, ok = <-b:
-				name = "b"
-			}
-			if !ok {
-				return
-			}
-			fmt.Println(name, x)
-		}
-	}()
-	go func() {
-		defer wg.Done()
-		defer close(a)
-		defer close(b)
-		for i := 0; i < 10; i++ {
-			select {
-			case a <- i:
-			case b <- i * 10:
-			}
-		}
-	}()
-	wg.Wait()
+    var wg sync.WaitGroup
+    wg.Add(2)
+    a, b := make(chan int), make(chan int)
+
+    go func() {
+        defer wg.Done()
+        for {
+            var (
+                name string
+                x    int
+                ok   bool
+            )
+            select {
+            case x, ok = <-a:
+                name = "a"
+            case x, ok = <-b:
+                name = "b"
+            }
+            if !ok {
+                return
+            }
+            fmt.Println(name, x)
+        }
+    }()
+    go func() {
+        defer wg.Done()
+        defer close(a)
+        defer close(b)
+        for i := 0; i < 10; i++ {
+            select {
+            case a <- i:
+            case b <- i * 10:
+            }
+        }
+    }()
+    wg.Wait()
 }
 ```
 
@@ -271,31 +269,31 @@ import (
 )
 
 func main() {
-	done := make(chan int)
-	data := []chan int{make(chan int, 3)}
+    done := make(chan int)
+    data := []chan int{make(chan int, 3)}
 
-	go func() {
-		defer close(done)
-		for i := 0; i < 10; i++ {
-			select {
-			case data[len(data)-1] <- i:
-			default:
-				data = append(data, make(chan int, 3))  // default 语句用于添加新的 channel 等.
-			}
-		}
-	}()
-	<-done // 阻塞, 直到 goroutine 执行结束
-	for i := 0; i < len(data); i++ {
-		c := data[i]
-		close(c)
-		for x := range c {
-			fmt.Println(x)
-		}
-	}
+    go func() {
+        defer close(done)
+        for i := 0; i < 10; i++ {
+            select {
+            case data[len(data)-1] <- i:
+            default:
+                data = append(data, make(chan int, 3))  // default 语句用于添加新的 channel 等.
+            }
+        }
+    }()
+    <-done // 阻塞, 直到 goroutine 执行结束
+    for i := 0; i < len(data); i++ {
+        c := data[i]
+        close(c)
+        for x := range c {
+            fmt.Println(x)
+        }
+    }
 }
 ```
 
-## 应用
+### 应用
 
 channel 本身就是一个并发安全的队列, 可用作 ID 生成器, Pool 等用途
 
@@ -305,30 +303,30 @@ channel 本身就是一个并发安全的队列, 可用作 ID 生成器, Pool �
 import (
     "fmt"
 )
- 
- type pool chan []byte
- 
- func newPool(cap int) pool {
- 	return make(chan []byte, cap)
- }
- 
- func (p pool) get() []byte {
- 	var bytes []byte
- 	select {
- 	case bytes = <-p:
- 		fmt.Println("获取成功并返回")
- 	default:
- 		fmt.Println("获取失败, 返回默认")
- 		bytes = make([]byte, 10)
- 	}
- 	return bytes
- }
- func (p pool) put(bytes []byte) {
- 	select {
- 	case p <- bytes:
- 		fmt.Println("放回成功")
- 	default:
- 		fmt.Println("放回失败")
- 	}
- }
+
+type pool chan []byte
+
+func newPool(cap int) pool {
+    return make(chan []byte, cap)
+}
+
+func (p pool) get() []byte {
+    var bytes []byte
+    select {
+    case bytes = <-p:
+        fmt.Println("获取成功并返回")
+    default:
+        fmt.Println("获取失败, 返回默认")
+        bytes = make([]byte, 10)
+    }
+    return bytes
+}
+func (p pool) put(bytes []byte) {
+    select {
+    case p <- bytes:
+        fmt.Println("放回成功")
+    default:
+        fmt.Println("放回失败")
+    }
+}
 ```

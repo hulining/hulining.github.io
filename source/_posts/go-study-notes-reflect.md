@@ -3,7 +3,6 @@ title: go 学习笔记之反射
 date: 2020/04/30
 tags:
   - go
-  - 学习笔记
 categories:
   - go
 abbrlink: 15536
@@ -13,7 +12,6 @@ description: '记录在学习 Go 过程中容易出错, 容易忘记的知识点
 反射是值在程序运行期间对程序本身进行访问和修改的能力. 程序在编译时, 变量被转换为内存地址, 程序运行时, 程序无法获取自身的信息.
 
 支持反射的语言可以在程序编译期将变量的反射信息, 如字段名称, 类型信息, 结构体信息等整合到可执行文件中, 并给程序提供接口访问反射信息, 这样就可以在程序运行期获取类型的反射信息, 并且有能力修改它们.
-
 
 任意接口值在反射中都可以理解为由 Type 和 Value 组成的. Go 语言的反射是由 `reflect` 包提供的, 它定义了两个重要的类型 `reflect.Type` 和 `reflect.Value`, 并提供了 `reflect.TypeOf` 和 `reflect.ValueOf` 函数来获取任意对象的 Value 和 Type.
 
@@ -48,14 +46,14 @@ import (
 )
 
 type Student struct {
-	Name  string
-	Age   int
+    Name  string
+    Age   int
 }
 
 func main() {
     stu := Student{
-    	Name:  "tom",
-    	Age:   20,
+        Name:  "tom",
+        Age:   20,
     }
     typeOfstu := reflect.TypeOf(stu)
     fmt.Println("type:", typeOfstu.Name(), "kind:", typeOfstu.Kind())
@@ -77,14 +75,14 @@ import (
 )
 
 type Student struct {
-	Name  string
-	Age   int
+    Name  string
+    Age   int
 }
 
 func main() {
     stu := Student{
-    	Name:  "tom",
-    	Age:   20,
+        Name:  "tom",
+        Age:   20,
     }
     ptrOfstu := &stu
     a:=[3]int{1,3,4}
@@ -99,7 +97,6 @@ func main() {
 ```
 
 `reflect.Type` 的 `Elem()` 方法仅当反射类型的种类是 `Array`, `Chan`, `Map`, `Ptr` 或 `Slice` 时才可以获取其元素类型, 否则 `Elem()` 方法会引发 panics.
-
 
 ### 使用反射获取结构体的成员及方法信息
 
@@ -118,13 +115,13 @@ func main() {
 
 ```go
 import (
-	"fmt"
-	"reflect"
+    "fmt"
+    "reflect"
 )
 
 type Student struct {
-	Name  string  `json: "name"`
-	Age   int     `json: "age"`
+    Name  string  `json: "name"`
+    Age   int     `json: "age"`
 }
 
 func (stu Student) GetSum(n1, n2 int) int {
@@ -132,51 +129,51 @@ func (stu Student) GetSum(n1, n2 int) int {
 }
 
 func (stu *Student) Print() {
-	fmt.Println(*stu)
+    fmt.Println(*stu)
 }
 
 func (stu *Student) Set(name string, age int) {
-	stu.Name = name
-	stu.Age = age
+    stu.Name = name
+    stu.Age = age
 }
 
 func main() {
-	stu := Student{
-		Name: "tom",
-		Age:  20,
-	}
-	typeOfstu := reflect.TypeOf(stu)
-	kindOfstu := typeOfstu.Kind()
-	typeOfptr := reflect.TypeOf(&stu)
+    stu := Student{
+        Name: "tom",
+        Age:  20,
+    }
+    typeOfstu := reflect.TypeOf(stu)
+    kindOfstu := typeOfstu.Kind()
+    typeOfptr := reflect.TypeOf(&stu)
 
-	if kindOfstu != reflect.Struct {
-		fmt.Println("except struct...")
-		return
-	}
+    if kindOfstu != reflect.Struct {
+        fmt.Println("except struct...")
+        return
+    }
 
-	fieldNum := typeOfstu.NumField()
-	fmt.Println("字段个数为: ", fieldNum)  // 2
-	for i := 0; i < fieldNum; i++ {
-		field := typeOfstu.Field(i)
-		fmt.Println(field)
-		fmt.Printf("字段名: %v, 字段类型: %v, 字段的 json 标签: %v\n", field.Name, field.Type, field.Tag.Get("json"))  // Tag.Get(key) 方法可以返回键值对格式的的标签指定键的值
-	}
+    fieldNum := typeOfstu.NumField()
+    fmt.Println("字段个数为: ", fieldNum)  // 2
+    for i := 0; i < fieldNum; i++ {
+        field := typeOfstu.Field(i)
+        fmt.Println(field)
+        fmt.Printf("字段名: %v, 字段类型: %v, 字段的 json 标签: %v\n", field.Name, field.Type, field.Tag.Get("json"))  // Tag.Get(key) 方法可以返回键值对格式的的标签指定键的值
+    }
 
-	methodNumOfstu := typeOfstu.NumMethod()
-	fmt.Println("stu方法个数为: ", methodNumOfstu)  // 1
-	for i := 0; i < methodNumOfstu; i++ {
-		method := typeOfstu.Method(i)
-		fmt.Println(method)
-		fmt.Printf("方法名: %v, 方法类型: %v\n", method.Name, method.Type)
-	}
+    methodNumOfstu := typeOfstu.NumMethod()
+    fmt.Println("stu方法个数为: ", methodNumOfstu)  // 1
+    for i := 0; i < methodNumOfstu; i++ {
+        method := typeOfstu.Method(i)
+        fmt.Println(method)
+        fmt.Printf("方法名: %v, 方法类型: %v\n", method.Name, method.Type)
+    }
 
-	methodNumOfptr := typeOfptr.NumMethod()
-	fmt.Println("&stu方法个数为: ", methodNumOfptr)   // 3
-	for i := 0; i < methodNumOfptr; i++ {
-		method := typeOfptr.Method(i)
-		fmt.Println(method)
-		fmt.Printf("方法名: %v, 方法类型: %v, 方法对象\n", method.Name, method.Type, method.Func)
-	}
+    methodNumOfptr := typeOfptr.NumMethod()
+    fmt.Println("&stu方法个数为: ", methodNumOfptr)   // 3
+    for i := 0; i < methodNumOfptr; i++ {
+        method := typeOfptr.Method(i)
+        fmt.Println(method)
+        fmt.Printf("方法名: %v, 方法类型: %v, 方法对象\n", method.Name, method.Type, method.Func)
+    }
 }
 ```
 
@@ -197,7 +194,7 @@ func main() {
     fmt.Printf("值为: %v, 实际类型为 %T", valueOfN, valueOfN)  // 输出为 值为: 20, 实际类型为 reflect.Value
     n2, ok := valueOfN.Interface().(int) // 先将 reflect.Value 转换为 interface, 然后通过类型断言来转换为 int 类型
     if ok {
-    	fmt.Printf("转换后值为: %v, 类型为 %T", n2, n2)  // 输出 转换后值为: 20, 类型为 int
+        fmt.Printf("转换后值为: %v, 类型为 %T", n2, n2)  // 输出 转换后值为: 20, 类型为 int
     }
 }
 ```
@@ -223,13 +220,13 @@ func main() {
 
 ```go
 import (
-	"fmt"
-	"reflect"
+    "fmt"
+    "reflect"
 )
 
 type Student struct {
-	Name  string  `json: "name"`
-	Age   int     `json: "age"`
+    Name  string  `json: "name"`
+    Age   int     `json: "age"`
 }
 
 func (stu Student) GetSum(n1, n2 int) int {
@@ -237,50 +234,49 @@ func (stu Student) GetSum(n1, n2 int) int {
 }
 
 func (stu *Student) Print() {
-	fmt.Println(*stu)
+    fmt.Println(*stu)
 }
 
 func (stu *Student) Set(name string, age int) {
-	stu.Name = name
-	stu.Age = age
+    stu.Name = name
+    stu.Age = age
 }
 
 func main() {
-	stu := Student{
-		Name: "tom",
-		Age:  20,
-	}
-	valueOfstu := reflect.ValueOf(stu)
-	kindOfstu := valueOfstu.Kind()
-	valueOfptr := reflect.ValueOf(&stu)
+    stu := Student{
+        Name: "tom",
+        Age:  20,
+    }
+    valueOfstu := reflect.ValueOf(stu)
+    kindOfstu := valueOfstu.Kind()
+    valueOfptr := reflect.ValueOf(&stu)
     typeOfStu := valueOfstu.Type()  // 返回反射的类型
 
-	if kindOfstu != reflect.Struct {
-		fmt.Println("except struct...")
-		return
-	}
+    if kindOfstu != reflect.Struct {
+        fmt.Println("except struct...")
+        return
+    }
 
-	fieldNum := typeOfstu.NumField()
-	fmt.Println("字段个数为: ", fieldNum)  // 2
-	for i := 0; i < fieldNum; i++ {
-		field := typeOfstu.Field(i)
-		fmt.Println(field)  // 直接输出各个字段的值
-        
-	}
+    fieldNum := typeOfstu.NumField()
+    fmt.Println("字段个数为: ", fieldNum)  // 2
+    for i := 0; i < fieldNum; i++ {
+        field := typeOfstu.Field(i)
+        fmt.Println(field)  // 直接输出各个字段的值
+    }
 
-	methodNumOfstu := typeOfstu.NumMethod()
-	fmt.Println("stu方法个数为: ", methodNumOfstu)  // 1
-	for i := 0; i < methodNumOfstu; i++ {
-		method := typeOfstu.Method(i)
-		fmt.Println(method)  // 直接输出一个形如 0x4878c0 的地址, 但是不确定是什么, 而且所有都是相同的
-	}
+    methodNumOfstu := typeOfstu.NumMethod()
+    fmt.Println("stu方法个数为: ", methodNumOfstu)  // 1
+    for i := 0; i < methodNumOfstu; i++ {
+        method := typeOfstu.Method(i)
+        fmt.Println(method)  // 直接输出一个形如 0x4878c0 的地址, 但是不确定是什么, 而且所有都是相同的
+    }
 
-	methodNumOfptr := typeOfptr.NumMethod()
-	fmt.Println("&stu方法个数为: ", methodNumOfptr)   // 3
-	for i := 0; i < methodNumOfptr; i++ {
-		method := typeOfptr.Method(i)
-		fmt.Println(method) // 直接输出一个形如 0x4878c0 的地址, 但是不确定是什么, 而且所有都是相同的
-	}
+    methodNumOfptr := typeOfptr.NumMethod()
+    fmt.Println("&stu方法个数为: ", methodNumOfptr)   // 3
+    for i := 0; i < methodNumOfptr; i++ {
+        method := typeOfptr.Method(i)
+        fmt.Println(method) // 直接输出一个形如 0x4878c0 的地址, 但是不确定是什么, 而且所有都是相同的
+    }
 }
 ```
 
@@ -290,13 +286,13 @@ func main() {
 
 ```go
 import (
-	"fmt"
-	"reflect"
+    "fmt"
+    "reflect"
 )
 
 type Student struct {
-	Name  string  `json: "name"`
-	Age   int     `json: "age"`
+    Name  string  `json: "name"`
+    Age   int     `json: "age"`
 }
 
 func (stu Student) GetSum(n1, n2 int) int {
@@ -304,44 +300,44 @@ func (stu Student) GetSum(n1, n2 int) int {
 }
 
 func (stu *Student) Print() {
-	fmt.Println(*stu)
+    fmt.Println(*stu)
 }
 
 func (stu *Student) Set(name string, age int) {
-	stu.Name = name
-	stu.Age = age
+    stu.Name = name
+    stu.Age = age
 }
 
 func main() {
-	stu := Student{
-		Name: "tom",
-		Age:  20,
-	}
-	valueOfStu := reflect.ValueOf(&stu)  // 需要注意这里传入的是 &stu, 使反射能够调用所有的方法, 并修改原始对象的成员变量
+    stu := Student{
+        Name: "tom",
+        Age:  20,
+    }
+    valueOfStu := reflect.ValueOf(&stu)  // 需要注意这里传入的是 &stu, 使反射能够调用所有的方法, 并修改原始对象的成员变量
 
     // 使用 reflect.Value 的 Call() 方法反射调用 GetSum(n1, n2 int) int 方法, Call()方法需传入 []reflect.Value 类型的值
-	var paramsGetSum []reflect.Value
-	paramsGetSum = append(paramsGetSum, reflect.ValueOf(10))
-	paramsGetSum = append(paramsGetSum, reflect.ValueOf(20))
-	resGetSum := valueOfStu.Method(0).Call(paramsGetSum)  // 调用后返回值为 []reflect.Value, 因此需要根据返回值个数使用索引来获取返回值
+    var paramsGetSum []reflect.Value
+    paramsGetSum = append(paramsGetSum, reflect.ValueOf(10))
+    paramsGetSum = append(paramsGetSum, reflect.ValueOf(20))
+    resGetSum := valueOfStu.Method(0).Call(paramsGetSum)  // 调用后返回值为 []reflect.Value, 因此需要根据返回值个数使用索引来获取返回值
     fmt.Printf("调用结果为 %v, 类型为 %T", resGetSum, resGetSum)  // 输出为 :调用结果为 30, 类型为 []reflect.Value
     resGetSum0 := resGetSum[0]
     fmt.Printf("第一个返回值为 %v, 类型为 %T\n", resGetSum0, resGetSum0)  // 输出为 :第一个返回值为 30, 类型为 reflect.Value
-	realRes0 := resGetSum[0].Interface().(int)
-	fmt.Printf("实际结果为 %v, 类型为 %T\n", realRes, realRes)  // 输出为 :实际结果为 30, 类型为 int
-    
+    realRes0 := resGetSum[0].Interface().(int)
+    fmt.Printf("实际结果为 %v, 类型为 %T\n", realRes, realRes)  // 输出为 :实际结果为 30, 类型为 int
+
     // 使用 reflect.Value 的 Call() 方法反射调用 Print() 方法, Call()方法需传入 []reflect.Value 类型的值
     var paramsPrint []reflect.Value
-	resPrint := valueOfStu.Method(1).Call(paramsPrint)
-	fmt.Printf("调用结果为 %v, 类型为 %T", resPrint, resPrint)  // 输出为 :调用结果为 [], 类型为 []reflect.Value
-    
+    resPrint := valueOfStu.Method(1).Call(paramsPrint)
+    fmt.Printf("调用结果为 %v, 类型为 %T", resPrint, resPrint)  // 输出为 :调用结果为 [], 类型为 []reflect.Value
+
     // 使用 reflect.Value 的 Call() 方法反射调用 Set(name string, age int) 方法, Call()方法需传入 []reflect.Value 类型的值
     var paramsSet []reflect.Value
-	paramsSet = append(paramsSet, reflect.ValueOf("jack"))
-	paramsSet = append(paramsSet, reflect.ValueOf(30))
-	resSet := valueOfStu.Method(2).Call(paramsSet)
-	fmt.Printf("调用结果为 %v, 类型为 %T\n", resSet, resSet) // 输出为 :调用结果为 [], 类型为 []reflect.Value
-	fmt.Println(stu)  // 可以看到 stu 已被修改为 {jack 30}
+    paramsSet = append(paramsSet, reflect.ValueOf("jack"))
+    paramsSet = append(paramsSet, reflect.ValueOf(30))
+    resSet := valueOfStu.Method(2).Call(paramsSet)
+    fmt.Printf("调用结果为 %v, 类型为 %T\n", resSet, resSet) // 输出为 :调用结果为 [], 类型为 []reflect.Value
+    fmt.Println(stu)  // 可以看到 stu 已被修改为 {jack 30}
 }
 ```
 
@@ -366,10 +362,10 @@ type StructTag string
 
 ```go
 type Method struct {
-	Name    string // 方法名
-	PkgPath string // 方法路径
-	Type    Type   // 方法类型
-	Func    Value  // 以接收者为第一个参数的 func
-	Index   int    // Type.Method 的索引
+    Name    string // 方法名
+    PkgPath string // 方法路径
+    Type    Type   // 方法类型
+    Func    Value  // 以接收者为第一个参数的 func
+    Index   int    // Type.Method 的索引
 }
 ```

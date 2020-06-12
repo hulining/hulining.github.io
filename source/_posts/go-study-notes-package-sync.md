@@ -3,7 +3,6 @@ title: go 学习笔记之 sync 包
 date: 2020/05/05
 tags:
   - go
-  - 学习笔记
 categories:
   - go
 abbrlink: 41417
@@ -14,7 +13,7 @@ description: >-
 
 `sync` 包提供了基础的同步方法和锁机制.导入方式为 `import "sync"`
 
-# 常用类型定义
+## 常用类型定义
 
 ```go
 // Locker 接口,表示可以解锁和加锁的对象
@@ -51,9 +50,9 @@ type WaitGroup struct {
 }
 ```
 
-# 常用函数
+## 常用函数
 
-## `Mutex` 结构体方法
+### `Mutex` 结构体方法
 
 互斥锁与 goroutine 没有关联,允许一个 goroutine 添加锁,另一个 goroutine 释放锁
 
@@ -66,7 +65,7 @@ func (m *Mutex) Lock()
 func (m *Mutex) Unlock()
 ```
 
-## `Once` 结构体方法
+### `Once` 结构体方法
 
 ```go
 // 实例声明 `var o sync.Once`
@@ -75,7 +74,7 @@ func (m *Mutex) Unlock()
 func (o *Once) Do(f func())
 ```
 
-## `Pool` 结构体方法
+### `Pool` 结构体方法
 
 ```go
 // 实例声明方式 `var p sync.Pool` 或 `var bufPool sync.Pool = sync.Pool{New: funName}`
@@ -86,7 +85,7 @@ func (p *Pool) Get() interface{}
 func (p *Pool) Put(x interface{})
 ```
 
-## `WaitGroup` 结构体方法
+### `WaitGroup` 结构体方法
 
 ```go
 // 实例声明 `var wg sync.WaitGroup`
@@ -101,9 +100,9 @@ func (wg *WaitGroup) Done()
 func (wg *WaitGroup) Wait()
 ```
 
-# 示例
+## 示例
 
-## `Once` 使用示例
+### `Once` 使用示例
 
 ```go
 import (
@@ -123,7 +122,7 @@ func main() {
 // 在 i=0 时被调用
 ```
 
-## `Pool` 使用示例
+### `Pool` 使用示例
 
 - 使用 `Pool` 返回 5 个随机数
 
@@ -148,7 +147,7 @@ func main() {
 }
 ```
 
-## `WaitGroup` 使用示例
+### `WaitGroup` 使用示例
 
 - 使用 `WaitGroup` 等待所有 goroutine 执行结束
 

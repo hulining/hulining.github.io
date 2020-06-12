@@ -3,14 +3,13 @@ title: go 学习笔记之常用数据类型
 date: 2020/04/30
 tags:
   - go
-  - 学习笔记
 categories:
   - go
 abbrlink: 16200
 description: '记录在学习 Go 过程中容易出错, 容易忘记的知识点, 主要包含 Go 中字符串, 数组, 切片, 字典, 结构体等数据类型的定义方式及其注意事项'
 ---
 
-# 字符串 `string`
+## 字符串 `string`
 
 字符串 `string` 是 Go 中的基本类型, 它是一个不可变的 UTF-8 字符(byte)序列.
 
@@ -33,7 +32,7 @@ func main(){
     // fmt.Printf("%p", &str[1]) // 报错 cannot take the address of 'str[1]', 不能获取 str[1] 的指针地址
     // str[1] = 'x'              // 报错, cannot assign to str[1], 字符串是不可变的, 不能对其中元素进行修改
     multiLine := `line \n
-    	    line2`
+            line2`
     fmt.Println(multiLine)    // 会按照  multiLine 的原始字符输出,不做任何转义操作
 }
 ```
@@ -47,9 +46,9 @@ import (
 
 func main(){
     str := "Hello 北京!"
-    
+
     for i := 0; i < len(str); i++ {
-    	fmt.Printf("%v: %v\n", i, str[i])
+        fmt.Printf("%v: %v\n", i, str[i])
     }
     for i, v := range str {
         fmt.Printf("%v: %v\n", i, v)
@@ -60,7 +59,7 @@ func main(){
 
 - 要修改字符串, 需要将其转换为 `[]rune` 或 `[]byte` 数组, 待修改完成后再使用 `string()` 强制转换回来.
 
-# 数组 `array`
+## 数组 `array`
 
 数组的一般形式如下:
 
@@ -85,7 +84,7 @@ import (
 )
 
 func test1(x [2]int) {
-	fmt.Printf("x: %p, %v\n", &x, x)
+    fmt.Printf("x: %p, %v\n", &x, x)
 }
 
 func test2(p *[2]int) {
@@ -94,11 +93,11 @@ func test2(p *[2]int) {
 }
 
 func main() {
-	a := [2]int{1, 2}
-	b := a
-	fmt.Printf("a: %p, %v\n", &a, a)
-	fmt.Printf("b: %p, %v\n", &b, b)
-	test1(a)
+    a := [2]int{1, 2}
+    b := a
+    fmt.Printf("a: %p, %v\n", &a, a)
+    fmt.Printf("b: %p, %v\n", &b, b)
+    test1(a)
     test2(&a)
     fmt.Printf("a: %p, %v\n", &a, a)
 }
@@ -109,7 +108,7 @@ func main() {
 // a: 0xc00000a0d0, [1 102]
 ```
 
-# 切片 `slice`
+## 切片 `slice`
 
 切片的一般形式如下
 
@@ -119,11 +118,10 @@ var sliceName []Type = []Type{element1, element2, element3...}
 
 特点和注意事项如下:
 
-
 - 可使用内置函数 `make([]Type, len, cap)` 初始化一个长度为 `len` 元素值为默认值的切片, 并完成长度为 `cap` 用于存储底层数据的数组的内存分配. 其中 `cap` 为容量, 可以省略(默认为 `len`), 否则必须大于等于 `len`. 切片的长度及容量均可超过其初始定义时的长度和容量, 此时会为底层数组重新分配内存地址空间
 - 切片是**引用类型**, 所有在函数内的对其元素的操作都会作用到其底层数据结构上
 - 可基于数组或数组指针创建切片, 以开始索引或结束索引确定切片所引用的数据字段. 不支持反向索引
-- 使用形如 `var s []int` 创建的切片为 `nil` 
+- 使用形如 `var s []int` 创建的切片为 `nil`
 - 切片支持使用索引号访问元素内容
 - `append()` 可用于向切片尾部添加数据, 返回对象的内存地址不会发生改变, 但是如果 `append` 后的切片超过 `cap` 容量, 则会为底层数组重新分配内存空间. 新分配的 `cap` 容量为一般初始 `cap` 容量的整数倍
 - `copy(dst, src []Type)` 可用于在两个切片对象间复制数据, 最终所复制的数据以较短的切片长度为准.
@@ -137,19 +135,19 @@ import (
 
 func main() {
     var nilSli []int
-	fmt.Println(nilArr == nil)  // true
-	sli := make([]int, 2, 5)
-	fmt.Printf("%p,%v,%v,%p\n", &sli, len(sli), cap(sli), &sli[0])
-	arr = append(arr, []int{1, 2, 3, 4, 5, 6}...)
-	fmt.Printf("%p,%v,%v,%p\n", &sli, len(sli), cap(sli), &sli[0])  
+    fmt.Println(nilArr == nil)  // true
+    sli := make([]int, 2, 5)
+    fmt.Printf("%p,%v,%v,%p\n", &sli, len(sli), cap(sli), &sli[0])
+    arr = append(arr, []int{1, 2, 3, 4, 5, 6}...)
+    fmt.Printf("%p,%v,%v,%p\n", &sli, len(sli), cap(sli), &sli[0])  
     // 可以看到 append 前后 `&arr` 没有变化, 但是 `cap(arr) 变为原来的 2 倍,实际上是对底层数组重新分配了新的内存空间(原来数组的内存空间也会被重新分配)
-	p := &sli
-	p0 := &sli[0]
-	p1 := &sli[1]
-	fmt.Printf("%p,%p,%p\n", p, p0, p1)
-	(*p)[0] += 100
-	*p1 += 100
-	fmt.Printf("%v\n", sli) // [100 100 1 2 3 4 5 6]
+    p := &sli
+    p0 := &sli[0]
+    p1 := &sli[1]
+    fmt.Printf("%p,%p,%p\n", p, p0, p1)
+    (*p)[0] += 100
+    *p1 += 100
+    fmt.Printf("%v\n", sli) // [100 100 1 2 3 4 5 6]
 }
 // 输出
 // true
@@ -179,7 +177,7 @@ func main() {
 // [101 20 32],0xc0000044c0
 ```
 
-# 字典 `map`
+## 字典 `map`
 
 字典的一般形式如下:
 
@@ -208,25 +206,25 @@ import (
 
 func main() {
     var nilMap map[string]string
-	fmt.Println(nilMap == nil)
-	m := make(map[string]user, 2)
-	fmt.Printf("%p,%v\n", &m, m)
-	m["tom"] = user{"tom", 20}
-	m["jack"] = user{"jack", 21}
-	m["lucy"] = user{"lucy", 19}
-	v, ok := m["liming"]
-	if ok {
-		fmt.Println(v)
-	}
-	fmt.Printf("%p,%v\n", &m, m)
-	for k, v := range m {
-		fmt.Println(k, v)  // 每次输出循序都不一样
-	}
-	//m["lucy"].age += 1 // 报错, cannot assign to `m["lucy"].age`, 不能对字典值的成员变量直接赋值
-	lucy := m["lucy"]
-	lucy.age += 1
-	m["lucy"] = lucy
-	fmt.Println(m)
+    fmt.Println(nilMap == nil)
+    m := make(map[string]user, 2)
+    fmt.Printf("%p,%v\n", &m, m)
+    m["tom"] = user{"tom", 20}
+    m["jack"] = user{"jack", 21}
+    m["lucy"] = user{"lucy", 19}
+    v, ok := m["liming"]
+    if ok {
+        fmt.Println(v)
+    }
+    fmt.Printf("%p,%v\n", &m, m)
+    for k, v := range m {
+        fmt.Println(k, v)  // 每次输出循序都不一样
+    }
+    //m["lucy"].age += 1 // 报错, cannot assign to `m["lucy"].age`, 不能对字典值的成员变量直接赋值
+    lucy := m["lucy"]
+    lucy.age += 1
+    m["lucy"] = lucy
+    fmt.Println(m)
 }
 // 输出如下
 // true
@@ -238,7 +236,7 @@ func main() {
 // map[jack:{jack 21} lucy:{tom 20} tom:{tom 20}]
 ```
 
-# 结构体 `struct`
+## 结构体 `struct`
 
 `struct` 将多个不通类型的字段序列打包成一个复合类型, 类似于`类`的概念. 一般定义方式如下
 
@@ -267,44 +265,44 @@ import (
 )
 
 type test struct {
-	Name string
-	Age  int
-	_    string
-	_    string
-	int
-	//int  // 报错, 重复定义 int
+    Name string
+    Age  int
+    _    string
+    _    string
+    int
+    //int  // 报错, 重复定义 int
 }
 type user struct {
-	name string
-	inneruser1
-	inneruser2
+    name string
+    inneruser1
+    inneruser2
 }
 type inneruser1 struct {
-	name string
-	age  int
+    name string
+    age  int
 }
 type inneruser2 struct {
-	name  string
-	age   int
-	score float64
+    name  string
+    age   int
+    score float64
 }
 
 func main() {
-	t := test{
-		Name: "test",
-		Age:  20,
-		int:  4,
-	}
+    t := test{
+        Name: "test",
+        Age:  20,
+        int:  4,
+    }
     fmt.Println(t)
-	u := user{
-		name:       "outeruser",
-		inneruser1: inneruser1{"inneruser1", 10},
-		inneruser2: inneruser2{"inneruser2", 20, 89.5},
-	}
-	fmt.Println(u.name)
-	// fmt.Println(u.age) // 报错, Ambiguous reference 'age', 编译器搞不清使用哪个 age
-	fmt.Println(u.inneruser1.age)
-	fmt.Println(u.score)
+    u := user{
+        name:       "outeruser",
+        inneruser1: inneruser1{"inneruser1", 10},
+        inneruser2: inneruser2{"inneruser2", 20, 89.5},
+    }
+    fmt.Println(u.name)
+    // fmt.Println(u.age) // 报错, Ambiguous reference 'age', 编译器搞不清使用哪个 age
+    fmt.Println(u.inneruser1.age)
+    fmt.Println(u.score)
 }
 // 输出
 // {test 20   4}
@@ -313,14 +311,15 @@ func main() {
 // 89.5
 ```
 
-## 字段标签
+### 字段标签
 
-字段标签并不是注释, 而是用来对字段进行描述的元数据. 
+字段标签并不是注释, 而是用来对字段进行描述的元数据.
 
 - 在运行期间, 可用反射获取标签信息, 常被用作格式校验, 数据库关系映射等.
 - 由于 Go 中私有变量与可导入变量是通过首字母大小写区分的. 因此对于可导入变量, 还可以用作 json 格式化输出字段
 
-示例如下: 
+示例如下:
+
 ```go
 import (
     "fmt"
@@ -329,24 +328,24 @@ import (
 )
 
 type user struct {
-	Name string `json:"name"` // `` 反引号中的内容为该字段的 tag 标签
-	Age  int    `json:"age"`
+    Name string `json:"name"` // `` 反引号中的内容为该字段的 tag 标签
+    Age  int    `json:"age"`
 }
 
 func main() {
-	u := user{
-		Name: "tom",
-		Age:  10,
-	}
-	val := reflect.ValueOf(u)
-	valType := val.Type()
-	for i := 0; i < val.NumField(); i++ {
-		fmt.Printf("%v: %v\n", valType.Field(i).Tag.Get("json"), val.Field(i))
-	}
-    
+    u := user{
+        Name: "tom",
+        Age:  10,
+    }
+    val := reflect.ValueOf(u)
+    valType := val.Type()
+    for i := 0; i < val.NumField(); i++ {
+        fmt.Printf("%v: %v\n", valType.Field(i).Tag.Get("json"), val.Field(i))
+    }
+
     str, err := json.Marshal(u)
     if err != nil {
-    	fmt.Println("格式转换出错")
+        fmt.Println("格式转换出错")
     }
     fmt.Println(string(str))
 

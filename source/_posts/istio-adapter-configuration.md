@@ -2,60 +2,65 @@
 title: istio可扩展的策略和遥测
 date: 2020/04/03
 tags:
-  - istio
   - 读书笔记
+  - istio
 categories:
-  - 云原生应用
   - istio
 abbrlink: 63298
 description: 本文章为《云原生服务网格Istio：原理、实践、架构与源码解析》第 4 章读书笔记.
 ---
 
-> 应用场景
+## 简介
+
+### 应用场景
 
 对服务进行全面管理,除了需要具备服务治理功能,还需要知道服务到底运行得怎么样,有没有问题,哪里有问题,这一般是 APM(Application Performance Management,应用性能管理) 的职能,其中涉及采集数据,存储数据和检索数据.
 
-> 实现方式
+### 实现方式
 
 Istio 将 Envoy 的遥测和策略功能提取出来,放到一个服务端组件 Mixer 上,在逻辑上将 Envoy 和各种遥测数据的收集解耦,并将 Envoy 和真正的遥测后端解耦.Envoy 和控制面组件 Mixer 的单条连接
 
 基于 Mixer Adapter 提供的扩展机制,可以做到在遥测和策略执行时对业务代码的无侵入,解耦数据面 Envoy 和遥测与策略执行的后端服务,并开发自己的 Adapter,提供扩展和定制的能力,提供满足用户特定场景的服务运行监控和控制
 
-# 原理
+## 原理
 
-## 工作流程
+### 工作流程
+
 简单来说,该流程主要有两步:
+
 1. Envoy 生成数据并将数据上报给 Mixer
 2. Mixer 调用对应的服务后端处理收到的数据
 
 每个经过 Envoy 的请求都会调用 Mixer上报数据,Mixer将上报的这些数据作为策略和遥测报告的一部
 分发送出来,并转换为对后端服务的调用
 
-## 属性
+### 属性
 
-> 属性定义
+#### 属性定义
 
 Envoy 上报的数据在 Istio 中被称为属性(Attribute).严格来讲,在以上 Mixer 处理流程的两个阶段,从Envoy到Mixer及从Mixer到后端服务,处理的
 对象都是属性
 
-> 属性表达式
+#### 属性表达式
 
-```
+```text
 destination_service: destination.service
 response_code: response.code
 destination_version: destination.labels["version"] | "unknown"
 ```
+
 更多属性表达式见 <云原生服务网格 istio> 表 4-1
 
-> Mixer的配置模型
+#### Mixer的配置模型
 
 Istio 主要通过 `Handler`(业务处理),`Instance`(数据定义)和 `Rule`(关联规则)这三个资源对象来描述对 Adapter 的配置
 
-- `Handler`
+##### `Handler`
 
 Handler 描述定义的 Adapters 及其配置,不同的 Adapter 有不同的配置.Handler 是 Adapter 定义的模板的实现,通过给模板上的参数赋值来进行实例化
 
-示例如下
+示例如下:
+
 ```yaml
 apiVersion: "config.istio.io/v1alpha2"
 kind: stdio
@@ -119,11 +124,12 @@ spec:
         bounds: [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10]
 ```
 
-- `Instance`
+##### `Instance`
 
 Instance 定义了 Adapter 要处理的数据对象,通过模板为 Adapter 提供对元数据的定义.Mixer 通过 Instance 把来自代理的属性拆分并分发给不通的适配器
 
 示例如下:
+
 ```yaml
 apiVersion: "config.istio.io/v1alpha2"
 kind: logentry
@@ -200,7 +206,7 @@ spec:
   monitored_resource_type: '"UNSPECIFIED"'
 ```
 
-- `Rule`
+##### `Rule`
 
 Rule 配置了一组规则,告诉 Mixer 有哪个 Instance 在什么时候被发送给哪个 Handler 来处理,一般包括一个匹配的表达式和执行动作(action)匹配表达式控制在什么时候调用 Adapter,在 Action 里配置 Adapter 和 Instance 的名称
 
@@ -211,7 +217,8 @@ Rule 配置了一组规则,告诉 Mixer 有哪个 Instance 在什么时候被发
 match | 是 | 表示匹配条件,如果未定义条件,则判定为总是匹配
 actions | 是 | 表示满足条件后执行的动作,是一个数组.包含 handler 和 instance 两个字段,用于指定 handler 和 instance 的名称(必须是全名,格式一般为 `<name.kind>`)
 
-示例如下
+示例如下:
+
 ```yaml
 apiVersion: "config.istio.io/v1alpha2"
 kind: rule
@@ -241,9 +248,9 @@ spec:
     - responsesize.metric
 ```
 
-# 遥测适配器配置
+## 遥测适配器配置
 
-## Prometheus 适配器
+### Prometheus 适配器
 
 > 工作流程
 
@@ -253,7 +260,7 @@ spec:
 4. Prometheus 服务作为 Addon 在集群中进行安装,拉取并存储 Metric 数据,提供 Query 接口进行检索
 5. 集群内的 Dashboard(如Grafana)通过 Prometheus 的检索 API 访问 Metric 数据
 
-> handler 配置定义
+#### handler 配置定义
 
 handler 配置中最主要的字段是 `metrics`,用于在 Prometheus 中定义 metrics.它是一个数组,每个元素都具有如下属性
 
@@ -262,10 +269,10 @@ handler 配置中最主要的字段是 `metrics`,用于在 Prometheus 中定义 
 - `kind`: 定义指标类型,请求计数类型为 `COUNTER`,请求耗时类型为 `DISTRIBUTION`.DISTRIBUTION 类型的指标可以定义其 buckets
 - `label_names`: 定义指标的标签,一般与 instance 中维度相同
 
-> instance 配置定义
+#### instance 配置定义
 
 instance 配置中最主要的字段是 `dimensions` 和 `value`,分别用于记录数据的维度及对应的值.这两个字段均支持属性表达式.其中维度中的 key 多用于 prometheus-metrics 的标签
 
-> rule 配置定义
+#### rule 配置定义
 
 Rule 可以将 Handler 和 Instance建立关系,最主要的字段是 `match` 和 `actions`,分别用于匹配规则及匹配后的动作

@@ -3,7 +3,6 @@ title: go 学习笔记之表达式
 date: 2020/04/30
 tags:
   - go
-  - 学习笔记
 categories:
   - go
 abbrlink: 46843
@@ -12,7 +11,7 @@ description: >-
   fallthrough,goto,break,continue 等关键字
 ---
 
-# 指针
+## 指针
 
 指针会分配内存空间, 相当于一个专门用来保存对象地址的整型变量. 它有自身的内存地址, 其值为另外一个对象的内存地址
 
@@ -48,9 +47,10 @@ func main() {
 }
 ```
 
-# `for` 循环
+## `for` 循环
 
 主要有两种形式
+
 ```go
 for i := 0; i < 10; i++ {
     // do something
@@ -62,9 +62,10 @@ for index, value := range x {
     // 可使用 _ 对其中元素进行站位操作
 }
 ```
+
 Go 中没有 `while`, `until` 等关键字, 因此没有 `while true` 或 `do...until` 等形式, 我们可以使用 `for` + `if` 条件判断达到类似的效果. 如下:
 
-```
+```go
 // 一直循环
 for {
     // do something
@@ -79,9 +80,10 @@ for {
 }
 ```
 
-# `if-else` 流程控制
+## `if-else` 流程控制
 
 `if-else` 控制比较简单, 一般形式如下
+
 ```go
 if expression {
     // do something
@@ -92,7 +94,7 @@ if expression {
 }
 ```
 
-# `switch` 流程控制
+## `switch` 流程控制
 
 与 `if-else` 类似相同, `switch` 语句也用于选择执行, 但具体使用场景会有所不同
 
@@ -100,9 +102,9 @@ if expression {
 
 - 支持 `switch` 代码块内赋值等初始化语句
 - `case` 语句支持多个匹配条件逻辑或
--  只有全部 `case` 语句匹配失败时才会执行 `default` 块
--  相邻的空 `case` 表示执行的代码块为空
--  无需显示指定 `break` 语句, `case` 执行完毕后自动中断
+- 只有全部 `case` 语句匹配失败时才会执行 `default` 块
+- 相邻的空 `case` 表示执行的代码块为空
+- 无需显示指定 `break` 语句, `case` 执行完毕后自动中断
 
 ```go
 import (
@@ -110,15 +112,15 @@ import (
 )
 
 func main() {
-	switch x := 5; x {
+    switch x := 5; x {
     case 0:     // 隐式 "case 0: break;"
-	case 1, 2, 3, 4, 5:
-		fmt.Println("工作日")
-	case 6, 7:
-		fmt.Println("周末")
-	default:
-		fmt.Println("错误输入")
-	}
+    case 1, 2, 3, 4, 5:
+        fmt.Println("工作日")
+    case 6, 7:
+        fmt.Println("周末")
+    default:
+        fmt.Println("错误输入")
+    }
 }
 ```
 
@@ -131,14 +133,14 @@ import (
 
 func main() {
     x := 20
-	switch  {
-	case x > 0 && x < 18:
-		fmt.Println("未成年人")
-	case x >= 18:
-		fmt.Println("成年人")
-	default:
-		fmt.Println("错误输入")
-	}
+    switch  {
+    case x > 0 && x < 18:
+        fmt.Println("未成年人")
+    case x >= 18:
+        fmt.Println("成年人")
+    default:
+        fmt.Println("错误输入")
+    }
 }
 ```
 
@@ -201,8 +203,7 @@ func main() {
 // 可看到 case 1 2 随机执行
 ```
 
-
-## `fallthrough` 关键字
+### `fallthrough` 关键字
 
 `fallthrough` 关键字用于继续执行**下一个** `case` 语句, 必须放在 `case` 代码块末尾
 
@@ -212,24 +213,24 @@ import (
 )
 
 func main() {
-	switch x := 0; x {
+    switch x := 0; x {
     case 0:
         fmt.Println("0")
         fallthrough
-	case 1, 2, 3, 4, 5:
-		fmt.Println("工作日")
-	case 6, 7:
-		fmt.Println("周末")
-	default:
-		fmt.Println("错误输入")
-	}
+    case 1, 2, 3, 4, 5:
+        fmt.Println("工作日")
+    case 6, 7:
+        fmt.Println("周末")
+    default:
+        fmt.Println("错误输入")
+    }
 }
 // 输出如下
 // 0
 // 工作日
 ```
 
-# `goto`, `continue`, `break` 关键字
+## `goto`, `continue`, `break` 关键字
 
 - `goto` 用于定点跳转, 代码跳转到指定标签的代码位置, 但不能跳转到其他函数或内层代码块内
 - `continue` 仅用于 `for` 循环, 终止本次循环逻辑, 立即进入下一轮循环.
@@ -244,21 +245,21 @@ import (
 
 func main() {
 outer:
-	for x := 0; x < 5; x++ {
-		for y := 0; y < 10; y++ {
-			if y > 2 {
-				fmt.Println()
-				continue outer
-			}
-			if x > 2 {
-				break outer
-			}
-			fmt.Printf("%v:%v ", x, y)
-		}
-	}
+    for x := 0; x < 5; x++ {
+        for y := 0; y < 10; y++ {
+            if y > 2 {
+                fmt.Println()
+                continue outer
+            }
+            if x > 2 {
+                break outer
+            }
+            fmt.Printf("%v:%v", x, y)
+        }
+    }
 }
 // 输出如下:
-// 0:0 0:1 0:2 
-// 1:0 1:1 1:2 
-// 2:0 2:1 2:2 
+// 0:0 0:1 0:2
+// 1:0 1:1 1:2
+// 2:0 2:1 2:2
 ```

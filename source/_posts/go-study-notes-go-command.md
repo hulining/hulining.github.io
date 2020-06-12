@@ -3,7 +3,6 @@ title: go 学习笔记之 go 命令
 date: 2020/05/02
 tags:
   - go
-  - 学习笔记
 categories:
   - go
 abbrlink: 44881
@@ -22,9 +21,9 @@ description: '记录在学习 Go 过程中容易出错, 容易忘记的知识点
 :---: | :--- | :---
 bug | bug/issue 报告 | 它会收集当前系统及 Go 语言信息, 在 `github/golang/go` 代码仓库中帮助你创建一个 issues
 build | 编译软件包和依赖 |
-clean | 删除旧的对象文件和缓存文件 | 
+clean | 删除旧的对象文件和缓存文件 |
 doc | 显示包及其内容或符号的帮助文档 |
-env | 打印当前 Go 环境信息 | 包括 `GO111MODULE`, `GOARCH`, `GOBIN`, ` GOHOSTARCH`, `GOHOSTOS`, `GOPATH`, `GOPROXY`, `GOROOT`, `GOTOOLDIR`,`GOMOD` 等环境变量
+env | 打印当前 Go 环境信息 | 包括 `GO111MODULE`, `GOARCH`, `GOBIN`, `GOHOSTARCH`, `GOHOSTOS`, `GOPATH`, `GOPROXY`, `GOROOT`, `GOTOOLDIR`,`GOMOD` 等环境变量
 fix | 更新软件包以使用新的 API |
 fmt | 用于格式化 go 源代码
 generate | 通过预处理源生成 Go 代码文件
@@ -60,17 +59,17 @@ packages | 包
 testflag | 测试的标志
 testfunc | 测试函数
 
-# `go build`
+## `go build`
 
 构建编译包及其依赖, 但是不会安装
 
-```
+```bash
 go build [-o output] [-i] [build flags] [packages]
 ```
 
 - 如果要构建的参数是单个目录中的 `.go` 列表文件, 则 build 会将其视为指定单个程序包的源文件列表
 - 编译软件包时, build 会忽略以 `_test.go` 结尾的文件
-- 编译单个 main 包时, build 将生成的可执行文件输出为第一个源代码文件名或源代码目录名文件(如 `go build ed.go rx.go` 生成 `ed`/`ed.exe`, `go build unix/sam` 生成 `sam`/`sam.exe`). 编译 Windows 系统可以执行文件时, 会添加 ".exe" 后缀 
+- 编译单个 main 包时, build 将生成的可执行文件输出为第一个源代码文件名或源代码目录名文件(如 `go build ed.go rx.go` 生成 `ed`/`ed.exe`, `go build unix/sam` 生成 `sam`/`sam.exe`). 编译 Windows 系统可以执行文件时, 会添加 ".exe" 后缀
 - 编译多个软件包或单个非 main 软件包时, build 会编译软件包, 但是会丢弃生成的对象. 仅用作检查是否可以构建软件包
 
 标志 | 作用
@@ -86,24 +85,25 @@ go build [-o output] [-i] [build flags] [packages]
 `-n` | 打印命令, 但不运行
 `-p n` | 可以并行运行的程序数量, 默认是可用的 CPU 数量
 `-race` | 启用数据竞争检测, 仅支持 linux/amd64, freebsd/amd64, darwin/amd64 和 windows/amd64
-`-msan` | 
+`-msan` |
 `-v` | 在编译时打印软件包名称
 `-work` | 打印临时工作目录名, 退出时不要删除它
 `-x` | 打印命令
-`-asm` | 
+`-asm` |
 `-buildmode mode` | 构建的模式选择, 可选模式为 `archive`, `c-archive`, `c-shared`, `default`, `shared`, `exe`, `pie`, `plugin`. 详见 `go help buildmode`
 `-compiler name` | 编译器的名称 如 `runtime.Compiler`(gccgo 或 gc)
 `-mod mode` | 模块的下载模式: readonly 或 vendor
 `-pkgdir dir` | 从指定目录安装和加载所有软件包, 在非标准配置进行构建时, 使用 -pkgdir 将生成的软件包保存在单独的位置
 `-tags tag,list` | 以逗号分割的构建标记列表
 
-# `go clean`
+## `go clean`
 
 从软件包源目录中删除目标文件
 
-```
+```bash
 go clean [clean flags] [build flags] [packages]
 ```
+
 go 命令在临时目录中构建大多数对象, 因此 `go clean` 主要与其它工具或手动调用 `go build` 留下的对象文件有关
 
 标志 | 解释
@@ -115,10 +115,11 @@ go 命令在临时目录中构建大多数对象, 因此 `go clean` 主要与其
 `-cache` | 删除所有 `go build` 缓存
 `-modcache` | 删除所有模块下载缓存, 包括源代码的版本依赖
 
-# `go doc`
+## `go doc`
 
 显示帮助文档
-```
+
+```bash
 go doc [-u] [-c] [package|[package.]symbol[.methodOrField]]
 ```
 
@@ -132,11 +133,11 @@ go doc [-u] [-c] [package|[package.]symbol[.methodOrField]]
 `-src` | 显示该链接的完整源代码
 `-u` | 显示未导出以及已导出符号, 方法和字段的文档
 
-# `go env`
+## `go env`
 
 输出 Go 环境变量信息
 
-```
+```bash
 go env [-json] [-u] [-w] [var ...]
 ```
 
@@ -148,19 +149,19 @@ go env [-json] [-u] [-w] [var ...]
 `-u <arg> ...` | 会取消 `go env -w NAME=VALUE` 设置的指定环境变量
 `-w <NAME=VALUE> ...` | 修改默认环境变量值(不能新添自定义环境变量)
 
-# `go fix`
+## `go fix`
 
 更新软件包以使用新的 API
 
-```
+```bash
 go fix [packages]
 ```
 
-# `go fmt`
+## `go fmt`
 
 格式化 go 代码包, 在指定包中运行 `gofmt -l -w`. 返回已修改文件的名称
 
-```
+```bash
 go fmt [-n] [-x] [packages]
 ```
 
@@ -169,9 +170,9 @@ go fmt [-n] [-x] [packages]
 `-n` | 只打印将要执行的命令
 `-x` | 打印并执行命令
 
-# `go get`
+## `go get`
 
-```
+```bash
 go get [-d] [-f] [-t] [-u] [-v] [-fix] [-insecure] [build flags] [packages]
 ```
 
@@ -195,11 +196,11 @@ checkout 新的包时, get 将创建目录 `GOPATH/src/<import-path>`. 如果 `G
 
 get 永远不会 checkout 或更新保存在 vendor 目录中的代码
 
-# `go install`
+## `go install`
 
 编译并安装指定的软件包
 
-```
+```bash
 go install [-i] [build flags] [packages]
 ```
 
@@ -215,7 +216,7 @@ go install [-i] [build flags] [packages]
 
 列出指定包或其子包包名，每行一个
 
-```
+```bash
 go list [-f format] [-json] [-m] [list flags] [build flags] [packages]
 ```
 
@@ -231,14 +232,14 @@ go list [-f format] [-json] [-m] [list flags] [build flags] [packages]
 `-test` | 列出指定的包及其测试二进制文件, 以将测试二进制文件的确切构造传达给代码分析工具
 `-m` | 列出模块 , 而不是包
 
-最常用的标志是 `-f` , 它根据包和模块定义信息, 按照指定格式输出所需信息. 如 `'\{\{ .ImportPath }}'`(删除反斜线) 显示包的导入路径(默认), `'\{\{ .Name }}'`(删除反斜线)显示包的名称等. 
+最常用的标志是 `-f` , 它根据包和模块定义信息, 按照指定格式输出所需信息. 如 `'\{\{ .ImportPath }}'`(删除反斜线) 显示包的导入路径(默认), `'\{\{ .Name }}'`(删除反斜线)显示包的名称等.
 
 包的详细定义信息见如下结构体
 
 ```go
 type Package struct {
         Dir           string   // 包含包源代码的目录
-        ImportPath    string   // 包在目录中的导入路径, `go list` 的默认输出格式 
+        ImportPath    string   // 包在目录中的导入路径, `go list` 的默认输出格式
         ImportComment string   // package语句的import注释中的路径
         Name          string   // 包名称
         Doc           string   // 包文档字符串
@@ -315,15 +316,15 @@ type Module struct {
 }
 
 type ModuleError struct {
-	Err string // 错误信息
+    Err string // 错误信息
 }
 ```
 
-# `go mod`
+## `go mod`
 
 提供对模块的操作
 
-```
+```bash
 go mod <command> [arguments]
 ```
 
@@ -340,11 +341,11 @@ vendor | 将依赖复制到 vendor 目录下
 verify | 校验依赖
 why | 解释为什么需要软件包或模块
 
-## `download`
+### `download`
 
 下载指定模块, 这些模块是主模块依赖的模块, 也可以是 `path@version` 形式的模块查询. 如果没有参数, 则下载主模块的所有依赖.
 
-```
+```bash
 go mod download [-json] [modules]
 ```
 
@@ -368,7 +369,7 @@ type Module struct {
 }
 ```
 
-## `edit`
+### `edit`
 
 提供了一个用于编辑 go.mod 的命令行界面, 主要供工具或脚本使用. 它只读取 go.mod, 不查找所涉及的模块信息.
 
@@ -392,7 +393,7 @@ type Module struct {
 }
 
 type GoMod struct {
-	Module  Module
+    Module  Module
     Go      string
     Require []Require
     Exclude []Module
@@ -411,17 +412,17 @@ type Replace struct {
 }
 ```
 
-## `init`
+### `init`
 
 初始化一个新的 go.mod 保存在当前目录, 实际上是创建了一个以当前目录为 `/` 的新模块. go.mod 文件必须不存在
 
-```
+```bash
 go mod init [module]
 ```
 
 ### `tidy`
 
-```
+```bash
 go mod tidy [-v]
 ```
 
@@ -431,7 +432,7 @@ go mod tidy [-v]
 
 ## `vendor`
 
-```
+```bash
 go mod vendor [-v]
 ```
 
@@ -439,11 +440,11 @@ go mod vendor [-v]
 
 `-v` 标志将已 vendored 模块和包因为到标准错误
 
-# `go run`
+## `go run`
 
 编译并运行指定的 Go 主程序包
 
-```
+```bash
 go run [build flags] [-exec xprog] package [arguments...]
 ```
 
@@ -451,12 +452,11 @@ go run [build flags] [-exec xprog] package [arguments...]
 
 默认情况下, `go run` 直接运行编译的二进制文件. 如果添加 `-exec` 标志, 那么 `go run` 使用 xprog 调用二进制文件. 如果未提供 `-exec` 标志, 则 GOOS 或 `GOARCH` 与系统不同的情况下, 可以找到名为 `go_$GOOS_$GOARCH_exec` 的程序文件
 
-
-# `go test`
+## `go test`
 
 自动测试由导入路径命名的包, 输出测试结果的摘要信息
 
-```
+```bash
 go test [build/test flags] [packages] [build/test flags & test binary flags]
 ```
 
@@ -469,7 +469,7 @@ go test 有两种不同的运行模式:
 - 本地目录模式: 在没有指定 package 包参数的情况下调用 go test 采用的模式. 在此模式下, go test 编译当前目录中包的源码和测试文件, 然后运行生成的二进制测试文件. 在此模式下, 将禁用缓存. 测试完成后, 输出测试的摘要信息, 包括测试状态(ok 或 FAIL), 包名和测试时间
 - 包列表模式: 在显示指定 package 包参数的情况下调用 go test 采用的模式. 在此模式下, go test 编译并测试命令行中列出的每个包, 如果测试通过, 则只输出 ok 摘要行. 否则, 输出完整的测试输出.
 
-在包列表模式下, go test 缓存成功的测试结果, 避免运行不必要的重复测试. 
+在包列表模式下, go test 缓存成功的测试结果, 避免运行不必要的重复测试.
 
 标志 | 解释
 :---: | :---

@@ -3,7 +3,6 @@ title: go 学习笔记之 os 包
 date: 2020/05/04
 tags:
   - go
-  - 学习笔记
 categories:
   - go
 abbrlink: 45949
@@ -12,7 +11,7 @@ description: 本文章主要包含 Go os 包及其内置类型和方法的使用
 
 `os` 包提供了与平台无关的接口以便于为我们提供对系统进行操作函数.导入方式为 `import "os"`
 
-# 常用类型定义
+## 常用类型定义
 
 ```go
 // 文件类型掩码封装
@@ -34,7 +33,7 @@ type FileInfo interface {
 }
 ```
 
-# 常用常量及变量
+## 常用常量及变量
 
 以下提供了 `os` 包中的常用常量,包含文件的类型权限,属性等
 
@@ -93,11 +92,11 @@ var (
 )
 ```
 
-# 常用函数
+## 常用函数
 
-## `os` 包函数
+### `os` 包函数
 
-### 系统相关
+#### 系统相关
 
 ```go
 // 返回系统主机名及可能发生的错误
@@ -118,7 +117,7 @@ func Getpid() int  // 返回当前程序的进程ID
 func Getppid() int  // 返回当前进程的父进程ID
 ```
 
-### 文件相关
+#### 文件相关
 
 ```go
 // 返回描述指定的文件的 FileInfo 及可能发生的错误
@@ -162,7 +161,7 @@ func Symlink(oldname, newname string) error
 func TempDir() string
 ```
 
-## `File` 结构体方法
+### `File` 结构体方法
 
 ```go
 // 返回文件的名称
@@ -196,9 +195,9 @@ func (f *File) Sync() (err error)
 func (f *File) Close() error
 ```
 
-# 示例
+## 示例
 
-## 文件读写示例
+### 文件读写示例
 
 ```go
 import (

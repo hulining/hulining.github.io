@@ -3,7 +3,6 @@ title: go 学习笔记之 sql 包
 date: 2020/05/10
 tags:
   - go
-  - 学习笔记
 categories:
   - go
 abbrlink: 6060
@@ -22,7 +21,7 @@ import _ "github.com/go-sql-driver/mysql"
 db, err := sql.Open("mysql", "user:password@/dbname")
 ```
 
-# 常用类型定义
+## 常用类型定义
 
 ```go
 // 列的类型
@@ -88,7 +87,7 @@ type TxOptions struct {
 }
 ```
 
-# 常量及变量
+## 常量及变量
 
 ```go
 // 隔离级别
@@ -104,9 +103,9 @@ const (
 )
 ```
 
-# 常用函数
+## 常用函数
 
-## `sql` 包函数
+### `sql` 包函数
 
 ```go
 // 返回已注册的驱动列表
@@ -123,7 +122,7 @@ func Open(driverName, dataSourceName string) (*DB, error)
 func OpenDB(c driver.Connector) *DB
 ```
 
-## `ColumnType` 结构体方法
+### `ColumnType` 结构体方法
 
 `ColumnType` 定义了列的类型,它包含以下方法
 
@@ -141,7 +140,8 @@ func (ci *ColumnType) Nullable() (nullable, ok bool)
 // 返回适合使用 Rows.Scan 进行扫描的 Go 反射类型
 func (ci *ColumnType) ScanType() reflect.Type
 ```
-## `DB` 结构体方法
+
+### `DB` 结构体方法
 
 `DB` 定义了数据库的实例对象.
 
@@ -177,7 +177,7 @@ func (db *DB) SetMaxOpenConns(n int)
 func (db *DB) Stats() DBStats
 ```
 
-## `Rows` 结构体方法
+### `Rows` 结构体方法
 
 ```go
 // 返回列的信息,如类型,长度,是否可为空.
@@ -192,7 +192,7 @@ func (rs *Rows) NextResultSet() bool
 func (rs *Rows) Scan(dest ...interface{}) error
 ```
 
-## `Stmt` 结构体方法
+### `Stmt` 结构体方法
 
 ```go
 // 关闭
@@ -207,7 +207,7 @@ func (s *Stmt) QueryRow(args ...interface{}) *Row
 func (s *Stmt) QueryRowContext(ctx context.Context, args ...interface{}) *Row
 ```
 
-## `Tx` 结构体方法
+### `Tx` 结构体方法
 
 ```go
 // 提交事务
@@ -231,7 +231,7 @@ func (tx *Tx) Stmt(stmt *Stmt) *Stmt
 func (tx *Tx) StmtContext(ctx context.Context, stmt *Stmt) *Stmt
 ```
 
-# 示例
+## 示例
 
 ```go
 import (

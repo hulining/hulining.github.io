@@ -14,7 +14,7 @@ fmt 包采用占位符的方式实现了格式化的 I/O.主要占位符如下:
 
 ```go
 type User struct {
-	Name string
+    Name string
 }
 user := User{Name: "name"}
 ```

@@ -22,6 +22,7 @@ resp, err := http.PostForm("http://example.com/form",
 // 客户端必须显式关闭响应体
 defer resp.Body.Close()
 ```
+
 ```go
 // 自定义 Client 实例对象,并使用该对象发送请求
 client := &http.Client{
@@ -59,6 +60,7 @@ http.HandleFunc("/bar", func(w http.ResponseWriter, r *http.Request) {
 })
 log.Fatal(http.ListenAndServe(":8080", nil))
 ```
+
 ```go
 s := &http.Server{
     Addr:           ":8080",
@@ -72,9 +74,9 @@ log.Fatal(s.ListenAndServe())
 
 `http` 包的 `Transport` 和 `Server` 类型对于简单的配置都自动支持 HTTP/2 协议.要使用更为复杂的 HTTP/2 协议,请直接导入 `golang.org/x/net/http2`,并使用其 `ConfigureTransport` 或 `ConfigureServer` 类型的相关函数.
 
-# 常用类型定义
+## 常用类型定义
 
-```
+```go
 // 客户端类型结构体定义,用于自定义客户端
 type Client struct {
     // 发出 HTTP 请求机制.默认使用 `DefaultTransport`
@@ -109,7 +111,7 @@ type Request struct {
     TransferEncoding []string
     Close bool  // 发送请求后是否关闭 TCP 连接
     Host string  // 请求主机,如果为空,则使用 URL.Host 的值
-    
+
     // 以下三个属性需要调用`ParseForm` 或 `ParseMultipartForm` 后才可获取属性值
     Form url.Values  // 已解析的表单数据,包含 URL 参数,PATCH,POST,PUT 表单数据.
     PostForm url.Values // 已解析的表单数据,包含 PATCH,POST,PUT 表单数据
@@ -138,10 +140,10 @@ type Server struct {
     Addr string  // HTTP 服务监听的地址,默认为":80"
     Handler Handler // 调用处理请求的程序,默认为 `http.DefaultServeMux`
     TLSConfig *tls.Config  // TLS 相关配置
-    ReadTimeout time.Duration  // 读取整个请求的超时时间 
+    ReadTimeout time.Duration  // 读取整个请求的超时时间
     ReadHeaderTimeout time.Duration // 读取请求头的超时时间
     WriteTimeout time.Duration  // 响应的超时时间
-    IdleTimeout time.Duration // 启动 keep-alived 后,等待下一个请求的超时时间,
+    IdleTimeout time.Duration // 启动 keep-alived 后,等待下一个请求的超时时间
     MaxHeaderBytes int // 控制请求头的最大字节数
     ConnState func(net.Conn, ConnState) // 客户端连接状态更改时的回调函数
     ErrorLog *log.Logger // 错误日志记录器.默认为 log 包提供的标准 logger
@@ -149,7 +151,7 @@ type Server struct {
 }
 ```
 
-# 常用常量及变量
+## 常用常量及变量
 
 ```go
 // 常见 HTTP 响应状态码定义(仅包含常见部分),详见 https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
@@ -198,7 +200,7 @@ var DefaultTransport RoundTripper = &Transport{
 var DefaultServeMux = &defaultServeMux
 ```
 
-# 常用函数
+## 常用函数
 
 ## `http` 包函数
 
@@ -242,9 +244,9 @@ func ServeFile(w ResponseWriter, r *Request, name string)
 func SetCookie(w ResponseWriter, cookie *Cookie)
 ```
 
-## `Client` 结构体方法
+### `Client` 结构体方法
 
-``go
+```go
 // 关闭等待连接
 func (c *Client) CloseIdleConnections()
 // 使用配置的客户端发送请求并返回响应
@@ -271,8 +273,9 @@ func (h Header) Write(w io.Writer) error
 func (h Header) WriteSubset(w io.Writer, exclude map[string]bool) error
 ```
 
-## `Request` 结构体方法
-```
+### `Request` 结构体方法
+
+```go
 func (r *Request) AddCookie(c *Cookie)  // 添加 cookie
 func (r *Request) BasicAuth() (username, password string, ok bool) // 返回请求基本认证中的用户名密码
 func (r *Request) Cookie(name string) (*Cookie, error) // 返回指定名称的 Cookie
@@ -287,13 +290,15 @@ func (r *Request) SetBasicAuth(username, password string)  // 设置基本认证
 func (r *Request) UserAgent() string // 返回请求的客户端代理
 func (r *Request) Write(w io.Writer) error // 将请求写入文件
 ```
-## `Response` 结构体方法
-```
+
+### `Response` 结构体方法
+
+```go
 func (r *Response) Cookies() []*Cookie  // 响应的 cookie
 func (r *Response) Location() (*url.URL, error) // 返回响应的`Location` 响应头
 ```
 
-## `ServeMux` 结构体方法
+### `ServeMux` 结构体方法
 
 ```go
 // 注册处理请求函数
@@ -302,8 +307,10 @@ func (mux *ServeMux) HandleFunc(pattern string, handler func(ResponseWriter, *Re
 // 返回给定请求的处理程序
 func (mux *ServeMux) Handler(r *Request) (h Handler, pattern string)
 ```
-## `Server` 结构体方法
-```
+
+### `Server` 结构体方法
+
+```go
 // 立即关闭服务
 func (srv *Server) Close() error
  // 监听并启动服务
@@ -320,9 +327,9 @@ func (srv *Server) SetKeepAlivesEnabled(v bool)
 func (srv *Server) Shutdown(ctx context.Context) error
 ```
 
-# 示例
+## 示例
 
-## 文件服务器
+### 文件服务器
 
 ```go
 import "net/http"
@@ -336,7 +343,7 @@ func main() {
 }
 ```
 
-## 调用 `PostForm` 发送请求及数据
+### 调用 `PostForm` 发送请求及数据
 
 ```go
 import (
@@ -360,7 +367,7 @@ func main() {
 
 ## `Handle` 与 `HandleFunc`
 
-```
+```go
 import (
     "io"
     "net/http"
@@ -379,8 +386,7 @@ func main() {
 }
 ```
 
-
-## 自定义`Handler`
+### 自定义`Handler`
 
 ```go
 import (

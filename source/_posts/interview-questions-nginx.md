@@ -10,7 +10,7 @@ abbrlink:
 description: 总结整理常见 Nginx 面试题,以作备忘
 ---
 
-## Nginx 支持的负载均衡算法有哪些?分别有什么应用场景?
+## Nginx 支持的负载均衡算法有哪些?分别有什么应用场景
 
 - round robin 轮询
 
@@ -101,7 +101,7 @@ upstream bakend {
 // 可选的 `two` 参数随机选择两个后端服务器,然后使用指定的 `method` 选择一个后端服务器.默认方法是 `least_conn`,将请求传递给活动连接数最少的服务器
 ```
 
-## Nginx location 匹配的顺序是什么?
+## Nginx location 匹配的顺序是什么
 
 Nginx location 按照如下优先级顺序进行匹配
 

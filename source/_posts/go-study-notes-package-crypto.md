@@ -3,14 +3,13 @@ title: go 学习笔记之 crypto 包
 date: 2020/05/05
 tags:
   - go
-  - 学习笔记
 categories:
   - go
 abbrlink: 16535
 description: 本文章主要包含 Go crypto 包及其部分子包内置类型和方法的使用.crypto 包及其子包包含了通用加密算法的集合.
 ---
 
-# `crypto 包`
+## `crypto 包`
 
 crypto 包包含了通用加密算法的集合,提供了一些加密过程中基本对象的封装或基本接口的定义.导入方式为 `import "crypto"`.
 
@@ -20,7 +19,7 @@ crypto 包包含了通用加密算法的集合,提供了一些加密过程中基
 - 非对加解密: 加解密使用不同的密钥,其中的代表就是 RSA
 - 签名算法: 主要用于验证,防止信息被修改,多用于文件校验,数字签名,鉴权协议的等,其中算法主要有 MD5,SHA1,HMAC 等
 
-## 类型定义
+### 类型定义
 
 它主要包含如下加密过程中的基本类型定义
 
@@ -60,7 +59,7 @@ type SignerOpts interface {
 }
 ```
 
-## 常量及变量
+### 常量及变量
 
 ```go
 const (
@@ -86,7 +85,7 @@ const (
 )
 ```
 
-## 子包
+### 子包
 
 它包含众多子包,如下
 
@@ -111,18 +110,18 @@ tls | 部分实现了 RFC 5246 中指定的 TLS 1.2 和 RFC 8446 中指定的 TL
 x509 | 解析 X.509 编码的密钥和证书
 x509/pkix | 包含用于X.509证书,CRL 和 OCSP 的 ASN.1 解析和序列化的共享低级结构
 
-# `crypto/aes`
+## `crypto/aes`
 
 aes 包实现了 AES 对称加密.导入方式为 `import "crypto/aes"`
 
-## 常用常量及变量
+### 常用常量及变量
 
 ```go
 // AES 块大小.以字节为单位
 const BlockSize = 16
 ```
 
-## 常用方法
+### 常用方法
 
 ```go
 // 创建并返回新的 `cipher.Block`
@@ -130,11 +129,11 @@ const BlockSize = 16
 func NewCipher(key []byte) (cipher.Block, error)
 ```
 
-# `crypto/cipher`
+## `crypto/cipher`
 
 cipher 包实现标准的分组加密模式(CBC,ECB 等),可以将其包装在低级分组加密实现中.导入方式为 `import "crypto/cipher"`
 
-## 常用类型定义
+### 常用类型定义
 
 ```go
 // AEAD 加密模式接口,对关联数据进行身份验证加密
@@ -190,9 +189,9 @@ type StreamWriter struct {
 }
 ```
 
-## 常用方法
+### 常用方法
 
-### `cipher` 包方法
+#### `cipher` 包方法
 
 ```go
 // 返回以GCM模式下以标准随机数长度(12)包装的 128 位 AEAD 分组加密模式
@@ -223,9 +222,10 @@ func NewCTR(block Block, iv []byte) Stream
 func NewOFB(b Block, iv []byte) Stream
 ```
 
-## 示例
+### 示例
 
-### AES GCM 模式认证加密解密
+#### AES GCM 模式认证加密解密
+
 ```go
 import (
     "crypto/aes"
@@ -298,7 +298,7 @@ func main() {
 }
 ```
 
-### AES CBC 模式加密解密
+#### AES CBC 模式加密解密
 
 ```go
 import (
@@ -381,20 +381,23 @@ func main() {
     fmt.Println("解密结果: ", plaintext2)
 }
 ```
+
 CFB 模式加密用法与 CBC 加密模式用法基本一致,在创建 `blockMode` 时调用对应的方法即可
 
-# `crypto/md5`
+## `crypto/md5`
 
 md5 包实现了 RFC 1321 中定义的 MD5 哈希算法.导入方式 `import "crypto/md5"`. `sha1`,`sha256`,`sha512` 变量定义与相关方法与 `md5` 类似,不再赘述
 
-## 常量及变量
+### 常量及变量
+
 ```go
 // MD5的块大小,以字节为单位
 const BlockSize = 64
 // MD5 校验和的大小
 const Size = 16
 ```
-## 常用方法
+
+### 常用方法
 
 ```go
 // 返回 `hash.Hash`,用于计算 MD5校验和.
@@ -403,7 +406,7 @@ func New() hash.Hash
 func Sum(data []byte) [Size]byte
 ```
 
-## 示例
+### 示例
 
 ### 计算字符串的校验和
 
@@ -456,18 +459,18 @@ func main() {
 
 ```
 
-# `crypto/rand`
+## `crypto/rand`
 
 rand 包实现了加密安全的随机数生成器.它在包中定义了全局唯一的 `var Reader io.Reader` 变量提供了以下方法用于生成随机数
 
-## 常量及变量
+### 常量及变量
 
 ```go
 // 加密安全的随机数生成其的全局共享实例
 var Reader io.Reader
 ```
 
-## 函数
+### 函数
 
 ```go
 // 返回范围为 [0,max) 的随机整数值
@@ -477,7 +480,7 @@ func Int(rand io.Reader, max *big.Int) (n *big.Int, err error)
 func Read(b []byte) (n int, err error)
 ```
 
-## 示例
+### 示例
 
 ```go
 // 创建随机数的切片,使用 `io.ReadFull` 将 rand.Reader 产生的随机数写入 nonce 中
@@ -487,13 +490,13 @@ if _, err := io.ReadFull(rand.Reader, nonce); err != nil {
 }
 ```
 
-# `crypto/rsa`
+## `crypto/rsa`
 
 rsa 实现了 RSA 非对称加密算法,该算法通过生成密钥对实现加密和加密,公钥文件用于加密,私钥用于解密.
 
 RSA 是一个基本操作,在此程序包中用于实现公钥加密或公钥签名.此包中的 RSA 操作未使用固定时间算法实现.
 
-## 常量及变量
+### 常量及变量
 
 ```go
 const (
@@ -504,7 +507,7 @@ const (
 )
 ```
 
-## 类型定义
+### 类型定义
 
 ```go
 // RSA 私钥的结构体定义,可通过 `rsa.GenerateKey` 生成对象
@@ -547,7 +550,7 @@ type PSSOptions struct {
 }
 ```
 
-## 常用方法
+### 常用方法
 
 ### `rsa` 包函数
 
@@ -572,7 +575,7 @@ func VerifyPKCS1v15(pub *PublicKey, hash crypto.Hash, hashed []byte, sig []byte)
 func SignPSS(rand io.Reader, priv *PrivateKey, hash crypto.Hash, hashed []byte, opts *PSSOptions) ([]byte, error)
 ```
 
-### `PrivateKey` 结构体方法
+#### `PrivateKey` 结构体方法
 
 `PrivateKey` 结构体实现了 `crypto.Decrypter` 和 `crypto.Signer` 接口.具有以下方法
 
@@ -591,7 +594,7 @@ func (priv *PrivateKey) Sign(rand io.Reader, digest []byte, opts crypto.SignerOp
 func (priv *PrivateKey) Validate() error
 ```
 
-## 示例
+### 示例
 
 ### 对数据进行加密解密
 
@@ -629,7 +632,7 @@ func main() {
 }
 ```
 
-### 对数据进行签名认证
+#### 对数据进行签名认证
 
 ```go
 import (

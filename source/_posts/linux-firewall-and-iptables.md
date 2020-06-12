@@ -43,7 +43,7 @@ Linux 防火墙还内置了 5 条规则链,用于表示数据包传输的路径,
 2. 如果数据包就是进入本机的,它将会到达 `INPUT` 链.`INPUT` 链规则接受该数据包后,相关进程就会收到它,进行处理后发送响应数据包,响应数据包会经过 `OUTPUT` 链,然后到 `POSTROUTING` 链后流出本机.
 3. 如果数据包是要转发出去的,且内核允许转发(通过 `echo 1 > /proc/sys/net/ipv4/ip_forward` 开启).数据包就会经过 `FORWARD` 链,到达 `POSTROUTING` 链后流出本机
 
-![数据包流向](https://raw.githubusercontent.com/hulining/draw.io-images/master/linux-packet-flow.svg)
+![数据包流向](https://raw.githubusercontent.com/hulining/draw.io-images/master/packet-flow.svg)
 
 ## 管理 iptables 规则
 

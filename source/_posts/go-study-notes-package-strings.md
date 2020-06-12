@@ -3,7 +3,6 @@ title: go 学习笔记之 strings 包
 date: 2020/05/04
 tags:
   - go
-  - 学习笔记
 categories:
   - go
 abbrlink: 33042
@@ -12,7 +11,7 @@ description: 本文章主要包含 Go strings 包及其内置类型和方法的�
 
 `strings` 包实现了用于操作字符的简单函数.导入方式为 `import "strings"`
 
-# 常用类型定义
+## 常用类型定义
 
 ```go
 // 从字符串读取数据的封装,实现了 `io.Reader`,`io.Seeker`,`io.ReaderAt`,`io.WriterTo``io.ByteScanner`,`io.RuneScanner` 接口
@@ -26,9 +25,9 @@ type Replacer struct {
 }
 ```
 
-# 常用函数
+## 常用函数
 
-# `strings` 包常用函数
+## `strings` 包常用函数
 
 `strings` 包中提供了如下常用函数
 

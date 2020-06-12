@@ -3,7 +3,6 @@ title: go 学习笔记之 io 包
 date: 2020/05/05
 tags:
   - go
-  - 学习笔记
 categories:
   - go
 abbrlink: 6060
@@ -12,7 +11,7 @@ description: '本文章主要包含 Go io 包及其内置类型和方法的使�
 
 `io` 包提供了对 IO 原语的基本接口. 它主要封装了一些已有的实现(如 os 包中的),并将这些抽象为使用性的功能和一些其它相关接口.
 
-# 常用类型定义
+## 常用类型定义
 
 ```go
 // 读相关接口
@@ -77,7 +76,7 @@ type Seeker interface {
 }
 ```
 
-# 常用常量及变量
+## 常用常量及变量
 
 ```go
 const (
@@ -90,9 +89,9 @@ const (
 var EOF = errors.New("EOF")  
 ```
 
-# 常用方法
+## 常用方法
 
-# `io` 包方法
+## `io` 包方法
 
 ```go
 // 将 src 的数据拷贝到 dst.返回拷贝的字节数和可能发生的错误
@@ -109,12 +108,12 @@ func ReadAtLeast(r Reader, buf []byte, min int) (n int, err error)
 func ReadFull(r Reader, buf []byte) (n int, err error)
 //  将字符串 s 写入 w 中.返回写入的字节长度及可能发生的错误
 //  如果 w 实现了 StringWriter 接口, `w.WriteString()` 将直接被调用.参见 https://github.com/golang/go/blob/master/src/io/io.go#L293
-func WriteString(w Writer, s string) (n int, err error) 
+func WriteString(w Writer, s string) (n int, err error)
 ```
 
-# 示例
+## 示例
 
-拷贝文件
+- 拷贝文件
 
 ```go
 import (

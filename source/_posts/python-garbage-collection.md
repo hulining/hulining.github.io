@@ -2,9 +2,9 @@
 title: Python 垃圾回收
 date: 2020/06/09
 tags:
+  - 面试题
   - Python
   - 垃圾回收
-  - 面试
 categories:
   - Python
 abbrlink: 

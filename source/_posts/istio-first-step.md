@@ -2,10 +2,9 @@
 title: 初识istio
 date: 2020/04/03
 tags:
-  - istio
   - 读书笔记
+  - istio
 categories:
-  - 云原生应用
   - istio
 abbrlink: 43254
 description: 本文章为《云原生服务网格Istio：原理、实践、架构与源码解析》第 1-2 章读书笔记.
@@ -13,11 +12,11 @@ description: 本文章为《云原生服务网格Istio：原理、实践、架�
 
 本文章为[《云原生服务网格Istio：原理、实践、架构与源码解析》](https://item.jd.com/12538407.html)第 1-2 章读书笔记.如果在学习过程中有理解不准确的地方,请以原书为准.
 
-# istio 简介
+## istio 简介
 
 [Istio](https://istio.io/) 是一个与 [Kubernetes](https://kubernetes.io/) 紧密结合的适用于云原生场景的 Service Mesh 形态的用于服务治理的开放平台
 
-## istio 可以做什么
+### istio 可以做什么
 
 - 自动通过服务发现获取服务实例列表,并根据负载均衡策略选择一个服务实例
 - 对服务双方启用双向认证和通道加密
@@ -26,9 +25,9 @@ description: 本文章为《云原生服务网格Istio：原理、实践、架�
 - 将一定特征的服务重定向,实现灰度发布
 - 记录调用链,进行分布式追踪.根据访问数据形成完整的应用访问拓扑
 
-# istio 架构概述
+## istio 架构概述
 
-## istio 工作机制
+### istio 工作机制
 
 ![istio 工作机制和架构](https://raw.githubusercontent.com/hulining/hulining.github.io/hexo/source/_posts/images/istio-first-step/istio_working_mechanism_and_architecture.jpg)
 
@@ -42,7 +41,7 @@ description: 本文章为《云原生服务网格Istio：原理、实践、架�
 - `策略执行`: 在进行服务访问时,通过Mixer连接后端服务来控制服务间的访问,判断对访问是放行还是拒绝
 - `外部访问`: 在网格的入口处有一个 Envoy 扮演入口网关的角色
 
-## istio 服务模型
+### istio 服务模型
 
 istio 服务模型与 kubernetes 中服务模型对应关系如下
 
@@ -52,7 +51,7 @@ service | service
 服务版本 | Deployment,使用 app 和 version 标签区分不同服务的不同版本
 服务实例 | Endpoint
 
-## istio 主要组件
+### istio 主要组件
 
 > istio-pilot 服务发现和服务治理
 
@@ -75,7 +74,7 @@ pilot 提供各种服务发现的 adapter 实现服务发现机制,并将其构�
 当网格中的两个服务间有调用发生时,服务的代理 Envoy 就会上报遥测数据给 istio-telemetry 服务组件,istio-telemetry 服务组件则根据配置将生成访问 Metric 等数据分发给后端的遥测服务
 
 - 使用 policy 服务组件管理网络策略
- 
+
 数据面在转发服务的请求前调用 istio-policy 的 Check 接口检查服务间通信的策略,然后根据配置将请求转发到对应的 adapter 进行检查,给代理返回允许访问还是拒绝
 
 > istio-citadel 安全中心
@@ -100,9 +99,9 @@ istio-sidecar-injector 主要负责自动注入,在创建 Pod 时自动调用 is
 
 istio-ingressgateway 是服务网格入口处的网关,从网格外访问网格内的服务就是通过这个组件进行的.该组件是一个 Loadbalancer 类型的 Service,并开放了一组端口,用于外部访问.
 
-# 非侵入的流量治理
+## 非侵入的流量治理
 
-## 原理
+### 原理
 
 > 目标
 
@@ -147,4 +146,4 @@ Istio 中通过 Ingress Gateway 访问网格内的服务,做四层到六层的�
 - 外部接入服务治理
 
 Istio 通过 ServiceEntry 资源对象将网格外的服务注册到网格上,然后像对网格内的普通服务一样对网格外的服务访问进行治理.有时需
-要有一个专门的 Egress Gateway 来提供统一的出口网关
+要有一个专门的 Egress Gateway 来提供统一的出口网关.

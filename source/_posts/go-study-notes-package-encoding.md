@@ -3,7 +3,6 @@ title: go 学习笔记之 encoding 包
 date: 2020/05/15
 tags:
   - go
-  - 学习笔记
 categories:
   - go
 abbrlink: 10194
@@ -17,7 +16,7 @@ description: '本文章主要包含 Go encoding 及其子包的内置函数的�
 - `encoding/pem` 实现了 PEM 数据编码,常用于 TLS 密钥和证书中
 - `encoding/xml` 实现了 xml 格式数据的编码与解码
 
-# `encoding/base64` 包
+## `encoding/base64` 包
 
 ## 常量及变量
 
@@ -38,7 +37,7 @@ var StdEncoding = NewEncoding(encodeStd)
 var URLEncoding = NewEncoding(encodeURL)
 ```
 
-## 常用函数
+### 常用函数
 
 - 包函数
 
@@ -66,26 +65,26 @@ func (enc Encoding) WithPadding(padding rune) *Encoding
 
 ```go
 import (
-	"encoding/base64"
-	"fmt"
+    "encoding/base64"
+    "fmt"
 )
 
 func main() {
-	dataForEncoding := []byte("string for encoding")
-	strAfterEncode := base64.StdEncoding.EncodeToString(dataForEncoding)
+    dataForEncoding := []byte("string for encoding")
+    strAfterEncode := base64.StdEncoding.EncodeToString(dataForEncoding)
     fmt.Println(strAfterEncode)
-    
+
     strForDecode := "c29tZSBkYXRhIHdpdGggACBhbmQg77u/"
-	dataAfterDecode, err := base64.StdEncoding.DecodeString(strForDecode)
-	if err != nil {
-		fmt.Println("error:", err)
-		return
-	}
-	fmt.Printf("%q\n", dataAfterDecode)
+    dataAfterDecode, err := base64.StdEncoding.DecodeString(strForDecode)
+    if err != nil {
+        fmt.Println("error:", err)
+        return
+    }
+    fmt.Printf("%q\n", dataAfterDecode)
 }
 ```
 
-# `encoding/json` 包
+## `encoding/json` 包
 
 `encoding/json` 实现了 json 格式数据的编码与解码.主要用于对象实例与 JSON 格式数据间的相互转换.
 
@@ -102,38 +101,37 @@ func Unmarshal(data []byte, v interface{}) error
 
 ```go
 import (
-	"encoding/json"
-	"fmt"
-	"os"
-)
+    "encoding/json"
+    "fmt"
+    "os"
+}
 
 type ColorGroup struct {
-	ID     int      `json:"id"`
-	Name   string   `json:"name"`
-	Colors []string `json:"colors"`
+    ID     int      `json:"id"`
+    Name   string   `json:"name"`
+    Colors []string `json:"colors"`
 }
 
 func main() {
-	group := ColorGroup{
-		ID:     1,
-		Name:   "Reds",
-		Colors: []string{"Crimson", "Red", "Ruby", "Maroon"},
-	}
-	b, err := json.MarshalIndent(group, "", "  ")
-	if err != nil {
-		fmt.Println("error:", err)
-	}
-	os.Stdout.Write(b)
-	fmt.Println()
-
-	color := []byte(`{"id":2,"name":"Greens","colors":["Crimson","Green"]}`)
-	var colorGroup ColorGroup
-	err = json.Unmarshal(color, &colorGroup)
-	fmt.Println(colorGroup)
+    group := ColorGroup{
+        ID:     1,
+        Name:   "Reds",
+        Colors: []string{"Crimson", "Red", "Ruby", "Maroon"},
+    }
+    b, err := json.MarshalIndent(group, "", "  ")
+    if err != nil {
+        fmt.Println("error:", err)
+    }
+    os.Stdout.Write(b)
+    fmt.Println()
+    color := []byte(`{"id":2,"name":"Greens","colors":["Crimson","Green"]}`)
+    var colorGroup ColorGroup
+    err = json.Unmarshal(color, &colorGroup)
+    fmt.Println(colorGroup)
 }
 ```
 
-# `encoding/pem` 包
+## `encoding/pem` 包
 
 `pem` 包实现了 PEM 数据编码,常用于 TLS 密钥和证书中
 
@@ -159,8 +157,7 @@ func Encode(out io.Writer, b *Block) error
 func Decode(data []byte) (p *Block, rest []byte)
 ```
 
-
-# `encoding/xml` 包
+## `encoding/xml` 包
 
 与 `encoding/json` 类似,`encoding/xml` 实现了 xml 格式数据的编码与解码.主要用于对象实例与 xml 格式数据间的相互转换.
 
@@ -177,36 +174,35 @@ func Unmarshal(data []byte, v interface{}) error
 
 ```go
 import (
-	"encoding/xml"
-	"fmt"
-	"os"
+    "encoding/xml"
+    "fmt"
+    "os"
 )
 
 type Address struct {
-	City, State string
+    City, State string
 }
 type Person struct {
-	XMLName   xml.Name `xml:"person"`
-	Id        int      `xml:"id,attr"`
-	FirstName string   `xml:"name>first"`
-	LastName  string   `xml:"name>last"`
-	Age       int      `xml:"age"`
-	Height    float32  `xml:"height,omitempty"`
-	Married   bool
-	Address
-	Comment string `xml:",comment"`
+    XMLName   xml.Name `xml:"person"`
+    Id        int      `xml:"id,attr"`
+    FirstName string   `xml:"name>first"`
+    LastName  string   `xml:"name>last"`
+    Age       int      `xml:"age"`
+    Height    float32  `xml:"height,omitempty"`
+    Married   bool
+    Address
+    Comment string `xml:",comment"`
 }
 
 func main() {
-	person := &Person{Id: 13, FirstName: "John", LastName: "Doe", Age: 42}
-	person.Comment = " Need more details. "
-	person.Address = Address{"Hanga Roa", "Easter Island"}
+    person := &Person{Id: 13, FirstName: "John", LastName: "Doe", Age: 42}
+    person.Comment = " Need more details. "
+    person.Address = Address{"Hanga Roa", "Easter Island"}
 
-	output, err := xml.MarshalIndent(person, "", "  ")
-	if err != nil {
-		fmt.Printf("error: %v\n", err)
-	}
-	os.Stdout.Write(output)
+    output, err := xml.MarshalIndent(person, "", "  ")
+    if err != nil {
+        fmt.Printf("error: %v\n", err)
+    }
+    os.Stdout.Write(output)
 }
 ```
-

@@ -3,7 +3,6 @@ title: go 学习笔记之函数
 date: 2020/04/30
 tags:
   - go
-  - 学习笔记
 categories:
   - go
 abbrlink: 47797
@@ -13,7 +12,7 @@ description: >-
 ---
 
 
-# 定义
+## 定义
 
 关键字 `func` 用于定义函数. Go 语言中函数有以下特点:
 
@@ -40,7 +39,7 @@ func FuncName(arg argType, args ...argsType) {
 }
 // 带返回值
 // returnName 可省略, 返回值可以为逗号 `,` 分割的多个值
-func FuncName() (returnName returnType) { 
+func FuncName() (returnName returnType) {
     // expression
 }
 // 匿名函数
@@ -54,13 +53,13 @@ FuncName(args)
 a(args)
 ```
 
-# 参数
+## 参数
 
 函数的参数可视作局部变量, 因此不能在相同层次定义同名变量
 
 > 函数的形参是指函数中定义的参数, 实参则是函数调用时所传递的参数.
 
-不管传入的参数是指针,引用类型,还是其它类型参数,都是值拷贝传递.区别在于是拷贝指针, 还是拷贝目标对象. 
+不管传入的参数是指针,引用类型,还是其它类型参数,都是值拷贝传递.区别在于是拷贝指针,还是拷贝目标对象.
 
 ```go
 import (
@@ -87,7 +86,7 @@ func main() {
 }
 ```
 
-## 不定长变参
+### 不定长变参
 
 变参本质上是一个切片,只能接收一到多个同类型的参数,且必须放在参数列表末尾
 
@@ -121,7 +120,7 @@ func main() {
 }
 ```
 
-# 返回值
+## 返回值
 
 - 有返回值的语句, 必须有明确的 `return` 终止语句
 - Go 函数支持多返回值模式
@@ -136,15 +135,16 @@ import (
 func test() (a int) {
     fmt.Println(a) // 输出 0
     a := 10        // 报错,No new variables on left side of :=, 表示 a 不是一个新定义的变量, 只能使用 = 对其赋值
-	return
+    return
 }
 ```
 
-# 匿名函数
+## 匿名函数
 
 除没有名字外, 匿名函数与普通函数完全相同. 匿名函数可以直接被调用, 保存到变量, 作为参数或返回值
 
 - 直接执行或赋值给变量
+
 ```go
 import (
     "fmt"
@@ -155,7 +155,7 @@ func main() {
     func (s string){
         fmt.Println(s)
     }("hello world")
-    
+
     // 赋值给变量
     add := func (x, y int) int {
         return x + y
@@ -229,19 +229,19 @@ import (
 )
 
 func test() []func() {
-	var s []func()
-	for i := 0; i < 2; i++ {
-		s = append(s, func() {
-			fmt.Println(&i, i)
-		})
-	}
-	return s
+    var s []func()
+    for i := 0; i < 2; i++ {
+        s = append(s, func() {
+        fmt.Println(&i, i)
+        })
+    }
+    return s
 }
 
 func main() {
-	for _, f := range test() {
-		f()
-	}
+    for _, f := range test() {
+        f()
+    }
 }
 // 输出如下:
 // 0xc000062090 2
@@ -258,20 +258,20 @@ import (
 )
 
 func test() []func() {
-	var s []func()
-	for i := 0; i < 2; i++ {
+    var s []func()
+    for i := 0; i < 2; i++ {
         x := i // x 在每次循环都重新定义
-		s = append(s, func() {
-			fmt.Println(&x, x)
-		})
-	}
-	return s
+        s = append(s, func() {
+            fmt.Println(&x, x)
+        })
+    }
+    return s
 }
 ```
 
-# `defer` 语句延迟调用
+## `defer` 语句延迟调用
 
-- `defer` 语句定义的语句直到当前函数执行结束前在被执行, 常用于资源释放, 解除绑定, 错误处理等操作. 多个 `defer` 语句会按照"先进后出"(FILO)的次序执行. 
+- `defer` 语句定义的语句直到当前函数执行结束前在被执行, 常用于资源释放, 解除绑定, 错误处理等操作. 多个 `defer` 语句会按照"先进后出"(FILO)的次序执行.
 - `defer` 语句定义的语句会被延迟调用, 其中传入的参数被复制并被缓存起来. 调用时使用的参数为 `defer` 语句定义时的参数值. 如
 
 ```go
@@ -280,14 +280,14 @@ import (
 )
 
 func main() {
-	x, y := 1, 2
-	defer func(a, b int) {
-		fmt.Println("传入 defer 语句中 a b 值分别为 ", a, b)  // 只有传入的参数保存了当时的状态
-		fmt.Println("不以 defer 语句参数方式输出 x y 值分别为", x, y)
+    x, y := 1, 2
+    defer func(a, b int) {
+        fmt.Println("传入 defer 语句中 a b 值分别为 ", a, b)  // 只有传入的参数保存了当时的状态
+        fmt.Println("不以 defer 语句参数方式输出 x y 值分别为", x, y)
     }(x, y)
-	x += 100
-	y += 100
-	fmt.Println("函数结束前 x y 值为", x, y)
+    x += 100
+    y += 100
+    fmt.Println("函数结束前 x y 值为", x, y)
 }
 // 输出如下:
 // 函数结束前 x y 值为 101 102
@@ -295,7 +295,7 @@ func main() {
 // 不以 defer 语句参数方式输出 x y 值分别为 101 102
 ```
 
-## 误用
+### 误用
 
 `defer` 语句在函数结束时才被执行. 不合理的使用方式会浪费资源.
 
@@ -308,16 +308,16 @@ import (
 )
 
 func main() {
-	for i := 0; i < 100; i++ {
-		path := fmt.Sprintf("log/%d.txt", i)
-		file, err := os.Open(path)
-		if err != nil {
-			fmt.Println(err)
-		}
+    for i := 0; i < 100; i++ {
+        path := fmt.Sprintf("log/%d.txt", i)
+        file, err := os.Open(path)
+        if err != nil {
+            fmt.Println(err)
+        }
         // 这个文件关闭操作在 main 函数结束时才会执行,而不是在当前循环结束后执行
-		defer file.Close()
+        defer file.Close()
         // do something...
-	}
+    }
 }
 ```
 
@@ -330,16 +330,16 @@ import (
 )
 
 func main() {
-	do := func(n int){
-		path := fmt.Sprintf("log/%d.txt", n)
-		file, err := os.Open(path)
-		if err != nil {
-			fmt.Println(err)
-		}
+    do := func(n int){
+        path := fmt.Sprintf("log/%d.txt", n)
+        file, err := os.Open(path)
+        if err != nil {
+            fmt.Println(err)
+        }
         // 这个文件关闭操作在该函数结束时调用
-		defer file.Close()
+        defer file.Close()
         // do something...
-	}
+    }
 
     for i := 0; i < 100; i++ {
         do()
@@ -347,7 +347,7 @@ func main() {
 }
 ```
 
-# 错误处理
+## 错误处理
 
 ## `error`
 
@@ -358,16 +358,16 @@ func main() {
 ```go
 // Go 内置的 error 接口
 type error interface {
-	Error() string
+    Error() string
 }
 
 // 自定义 Error
 type DivError struct {
-	s string
+    s string
 }
 
 func (divError *DivError) Error() string {
-	return divError.s
+    return divError.s
 }
 ```
 
@@ -377,7 +377,7 @@ func (divError *DivError) Error() string {
 err := errors.New("some description for error")
 ```
 
-## `panic()`, `revover()` 内置函数
+### `panic()`, `revover()` 内置函数
 
 - `panic()` 内置函数接收 `interface` 作为参数, 会立即中断当前函数流程, 执行延迟调用并将 `panice` 向外传递
 - `revover()` 内置函数返回 `interface` 对象, 多用于捕获 `panic()` 函数引发的错误. **该函数必须在延迟调用函数中才能正常工作**
@@ -388,14 +388,14 @@ import (
 )
 
 func catch() {
-	recover()
-	fmt.Println("捕获成功")
+    recover()
+    fmt.Println("捕获成功")
 }
 
 func main() {
-	defer catch()                // 捕获成功
-	defer fmt.Println(recover()) // 捕获失败
-	defer recover()              // 捕获失败
-	panic("error")
+    defer catch()                // 捕获成功
+    defer fmt.Println(recover()) // 捕获失败
+    defer recover()              // 捕获失败
+    panic("error")
 }
 ```

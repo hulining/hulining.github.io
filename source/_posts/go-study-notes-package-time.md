@@ -3,7 +3,6 @@ title: go 学习笔记之 time 包
 date: 2020/05/01
 tags:
   - go
-  - 学习笔记
 categories:
   - go
 abbrlink: 46353
@@ -12,7 +11,7 @@ description: '本文章主要包含 Go time 包及其内置类型和方法的使
 
 `time` 包提供了时间日期操作的函数, 包括时间的显示和计算.导入方式为 `import "time"`
 
-# 常用类型定义
+## 常用类型定义
 
 ```go
 // 星期几封装
@@ -35,7 +34,7 @@ type Time struct {
 type Duration int64
 ```
 
-# 常用内置常量及变量
+## 常用内置常量及变量
 
 `time` 包中提供了如下常用常量或变量的定义
 
@@ -79,7 +78,7 @@ var UTC *Location = &utcLoc  // UTC 时区表示
 var Local *Location = &localLoc  // 当地时区表示
 ```
 
-# 常用函数
+## 常用函数
 
 ## `time` 包函数
 
@@ -95,7 +94,7 @@ func Parse(layout, value string) (Time, error)
 func Sleep(d Duration)
 ```
 
-## `Time` 结构体方法
+### `Time` 结构体方法
 
 ```go
 // 返回根据 layout 指定的格式返回 t 代表的时间点的格式化文本表示. 示例如下所示
@@ -146,12 +145,12 @@ func (t Time) Equal(u Time) bool
 func (t Time) Sub(u Time) Duration
 ```
 
-# 示例
+## 示例
 
 ## 时间日志对象与字符串相互转换示例
 
 ```go
-// 
+//
 import (
     "fmt"
     "time"
@@ -166,7 +165,7 @@ func main() {
 
     // nowStr := now.Format("06-1-2 15:4:5")
     // nowStr := now.Format("01-02 15:04")
-    
+
     fmt.Println(nowStr)
     str := "2020年5月1日 15"
     // 当字符串为短格式时, layout 也必须为短格式

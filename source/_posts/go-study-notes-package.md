@@ -3,7 +3,6 @@ title: go 学习笔记之包管理
 date: 2020/05/04
 tags:
   - go
-  - 学习笔记
 categories:
   - go
 abbrlink: 19238

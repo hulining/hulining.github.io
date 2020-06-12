@@ -3,7 +3,6 @@ title: go 学习笔记之 bufio 包
 date: 2020/05/04
 tags:
   - go
-  - 学习笔记
 categories:
   - go
 abbrlink: 54358
@@ -12,7 +11,7 @@ description: '本文章主要包含 Go bufio 包及其内置类型和方法的�
 
 `bufio` 包实现了缓冲的 IO. 它包含分别实现 `io.Reader()` 和 `io.Writer()` 接口的 `Reader` 和 `Writer`对象,提供了 IO 缓冲区和文本类型 IO 的一些支持.导入方式为 `import "bufio"`
 
-# 常用类型定义
+## 常用类型定义
 
 ```go
 // Reader 是实现了 `io.Reader` 接口的缓冲对象
@@ -35,7 +34,7 @@ type ReadWriter struct {
 // Scanner 提供了一些方便的接口来扫描缓冲区数据,如用换行符分隔行的文件.
 // 通过连续调用 `Scan()` 方法将逐步浏览文件 'token'(文件内容),并跳过 token 之间的字节.token 的规范是由 `SplitFunc` 类型的分割函数定义的.默认的分割函数将输入分割成行,并去掉行尾的换行标志.
 // 预定义的分割函数可以将输入分割成行,字节,unicode,空白分隔的 word.调用者可以定制自己的分割函数
-// 
+//
 // 需要更多对错误管理的控制或 token 很大,或必须从 reader 连续读取的程序,应使用 `bufio.Reader`代替
 type Scanner struct {
     // 内含隐藏或非导出字段
@@ -46,7 +45,7 @@ type Scanner struct {
 type SplitFunc func(data []byte, atEOF bool) (advance int, token []byte, err error)  
 ```
 
-# 常用常量及变量
+## 常用常量及变量
 
 ```go
 const (
@@ -55,9 +54,9 @@ const (
 )
 ```
 
-# 常用函数
+## 常用函数
 
-## `bufio` 包函数
+### `bufio` 包函数
 
 ```go
 // 返回一个带有默认大小缓冲区的 `Reader` 对象
@@ -68,7 +67,7 @@ func NewReaderSize(rd io.Reader, size int) *Reader
 func NewWriter(w io.Writer) *Writer
 // 返回一个带有指定大小缓冲区的 `Writer` 对象
 func NewWriterSize(w io.Writer, size int) *Writer
-// 使用 Reader,Writer 对象创建一个新的 ReadWriter 对象 
+// 使用 Reader,Writer 对象创建一个新的 ReadWriter 对象
 func NewReadWriter(r *Reader, w *Writer) *ReadWriter
 
 
@@ -84,7 +83,7 @@ func ScanWords(data []byte, atEOF bool) (advance int, token []byte, err error)
 func ScanLines(data []byte, atEOF bool) (advance int, token []byte, err error)
 ```
 
-## `Reader` 结构体方法
+### `Reader` 结构体方法
 
 ```go
 // 丢弃缓冲区中的数据,清除任何错误,将 b 设置为从 r 读取数据
@@ -110,7 +109,7 @@ func (b *Reader) ReadString(delim byte) (line string, err error)
 func (b *Reader) WriteTo(w io.Writer) (n int64, err error)  
 ```
 
-## `Writer` 结构体方法
+### `Writer` 结构体方法
 
 ```go
 func (b *Writer) Reset(w io.Writer)  // 丢弃缓冲中的数据,清除任何错误,将 b 设置为向 w 写入数据
@@ -122,7 +121,7 @@ func (b *Writer) Flush() error  // 将缓冲区数据持久化到文件中.返�
 func (b *Writer) ReadFrom(r io.Reader) (n int64, err error)  // 实现 `io.ReaderFrom` 接口.从 r 中读取数据到缓冲区
 ```
 
-## `Scanner` 结构体方法
+### `Scanner` 结构体方法
 
 ```go
 // 设置 Scanner 的分割函数.必须在 `Scan()` 之前调用
@@ -137,10 +136,11 @@ func (s *Scanner) Text() string
 func (s *Scanner) Err() error
 ```
 
-# 示例
+## 示例
 
 现有一文件 `filename` 内容如下:
-```
+
+```text
 hello
 the second line: nice to meet you
 the third line: see you next time
@@ -209,12 +209,12 @@ func main() {
     WriterExample(bw)
 }
 
-// 输出为以下内容: 
+// 输出为以下内容:
 // 该行结束,读到或剩余内容为: hello
 // 该行未结束,读到内容为: the second line:
 // 该行未结束,读到内容为:  nice to meet yo
 // 该行结束,读到或剩余内容为: u
-// 该行未结束,读到内容为: the third line: 
+// 该行未结束,读到内容为: the third line:
 // 该行未结束,读到内容为: see you next tim
 // 该行结束,读到或剩余内容为: e
 // ------
@@ -222,13 +222,16 @@ func main() {
 // the second line: nice to meet you
 // the third line: see you next time
 ```
+
 通过以上示例可以看到:
+
 - `ReadLine()` 超过缓冲区大小的数据被分为多次读取,且行尾的换行符不被保留
 - 文件增加 "this new add line\n" 内容
 
 ## `bufio.Scanner` 扫描示例
 
 - 统计单词个数
+
 ```go
 import (
     "bufio"

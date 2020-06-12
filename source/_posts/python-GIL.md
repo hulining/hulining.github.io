@@ -2,9 +2,9 @@
 title: Python 多线程/多进程与 GIL
 date: 2020/06/09
 tags:
+  - 面试题
   - Python
   - GIL
-  - 面试
 categories:
   - Python
 abbrlink: 
@@ -23,7 +23,7 @@ CPython 解释器本身不是线程安全的,因此有全局解释器锁(GIL),�
 
 对于 IO 密集型代码来说,多线程能够有效有效提升效率,避免 IO 操作过程中的等待时间,所以 **Python 的多线程对 IO 密集型代码比较友好**.
 
-## Python 中有 GIL,为什么还需要锁或线程同步?
+## Python 中有 GIL,为什么还需要锁或线程同步
 
 GIL 保护 Python 解释器.这意味着:
 

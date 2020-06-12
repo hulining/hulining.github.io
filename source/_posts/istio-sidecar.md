@@ -2,16 +2,15 @@
 title: istio Sidecar 机制
 date: 2020/04/03
 tags:
-  - istio
   - 读书笔记
+  - istio
 categories:
-  - 云原生应用
   - istio
 abbrlink: 14870
 description: 本文章为《云原生服务网格Istio：原理、实践、架构与源码解析》第 6 章读书笔记.
 ---
 
-# Sidecar 注入
+## Sidecar 注入
 
 在 Kubernetes 中,Sidecar 容器与应用容器共存于同一个 Pod 中,共享同一个 Network Namespaces,因此Sidecar容器与应用容器共享同一个网络协议栈,这是 Sidecar 能够通过 iptables 拦截应用进出口流量的根本原因
 
@@ -56,7 +55,7 @@ webhooks:
 
 由以上配置可见, Sidecar Injector 只对标签匹配 `istio-injection：enabled` 的命名空间下的Pod资源对象的创建生效
 
-# Sidecar 流量拦截
+## Sidecar 流量拦截
 
 Sidecar 流量拦截基于 iptables 规则(init 容器启动时设置规则),拦截应用容器 Inbound/Outbound 的流量
 
@@ -69,7 +68,7 @@ Sidecar 流量拦截基于 iptables 规则(init 容器启动时设置规则),拦
 5. iptables 规则将出口数据包转发给Envoy
 6. Envoy 再根据自身配置决定是否将流量转发到容器外
 
-## 流量拦截原理
+### 流量拦截原理
 
 Istio中,流量拦截的实现依赖 initContainer iptables 规则的设置,目前有 `REDIRECT` 和 `TPROXY` 两种流量拦截模式.
 
@@ -98,5 +97,5 @@ initContainers:
   - "-b"  # 入口端口,进入目标端口的数据包会被转发到 Envoy,默认为应用服务监听端口
   - "9080"
   - "-d"  # 入口端口,进入目标端口的数据包不会被转发到Envoy,默认为 15020,这是 Sidecar 容器的健康检查端口
-  - "15020" 
+  - "15020"
 ```
