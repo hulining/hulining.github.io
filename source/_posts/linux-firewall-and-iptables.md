@@ -27,6 +27,8 @@ Linux 防火墙内置了 4 个表分别提供不同的功能.表及其功能如�
 
 规则表之间的优先顺序为 `raw -> mangle -> nat -> filter`.
 
+![四表五链](https://github.com/hulining/hulining.github.io/raw/hexo/source/_posts/images/linux-firewall-and-iptables/firewalld-tables-and-chains.png)
+
 Linux 防火墙还内置了 5 条规则链,用于表示数据包传输的路径,每一条链其实就是用户定义的规则清单,其中包含一条或多条规则.规则链及其生效时间/功能如下:
 
 链 | 生效时间 | 功能
@@ -45,7 +47,9 @@ Linux 防火墙还内置了 5 条规则链,用于表示数据包传输的路径,
 
 ![数据包流向](https://raw.githubusercontent.com/hulining/draw.io-images/master/packet-flow.svg)
 
-## 管理 iptables 规则
+![数据包流向](https://github.com/hulining/hulining.github.io/raw/hexo/source/_posts/images/linux-firewall-and-iptables/packet-flow.png)
+
+## 使用 iptables 管理防火墙规则
 
 iptables 仅作为 Linux 防火墙管理工具,让人们更加便捷,直观的管理 Linux 主机防火墙.
 
@@ -205,4 +209,39 @@ iptables -N LOGGING
 iptables -A LOGGING -m limit --limit 2/min -j LOG --log-prefix "IPTables Packet Dropped: " --log-level 7
 iptables -A LOGGING -j DROP
 iptables -A INPUT -j LOGGING
+```
+
+## iptables 性能优化技巧
+
+合理的配置 iptables 规则可以保护我们的内部主机.但是当 iptables 规则设置不合理时,可能会造成服务不可访问或服务性能下降.因此在使用 iptables 配置防火墙规则时,应注意如下几点:
+
+- 安全放行所有 ESTABLISHED 状态连接,建议放在第一条,效率更高
+
+```bash
+iptables -I INPUT -m state --state ESTABLISHED -j ACCEPT
+iptables -I OUTPUT -m state --state ESTABLISHED -j ACCEPT
+```
+
+- 尽可能将可由一条规则能够描述的多个规则合并为一条规则,如添加多个端口/IP 访问
+
+```bash
+iptables -A INPUT -p tcp -m multiport --dports 22,80,443 -m state --state NEW,ESTABLISHED -j ACCEPT
+iptables -A OUTPUT -p tcp -m multiport --sports 22,80,443 -m state --state ESTABLISHED -j ACCEPT
+
+iptables -A INPUT -m iprange --src-range 192.168.0.10-192.168.0.20 -j ACCEPT
+iptables -A OUTPUT -m iprange --src-range 192.168.0.10-192.168.0.20 -j ACCEPT
+```
+
+- 有特殊目的限制访问功能要在放行规则之前加以拒绝
+
+```bash
+# 对服务器限制发送带有 *iqiyi.com 的报文
+iptables -I OUTPUT 2 -m string --string "*iqiyi.com" --algo kmp -j REJECT
+```
+
+- 谨慎放行入站的新请求
+- 在规则最后添加默认策略
+
+```bash
+iptables - A INPUT -P DROP
 ```

@@ -2,11 +2,11 @@
 title: 自定义kube-prometheus添加etcd监控
 date: 2020/04/03
 tags:
-  - kubernetes
-  - prometheus
+  - Kubernetes
+  - Prometheus
   - etcd
 categories:
-  - prometheus
+  - Prometheus
 abbrlink: 43867
 description: kube-prometheus 默认不包含对 etcd 的监控, 本文章使用 kube-prometheus 为 etcd 添加监控
 ---

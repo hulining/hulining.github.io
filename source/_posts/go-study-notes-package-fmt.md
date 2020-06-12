@@ -3,7 +3,6 @@ title: go 学习笔记之 fmt 包
 date: 2020/05/16
 tags:
   - go
-  - 学习笔记
 categories:
   - go
 abbrlink: 28915
