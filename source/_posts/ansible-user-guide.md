@@ -1052,7 +1052,7 @@ HP-UX, Mandrake, RedHat, SGML, Slackware, Solaris, Suse, Windows
 - `loop` 关键字等价于 `with_list`,是简单循环最好的选择
 - `loop` 关键字不支持字符串作为输入,参见 [loop 中 query 与 lookup 函数比较](#loop-中-query-与-lookup-函数比较)或官方文档 - [Ensuring list input for loop: query vs. lookup](https://docs.ansible.com/ansible/latest/user_guide/playbooks_loops.html#query-vs-lookup) 或.
 - 一般来说,[后文](#with_X-转换为-loop)(官方文档 - [Migrating from with_X to loop](https://docs.ansible.com/ansible/latest/user_guide/playbooks_loops.html#migrating-from-with-x-to-loop))中包含的 `with_*` 均可以转换为 `loop`.
-- 对于 `with_items` 带有列表嵌套的场景,需要对 `loop` 内容使用 `flatten(1)` 过滤器来得到相同的结果.如 `with_items: [1, [2, 3], 4]` 可转换为 `loop: "{{ [1, [2,3] ,4] | flatten(1) }}"`
+- 对于 `with_items` 带有列表嵌套的场景,需要对 `loop` 内容使用 `flatten(1)` 过滤器来得到相同的结果.如 `with_items: [1, [2, 3], 4]` 可转换为 {% raw %}`loop: "{{ [1, [2,3] ,4] | flatten(1) }}"`{% endraw %}.
 
 #### loop 中 query 与 lookup 函数比较
 
