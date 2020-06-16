@@ -335,7 +335,7 @@ def gen():
 - 子生成器: 从 `yield from` 表达式中 `<iterable>` 部分获取的生成器
 - 调用方: PEP 380 使用"调用方"这个术语指代调用委派生成器的客户端代码
 
-![yield-from](://raw.githubusercontent.com/hulining/hulining.github.io/hexo/source/_posts/images/python-coroutine-yield-and-yield-from-expression/yield-from.png)
+![yield-from](yield-from.png)
 
 委派生成器在 `yield from` 表达式处暂停时,调用方可以直接把数据发给子生成器,子生成器再把产出的值发给调用方.子生成器返回结束后(调用方传入向子生成器传入 None 时),子生成器会抛出 `StopIteration` 异常,并把返回值附加到异常对象上,此时委派生成器会恢复,并捕获异常.
 
@@ -425,3 +425,9 @@ RESULT = _r # _r 是我们想要返回的结果,是整个 yield from 表达式�
 ```
 
 另外可以参考 [PEP 380 Formal Semantics](https://www.python.org/dev/peps/pep-0380/#formal-semantics) 中对 `RESULT = yield from EXP` 表达式给出的完整伪代码.
+
+---
+
+参考:
+
+- 流畅的 Python
