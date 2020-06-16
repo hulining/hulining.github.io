@@ -300,9 +300,11 @@ Result(count=3, average=15.5)
 
 ## yield from 表达式
 
-首先要知道,`yield from` 是全新的语言结构。它的作用比 `yield` 多很多.
+首先要知道,`yield from <expr>` 表达式是全新的语言结构,其中 `<expr>` 为可迭代对象.
 
-- `yield from` 可用于简化 for 循环中的 `yield` 表达式
+### yield from 表达式做了什么
+
+- `yield from <expr>` 对 `<expr>` 可迭代对象所做的第一件事是调用 `iter(<expr>)`,从中获取迭代器.
 
 ```python
 def gen():
@@ -314,12 +316,16 @@ def gen():
 # 可以转化为如下
 
 def gen():
-    # `yield from x` 表达式对 x 对象所做的第一件事是,调用 `iter(x)`,从中获取迭代器.因此,x 可以是任何可迭代的对象
+    # `yield from` 可用于简化 for 循环中的 `yield` 表达式
     yield from 'AB'
     yield from range(1, 3)
 ```
 
-- `yield form` 表达式会捕获 `StopIteration` 异常,并把异常的 `value` 属性的值变成 `yield from` 表达式的值
+- `yield from <expr>` 表达式会捕获 `<expr>` 可迭代对象迭代结束后的 `StopIteration` 异常,并把异常的 `value` 属性的值变成 `yield from` 表达式的值
+
+- 当 `<expr>` 是另一个生成器时,允许子生成器执行带有返回值的 `return` 语句,并且该返回值将成为 `yield from` 表达式 的值
+
+### 原理
 
 `yield from` 的主要功能是打开双向通道,把最外层的调用方与最内层的子生成器连接起来,这样二者可以直接发送和产出值,还可以直接传入异常.而不用在位于中间的协程中添加大量处理异常的代码.
 
@@ -386,3 +392,36 @@ data = {
 if __name__ == '__main__':
     main(data)
 ```
+
+上述示例阐明了如下四点,参见 [PEP 380 Proposal](https://www.python.org/dev/peps/pep-0380/#proposal)小节
+
+- 子生成器产生的任何值都将直接传递给调用方(如上示例中的 main 函数代码)
+- 使用 `send()` 方法发给委派生成器的值都直接传给子生成器.如果发送的值是 None,那么会调用子生成器的 `__next__()` 方法.如果发送的值不是 None,那么会调用子生成器的 `send()` 方法.如果调用的方法抛出 `StopIteration` 异常,那么委派生成器恢复运行,而任何其他异常都会向上冒泡,传给委派生成器
+- 生成器退出时,子生成器中的 `return expr` 表达式会触发 `StopIteration(expr)` 异常抛出
+- `yield from` 表达式的值是子生成器终止时传给 `StopIteration` 异常的第一个参数
+
+以下是 `RESULT = yield from EXPR` 简化的伪代码,没有处理委派生成器调用 `.throw(...)` 和 `.close()` 方法,且只处理了 `StopIteration` 异常
+
+```python
+# _i 子生成器
+# _y 子生成器产出的值
+# _r 最终返回结果,yield from 表达式的值
+# _s 调用方发给委派生成器的值,这个值会转发给子生成器
+# _e 异常对象,伪代码中始终是 StopIteration 实例
+_i = iter(EXPR) # EXPR 是可迭代对象,因此调用 iter(EXPR) 获取迭代器 _i(这是子生成器)
+try:
+    _y = next(_i) # 预激子生成器,将产出结果保存在 _y 中
+except StopIteration as _e:
+    _r = _e.value # 如果抛出 StopIteration 异常,则获取异常对象的 value 属性,并赋值给 _r
+else:
+    while 1: # 运行循环,委派生成器会阻塞,只作为调用方和子生成器之间的通道
+        _s = yield _y # 产出子生成器当前产出的元素,并等待调用方发送数据(代码示例中为 `group.send`),并赋值给变量 _s
+        try:
+            _y = _i.send(_s) # 将调用方发送的 _s 发送到子生成器中,尝试让子生成器向前执行
+        except StopIteration as _e: # 如果子生成器抛出 StopIteration 异常,获取其 value 属性的值,赋值给 _r,然后退出循环,让委派生成器恢复运行
+            _r = _e.value
+            break
+RESULT = _r # _r 是我们想要返回的结果,是整个 yield from 表达式的值
+```
+
+另外可以参考 [PEP 380 Formal Semantics](https://www.python.org/dev/peps/pep-0380/#formal-semantics) 中对 `RESULT = yield from EXP` 表达式给出的完整伪代码.
