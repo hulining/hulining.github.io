@@ -3,7 +3,7 @@ title: Python 迭代器与生成器
 date: 2020/06/08
 tags:
   - Python
-  - 面试题
+  - 面试
 categories:
   - Python
 abbrlink: 

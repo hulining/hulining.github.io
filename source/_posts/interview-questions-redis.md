@@ -2,8 +2,8 @@
 title: 运维面试题之 Redis
 date: 2020/06/04
 tags:
-  - 面试题
   - Redis
+  - 面试
 categories:
   - Redis
 abbrlink: 

@@ -2,8 +2,8 @@
 title: 运维面试题之 Linux
 date: 2020/06/04
 tags:
-  - 面试题
   - Linux
+  - 面试
 categories:
   - Linux
 abbrlink: 

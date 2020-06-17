@@ -3,7 +3,7 @@ title: Python 中 __init__ 和 __new__ 的区别
 date: 2020/06/08
 tags:
   - Python
-  - 面试题
+  - 面试
 categories:
   - Python
 abbrlink: 
