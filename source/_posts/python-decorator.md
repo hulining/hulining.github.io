@@ -499,14 +499,14 @@ def hello():
    print('hello')
 
 # 输出结果
-outer function begin
-outer function end
-wrapper function begin
-wrapper function end
-inner function begin
-[debug]: enter function hello()
-inner function end
-hello
+# outer function begin
+# outer function end
+# wrapper function begin
+# wrapper function end
+# inner function begin
+# [debug]: enter function hello()
+# inner function end
+# hello
 ```
 
 ### 错误的属性
