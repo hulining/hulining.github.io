@@ -509,9 +509,9 @@ inner function end
 hello
 ```
 
-### 错误的函数名和文档
+### 错误的属性
 
-任何被装饰器修饰过的函数,其实已经变成装饰器函数的调用.导致被装饰对象的所有内置属性,都会变成装饰器函数的内置属性.
+任何被装饰器装饰过的对象,其实已经变成装饰器函数返回的可调用对象.导致被装饰对象的所有内置属性,都会变成装饰器函数返回的可调用对象的内置属性.
 
 ```python
 from datetime import datetime
@@ -522,7 +522,7 @@ def logging(func):
         return func(*args, **kwargs)
     return wrapper
 
-@logging # 等同于 say=logging(say),导致调用 say 变量的所有内置属性,都会变成 wrapper 函数的内置属性
+@logging # 等同于 say=logging(say),导致 say 变量的所有内置属性,都会变成 wrapper 函数的内置属性
 def say(something):
     """say something"""
     print("say {}!".format(something))
@@ -530,13 +530,13 @@ def say(something):
 print(say.__name__)  # wrapper
 ```
 
-解决: 使用标准库里的 `functools.wraps`,可以基本解决这个问题
+解决: 使用标准库里的 `functools.wraps` 装饰器对待返回的可调用对象进行装饰,可以基本解决这个问题
 
 ```python
 from functools import wraps
 
 def logging(func):
-     # 使用内置库里的wraps对内置函数进行装饰
+     # 使用内置库里的 wraps 对内置函数进行装饰
     @wraps(func)
     def wrapper(*args, **kwargs):
         """print log before a function."""
