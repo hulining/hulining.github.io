@@ -1,13 +1,13 @@
 ---
-title: kubernetes相关错误及其解决
+title: Kubernetes 相关错误及其解决
 date: 2020/04/03
 tags:
-  - kubernetes
+  - Kubernetes
   - etcd
 categories:
-  - kubernetes
+  - Kubernetes
 abbrlink: 57264
-description: 本文章为学习 kubernetes 及其相关组件中遇到的问题及解决办法
+description: 本文章为学习 Kubernetes 及其相关组件中遇到的问题及解决办法
 ---
 
 ## etcd
