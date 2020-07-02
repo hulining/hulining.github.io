@@ -2,8 +2,8 @@
 title: 运维面试题之 Kubernetes
 date: 2020/06/04
 tags:
-  - 面试题
   - Kubernetes
+  - 面试
 categories:
   - Kubernetes
 abbrlink: 

@@ -2,9 +2,9 @@
 title: Python 多线程/多进程与 GIL
 date: 2020/06/09
 tags:
-  - 面试题
   - Python
   - GIL
+  - 面试
 categories:
   - Python
 abbrlink: 

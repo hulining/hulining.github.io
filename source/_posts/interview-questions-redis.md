@@ -2,8 +2,8 @@
 title: 运维面试题之 Redis
 date: 2020/06/04
 tags:
-  - 面试题
   - Redis
+  - 面试
 categories:
   - Redis
 abbrlink: 
@@ -318,7 +318,7 @@ ping,pong,meet,fail
 > 解决办法
 
 - 设置 key 随机失效时间
-- 将热点数据均匀分布在不同的 Redis 库中也能避免全部失效.或设置热点数据用不过期,有更新操作则更新缓存
+- 将热点数据均匀分布在不同的 Redis 库中也能避免全部失效.或设置热点数据永不过期,有更新操作则更新缓存
 
 ### 缓存穿透和击穿
 
@@ -326,20 +326,20 @@ ping,pong,meet,fail
 
 > 解决: 在接口层增加校验,比如用户鉴权,参数做校验,对不合法的请求直接返回,而不查询缓存与数据库.
 
-缓存击穿不同的是缓存击穿是指一个Key非常热点,在不停地扛着大量的请求,大并发集中对这一个点进行访问,当这个Key在失效的瞬间,持续的大并发直接落到了数据库上,就在这个Key的点上击穿了缓存
+缓存击穿不同的是缓存击穿是指一个 Key 非常热点,在不停地扛着大量的请求,大并发集中对这一个点进行访问.当这个 Key 在失效的瞬间,持续的大并发直接落到了数据库上,就在这个 Key 的点上击穿了缓存
 
 > 解决: 设置热点数据永不过期
 
 ## Redis 安全策略
 
 - 简单的密码验证,通过 `requirepass` 配置
-- 对危险命令重命名,通过 `rename-command` 设置,危险命令包括 
-  - keys: 如果键值较多,存在阻塞 Redis 的可能性
-  - flushall/flushdb: 数据全部被清除
-  - save: 如果键值较多,存在阻塞 Redis 的可能性
-  - debug: 例如 debug reload 会重启 Redis
-  - config: config 包含 redis 配置相关命令,应该交给管理员使用
-  - shutdown: 停止 Redis
+- 对危险命令重命名,通过 `rename-command` 设置,危险命令包括
+  - `keys`: 如果键值较多,存在阻塞 Redis 的可能性
+  - `flushall`/`flushdb`: 数据全部被清除
+  - `save`: 如果键值较多,存在阻塞 Redis 的可能性
+  - `debug`: 例如 debug reload 会重启 Redis
+  - `config`: config 包含 redis 配置相关命令,应该交给管理员使用
+  - `shutdown`: 停止 Redis
 - bind: 选择指定网卡做绑定,而不要绑定 0.0.0.0
 - 修改默认端口
 - 尽量不要使用 root 用户运行
