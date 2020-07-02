@@ -67,7 +67,7 @@ import (
 
 因此以上包及其引用包中的常量,全局变量会依次被初始化,`init()` 函数会被执行.
 
-这里需要注意的是 `"github.com/prometheus/client_golang/prometheus"` 包中几乎每个文件的 `init()` 函数都会调用 `registerCollector(collector string, isDefaultEnabled bool, factory func() (Collector, error))` 对该文件中定义的 `Collector` 进行注册.
+这里需要注意的是 `"github.com/prometheus/client_golang/prometheus"` 包中几乎每个文件的 `init()` 函数都会调用 `registerCollector()` 对该文件中定义的 `Collector` 进行注册.
 
 ```go
 // collector/collector.go
