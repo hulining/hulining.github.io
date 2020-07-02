@@ -8,7 +8,7 @@ tags:
 categories:
   - Python
 abbrlink: 
-description: 协程 coroutine,又称微线程.本文章主要记录 Python 协程相关内容,以作备忘.
+description: 协程 coroutine,又称微线程.本文章主要记录 Python yield 与 yield from 表达式创建的协程的相关内容,以作备忘.
 ---
 
 由于 GIL 的存在,Python 多线程性能甚至比单线程更糟.
@@ -335,7 +335,7 @@ def gen():
 - 子生成器: 从 `yield from` 表达式中 `<iterable>` 部分获取的生成器
 - 调用方: PEP 380 使用"调用方"这个术语指代调用委派生成器的客户端代码
 
-![yield-from](yield-from.png)
+![yield-from](https://github.com/hulining/hulining.github.io/raw/hexo/source/_posts/images/python-coroutine-yield-and-yield-from-expression/yield-from.png)
 
 委派生成器在 `yield from` 表达式处暂停时,调用方可以直接把数据发给子生成器,子生成器再把产出的值发给调用方.子生成器返回结束后(调用方传入向子生成器传入 None 时),子生成器会抛出 `StopIteration` 异常,并把返回值附加到异常对象上,此时委派生成器会恢复,并捕获异常.
 
@@ -430,4 +430,5 @@ RESULT = _r # _r 是我们想要返回的结果,是整个 yield from 表达式�
 
 参考:
 
-- 流畅的 Python
+- [流畅的 Python](http://product.dangdang.com/25071121.html)
+- [廖雪峰 Python 教程 - 异步IO - 协程](https://www.liaoxuefeng.com/wiki/1016959663602400/1017968846697824)

@@ -79,10 +79,10 @@ src/
 +-- z/              # z 包不可导入 lib/internal 下所有内容, 但可以导入 lib/x 包
 ```
 
-在执行 main 包的 main 函数之前, Go 程序先对整个程序的包进行初始化. 包内的源码文件都可以定义一到多个初始化函数, 编译器首先确保完成所有全局变量初始化, 然后开始执行 `init()` 初始化函数,直到这些全部结束后, 运行时才进入 `main.main` 入口函数.
+在执行 `main` 包的 `main` 函数之前,Go 程序先对整个程序的包进行初始化.包内的源码文件都可以定义一到多个初始化函数,编译器首先确保完成所有全局变量初始化,然后开始执行 `init()` 初始化函数,直到这些全部结束后,运行时才进入 `main.main` 入口函数.
 
-1. 从 main 函数引用的包开始, 逐级查找包的引用, 直到找到没有引用其它包的包
-2. 单个包在初始化过程中, 先初始化常量, 然后是全局变量, 最后执行包的 init 函数
+1. 从 main 函数引用的包开始,逐级查找包的引用,直到找到没有引用其它包的包
+2. 单个包在初始化过程中,先初始化常量,然后是全局变量,最后执行包的 `init()` 函数
 
 ![Go 包的初始化](https://raw.githubusercontent.com/hulining/hulining.github.io/hexo/source/_posts/images/go-study-notes-package/package_initialization_process_in_go.jpg)
 
