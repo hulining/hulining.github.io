@@ -41,7 +41,7 @@ VERSION: 记录版本信息
 
 ### 导包
 
-```go
+```golang
 import (
     "fmt"
     "net/http"
@@ -61,13 +61,13 @@ import (
 )
 ```
 
-首先我们要知道 Go 导包过程中做了哪些事情,参见 {% go-study-notes-package %} 导入包小节.这里再赘述一遍.
+首先我们要知道 Go 导包过程中做了哪些事情,参见 {% post_link go-study-notes-package %} 导入包小节.这里再赘述一遍.
 
 > 在执行 `main` 包的 `main` 函数之前,Go 程序先对整个程序的包进行初始化.包内的源码文件都可以定义一到多个初始化函数,编译器首先确保完成所有全局变量初始化,然后开始执行 `init()` 初始化函数,直到这些全部结束后,运行时才进入 `main.main` 入口函数.
 
 因此以上包及其引用包中的常量,全局变量会依次被初始化,`init()` 函数会被执行.
 
-这里需要注意的是 `"github.com/prometheus/client_golang/prometheus"` 包中几乎每个文件的 `init()` 函数都会调用 `registerCollector()` 对该文件中定义的 `Collector` 进行注册.
+这里需要注意的是 `"github.com/prometheus/client_golang/prometheus"` 包中几乎每个文件的 `init()` 函数都会调用 `registerCollector(collector string, isDefaultEnabled bool, factory func(logger log.Logger) (Collector, error))` 函数对该文件中定义的 `Collector` 进行注册.
 
 ```go
 // collector/collector.go
