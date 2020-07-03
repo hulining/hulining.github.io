@@ -41,7 +41,7 @@ VERSION: 记录版本信息
 
 ### 导包
 
-```golang
+```go
 import (
     "fmt"
     "net/http"
