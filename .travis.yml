@@ -44,5 +44,5 @@ script:
 notifications:
   email:
     - loserkid@163.com
-  on_success: change
+  on_success: never # default: change
   on_failure: always
