@@ -141,7 +141,7 @@ int main()
 // 共创建 20 个进程
 ```
 
-## `ln -s` 与 `mv` 对某文件操作时,对 inode 和 block 有什么影响
+### `ln -s` 与 `mv` 对某文件操作时,对 inode 和 block 有什么影响
 
 ```bash
 # 理解 blocks 为磁盘存储块, inode 为指向该存储块的地址
@@ -194,7 +194,7 @@ Swap: 总,使用,剩余,cache 缓存
 进程ID 用户 优先级 nice值 虚拟内存 物理内存 共享内存 进程状态 CPU 内存 运行时长 命令
 ```
 
-## `kill` 信号
+### `kill` 信号
 
 ```text
 1 HUP 终端断线

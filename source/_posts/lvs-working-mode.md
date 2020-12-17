@@ -48,12 +48,14 @@ Linux 操作系统提供了 `ipvsadm` 管理工具来管理 LVS 规则.其常用
 
 ## LVS 三种工作模式
 
+首先了解以下缩写:
+
 - DS：Director Server 前端负载均衡器节点
 - RS：Real Server 后端真实的工作服务器
 - VIP：DS 上的虚拟 IP 地址,直接面向用户请求
 - DIP：DS 内网 IP 地址,主要用于和内部主机通讯
-- RIP：Real Server IP，后端服务器的 IP 地址
-- CIP：Client IP，访问客户端的IP地址
+- RIP：Real Server IP,后端服务器的 IP 地址
+- CIP：Client IP,访问客户端的IP地址
 
 ### NAT 模式
 
