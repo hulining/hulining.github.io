@@ -28,7 +28,7 @@ Linux 防火墙内置了 4 个表分别提供不同的功能.表及其功能如�
 
 规则表之间的优先顺序为 `raw -> mangle -> nat -> filter`.
 
-![四表五链](https://github.com/hulining/hulining.github.io/raw/hexo/source/_posts/images/linux-firewall-and-iptables/firewalld-tables-and-chains.png)
+![四表五链](https://raw.githubusercontent.com/hulining/hulining.github.io/hexo/source/_posts/images/linux-firewall-and-iptables/firewalld-tables-and-chains.png)
 
 Linux 防火墙还内置了 5 条规则链,用于表示数据包传输的路径,每一条链其实就是用户定义的规则清单,其中包含一条或多条规则.规则链及其生效时间/功能如下:
 
@@ -46,9 +46,9 @@ Linux 防火墙还内置了 5 条规则链,用于表示数据包传输的路径,
 2. 如果数据包就是进入本机的,它将会到达 `INPUT` 链.`INPUT` 链规则接受该数据包后,相关进程就会收到它,进行处理后发送响应数据包,响应数据包会经过 `OUTPUT` 链,然后到 `POSTROUTING` 链后流出本机.
 3. 如果数据包是要转发出去的,且内核允许转发(通过 `echo 1 > /proc/sys/net/ipv4/ip_forward` 开启).数据包就会经过 `FORWARD` 链,到达 `POSTROUTING` 链后流出本机
 
-![数据包流向](https://raw.githubusercontent.com/hulining/draw.io-images/master/packet-flow.svg)
+![数据包流向](https://raw.githubusercontent.com/hulining/hulining.github.io/hexo/source/_posts/images/linux-firewall-and-iptables/packet-flow.svg)
 
-![数据包流向](https://github.com/hulining/hulining.github.io/raw/hexo/source/_posts/images/linux-firewall-and-iptables/packet-flow.png)
+![数据包流向](https://raw.githubusercontent.com/hulining/hulining.github.io/hexo/source/_posts/images/linux-firewall-and-iptables/packet-flow.png)
 
 ## 使用 iptables 管理防火墙规则
 
@@ -244,5 +244,5 @@ iptables -I OUTPUT 2 -m string --string "*iqiyi.com" --algo kmp -j REJECT
 - 在规则最后添加默认策略
 
 ```bash
-iptables - A INPUT -P DROP
+iptables -A INPUT -P DROP
 ```
