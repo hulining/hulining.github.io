@@ -25,11 +25,11 @@ func (ch CustomHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func main() {
     // 创建 CustomHandler 实例对象,传入 ListenAndServe 函数
-    http.ListenAndServe("8080", CustomHandler{})
+    http.ListenAndServe(":8080", CustomHandler{})
 }
 ```
 
-现在我们来看一下 `http.ListenAndServe("8080", CustomHandler{})` 这段代码是如何处理请求的
+现在我们来看一下 `http.ListenAndServe(":8080", CustomHandler{})` 这段代码是如何处理请求的
 
 ## 创建对象
 
@@ -45,12 +45,12 @@ func ListenAndServe(addr string, handler Handler) error {
 }
 ```
 
-### 创建 `net.TCPListener` 对象,并监听指定地址
+### 创建 `net.Listener` 对象,并监听指定地址
 
 `server.ListenAndServe()` 代码做了如下事情
 
-1. 创建 `net.TCPListener` 对象
-2. 使用创建的 `net.TCPListener` 监听地址
+1. 根据传入的参数创建 `net.ListenConfig` 对象,实际是创建了 `net.Listener` 对象.如 `TCPListener`,`UnixListener`
+2. 使用创建的 `net.ListenConfig` 对象中的 `TCPListener` 成员实例监听指定地址.
 
 ```go
 // // net/http/server.go#2818
@@ -101,6 +101,7 @@ func (lc *ListenConfig) Listen(ctx context.Context, network, address string) (Li
     // 如果是 `UnixAddr`,则调用 listenUnix 创建 `UnixListener`
     switch la := la.(type) {
     case *TCPAddr:
+        // 返回 TCPListener 实例,见下代码
         l, err = sl.listenTCP(ctx, la)
     case *UnixAddr:
         l, err = sl.listenUnix(ctx, la)
@@ -114,18 +115,39 @@ func (lc *ListenConfig) Listen(ctx context.Context, network, address string) (Li
 }
 ```
 
+如下是创建 `TCPListener` 的代码
+
+```go
+// /net/tcpsock_posix.go#L167
+func (sl *sysListener) listenTCP(ctx context.Context, laddr *TCPAddr) (*TCPListener, error) {
+	fd, err := internetSocket(ctx, sl.network, laddr, nil, syscall.SOCK_STREAM, 0, "listen", sl.ListenConfig.Control)
+	if err != nil {
+		return nil, err
+	}
+	return &TCPListener{fd: fd, lc: sl.ListenConfig}, nil
+}
+```
+
 ## 建立连接
 
-代码跳转到 `srv.Serve(ln)`,这里是 Server 对象处理 TCPListener 接受连接的过程.
+代码跳转到 `srv.Serve(ln)`,这里是 Server 对象处理 `TCPListener` 接受连接的过程.
 
 ```go
 // net/http/server.go#L2871
 func (srv *Server) Serve(l net.Listener) error {
-    if fn := testHookServerServe; fn != nil {
-        fn(srv, l) // 调用钩子函数
-    }
     // ... 跳过部分代码 ...
-    var tempDelay time.Duration // accept 接收连接失败的睡眠时长,
+    
+    origListener := l
+    // 这里可以理解为仅仅关闭一次
+    l = &onceCloseListener{Listener: l}
+    defer l.Close()
+
+    // 处理 http2 协议的请求
+    if err := srv.setupHTTP2_Serve(); err != nil {
+        return err
+    }
+
+    var tempDelay time.Duration // accept 接收连接失败的睡眠时长,在未达到最大超时时长时,成倍数增长
     ctx := context.WithValue(baseCtx, ServerContextKey, srv)
     for {
         // 调用 net.Listener 的 Accept() 接受连接,返回 `TCPConn` TCP 连接
@@ -159,10 +181,10 @@ func (srv *Server) Serve(l net.Listener) error {
                 panic("ConnContext returned nil")
             }
         }
-        tempDelay = 0
+        tempDelay = 0   // 建立连接后,接收连接失败的睡眠时长置为 0
         c := srv.newConn(rw) // Server 通过 `l.Accept()` 返回的 TCPConn 正式建立连接.
         c.setState(c.rwc, StateNew) // 设置建立连接的状态为 StateNew
-        go c.serve(connCtx) // 连接正式服务请求上下文
+        go c.serve(connCtx) // 使用协程处理请求的上下文
     }
 }
 ```
@@ -220,7 +242,6 @@ func (c *conn) serve(ctx context.Context) {
             }
             return
         }
-
 
     // HTTP/1.x from here on.
 
@@ -296,7 +317,7 @@ func (c *conn) serve(ctx context.Context) {
         // in parallel even if their responses need to be serialized.
         // But we're not going to implement HTTP pipelining because it
         // was never deployed in the wild and the answer is HTTP/2.
-        // 响应请求
+        // 调用 ServeHTTP() 方法,响应请求
         serverHandler{c.server}.ServeHTTP(w, w.req)
         // 处理请求完成的后续操作
         w.cancelCtx()
@@ -310,7 +331,7 @@ func (c *conn) serve(ctx context.Context) {
             }
             return
         }
-        c.setState(c.rwc, StateIdle)
+        c.setState(c.rwc, StateIdle)    // 响应请求后,连接置为空闲
         c.curReq.Store((*response)(nil))
         if !w.conn.server.doKeepAlives() {
             // We're in shutdown mode. We might've replied
@@ -410,6 +431,7 @@ func (mux *ServeMux) HandleFunc(pattern string, handler func(ResponseWriter, *Re
         panic("http: nil handler")
     }
     // 调用 ServeMux 的 Handle 方法
+    // 这里将我们自定义的 handler 强制转换为 HandlerFunc 类型
     mux.Handle(pattern, HandlerFunc(handler))
 }
 ```
@@ -417,6 +439,7 @@ func (mux *ServeMux) HandleFunc(pattern string, handler func(ResponseWriter, *Re
 其中,`HandlerFunc` 其实是形如 `func(ResponseWriter, *Request)` 的函数.调用 `HandlerFunc` 的 `ServeHTTP` 其实是调用了 `func(ResponseWriter, *Request)`.这里很重要!!!
 
 ```go
+// /net/server.go#L2038
 type HandlerFunc func(ResponseWriter, *Request)
 
 // ServeHTTP calls f(w, r).
@@ -460,7 +483,7 @@ func (mux *ServeMux) Handle(pattern string, handler Handler) {
 1. 对 `mux.mu` 加锁
 2. 判断是否存在 mux.m[pattern],如果存在,则报错
 3. 新建 `e = muxEntry{h: handler, pattern: pattern}`,并设置 `mux.m[pattern] = e`. 将传入的 `HandlerFunc` 保存到 `mux.m`,也就是 `muxEntry` 对象中.
-4. 如果注册 `pattern` 最后一个字符为 '/',则将 `e` 添加到 `mux.es` 中,并进行排序
+4. 如果注册 `pattern` 最后一个字符为 '/',则将 `e` 添加到 `mux.es` 中,并进行排序,排序规则为路由从长到短
 5. 如果注册 `pattern` 开始字符为 '/',则设置 `mux.hosts` 为 `true`
 6. 方法执行完毕对 `mux.mu` 解锁
 
@@ -498,10 +521,23 @@ func (mux *ServeMux) ServeHTTP(w ResponseWriter, r *Request) {
         w.WriteHeader(StatusBadRequest)
         return
     }
-    // 此时 h 变量为我们在 http.HandleFunc 中为指定 url 定义的 HandlerFunc
+    // 此时 h 变量为我们在 http.HandleFunc 中为指定 url 定义的 handler func(ResponseWriter, *Request)
+    // 该对象已经在传入时进行类型强转,转换为 HandlerFunc
     h, _ := mux.Handler(r)
-    // 调用 HandlerFunc 的 ServeHTTP 其实就是调用了它自己.形如 `func(ResponseWriter, *Request)` 的函数,将数据写入响应体.
+    // 此时,再调用 HandlerFunc 的 ServeHTTP 其实就是调用了它自己.形如 `func(ResponseWriter, *Request)` 的函数,通过自定义函数,将数据写入响应体.
     h.ServeHTTP(w, r)
+}
+```
+
+再次附上 `HandlerFunc` 的定义及其 `ServeHTTP` 方法,加深理解
+
+```go
+// /net/server.go#L2038
+type HandlerFunc func(ResponseWriter, *Request)
+
+// ServeHTTP calls f(w, r).
+func (f HandlerFunc) ServeHTTP(w ResponseWriter, r *Request) {
+    f(w, r)
 }
 ```
 
@@ -518,7 +554,7 @@ func (mux *ServeMux) Handler(r *Request) (h Handler, pattern string) {
 }
 
 // net/http/server.go#L2359
-func (mux *ServeMux) handler(host, path string) (h Handler, pattern string) {
+    func (mux *ServeMux) handler(host, path string) (h Handler, pattern string) {
     // 加锁解锁
     mux.mu.RLock()
     defer mux.mu.RUnlock()
@@ -528,6 +564,7 @@ func (mux *ServeMux) handler(host, path string) (h Handler, pattern string) {
         h, pattern = mux.match(host + path)
     }
     if h == nil {
+        // 对请求url与路由规则进行匹配
         h, pattern = mux.match(path)
     }
     if h == nil {
@@ -539,17 +576,19 @@ func (mux *ServeMux) handler(host, path string) (h Handler, pattern string) {
 
 > 在看 `mux.match` 方法之前应该先对 `http.HandleFunc("/",Hello)` 有一定的理解.
 
-代码跳转到 `mux.match(host + path)`, `mux.match` 方法会为传入的的路径选择合适的 `Handler`.具体如下:
+按照最简单的情况,代码跳转到 `mux.match(path)`, `mux.match` 方法会为传入的的路径选择合适的 `Handler`.具体如下:
 
 ```go
 func (mux *ServeMux) match(path string) (h Handler, pattern string) {
-    // 如果 mux.m 中刚好有传入的路径,则直接返回其对应的 HandlerFunc
+    // 如果 mux.m 中刚好有传入的路径,则直接返回其对应的 HandlerFunc.
+    // 此时请求URL与注册的请求路由完全匹配,可以直接返回.时间复杂度为 O(1)
     v, ok := mux.m[path]
     if ok {
         return v.h, v.pattern
     }
-    // 检查最长合法匹配路径. `mux.es` 中包含所有以/从最长到最短排序的模式.
-    // 并返回其 HandlerFunc
+    // 检查最长合法匹配路径. `mux.es` 中包含所有以从最长到最短排序的路由规则,pattern.
+    // 此时返回的 handler 是我们自定义的 Hello(w http.ResponseWriter, r *http.Request) 函数
+    // 此时需要遍历请求路由列表,找到请求路由匹配请求中的最长字串.时间复杂度为 O(n),n 为注册的请求路由长度
     for _, e := range mux.es {
         if strings.HasPrefix(path, e.pattern) {
             return e.h, e.pattern
