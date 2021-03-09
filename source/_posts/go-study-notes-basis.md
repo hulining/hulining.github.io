@@ -1,5 +1,5 @@
 ---
-title: go 学习笔记之类型
+title: go 学习笔记之基本类型
 date: 2020/04/30
 tags:
   - go
@@ -30,8 +30,8 @@ uintptr | 4, 8 | 0 | 足够存储指针的 uint
 string |  | "" | 字符串, 默认为空字符串, 而非 nil
 array | | | 数组
 struct | | | 结构体
-function | | nil | 函数
-interface | | nil | 接口
+function | | nil | 函数, 引用类型
+interface | | nil | 接口, 引用类型
 map | | nil | 字典, 引用类型
 slice | | nil | 切片, 引用类型
 channel | | nil | 通道, 引用类型
