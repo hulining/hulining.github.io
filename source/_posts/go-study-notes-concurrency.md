@@ -3,12 +3,15 @@ title: go 学习笔记之并发
 date: 2020/04/30
 tags:
   - go
+  - 面试
+  - 并发
+  - goroutine
 categories:
   - go
 abbrlink: 9125
 description: >-
   记录在学习 Go 过程中容易出错, 容易忘记的知识点, 主要包含 Go 中并发或 goroutine 协程的实现, 通过 sync.WaitGroup
-  等待协程执行完毕, 简单描述了 channel 的使用
+  等待协程执行完毕,简单描述了 channel 的使用
 ---
 
 ## 并发与并行
@@ -129,7 +132,7 @@ Go 鼓励使用 CSP(Communicating Sequential Process) channel, 以通信来代�
 
 > Don't communicate by sharing memory, share memory by communicating. 不要以共享内存来进行通信, 而是通过通信来共享内存.
 
-作为 CSP 核心, channel 是显示的, 要求操作双方必须知道数据类型和具体通道,但并不关心另一端操作者身份和数量. 可如果另一端未准备妥当或消息未及时处理时,会阻塞当前端.
+作为 CSP 核心, channel 是显式的, 要求操作双方必须知道数据类型和具体通道,但并不关心另一端操作者身份和数量. 可如果另一端未准备妥当或消息未及时处理时,会阻塞当前端.
 
 channel 定义方式如下:
 
@@ -274,16 +277,16 @@ import (
 func main() {
     var wg sync.WaitGroup
     wg.Add(2)
-    a, b := make(chan int), make(chan int)
+    ach, bch := make(chan int), make(chan int)
 
-    go func() {
+    go func(wg *sync.WaitGroup, a, b <-chan int) {
         defer wg.Done()
+        var (
+            name string
+            x    int
+            ok   bool
+        )
         for {
-            var (
-                name string
-                x    int
-                ok   bool
-            )
             select {
             case x, ok = <-a:
                 name = "a"
@@ -295,8 +298,8 @@ func main() {
             }
             fmt.Println(name, x)
         }
-    }()
-    go func() {
+    }(&wg, ach, bch)
+    go func(wg *sync.WaitGroup, a, b chan<- int) {
         defer wg.Done()
         defer close(a)
         defer close(b)
@@ -306,7 +309,7 @@ func main() {
             case b <- i * 10:
             }
         }
-    }()
+    }(&wg, ach, bch)
     wg.Wait()
 }
 ```
@@ -386,19 +389,25 @@ func (p pool) put(bytes []byte) {
 有时候在 Go 代码中可能会存在多个 goroutine 同时操作一个资源,这种情况会发生数据竞争问题.如
 
 ```go
-var x int64
-var wg sync.WaitGroup
+import (
+    "fmt"
+    "sync"
+)
 
-func add() {
+func add(wg *sync.WaitGroup, x *int64) {
     defer wg.Done()
     for i := 0; i < 1000; i++ {
-        x = x + 1
+        *x = *x + 1
     }
 }
+
 func main() {
+    var x int64
+    var wg sync.WaitGroup
+    
     for i := 0; i < 10; i++ {
         wg.Add(1)
-        go add()
+        go add(&wg, &x)
     }
     wg.Wait()
     fmt.Println(x)
@@ -407,25 +416,32 @@ func main() {
 
 可以发现与预期结果不符,原因是两个 goroutine 在访问和修改 x 变量的时候会存在数据竞争.
 
-未解决以上问题,Go 引入了锁的概念.Go 语言中使用 `sync.Mutex` 类型来实现互斥锁.使用互斥锁来修复上面代码的问题:
+为解决以上问题,Go 引入了锁的概念.Go 语言中使用 `sync.Mutex` 类型来实现互斥锁.使用互斥锁来修复上面代码的问题:
 
 ```go
-var x int64
-var wg sync.WaitGroup
+import (
+    "fmt"
+    "sync"
+)
+
 var lock sync.Mutex
 
-func add() {
+func add(wg *sync.WaitGroup, x *int64) {
     defer wg.Done()
     for i := 0; i < 1000; i++ {
         lock.Lock() // 加锁
-        x = x + 1
+        *x = *x + 1
         lock.Unlock() // 释放锁
     }
 }
+
 func main() {
+    var x int64
+    var wg sync.WaitGroup
+    
     for i := 0; i < 10; i++ {
         wg.Add(1)
-        go add()
+        go add(&wg, &x)
     }
     wg.Wait()
     fmt.Println(x)
@@ -470,20 +486,24 @@ func CompareAndSwapUint64(addr *uint64, old, new uint64) (swapped bool)
 使用原子操作对上面变量 x 进行修改.代码如下:
 
 ```go
-var x int64
-var wg sync.WaitGroup
-var lock sync.Mutex
+import (
+    "fmt"
+    "sync"
+    "sync/atomic"
+)
 
-func add() {
+func add(wg *sync.WaitGroup, x *int64) {
     defer wg.Done()
     for i := 0; i < 1000; i++ {
-        atomic.AddInt64(&x, 1)
+        atomic.AddInt64(x, 1)
     }
 }
 func main() {
+    var x int64
+    var wg sync.WaitGroup
     for i := 0; i < 10; i++ {
         wg.Add(1)
-        go add()
+        go add(&wg, &x)
     }
     wg.Wait()
     fmt.Println(x)

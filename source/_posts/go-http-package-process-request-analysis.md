@@ -4,6 +4,7 @@ date: 2020/07/06
 tags:
   - go
   - http
+  - 源码阅读
 categories:
   - go
 abbrlink: 
@@ -120,11 +121,11 @@ func (lc *ListenConfig) Listen(ctx context.Context, network, address string) (Li
 ```go
 // /net/tcpsock_posix.go#L167
 func (sl *sysListener) listenTCP(ctx context.Context, laddr *TCPAddr) (*TCPListener, error) {
-	fd, err := internetSocket(ctx, sl.network, laddr, nil, syscall.SOCK_STREAM, 0, "listen", sl.ListenConfig.Control)
-	if err != nil {
-		return nil, err
-	}
-	return &TCPListener{fd: fd, lc: sl.ListenConfig}, nil
+    fd, err := internetSocket(ctx, sl.network, laddr, nil, syscall.SOCK_STREAM, 0, "listen", sl.ListenConfig.Control)
+    if err != nil {
+    return nil, err
+    }
+    return &TCPListener{fd: fd, lc: sl.ListenConfig}, nil
 }
 ```
 
