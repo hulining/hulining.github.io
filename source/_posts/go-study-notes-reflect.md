@@ -81,14 +81,13 @@ type Student struct {
 
 func main() {
     stu := Student{
-        Name:  "tom",
-        Age:   20,
+       Name:  "tom",
+       Age:   20,
     }
     ptrOfstu := &stu
-    a:=[3]int{1,3,4}
-    typeOfptr := reflect.TypeOf(a)  // 获取 &stu 的反射的类型对象 `reflect.Type`
+    typeOfptr := reflect.TypeOf(ptrOfstu)  // 获取 &stu 的反射的类型对象 `reflect.Type`
     fmt.Println("type:", typeOfptr.Name(), "kind:", typeOfptr.Kind())  // 输出为 type:  kind: ptr
-    elemType := typeOfptr.Elem()
+    elem := typeOfptr.Elem()
     fmt.Println("elem's type:", elem.Name(), "elem's kind:", elem.Kind())  // 输出为 elem's type: Student elem's kind: struct
 }
 // 输出
@@ -172,7 +171,7 @@ func main() {
     for i := 0; i < methodNumOfptr; i++ {
         method := typeOfptr.Method(i)
         fmt.Println(method)
-        fmt.Printf("方法名: %v, 方法类型: %v, 方法对象\n", method.Name, method.Type, method.Func)
+        fmt.Printf("方法名: %v, 方法类型: %v, 方法对象%v\n", method.Name, method.Type, method.Func)
     }
 }
 ```
@@ -248,33 +247,35 @@ func main() {
         Age:  20,
     }
     valueOfstu := reflect.ValueOf(stu)
-    kindOfstu := valueOfstu.Kind()
     valueOfptr := reflect.ValueOf(&stu)
-    typeOfStu := valueOfstu.Type()  // 返回反射的类型
+
+    typeOfStu := valueOfstu.Type() // 返回反射的类型
+    kindOfstu := valueOfstu.Kind() // 返回反射的种类
 
     if kindOfstu != reflect.Struct {
         fmt.Println("except struct...")
         return
     }
+    fmt.Println(typeOfStu)
 
-    fieldNum := typeOfstu.NumField()
-    fmt.Println("字段个数为: ", fieldNum)  // 2
+    fieldNum := valueOfstu.NumField()
+    fmt.Println("字段个数为: ", fieldNum) // 2
     for i := 0; i < fieldNum; i++ {
-        field := typeOfstu.Field(i)
-        fmt.Println(field)  // 直接输出各个字段的值
+        field := valueOfstu.Field(i)
+        fmt.Println(field) // 直接输出各个字段的值
     }
 
-    methodNumOfstu := typeOfstu.NumMethod()
-    fmt.Println("stu方法个数为: ", methodNumOfstu)  // 1
+    methodNumOfstu := valueOfstu.NumMethod()
+    fmt.Println("stu方法个数为: ", methodNumOfstu) // 1
     for i := 0; i < methodNumOfstu; i++ {
-        method := typeOfstu.Method(i)
-        fmt.Println(method)  // 直接输出一个形如 0x4878c0 的地址, 但是不确定是什么, 而且所有都是相同的
+        method := valueOfstu.Method(i)
+        fmt.Println(method) // 直接输出一个形如 0x4878c0 的地址, 但是不确定是什么, 而且所有都是相同的
     }
 
-    methodNumOfptr := typeOfptr.NumMethod()
-    fmt.Println("&stu方法个数为: ", methodNumOfptr)   // 3
+    methodNumOfptr := valueOfptr.NumMethod()
+    fmt.Println("&stu方法个数为: ", methodNumOfptr) // 3
     for i := 0; i < methodNumOfptr; i++ {
-        method := typeOfptr.Method(i)
+        method := valueOfptr.Method(i)
         fmt.Println(method) // 直接输出一个形如 0x4878c0 的地址, 但是不确定是什么, 而且所有都是相同的
     }
 }
@@ -320,11 +321,11 @@ func main() {
     paramsGetSum = append(paramsGetSum, reflect.ValueOf(10))
     paramsGetSum = append(paramsGetSum, reflect.ValueOf(20))
     resGetSum := valueOfStu.Method(0).Call(paramsGetSum)  // 调用后返回值为 []reflect.Value, 因此需要根据返回值个数使用索引来获取返回值
-    fmt.Printf("调用结果为 %v, 类型为 %T", resGetSum, resGetSum)  // 输出为 :调用结果为 30, 类型为 []reflect.Value
+    fmt.Printf("调用结果为 %v, 类型为 %T\n", resGetSum, resGetSum)  // 输出为 :调用结果为 30, 类型为 []reflect.Value
     resGetSum0 := resGetSum[0]
     fmt.Printf("第一个返回值为 %v, 类型为 %T\n", resGetSum0, resGetSum0)  // 输出为 :第一个返回值为 30, 类型为 reflect.Value
     realRes0 := resGetSum[0].Interface().(int)
-    fmt.Printf("实际结果为 %v, 类型为 %T\n", realRes, realRes)  // 输出为 :实际结果为 30, 类型为 int
+    fmt.Printf("实际结果为 %v, 类型为 %T\n", realRes0, realRes0)  // 输出为 :实际结果为 30, 类型为 int
 
     // 使用 reflect.Value 的 Call() 方法反射调用 Print() 方法, Call()方法需传入 []reflect.Value 类型的值
     var paramsPrint []reflect.Value
@@ -338,34 +339,5 @@ func main() {
     resSet := valueOfStu.Method(2).Call(paramsSet)
     fmt.Printf("调用结果为 %v, 类型为 %T\n", resSet, resSet) // 输出为 :调用结果为 [], 类型为 []reflect.Value
     fmt.Println(stu)  // 可以看到 stu 已被修改为 {jack 30}
-}
-```
-
-## 其它类型结构体
-
-### StructField 结构体字段
-
-```go
-type StructField struct {
-    Name string          // 字段名
-    PkgPath string       // 字段路径
-    Type      Type       // 字段反射类型对象
-    Tag       StructTag  // 字段的结构体标签
-    Offset    uintptr    // 字段在结构体中的相对偏移
-    Index     []int      // Type.FieldByIndex中的返回的索引值
-    Anonymous bool       // 是否为匿名字段
-}
-type StructTag string
-```
-
-### Method 方法
-
-```go
-type Method struct {
-    Name    string // 方法名
-    PkgPath string // 方法路径
-    Type    Type   // 方法类型
-    Func    Value  // 以接收者为第一个参数的 func
-    Index   int    // Type.Method 的索引
 }
 ```
