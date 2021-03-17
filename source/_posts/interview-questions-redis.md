@@ -41,14 +41,21 @@ zset, (带有分值 score 的)有序集合
 - 缓存: 将后端数据缓存到特定的键中,并设置过期时间,减小后端应用的压力
 - 计数: Redis 对整型数据提供自增自减函数,可以作为计数的基础工具,以实现快速计数,查询缓存的功能
 - 共享 session: 使用 Redis 将用户的 Session 数据集中管理,每次用户更新或登录可直接从 Redis 中获取 Session
-限速与过期: 限制用户的访问频率,如限制向同一手机号发送短信验证码的频率.设置验证码的过期时间等
+- 限速与过期: 限制用户的访问频率,如限制向同一手机号发送短信验证码的频率.设置验证码的过期时间等
 
 ### hash
 
 #### 内部编码
 
-- ziplist(压缩列表): 当列表元素个数小于 `list-max-ziplist-entries` 配置(默认 512),同事列表中的元素值都小于 `list-max-ziplist-value` 配置(默认 64 字节)
+- ziplist(压缩列表): 当元素个数小于 `hash-max-ziplist-entries` 配置(默认 512),同时元素值都小于 `hash-max-ziplist-value` 配置(默认 64 字节)
 - hashtable(哈希表): 哈希类型无法满足 ziplist 条件时
+
+#### 应用场景
+
+应用于使用 `string` 不好存储的场景,比如关系型数据库的缓存.
+
+- 将关系型数据库的表字段序列化后用一个键值保存.这么做的优点是可以简化编程,合理的序列化可以提高内存使用率.缺点是序列化与反序列化过程中会有一定的开销.
+- 将关系型数据库的表属性使用一对 key-value.但是只用一个键保存.优点是简单直观,可以减少内存空间的使用.缺点是要控制 key-value 个数,控制 hash 内部编码在 ziplist 和 hashtable 之间的转换.
 
 ### list
 
@@ -119,6 +126,22 @@ Redis 数据保存在内存中,当进程重新启动时,释放内存并重新分
 
 ### RDB
 
+#### 触发方式
+
+> 手动触发
+
+- `save`: `save` 命令会阻塞当前 Redis 服务,直到 RDB 持久化完成为止.
+- `bgsave`: `bgsave` 命令会使 Redis 进程 fork 创建出子进程,RDB 持久化过程由子进程完成.fork 过程中,Redis 会阻塞,但一般时间很短.
+
+> 自动触发
+
+- 配置文件中使用 `save m n` 相关配置,表示 m 秒内存在 n 次修改时,自动触发 `bgsave`.
+- 从节点全量复制时,主节点自动触发 `bgsave` 生成 RDB 文件,并发送给从节点
+- 执行 `debug reload` 命令重新加载 Redis 时,会自动触发.
+- 默认情况下,执行 `shutdown` 关闭 Redis 时,如果没有开启 AOF,则自动执行 `bgsave`.
+
+#### bgsave 流程说明
+
 1. 执行 bgsave 命令,父进程判断有无子进程在进行持久化操作.如有,则直接返回
 2. 父进程执行 fork 操作创建子进程(该过程父进程会阻塞),子进程创建 RDB 文件,并根据父进程内存生成临时快照文件,完成后对原有文件进行原子替换
 3. 子进程发送信号给父进程表示完成,父进程更新统计信息
@@ -128,11 +151,16 @@ Redis 数据保存在内存中,当进程重新启动时,释放内存并重新分
 ### AOF
 
 1. 写入命令以 RESP 协议文本格式追加到 aof_buf 缓冲区中
-2. AOF 缓冲区根据配置的同步策略向磁盘做同步操作.包括 3 种策略,always,everysec(默认),no
-3. AOF文件重写,`bgrewriteaof` 或自动触发.
-    1) 父进程 fork 子进程,开销与 bgsave 一样.子进程能够共享 fork操作时的内存数据
-    2) 子进程根据内存快照,按照重写规则写入到新的 AOF 文件
-    3) 写入完成后,通知父进程,父进程更新统计信息,使用新文件替换老文件,并将缓冲区写入新的 AOF 文件中
+2. AOF 缓冲区根据配置的同步策略向磁盘做同步操作.同步策略由 `appendfsync` 参数控制,包括以下 3 种策略
+   - always: 每次写入都要同步 AOF 文件,在一般的 SATA 盘上,Redis 只能支持大约几百 TPS 写入,与 Redis 高性能背道而驰
+   - everysec(默认): 每秒同步一次,理论上在宕机的情况下只丢失 1 秒的数据
+   - no: Redis 不做同步,同步硬盘由操作系统负责,通常 30 秒一次.无法保证数据安全.
+3. 执行 AOF文件重写,`bgrewriteaof` 或自动触发.
+   1. 如果当前进程正在执行 AOF 重写,则直接返回.如果正在执行  `bgsave`,则等 `bgsave` 完成后再执行.
+   2. 父进程 fork 子进程,开销与 `bgsave` 一样.子进程能够共享 fork 操作时的内存数据
+   3. 父进程 fork 完成后,继续响应其它命令,所有修改操作依然写入 AOF 缓冲区,并根据 `appendfsync` 策略同步到磁盘
+   4. 子进程根据内存快照,按照重写规则写入到新的 AOF 文件
+   5. 写入完成后,通知父进程,父进程更新统计信息,使用新文件替换老文件,并将缓冲区写入新的 AOF 文件中
 
 > 注意: fork 阻塞,AOF 追加阻塞(磁盘同步过程中,可能造成阻塞)
 
@@ -173,7 +201,7 @@ Redis 数据保存在内存中,当进程重新启动时,释放内存并重新分
 ### 增量复制
 
 1. 从节点发送 `psync {runId} {offset}` 命令进行部分复制
-2. 主节点判断 runId 与自身是否一致,如果一致,则根据参数 offset 在复制积压缓冲区查找,如果偏移量在缓冲区中,则发送 +CONTINUE 响应;若不一致,则退化为全量复制
+2. 主节点判断 runId 与自身是否一致,如果一致,则根据参数 offset 在复制积压缓冲区查找,如果偏移量在缓冲区中,则发送 +CONTINUE 响应;若不一致或 offset 不在缓冲区中,则退化为全量复制
 3. 主节点根据偏移量把复制积压缓冲区内数据发送给从节点,保证主从复制进入正常状态
 
 ![redis 增量复制](https://raw.githubusercontent.com/hulining/hulining.github.io/hexo/source/_posts/images/interview-questions-redis/redis-increment-copy.png)
@@ -217,8 +245,8 @@ Redis 数据保存在内存中,当进程重新启动时,释放内存并重新分
 
 ## 阻塞原因
 
-- API 或数据结构使用不合理,使用 `slowlog get {n}` 查看最近 n 次慢查询记录,或使用 bigkeys 查看大对象
-- CPU 饱和,单线程 Redis 处理命令时只能使用一个 CPU.建议使用统计命令 使用统计命令 `redis-cli -h{ip} -p{port}--stat` 查看当前 Redis 使用情况(可能存在 Redis 实例为了追求低内存使用量,过度放宽 ziplist 使用条件(修改了 hash-max-ziplist-entries 和 hash-max-ziplist-value 配置),而 ziplist 的操作算法复杂度在 O(n)到 O(n^2) 之间,导致内存使用率过低,而 CPU 使用率过高
+- API 或数据结构使用不合理,使用 `slowlog get {n}` 查看最近 n 次慢查询记录.或使用 bigkeys 查看大对象.对于慢查询,Redis 提供了  `showlog-log-slower-than` 设置慢查询的阈值,`showlog-max-len` 设置慢查询日志最多存储多少条
+- CPU 饱和,单线程 Redis 处理命令时只能使用一个 CPU.建议使用统计命令 使用统计命令 `redis-cli -h{ip} -p{port} --stat` 查看当前 Redis 使用情况(可能存在 Redis 实例为了追求低内存使用量,过度放宽 ziplist 使用条件(修改 `hash-max-ziplist-entries` 和 `hash-max-ziplist-value` 配置),而 ziplist 的操作算法复杂度在 O(n)到 O(n^2) 之间,导致内存使用率过低,而 CPU 使用率过高
 - 持久化阻塞. 在持久化时,如果 fork 操作本身耗时过长,必然会导致主线程的阻塞
 - CPU 竞争, Redis 是典型的 CPU 密集型应用,不应与其它 CPU 密集型应用部署在一起.且若做了 CPU 绑定, 父子进程 RDB/AOF 重写时,可能存在 CPU 竞争
 - 内存交换(swap),保证 Redis 高性能的一个重要前提是将所有数据保存在内存中.如果数据部分保存在内存中,可能导致 Redis 性能下降.所以务必确保 Redis 实例有足够内存可以使用,并设置 `maxmemory`,降低系统使用 swap 的优先级

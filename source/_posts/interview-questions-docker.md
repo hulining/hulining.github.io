@@ -100,7 +100,7 @@ overlay2 采用三层结构:
 
 - 尽量使用 `ENV` 和 `ARG` 让人不改或者少改 Dockerfile 即可做构建对应版本的镜像
 
-- 尽量减少 Dockerfile 中单独的 `RUN` 命令的数量来减少镜像的层数.
+- 尽量减少 Dockerfile 中单独的 `RUN` 命令的数量来减少镜像的层数.在一个 RUN 中清理编译生成文件,安装包的缓存等临时文件
 
 > Dockerfile 中指令 `RUN`,`COPY`,`ADD` 会创建新的镜像层,之后镜像层的操作不会影响上一层.因此即便 Dockerfile 中包含 `RUN rm -rf xxx` 镜像大小也不会减小.
 
@@ -281,7 +281,8 @@ COPY [--chown=<user>:<group>] ["<src>",... "<dest>"]
 `--entrypoint` 指令指定的命令会覆盖原有所有命令及参数
 
 ```Dockerfile
-# exec 形式,是推荐的形式
+# exec 形式,是推荐的形式.容器中 `executable` 进程 ID 为 1,可以使用 docker stop 命令优雅的停止容器.
+# 可以通过 ENTRYPOINT ["sh", "-c", "echo ${HOME}"] 获取变量的值
 ENTRYPOINT ["executable", "param1", "param2"]
 
 # shell 形式. 容器启动后默认执行 `/bin/sh -c command param1 param2`,这种方式启动的容器会自动回收孤儿进程与僵尸进程
