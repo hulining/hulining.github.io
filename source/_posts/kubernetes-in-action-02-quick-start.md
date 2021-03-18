@@ -192,9 +192,9 @@ get: 显示一个或多个资源
 
 create: 根据命令行临时创建一个资源,可能主要用于测试
     # 创建用于 imagePullSecret 指定拉取镜像的认证信息
-    kubectl create secret docker-registry <NAME> 
-      --docker-username=user --docker-password=password
-      --docker-email=email --docker-server=	https://index.docker.io/v1/
+    kubectl create secret docker-registry <NAME> \
+      --docker-username=user --docker-password=password \
+      --docker-email=email --docker-server=https://index.docker.io/v1/
 
 run: 在集群上运行镜像
     kubectl run <NAME> --image=<IMAGE> : 运行镜像,并指定pod名称<NAME>
