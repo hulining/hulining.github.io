@@ -1,6 +1,6 @@
 ---
 title: K8S 实战 - 02 快速开始
-date: 2020/06/24
+date: 2021/03/18
 tags:
   - Kubernetes
 categories:
