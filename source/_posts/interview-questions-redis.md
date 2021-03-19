@@ -126,7 +126,15 @@ Redis 数据保存在内存中,当进程重新启动时,释放内存并重新分
 
 ### RDB
 
-#### 触发方式
+#### bgsave 流程说明
+
+1. 执行 bgsave 命令,父进程判断有无子进程在进行持久化操作.如有,则直接返回
+2. 父进程执行 fork 操作创建子进程(该过程父进程会阻塞),子进程创建 RDB 文件,并根据父进程内存生成临时快照文件,完成后对原有文件进行原子替换
+3. 子进程发送信号给父进程表示完成,父进程更新统计信息
+
+![redis-bgsave](https://raw.githubusercontent.com/hulining/hulining.github.io/hexo/source/_posts/images/interview-questions-redis/redis-bgsave.png)
+
+#### `bgsave` 触发方式
 
 > 手动触发
 
@@ -140,15 +148,9 @@ Redis 数据保存在内存中,当进程重新启动时,释放内存并重新分
 - 执行 `debug reload` 命令重新加载 Redis 时,会自动触发.
 - 默认情况下,执行 `shutdown` 关闭 Redis 时,如果没有开启 AOF,则自动执行 `bgsave`.
 
-#### bgsave 流程说明
-
-1. 执行 bgsave 命令,父进程判断有无子进程在进行持久化操作.如有,则直接返回
-2. 父进程执行 fork 操作创建子进程(该过程父进程会阻塞),子进程创建 RDB 文件,并根据父进程内存生成临时快照文件,完成后对原有文件进行原子替换
-3. 子进程发送信号给父进程表示完成,父进程更新统计信息
-
-![redis-bgsave](https://raw.githubusercontent.com/hulining/hulining.github.io/hexo/source/_posts/images/interview-questions-redis/redis-bgsave.png)
-
 ### AOF
+
+#### AOF 流程说明
 
 1. 写入命令以 RESP 协议文本格式追加到 aof_buf 缓冲区中
 2. AOF 缓冲区根据配置的同步策略向磁盘做同步操作.同步策略由 `appendfsync` 参数控制,包括以下 3 种策略
@@ -162,9 +164,22 @@ Redis 数据保存在内存中,当进程重新启动时,释放内存并重新分
    4. 子进程根据内存快照,按照重写规则写入到新的 AOF 文件
    5. 写入完成后,通知父进程,父进程更新统计信息,使用新文件替换老文件,并将缓冲区写入新的 AOF 文件中
 
-> 注意: fork 阻塞,AOF 追加阻塞(磁盘同步过程中,可能造成阻塞)
-
 ![redis aof](https://raw.githubusercontent.com/hulining/hulining.github.io/hexo/source/_posts/images/interview-questions-redis/redis-aof.png)
+
+#### AOF 重写触发方式
+
+> 手动触发
+
+- `bgrewriteaof`: 直接使用 `bgrewriteaof` 命令触发 aof 重写
+
+> 自动触发
+
+根据 `auto-aof-rewrite-min-size` 和 `auto-aof-rewrite-percentage` 参数确定触发时机
+
+- `auto-aof-rewrite-min-size`: 表示 AOF 重写时文件的最小体积.默认为 64M
+- `auto-aof-rewrite-percentage`: 表示当前 AOF 文件空间(`aof_current_size`)和上一次重写后 AOF文件大小(`aof_base_size`)的比值
+
+自动触发时机为: `aof_current_size > auto-aof-rewrite-min-size` && `(aof_current_size - aof_base_size)/aof_base_size >= auto-aof-rewrite-percentage`.即当前文件大小大于 AOF 重写的最小体积,且上一次重写后,文件大小增长的百分比超过一定值.
 
 ## Redis 复制过程
 

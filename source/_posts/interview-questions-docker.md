@@ -12,7 +12,7 @@ description: 总结整理常见 Docker 面试题,以作备忘
 
 ## docker 配置
 
-docker 默认配置见官方文档 [daemon.json](https://docs.docker.com/engine/reference/commandline/dockerd/#daemon-configuration-file) 示例.且提供了众多[命令行参数](https://docs.docker.com/engine/reference/commandline/dockerd/#daemon).下面介绍一些常用配置:
+dockerd 默认配置见官方文档 [daemon.json](https://docs.docker.com/engine/reference/commandline/dockerd/#daemon-configuration-file) 示例.且提供了众多[命令行参数](https://docs.docker.com/engine/reference/commandline/dockerd/#daemon).下面介绍一些常用配置:
 
 ```text
 # 进程相关

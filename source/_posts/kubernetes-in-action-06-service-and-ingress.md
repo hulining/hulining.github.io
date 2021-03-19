@@ -1,5 +1,5 @@
 ---
-title: K8S 实战 - 05 Service 和 Ingress
+title: K8S 实战 - 06 Service 和 Ingress
 date: 2021/03/18
 tags:
   - Kubernetes
