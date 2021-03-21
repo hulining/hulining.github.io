@@ -59,7 +59,7 @@ webhooks:
 
 Sidecar 流量拦截基于 iptables 规则(init 容器启动时设置规则),拦截应用容器 Inbound/Outbound 的流量
 
-![istio 流量流向](https://raw.githubusercontent.com/hulining/hulining.github.io/hexo/source/_posts/images/istio-sidecar/istio_traffic_flow.png)
+![istio 流量流向](istio-sidecar/istio_traffic_flow.png)
 
 1. Inbound 流量在进入 Pod 的网络协议栈时首先被 iptables 规则拦截
 2. iptables 规则将数据包转发给 Envoy

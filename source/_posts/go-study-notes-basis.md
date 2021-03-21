@@ -141,7 +141,7 @@ const (
 
 本质上，我们可以理解函数传递参数都是值拷贝,只不过引用类型传递的是一个指向底层数据的指针, 所以我们在函数中操作的时候, 实际操作的是共享的底层数据值, 进而影响到所有引用到这个共享底层数据的变量
 
-![值类型与引用类型的区别](https://raw.githubusercontent.com/hulining/hulining.github.io/hexo/source/_posts/images/go-study-notes-basis/difference_between_valueType_and_referenceType.jpg)
+![值类型与引用类型的区别](go-study-notes-basis/difference_between_valueType_and_referenceType.jpg)
 
 同理, 在进行拷贝操作时, 值类型和引用类型会将变量的值进行拷贝, 值类型中变量的值是真实的数据, 因此可以理解为深拷贝. 引用类型中变量的值是真实存储数据的内存地址, 拷贝后变量的值也是该内存地址, 二者仍然共享同一底层数据, 因此可以理解为浅拷贝.
 

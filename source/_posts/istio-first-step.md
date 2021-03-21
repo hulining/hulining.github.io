@@ -29,7 +29,7 @@ description: 本文章为《云原生服务网格Istio：原理、实践、架�
 
 ### istio 工作机制
 
-![istio 工作机制和架构](https://raw.githubusercontent.com/hulining/hulining.github.io/hexo/source/_posts/images/istio-first-step/istio_working_mechanism_and_architecture.jpg)
+![istio 工作机制和架构](istio-first-step/istio_working_mechanism_and_architecture.jpg)
 
 - `自动注入`: 在创建应用程序时自动注入 Sidecar 代理.在 Kubernetes 场景下创建 Pod 时,Kube-apiserver 调用管理面组件的 Sidecar-Injector 服务,自动修改应用程序的描述信息并注入 Sidecar.在创建Pod时,在创建业务容器的同时在Pod中创建 Sidecar 容器
 - `流量拦截`: 在 Pod 初始化时设置 iptables 规则,当有流量到来时,基于配置的 iptables 规则拦截业务容器的 Inbound 流量和 Outbound 流量到 Sidecar 上.应用程序感知不到 Sidecar的存在,还以原本的方式进行互相访问
@@ -59,7 +59,7 @@ service | service
 
 pilot 提供各种服务发现的 adapter 实现服务发现机制,并将其构造和转换成 istio 的服务发现模型.如 kubernetes 源数据`service(service),endpoint(instance),deployment(version)`
 
-![pilot 服务发现](https://raw.githubusercontent.com/hulining/hulining.github.io/hexo/source/_posts/images/istio-first-step/service_discovery_on_pilot.png)
+![pilot 服务发现](istio-first-step/service_discovery_on_pilot.png)
 
 - 服务治理
 

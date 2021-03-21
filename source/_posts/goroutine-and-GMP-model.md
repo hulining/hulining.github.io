@@ -28,7 +28,7 @@ goroutine 具有占用内存小,调度灵活的特点:
 - M: thread 线程
 - P: Processor,包含了运行 goroutine 的资源.包含了可运行的 G 队列.如果线程想要运行 goroutine,则必须先获取 P.
 
-![GMP 模型](https://raw.githubusercontent.com/hulining/hulining.github.io/hexo/source/_posts/images/goroutine-and-GMP-model/gmp-model.png)
+![GMP 模型](goroutine-and-GMP-model/gmp-model.png)
 
 GMP 模型中包含以下概念:
 
@@ -63,7 +63,7 @@ GMP 模型中包含以下概念:
 
 ## go func() 调度流程
 
-![go func() 调度流程](https://raw.githubusercontent.com/hulining/hulining.github.io/hexo/source/_posts/images/goroutine-and-GMP-model/go-func-process.jpeg)
+![go func() 调度流程](goroutine-and-GMP-model/go-func-process.jpeg)
 
 如下是 go func() 的调度流程:
 
@@ -76,7 +76,7 @@ GMP 模型中包含以下概念:
 
 调度器的生命周期可表示如下:
 
-![调度器的生命周期](https://raw.githubusercontent.com/hulining/hulining.github.io/hexo/source/_posts/images/goroutine-and-GMP-model/life-cycle-of-scheduler.png)
+![调度器的生命周期](goroutine-and-GMP-model/life-cycle-of-scheduler.png)
 
 ## 参考
 
