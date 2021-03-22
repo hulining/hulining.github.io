@@ -1,6 +1,6 @@
 ---
 title: K8S 实战 - 03 资源管理
-date: 2021/03/18
+date: 2021/03/18 03:00:00
 tags:
   - Kubernetes
 categories:

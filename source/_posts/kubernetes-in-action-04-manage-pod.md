@@ -1,6 +1,6 @@
 ---
 title: K8S 实战 - 04 Pod 管理
-date: 2021/03/18
+date: 2021/03/18 04:00:00
 tags:
   - Kubernetes
 categories:

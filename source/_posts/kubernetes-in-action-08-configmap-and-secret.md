@@ -1,6 +1,6 @@
 ---
 title: K8S 实战 - 08 ConfigMap 和 Secret
-date: 2021/03/19
+date: 2021/03/19 08:00:00
 tags:
   - Kubernetes
 categories:

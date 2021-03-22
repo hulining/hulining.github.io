@@ -1,6 +1,6 @@
 ---
 title: K8S 实战 - 07 存储卷及数据持久化
-date: 2021/03/19
+date: 2021/03/19 07:00:00
 tags:
   - Kubernetes
 categories:

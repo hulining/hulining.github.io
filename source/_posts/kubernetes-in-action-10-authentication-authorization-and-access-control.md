@@ -1,6 +1,6 @@
 ---
 title: K8S 实战 - 10 认证,授权与准入控制
-date: 2021/03/19
+date: 2021/03/19 10:00:00
 tags:
   - Kubernetes
 categories:

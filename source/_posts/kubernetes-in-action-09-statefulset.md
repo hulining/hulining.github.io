@@ -1,6 +1,6 @@
 ---
 title: K8S 实战 - 09 StatefulSet 控制器
-date: 2021/03/19
+date: 2021/03/19 09:00:00
 tags:
   - Kubernetes
 categories:

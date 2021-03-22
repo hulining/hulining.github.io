@@ -1,6 +1,6 @@
 ---
 title: K8S 实战 - 05 Pod 控制器
-date: 2021/03/18
+date: 2021/03/18 05:00:00
 tags:
   - Kubernetes
 categories:
