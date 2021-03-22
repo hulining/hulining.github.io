@@ -742,7 +742,7 @@ facts 是由正在通信的远程目标主机发回的信息,这些信息被保�
        when: foo_result.rc == 5
 ```
 
-可通过注册变量的[返回值](#https://docs.ansible.com/ansible/latest/reference_appendices/common_return_values.html) 使用注册变量,以进行条件判断或命令执行结果保存.
+可通过注册变量的[返回值](https://docs.ansible.com/ansible/latest/reference_appendices/common_return_values.html) 使用注册变量,以进行条件判断或命令执行结果保存.
 
 以下列出注册变量常用的返回值:
 
@@ -805,11 +805,11 @@ Jinja2 filter 可以在模版表达式中转换变量的值.Jinja2 包含了许�
 3. inventory file or script group vars: 主机清单中定义的主机组变量
 4. inventory group_vars/all: 主机清单目录下的 `group_vars/all`
 5. playbook group_vars/all: playbook 目录下的 `group_vars/all`
-6. inventory group_vars/*: 主机清单目录下的 `group_vars/*`
-7. playbook group_vars/*: playbook 目录下的 `group_vars/*`
+6. inventory group_vars/: 主机清单目录下的 `group_vars/*`
+7. playbook group_vars/: playbook 目录下的 `group_vars/*`
 8. inventory file or script host vars: 主机清单中定义的主机变量
-9. inventory host_vars/*: 主机清单目录下的 `host_vars/*`
-10. playbook host_vars/*: playbook 目录下的 `host_vars/*`
+9. inventory host_vars/: 主机清单目录下的 `host_vars/*`
+10. playbook host_vars/: playbook 目录下的 `host_vars/*`
 11. host facts / cached set_facts: 主机 facts 或 facts 缓存中的变量
 12. play vars: 在 play 中定义的全局变量,如 `roles/x/tasks/main.yml` 中全局 `vars`
 13. play vars_prompt: 在 play 中定义的全局变量,如 `roles/x/tasks/main.yml` 中全局 `vars_prompt`
@@ -1085,7 +1085,7 @@ loop: "{{ lookup('inventory_hostnames', 'all', wantlist=True) }}"
     - two
 ```
 
-#### with_item
+#### with_items
 
 `with_items` 可以转换为 `loop` 和 `flatten` 过滤器
 
