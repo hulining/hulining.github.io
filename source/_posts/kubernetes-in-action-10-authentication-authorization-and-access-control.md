@@ -136,7 +136,7 @@ Kubernetes 支持的 HTTPS 客户端证书认证,基于 SSL/TLS 协议,安全性
 ### Kubernetes 中的 SSL/TLS 认证
 
 构建安全基础通信环境的 Kubernetes 集群时,需要用到 TLS 及数字证书的通信场景有很多种.
-![Kubernetes 的 SSL/TLS 通信](https://raw.githubusercontent.com/hulining/hulining.github.io/hexo/source/_posts/images/kubernetes-in-action-10-authentication-authorization-and-access-control/SSL-TLS-communication-in-kubernetes.png)
+![Kubernetes 的 SSL/TLS 通信](kubernetes-in-action-10-authentication-authorization-and-access-control/SSL-TLS-communication-in-kubernetes.png)
 
 etcd 集群内各节点间的通信,各节点与其客户端(主要是 API Server)之间的通信都应该以加密的方式进行,并需要进行身份验证
 
