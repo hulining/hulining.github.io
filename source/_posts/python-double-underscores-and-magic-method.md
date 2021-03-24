@@ -35,9 +35,9 @@ AttributeError: myClass instance has no attribute '__superprivate'
 - `__foo`: 解析器用 `_<classname>__foo` 来代替这个名字,以区别和其他类相同的命名,必须通过 `对象名._类名__xxx` 这样的方式进行访问.
 - `__foo__`: Python 内部魔术方法,用来区别其他用户自定义的命名,以防冲突.例如 `__init__()`,`__del__()`,`__call__()` 等.
 
-## Python 常用魔术方法
+## Python 常用魔术方法或属性
 
-### `__abs__`
+### `__abs__()`
 
 如果类实现了该方法,可通过 `abs()` 内置函数直接调用.如
 
@@ -57,7 +57,7 @@ if __name__ == "__main__":
 
 ```
 
-### `__eq__`
+### `__eq__()`
 
 如果类实现了该方法,可通过 `==` 判断两个对象是否相等.如
 
@@ -77,7 +77,7 @@ if __name__ == '__main__':
     print(c == d)
 ```
 
-### `__hash__`
+### `__hash__()`
 
 如果类实现了该方法,可通过 `hash()` 内置函数直接调用.如
 
@@ -96,13 +96,43 @@ if __name__ == '__main__':
 
 ```
 
-### `__iter__`
+### `__iter__()`
 
 > 如果对象实现了可以返回迭代器的 `__iter__` 方法,那么对象就是可迭代的.
 
 如果对象实现了该方法,可通过 `iter()` 函数直接调用.更多信息参见 {% post_link python-iterator-and-generator %}.
 
-### `__repr__` 与 `__str__`
+### __mro__
+
+此属性值为元组,子类在访问父类方法或属性时,会按照元组元素顺序寻找基类的方法或属性.如
+
+```python
+class A():
+    def foo(self):
+        print("a.foo")
+
+class B(A):
+    pass
+
+class C(A):
+    def foo(self):
+        print("c.foo")
+
+class D(B, C):
+    pass
+
+d = D()
+d.foo()
+print(D.__mro__)
+
+# 输出为
+# c.foo
+# (<class '__main__.D'>, <class '__main__.B'>, <class '__main__.C'>, <class '__main__.A'>, <class 'object'>)
+```
+
+在方法解析期间寻找基类时要考虑的类的元组
+
+### `__repr__()` 与 `__str__()`
 
 如果类实现了该方法,可通过 `str()` 内置函数直接调用.如
 

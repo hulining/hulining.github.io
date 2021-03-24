@@ -195,6 +195,8 @@ Compression Algorithm: NONE
 
 ### 第三阶段: Client Response to Server
 
+客户端向服务端发送响应包含如下信息:
+
 #### `Client Certificate`: 客户端证书(可选)
 
 客户端证书,如果服务端发送了客户端证书请求,则客户端将其证书发送到服务器以进行客户端身份验证.客户的证书包含客户端的公钥
@@ -256,6 +258,19 @@ insufficient_security | Yes | 没有达到安全要求
 internal_error | Yes | 与协议无关的错误
 user_canceled | Yes | 与协议无关的失败
 no_renegotiation | No | 协商请求被拒绝
+
+## HTTPS 连接过程
+
+上面描述的 HTTPS 连接过程太繁琐了.下面简化一下,方便记忆:
+
+1. 客户端通过发送 `Client Hello` 报文开始 SSL 通信.报文中包含客户端支持的 SSL 的版本和加密组件(Cipher Suite)列表
+2. 服务端发送 `Server Hello` 报文作为响应.同样的,报文中包含 SSL 版本以及加密组件
+3. 服务端发送 `Certificate` 报文,报文中包含公钥证书.并发送 `Server Hello Done` 报文通知客户端,最初阶段 SSL 握手协商结束
+4. 客户端密钥交换,以 `Client Key Exchange` 报文作为回应.报文中包含通信加密时使用的一种被称为 `Pre-master secret` 的随机密码串.该报文已用步骤 3 中公钥进行加密
+5. 客户端继续发送 `Change Cipher Spec` 报文.该报文会提示服务器,在此报文之后的通信会采用 `Pre-master secret` 密钥加密
+6. 客户端发送 `Finished` 报文.该报文包含连接至今全部报文的整体校验值
+7. 服务器同样发送 `Change Cipher Spec` 报文和 `Finished` 报文
+8. SSL 连接建立完成,后续发送 HTTP 请求
 
 ---
 

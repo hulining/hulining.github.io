@@ -71,7 +71,7 @@ awk '/200$/{ip_num[$1]++}END{for(ip in ip_num){print ip,ip_num[ip]}}' ip_code | 
 
 ### 为 `history` 添加时间戳,如何防止个人 history 操作泄露
 
-设置 `export HISTTIMEFORMAT='%F %T' ` 环境变量后,以后记录的命令历史操作就会添加时间
+设置 `export HISTTIMEFORMAT='%F %T'` 环境变量后,以后记录的命令历史操作就会添加时间
 
 - 可以将 `history` 记录的个人操作清空,使用 `history -c` 清空当前命令历史,并使用 `history -w` 将已经清空的命令历史写入到命令历史文件 `~/.bash_history` 中(或直接清空该文件),下次登录边不再有命令历史
 - 可以设置 `export HISTCONTROL=ignorespace` 环境变量,使得命令历史忽略记录以空格开始的命令.在执行敏感命令时,以空格开始
