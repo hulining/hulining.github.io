@@ -5,7 +5,7 @@ tags:
   - Kubernetes
 categories:
   - Kubernetes
-description: 本文为 K8S 实战的第九个章节.主要了解 K8S 集群中 StatefulSet 控制器相关概念及其使用方式
+description: 本文为 K8S 实战的第十个章节.主要了解 K8S 集群的认证,授权与准入控制相关策略.了解 RBAC 的使用.
 ---
 
 ## 访问控制概述

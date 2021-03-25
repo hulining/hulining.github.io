@@ -76,7 +76,7 @@ User | 提供用户及用户组隔离.每个容器都有独立的用户,用户�
 
 ### Union file systems
 
-Union file systems(联合文件系统)是通过创建层级进行操作的文件系统,它将对文件系统的修改作为一次提交来一层层的叠加.常用的包含 overlay2 aufs
+Union file systems(联合文件系统)是通过创建层级进行操作的文件系统,它将对文件系统的修改作为一次提交来一层层的叠加.常用的包含 `overlay2`,`aufs`.
 
 overlay2 采用三层结构:
 
