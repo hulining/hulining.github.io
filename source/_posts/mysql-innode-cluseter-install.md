@@ -629,3 +629,9 @@ mysql> SHOW DATABASES;
 ```
 
 如上实现了 MySQL 集群的高可用于故障恢复后的数据同步功能.
+
+---
+
+参考
+
+- [MySQL8.0.21 InnoDB Cluster 从零搭建集群方案详细文档](https://blog.csdn.net/qq_33158376/article/details/109799989)

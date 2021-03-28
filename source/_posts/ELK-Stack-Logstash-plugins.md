@@ -112,6 +112,38 @@ input {
 }
 ```
 
+### `kafka`
+
+[kafka](https://www.elastic.co/guide/en/logstash/current/plugins-inputs-kafka.html) 输入插件用于从 Kafka 集群中读取事件数据.
+
+> 常用配置字段
+
+字段 | 描述 | 是否必需 | 默认值
+:---: | :---: | :---: | :---:
+bootstrap_servers | kafka 实例的列表 | 否 | "localhost:9092"
+client_id | 客户端标识 | 否 | "logstash"
+connections_max_idle_ms | 空闲连接释放的超时时间 | 否 | -
+consumer_threads | 消费者线程数,一般配置为 kafka 的分区数 | 否 | 1
+decorate_events | 是否在事件中添加 kafka 元数据,如 topic,消息大小 | 否 | false
+group_id | kafka 消费者所属组的 id | 否 | "logstash"
+topics | 订阅的 topic | 否 | ["logstash"]
+topics_pattern | 以正则表达式方式订阅 topic | 否 | -
+
+> 示例
+
+```ruby
+input {
+  kafka {
+    bootstrap_servers => ["10.237.64.46:9094"]
+    group_id => "es-transfer"
+    topics => ["JSON_PRODUCE_TOPIC"]
+    consumer_threads => 5
+    decorate_events => true
+    codec => "json"
+  }
+}
+```
+
 ### `redis`
 
 [`redis`](https://www.elastic.co/guide/en/logstash/current/plugins-inputs-redis.html) 输入插件用于从 Redis 实例中读取事件数据,支持 Redis channels 和 lists.

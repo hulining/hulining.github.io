@@ -78,6 +78,8 @@ GMP 模型中包含以下概念:
 
 ![调度器的生命周期](goroutine-and-GMP-model/life-cycle-of-scheduler.png)
 
-## 参考
+---
+
+参考
 
 - [[典藏版]Golang调度器GPM原理与调度全分析](https://www.jianshu.com/p/fa696563c38a)

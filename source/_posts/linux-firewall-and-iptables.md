@@ -6,7 +6,7 @@ tags:
   - iptables
   - 面试
 categories:
-  - iptables
+  - Linux
 abbrlink: 
 description: 详细介绍 Linux 防火墙及 iptables 命令的使用,包含一些常用的 iptables 规则.
 ---
