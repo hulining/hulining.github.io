@@ -319,8 +319,32 @@ location / {
 }
 ```
 
+## Nginx 常用信号
+
+kill 信号 | 解释 | nginx 命令
+:--- | :--- | :---
+TERM(15), INT(2) | 快速停止 | nginx -s stop
+QUIT(3) | 优雅的停止 | nginx -s quit
+HUP(1) | 优雅的启动新的进程重新加载配置文件 | nginx -s reload
+USR1(10) | 日志文件滚动 | nginx -s reopen
+USR2(12) | 升级二进制可执行文件 | -
+WINCH(28) | 优雅的关闭 worker 进程
+
+### Nginx 平滑升级与回退
+
+假设 nginx 版本升级前进程 id 为 `30818`,则平滑升级与版本回退过程如下:
+
+```bash
+# 向原 master 进程发送 USR2 信号,使用新版本的 nginx 启动 master 进程,此时老版本的 nginx 仍在处理请求
+kill -USR2 30818
+# 向原 master 进程发送 WINCH 信号,优雅停止旧版本的 nginx worker,此时切换为新版本的 nginx 处理请求
+kill -WINCH 30818
+# 向原 master 进程发送 QUIT 信号,优雅停止旧版本的 nginx master
+kill -QUIT 30818
+```
+
 ---
 
-参考:
+参考
 
 - [Nginx 调优](https://www.cnblogs.com/zhichaoma/p/7989655.html)
