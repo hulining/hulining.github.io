@@ -175,16 +175,16 @@ nginx: configuration file /usr/local/nginx/conf/nginx.conf test failed
 此时需要对 `http` 配置段 `server_names_hash_bucket_size` 进行调整,如下:
 
 ```conf
+# ngx_http_core_module
 http {
-    # ...
     server_names_hash_bucket_size  512;
 }
 ```
 
 ### 开启高效文件传输模式,开启或 gzip 压缩
 
-- `http` 配置段 `sendfile` 参数用于开启文件高效传输模式
-- `http` 配置段`gzip` 参数可用于开启压缩功能
+- 配置段 `sendfile` 参数用于开启文件高效传输模式
+- 配置段`gzip` 参数可用于开启压缩功能
 
 ```conf
 http {
@@ -195,10 +195,10 @@ http {
 
 ### 优化 Nginx 连接超时时间
 
-- `http` 配置段 `keepalive_timeout` 参数用于设置客户端连接保持会话的超时时间,超过这个时间服务器会关闭该连接
-- `http` 配置段 `client_header_timeout` 参数用于设置读取客户端请求头数据的超时时间.如果读取请求头超时,服务器将返回 "Request time out (408)" 错误.
-- `http` 配置段 `client_body_timeout` 参数用于设置读取客户端请求主体数据的超时时间.如果读取请求体超时,服务器将返回 "Request time out (408)" 错误.
-- `http` 配置段 `send_timeout` 参数用于指定响应客户端的超时时间,如果超时,Nginx 将会关闭连接.
+- 配置段 `keepalive_timeout` 参数用于设置客户端连接保持会话的超时时间,超过这个时间服务器会关闭该连接
+- 配置段 `client_header_timeout` 参数用于设置读取客户端请求头数据的超时时间.如果读取请求头超时,服务器将返回 "Request time out (408)" 错误.
+- 配置段 `client_body_timeout` 参数用于设置读取客户端请求主体数据的超时时间.如果读取请求体超时,服务器将返回 "Request time out (408)" 错误.
+- 配置段 `send_timeout` 参数用于指定响应客户端的超时时间,如果超时,Nginx 将会关闭连接.
 
 ```conf
 http {
@@ -217,6 +217,33 @@ http {
 ```conf
 http {
     client_max_body_size 8m;    # 设置客户端最大请求体大小为8M
+}
+```
+
+### Nginx 限制连接与限制请求速率
+
+- `limit_conn_zone` 参数用于为共享内存区域设置参数
+- `limit_conn` 参数用于设置指定内存区域的最大连接数
+- `limit_conn_status` 参数用于设置超过最大连接数的请求状态码
+
+```conf
+http {
+    limit_conn_zone $binary_remote_addr zone=addr:10m; # 设置 $binary_remote_addr 客户端地址的地址区域为 10m
+    limit_conn ${zone} ${num}; # 设置指定 zone 的最大连接数
+    limit_conn_status ${http_code}; # 设置超过最大连接数的状态码,默认 503
+}
+```
+
+- `limit_req_zone` 参数用于为共享内存区域设置参数
+- `limit_req` 参数用于设置指定内存区域的最大连接数
+- `limit_req_status` 参数用于设置超过最大连接数的请求状态码
+
+```conf
+http {
+    limit_req_zone $binary_remote_addr zone=one:10m rate=1r/s; 
+    # 设置 $binary_remote_addr 客户端地址的地址区域为 10m,平均请求速率最大为 1r/s
+    limit_req zone=${zone} burst=${num}; # 设置指定 zone 的最大并发请求
+    limit_req_status ${http_code}; # 设置超过最大请求数的状态码,默认 503
 }
 ```
 

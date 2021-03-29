@@ -155,6 +155,14 @@ server_id = 10 # 唯一服务器ID,可自行设置
 sync_binlog = 1 # MySQL 每次在提交事务之前会将二进制日志同步到磁盘上,保证服务器在崩溃时不丢失事件
 innodb_flush_logs_at_trx_commit = 0,1,2  #  每次提交事务时会记录日志,开启会对性能产生影响,但是提升准确性
 
+# 主库执行
+create user repl_user@'%' IDENTIFIED BY '123456';
+GRANT REPLICATION SLAVE ON *.* TO repl_user IDENTIFIED BY '123456';
+flush privileges;
+show master status; # 获取到当前 binlog 及 position
+```
+
+```conf
 # 从库配置
 relay_log = /path/to/relay_log/relay-bin
 log_slave_updates = 1 # 允许从节点在二进制日志中记录更新事务
@@ -164,8 +172,8 @@ read_only = 1
 
 # 从库执行
 CHANGE MASTER TO MASTER_HOST='server1',
-    MASTER_USER='repl',
-    MASTER_PASSWORD='password',
+    MASTER_USER='repl_user',
+    MASTER_PASSWORD='123456',
     MASTER_LOG_FILE='mysql-bin.000001',
     MASTER_LOG_POS=0;
 ```
