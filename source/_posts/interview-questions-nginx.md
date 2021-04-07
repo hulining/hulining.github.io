@@ -68,8 +68,8 @@ upstream bakend {
     server 172.16.1.2:8080;
     server 172.16.1.3:8080;
 }
-// 如果指定 `header`,则使用 `$upstream_header_time`(请求头的响应时间)作为响应时间的判断依据
-// 如果指定 `last_byte`,则使用 `$upstream_response_time`(请求响应时间)作为响应时间的判断依据.如果同时指定了 `inflight` 参数,则不完整的请求也会计算在内.
+# 如果指定 `header`,则使用 `$upstream_header_time`(请求头的响应时间)作为响应时间的判断依据
+# 如果指定 `last_byte`,则使用 `$upstream_response_time`(请求响应时间)作为响应时间的判断依据.如果同时指定了 `inflight` 参数,则不完整的请求也会计算在内.
 ```
 
 - `hash key` 自定义 hash 键轮询
@@ -82,8 +82,8 @@ upstream bakend {
     server 172.16.1.2:8080;
     server 172.16.1.3:8080;
 }
-// 如果指定了 `consistent` 参数,则将使用 ketama 一致性哈希算法.
-// 该算法可以确保向组中添加服务器或从组中删除时,只有很少的键被重新映射到与原来不同的服务器.有助于缓存服务器获得更高的缓存命中率
+# 如果指定了 `consistent` 参数,则将使用 ketama 一致性哈希算法.
+# 该算法可以确保向组中添加服务器或从组中删除时,只有很少的键被重新映射到与原来不同的服务器.有助于缓存服务器获得更高的缓存命中率
 ```
 
 - random 完全随机
@@ -98,7 +98,7 @@ upstream bakend {
     server 172.16.1.2:8080;
     server 172.16.1.3:8080;
 }
-// 可选的 `two` 参数随机选择两个后端服务器,然后使用指定的 `method` 选择一个后端服务器.默认方法是 `least_conn`,将请求传递给活动连接数最少的服务器
+# 可选的 `two` 参数随机选择两个后端服务器,然后使用指定的 `method` 选择一个后端服务器.默认方法是 `least_conn`,将请求传递给活动连接数最少的服务器
 ```
 
 ## Nginx location 匹配的顺序是什么
@@ -128,6 +128,24 @@ location ~ /image {
 ```
 
 - 通用匹配: `location /path`,且 path 路径长者优先匹配
+
+## Nginx servername 匹配的顺序是什么
+
+1. 精确 server_name 匹配.
+2. 以 * 通配符开始的泛域名
+3. 以 * 通配符结束的泛域名
+4. 匹配正则表达式
+5. listen 指定的 default server_name
+6. http 模块下的第一个server配置块中的server_name
+
+## nginx 重新加载配置文件的流程是什么
+
+1. 向 master 发送 reload信号
+2. master 校验配置文件语法
+3. master 进程打开新的监听端口
+4. master 进程用新配置启动新的 worker 子进程
+5. master 进程向 worker 子进程发送 quit 信号
+6. 旧 worker 进程关闭监听句柄,处理完当前连接后后结束进程
 
 ## Nginx 调优
 
@@ -163,22 +181,14 @@ events {
 }
 ```
 
-### 优化服务器域名的散列表大小
+### 开启 access_log buffer 缓冲区
 
-如果在 server_name 中配置了长域名,可能会出现如下错误.
-
-```text
-nginx: [emerg] could not build the server_names_hash, you should increase server_names_hash_bucket_size: 64
-nginx: configuration file /usr/local/nginx/conf/nginx.conf test failed
-```
-
-此时需要对 `http` 配置段 `server_names_hash_bucket_size` 进行调整,如下:
+在高并发场景下,nginx 日志写入磁盘可能会极大的影响 nginx 的性能.可以通过设置 `access_log ... buffer=size flush=time` 来开启 nginx access_log 日志的缓冲区大小,并设置同步到磁盘的时间.
 
 ```conf
-# ngx_http_core_module
-http {
-    server_names_hash_bucket_size  512;
-}
+access_log path [format [buffer=size] [gzip[=level]] [flush=time] [if=condition]];
+# 或禁用某些不必要的日志.如静态文件的访问日志.
+access_log off;
 ```
 
 ### 开启高效文件传输模式,开启或 gzip 压缩
@@ -207,16 +217,6 @@ http {
     client_header_timeout 15;
     client_body_timeout 15;
     send_timeout 25;
-}
-```
-
-### 限制上传文件大小
-
-- `http` 配置段 `send_timeout` 参数用于设置客户端最大请求体大小.如果超过出,客户端会收到 413 错误,即请求体过大
-
-```conf
-http {
-    client_max_body_size 8m;    # 设置客户端最大请求体大小为8M
 }
 ```
 
@@ -254,6 +254,34 @@ http {
 ```conf
 location ~ .*\.(gif|jpg|jpeg|png|bmp|swf|js|css)$ {
     expires     3650d;
+}
+```
+
+### 限制上传文件大小
+
+- `http` 配置段 `send_timeout` 参数用于设置客户端最大请求体大小.如果超过出,客户端会收到 413 错误,即请求体过大
+
+```conf
+http {
+    client_max_body_size 8m;    # 设置客户端最大请求体大小为8M
+}
+```
+
+### 优化服务器域名的散列表大小
+
+如果在 server_name 中配置了长域名,可能会出现如下错误.
+
+```text
+nginx: [emerg] could not build the server_names_hash, you should increase server_names_hash_bucket_size: 64
+nginx: configuration file /usr/local/nginx/conf/nginx.conf test failed
+```
+
+此时需要对 `http` 配置段 `server_names_hash_bucket_size` 进行调整,如下:
+
+```conf
+# ngx_http_core_module
+http {
+    server_names_hash_bucket_size  512;
 }
 ```
 
