@@ -61,7 +61,7 @@ metadata:
 spec:
   type:  # Service 类型,默认为 ClusterIP.可选值为 ClusterIP,NodePort,LoadBalacer,ExternalName(用于接入集群外部CNAME)
   selector:  # Service 的标签选择器,用于关联后端 Pod
-  clusterIP:  # Service 的 IP地址,可选值为 "None","" 或指定 IP 地址."None" 用于构建 Headless Service.
+  clusterIP:  # Service 的 IP 地址,可选值为 "None","" 或指定 IP 地址."None" 用于构建 Headless Service.
   ports:
   - name:  # 端口名称
     port:  # Service 暴露出来的端口,如果为空,默认与 targetPort 一致,
@@ -71,9 +71,11 @@ spec:
   
   externalName:  # 接入集群外部 CNAME,一般为域名,但是不可以指定端口,仅用于 Service 类型为 ExternalName 时
   externalIPs:  # 接入集群外部服务,外部服务的 IP 列表
+  externalTrafficPolicy: # 控制流量的路由策略,可选值有 Cluster,Local.Cluster 会将外部流量路由到所有就绪的 endpoints,而 Local 只会路由到当前节点上就绪的 endpoints
   loadBalancerIP:  # 指定创建负载均衡器使用的 IP 地址,需要云厂商支持
   loadBalancerSourceRanges:  # 指定负载均衡器允许的客户端来源的地址范围
   sessionAffinity: None # 会话粘滞性,可选值有 ClientIP,None
+    # timeoutSeconds: 10800s # 如果 `sessionAffinity` 设置为 ClientIP,该参数设置会话的保持时间.默认为 3h
 ```
 
 ## 服务发现
