@@ -74,9 +74,9 @@ metadata:
 spec:
   capacity:
     storage:  # 指定 PV 容量,单位为 Mi,Gi
-  accessModes: # 设定访问模式列表
+  accessModes: # 设定访问模式列表.可选值为 `ReadWriteOnce`,`ReadOnlyMany`,`ReadWriteMany`
   
-  persistentVolumeReclaimPolicy:  # 设定回售策略
+  persistentVolumeReclaimPolicy:  # 设定回售策略.可选值为 `Retain`,`Recycle`,`Delete`
   mountOptions: # 设定挂载选项列表
   
   <type>: # 与 Pod 中定义 Volumes 大致相同,支持 hostPath,nfs,rbd(ceph),glusterfs
@@ -138,7 +138,7 @@ metadata:
   labels:
   
 spec:
-  accessMode: # 设定访问模式列表
+  accessMode: # 设定访问模式列表.可选值为 `ReadWriteOnce`,`ReadOnlyMany`,`ReadWriteMany`
   
   resources:
     requests:
@@ -168,7 +168,7 @@ StorageClass 中没有 `spec`字段,但包含如下5个字段:
 
 ```yaml
 # glusterfs
-apiVersion: storage.k8s.io/v1beta1
+apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
   name: nfs-storageclass     # 暴露出来的 StorageClass 名称

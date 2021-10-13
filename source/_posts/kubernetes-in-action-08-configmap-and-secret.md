@@ -90,6 +90,8 @@ metadata:
   namespace:
 data:
   # 存储键值对数据
+
+# immutable: true # 表示不可变更的 ConfigMap 对象.1.19 之后可以使用,1.21 变为 stable.
 ```
 
 ### 在 Pod 中使用 ConfigMap 资源对象
@@ -111,35 +113,40 @@ ConfigMap 资源支持容器应用动态更新配置,用户直接更新 ConfigMa
 
 ## Secret 资源
 
-Secret 资源的功能类似于 ConfigMap,以键值方式存储数据,在 Pod 资源中通过环境变量或存储卷进行数据访问.不同的是,Secret 对象仅会被分发至调用了此对象的 Pod 资源所在的工作节点,且只能由节点将其存储在内存中;Secret 对象的数据存储及打印格式为 Base64 编码的字符串(可通过 `base64 --decode` 进行解码),因此用户在创建 Secret 数据时也要提供此种编码格式的数据.不过,在容器中以环境变量或存储卷的方式进行访问时,它们会被自动解码为明文格式
+`Secret` 资源的功能类似于 `ConfigMap`,以键值方式存储数据,在 Pod 资源中通过环境变量或存储卷进行数据访问.不同的是,Secret 对象仅会被分发至调用了此对象的 Pod 资源所在的工作节点,且只能由节点将其存储在内存中;Secret 对象的数据存储及打印格式为 Base64 编码的字符串(可通过 `base64 --decode` 进行解码),因此用户在创建 Secret 数据时也要提供此种编码格式的数据.不过,在容器中以环境变量或存储卷的方式进行访问时,它们会被自动解码为明文格式.
 
-Secret 资源主要分为4种,如下:
+Secret 资源主要分为以下几种:
 
-- `opaque`: 自定义数据内容,base64 编码,存储密码,密钥,证书等数据.类型标识为 `generic`
-- `kubernetes.io/service-account-token`: Service Accoount 的认证信息,在创建 Service Account 时自动创建
-- `kubernetes.io/dockerconfigjson`: 存储 Docker镜像仓库的认证信息,类型标识为 `docker-registry`
-- `kubernetes.io/tls`: 用于为 SSL 通信模式存储证书和私钥文件,类型标识为 `tls`
+内置类型 | 用法简介 | 类型
+:--- | :--- | :---
+`opaque`|用户定义的任意数据,base64 编码,存储密码、密钥、证书等数据 | `generic`
+`kubernetes.io/service-account-token` |Service Accoount 的认证信息,在创建 Service Account 时自动创建 | `generic`
+`kubernetes.io/dockercfg`|`~/.dockercfg` 文件的序列化形式 | `docker-registry`
+`kubernetes.io/dockerconfigjson`|`~/.docker/config.json` 文件的序列化形式 | `docker-registry`
+`kubernetes.io/basic-auth`|基本身份认证的凭据 | `generic`
+`kubernetes.io/ssh-auth`|SSH 身份认证的凭据 | `generic`
+`kubernetes.io/tls`|TLS 客户端或者服务器端的数据 |  `tls`
+`bootstrap.kubernetes.io/token`|启动引导令牌数据 | `generic`
+
+以上详细示例可参见 [Secrets | Kubernetes](https://kubernetes.io/docs/concepts/configuration/secret/) 官方文档.
 
 ## 创建 Secret 资源
 
 ### 创建 `generic` 类型的 Secret 资源
 
-#### 基于直接值创建
-
-为 `kubectl create secret generic` 命令使用 `--from-literal` 选项可以在命令行直接给出键值对创建键值对形式的 Secret 对象.该选项可以重复使用以传递多个键值对.
-
-#### 基于文件创建
-
-为 `kubectl create secret generic` 命令使用 `--from-file` 选项可以基于文件内容创建 Secret 对象.该选项可以重复使用以传递多个文件.
+```bash
+kubectl create secret generic NAME 
+# [--from-file=[key=]source] # 基于文件内的键值对创建 secret
+# [--from-literal=key1=value1] # 基于 key/value 键值对创建 secret,可以指定多个
+# [--from-file=ssh-privatekey=<path_to_id_rsa> --from-file=ssh-publickey=<path_to_id_rsa.pub>] # 创建 ssh 身份认证的凭据
+```
 
 ### 创建 `tls` 类型的 Secret 资源
-
-### 基于私钥和证书文件创建用于 SSL/TLS 通信的 Secret 对象
 
 使用如下命令可以基于私钥文件和证书文件创建用于 SSL/TLS 通信的 Secret 对象
 
 ```bash
-kubectl create secret tls <secret_name> --key=<key_file> --cert=<crt_file>
+kubectl create secret tls NAME --cert=<path_to_cert> --key=<path_to_key>
 ```
 
 示例如下:
@@ -155,7 +162,9 @@ kubectl create secret tls <sceret_name> --key=nginx.key --cert=nginx.crt
 使用如下命令可以创建 `docker-registry` 类型的 Secret 对象,该对象可以用作 `spec.containers.imagePullSecret` 的值
 
 ```bash
-kubectl create secret docker registry <secret_name> \
-  --docker-user=<username> --docker-password=<password> \
+kubectl create secret docker-registry NAME \
+  --docker-user=<username> \
+  --docker-password=<password> \
+  --docker-email=<email> \
   ---docker-server=https://index.docker.io/v1/
 ```

@@ -243,7 +243,7 @@ spec:
   hostNetwork: false # 是否与主机共享使用网络名称空间
   hostIPC: false # 是否与主机共享使用 IPC
   hostPID: false # 是否与主机共享使用 PID
-  priorityClassName: 0 # 指定 pod 的优先级.优先级高的优先被调度.
+  priorityClassName: 0 # 指定 pod 的优先级.优先级高的优先被调度.Kubernetes 内置了 2 个 `PriorityClass: `system-cluster-critical`(10^9) 和 `system-node-critical`(10^9+1000)
   # K8S 中内置了 system-node-critical 和 system-cluster-critical.可通过创建 priorityClass 自定义优先级
   serviceAccountName: "default" # 指定要使用的 service account 认证,默认为当前名称空间下的 "default" sa 对象
   restartPolicy: # 重启策略,Always,Never,OnFailure,默认 Always

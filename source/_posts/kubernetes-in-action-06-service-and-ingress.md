@@ -170,20 +170,29 @@ Ingress 控制器可以由任何具有反向代理功能的服务程序实现,�
 Ingress 资源是基于 HTTP 虚拟主机或 URL 的转发规则,它在配置清单的 spec 字段提供了 `rules,backend,tls` 等字段进行定义.一般如下:
 
 ```yaml
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1 # 1.19 后变更为 stable API
 kind: Ingress
 metadata:
   name:
   namespace:
 spec:
   rules: # 定义负载均衡的规则
-  - host: # 指定主机名
+  - host: # 指定主机名,可选
     http:
       paths:
       - path: # 指定主机名下的指定指定路径会转发到指定后端,默认为"/"
-        backend: # 指定后端服务相关参数
-          serviceName:
-          servicePort: 
+        pathType: # 指定 path 的匹配方式,可选值为 Prefix(前缀),Exact(精确),ImplementationSpecific(具体实现)
+        backend: # 指定后端相关参数,可选值包括 service(服务),resource(资源,多用于静态资源存储)
+          service:
+            name:
+            port:
+              name: 
+              number:
+          resource:
+            apiGroup: # 被引用资源的 apiGroup 组
+            kind: # 被引用资源的 Kind 类型
+            name: # 被引用资源的名称
+            
   - host: # 支持指定多个主机名,根据不同主机名分发到不同的后端服务
     http:
       paths:
@@ -192,13 +201,14 @@ spec:
           serviceName:
           servicePort: 
   
-  backend: # 默认提供后端负载均衡服务的配置
-    serviceName:  # 指定后端负载均衡的服务名称 
-    servicePort:  # 指定后端负载均衡的服务端口
-  
   tls: # TLS 相关配置,目前仅支持默认 443 端口
   - secretName:  # 用于 TLS 加密通信的密钥名称
     hosts: # 用于 TLS 加密通信的主机列表
+  
+  defaultBackend: # 默认提供后端负载均衡服务的配置
+    # ... Backend 相关参数 ...
+
+  ingressClassName: # 1.18 后引入该字段.取代已弃用的 `kubernetes.io/ingress.class` 注解.为了向后兼容,`kubernetes.io/ingress.class` 注解优先级较高
 ```
 
 ### Ingress 资源类型

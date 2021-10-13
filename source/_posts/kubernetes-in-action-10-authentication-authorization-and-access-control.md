@@ -450,15 +450,15 @@ metadata:
   namespace:
 spec:
   limits:
-  - default: # 定义默认的资源限制
+  - default: # 定义默认的资源 limit 值
       cpu: 1000m
-    defaultRequest: # 定义默认资源需求
+    defaultRequest: # 定义默认的资源 request 值
       cpu: 1000m
-    min: # 定义最小资源用量
+    min: # 定义资源的最小使用限制
       cpu: 500m
-    max: # 定义最大资源用量
+    max: # 定义资源的最大使用限制
       cpu: 2000m
-    maxLimitRequestRatio: # 定义最大资源用量设定为最小用量的指定倍数
+    maxLimitRequestRatio: # 指定资源必须包含非 0 的 limit 和 request 值,且 limit 除以 request 的值小于等于此值.表示定义资源的最大突发值
       cpu: 4
     type: Container
 ```
