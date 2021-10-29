@@ -3,7 +3,7 @@ title: cobra 快速开始
 date: 2020/06/23
 tags:
   - go
-  - cobra
+  - 3rd
 categories:
   - go
 description: 在学习 Go 语言过程中发现很多项目都导入了 cobra 库.因此,根据 GitHub 上 cobra 项目的 README.md 对 cobra 进行系统的学习.
@@ -316,9 +316,9 @@ func (c *Command) ValidateArgs(args []string) error
 
 Flags 提供修饰符用于控制命令操作的方式.标志有两种不同的指配方式.
 
-#### 全局标记与局部标志
+#### 全局标志位与局部标志位
 
-一个标志是 '持久的',意味着该标志可用于指配给它的命令及该命令下的每个子命令.对于全局标志,将标志指配为 `rootcmd` 根命令上的持久标志.
+一个标志是 `persistent`,意味着该标志可用于指配给它的命令及该命令下的每个子命令.即全局标志.对于全局标志,将标志指配为 `rootcmd` 根命令上的持久标志.
 
 ```go
 rootCmd.PersistentFlags().BoolVarP(&Verbose, "verbose", "v", false, "verbose output")   // 全局标志位
@@ -570,3 +570,4 @@ Did you mean this?
 
 Run 'kubectl help' for usage.
 ```
+
