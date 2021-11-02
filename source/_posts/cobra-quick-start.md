@@ -262,7 +262,7 @@ type Command struct {
     ValidArgsFunction      func(cmd *Command, args []string, toComplete string) ([]string, ShellCompDirective)
     Args                   PositionalArgs // 限定命令行参数,见 Args 小节
     BashCompletionFunction string         // 生成命令行补全命令的函数
-    Deprecated             string         // 过期命令执行是打印的内容
+    Deprecated             string         // 过期命令执行时打印的内容
     Version                string         // 定义命令版本内容,一般使用 cmd.SetVersionTemplate() 设置版本信息
 
     // *Run func(cmd *cobra.Command, args []string)
