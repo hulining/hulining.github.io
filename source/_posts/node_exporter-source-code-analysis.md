@@ -6,8 +6,7 @@ tags:
   - node_exporter
   - Prometheus
 categories:
-  - node_exporter
-abbrlink: 
+  - Prometheus
 description: 一直想使用 Golang 写个项目,但不知道怎么入手,所以就看了看 node_exporter 源码,发现人家写的代码真的很棒.这里将阅读 node_exporter 源码做一下记录,以作备忘.
 ---
 
