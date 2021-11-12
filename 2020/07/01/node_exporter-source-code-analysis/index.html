@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Times New Roman:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"hulining.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="一直想使用 Golang 写个项目,但不知道怎么入手,所以就看了看 node_exporter 源码,发现人家写的代码真的很棒.这里将阅读 node_exporter 源码做一下记录,以作备忘.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="node_exporter 源码解析">
+<meta property="og:url" content="https://hulining.github.io/2020/07/01/node_exporter-source-code-analysis/index.html">
+<meta property="og:site_name" content="纸盒人">
+<meta property="og:description" content="一直想使用 Golang 写个项目,但不知道怎么入手,所以就看了看 node_exporter 源码,发现人家写的代码真的很棒.这里将阅读 node_exporter 源码做一下记录,以作备忘.">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-06-30T16:00:00.000Z">
+<meta property="article:modified_time" content="2021-11-12T07:44:23.841Z">
+<meta property="article:author" content="纸盒人">
+<meta property="article:tag" content="go">
+<meta property="article:tag" content="node_exporter">
+<meta property="article:tag" content="Prometheus">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://hulining.github.io/2020/07/01/node_exporter-source-code-analysis/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>node_exporter 源码解析 | 纸盒人</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">纸盒人</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">纸小呆</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">45</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">16</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">97</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/hulining" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://hulining.github.io/2020/07/01/node_exporter-source-code-analysis/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="纸盒人">
+      <meta itemprop="description" content="Keep it simple,Keep improving">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="纸盒人">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          node_exporter 源码解析
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-07-01 00:00:00" itemprop="dateCreated datePublished" datetime="2020-07-01T00:00:00+08:00">2020-07-01</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Prometheus/" itemprop="url" rel="index"><span itemprop="name">Prometheus</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+          <!--添加字数统计-->
+          
+            <span class="post-letters-count">
+              &nbsp; | &nbsp;
+              <span>2.7k 字</span>
+              &nbsp; | &nbsp;
+              <span>13 min</span>
+             </span>
+           
+            <div class="post-description">一直想使用 Golang 写个项目,但不知道怎么入手,所以就看了看 node_exporter 源码,发现人家写的代码真的很棒.这里将阅读 node_exporter 源码做一下记录,以作备忘.</div>
+
+
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="代码组织"><a href="#代码组织" class="headerlink" title="代码组织"></a>代码组织</h2><p><a href="https://github.com/prometheus/node_exporter" target="_blank" rel="noopener"><code>node_exporter</code></a> 是使用 Go 语言编写的 Prometheus exporter,多用于收集 *NIX 内核公开的硬件或操作系统指标.</p>
+<p>当前版本为 <a href="https://github.com/prometheus/node_exporter/tree/v1.0.1" target="_blank" rel="noopener"><code>v1.0.1</code></a>其代码组织结构很简单:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">- collector&#x2F;: 该包下主要定义 Collector,并对定义的 Collector 进行注册</span><br><span class="line">- https&#x2F;: v1.0.0 新增内容,主要为支持 https 请求</span><br><span class="line">- vendor&#x2F;: node_exporter 的依赖包</span><br><span class="line">- go.mod: module 包管理的信息</span><br><span class="line">- go.sum: module 包管理的信息</span><br><span class="line">- node_exporter.go: node_exporter 主程序文件</span><br></pre></td></tr></table></figure>
+
+<p>在使用过程中可能用到的目录或文件:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">- docs&#x2F;: 一些 prometheus 规则和与 kube-prometheus 中 node_exporter 相关的 libsonnet 文件</span><br><span class="line">- examples&#x2F;: 一些服务启动脚本</span><br><span class="line">- Dockerfile: 构建 docker 镜像</span><br><span class="line">VERSION: 记录版本信息</span><br></pre></td></tr></table></figure>
+
+<h2 id="node-exporter-go"><a href="#node-exporter-go" class="headerlink" title="node_exporter.go"></a><code>node_exporter.go</code></h2><p>首先来看 node_exporter 主要程序文件 <code>node_exporter.go</code>.</p>
+<h3 id="导包"><a href="#导包" class="headerlink" title="导包"></a>导包</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"fmt"</span></span><br><span class="line">    <span class="string">"net/http"</span></span><br><span class="line">    _ <span class="string">"net/http/pprof"</span></span><br><span class="line">    <span class="string">"os"</span></span><br><span class="line">    <span class="string">"sort"</span>  </span><br><span class="line">    <span class="string">"github.com/prometheus/common/promlog"</span></span><br><span class="line">    <span class="string">"github.com/prometheus/common/promlog/flag"</span></span><br><span class="line">    <span class="string">"github.com/go-kit/kit/log"</span> <span class="comment">// v1.0.0 新增日志输出</span></span><br><span class="line">    <span class="string">"github.com/go-kit/kit/log/level"</span> <span class="comment">// 日志级别相关</span></span><br><span class="line">    <span class="string">"github.com/prometheus/client_golang/prometheus"</span> <span class="comment">// prometheus 客户端库</span></span><br><span class="line">    <span class="string">"github.com/prometheus/client_golang/prometheus/promhttp"</span></span><br><span class="line">    <span class="string">"github.com/prometheus/common/version"</span></span><br><span class="line">    <span class="string">"github.com/prometheus/node_exporter/collector"</span> <span class="comment">// node_exporter 中定义的 Collector</span></span><br><span class="line">    <span class="string">"github.com/prometheus/node_exporter/https"</span> <span class="comment">// v1.0.0 新增支持 https 请求</span></span><br><span class="line">    kingpin <span class="string">"gopkg.in/alecthomas/kingpin.v2"</span> <span class="comment">// 用于定义标志.如 `--help`, `--log.level` 等标志</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>首先我们要知道 Go 导包过程中做了哪些事情,参见 <a href="/2020/05/04/go-study-notes-package/" title="go 学习笔记之包管理">go 学习笔记之包管理</a> 导入包小节.这里再赘述一遍.</p>
+<blockquote>
+<p>在执行 <code>main</code> 包的 <code>main</code> 函数之前,Go 程序先对整个程序的包进行初始化.包内的源码文件都可以定义一到多个初始化函数,编译器首先确保完成所有全局变量初始化,然后开始执行 <code>init()</code> 初始化函数,直到这些全部结束后,运行时才进入 <code>main.main</code> 入口函数.</p>
+</blockquote>
+<p>因此以上包及其引用包中的常量,全局变量会依次被初始化,<code>init()</code> 函数会被执行.</p>
+<p>这里需要注意的是 <code>&quot;github.com/prometheus/client_golang/prometheus&quot;</code> 包中几乎每个文件的 <code>init()</code> 函数都会调用 <code>registerCollector(collector string, isDefaultEnabled bool, factory func(logger log.Logger) (Collector, error))</code> 函数对该文件中定义的 <code>Collector</code> 进行注册.</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// collector/collector.go</span></span><br><span class="line"><span class="keyword">const</span> (</span><br><span class="line">    defaultEnabled  = <span class="literal">true</span></span><br><span class="line">    defaultDisabled = <span class="literal">false</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> (</span><br><span class="line">    <span class="comment">// key: Collector 名称,value: 对应 Collector 工厂函数</span></span><br><span class="line">    factories        = <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="function"><span class="keyword">func</span><span class="params">(logger log.Logger)</span> <span class="params">(Collector, error)</span>)</span></span><br><span class="line">    <span class="comment">// key: Collector 名称,value: 对应 Collector 是否启用</span></span><br><span class="line">    collectorState   = <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]*<span class="keyword">bool</span>)</span><br><span class="line">    <span class="comment">// key: Collector 名称,value: 对应 Collector 是否明确启用或禁用</span></span><br><span class="line">    forcedCollectors = <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">bool</span>&#123;&#125; <span class="comment">// collectors which have been explicitly enabled or disabled</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">// collector/collector.go#L58</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">registerCollector</span><span class="params">(collector <span class="keyword">string</span>, isDefaultEnabled <span class="keyword">bool</span>, factory <span class="keyword">func</span>(logger log.Logger)</span> <span class="params">(Collector, error)</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> helpDefaultState <span class="keyword">string</span></span><br><span class="line">    <span class="keyword">if</span> isDefaultEnabled &#123;</span><br><span class="line">       helpDefaultState = <span class="string">"enabled"</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">       helpDefaultState = <span class="string">"disabled"</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 注册 Collector 的标志名称,以 `collector.` 为前缀</span></span><br><span class="line">    flagName := fmt.Sprintf(<span class="string">"collector.%s"</span>, collector)</span><br><span class="line">    <span class="comment">// 注册 Collector 标志的帮助信息</span></span><br><span class="line">    flagHelp := fmt.Sprintf(<span class="string">"Enable the %s collector (default: %s)."</span>, collector, helpDefaultState)</span><br><span class="line">    <span class="comment">// 注册标志的默认值</span></span><br><span class="line">    defaultValue := fmt.Sprintf(<span class="string">"%v"</span>, isDefaultEnabled)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 是否启用 `--collector.&lt;collector&gt;` 标志</span></span><br><span class="line">    flag := kingpin.Flag(flagName, flagHelp).Default(defaultValue).Action(collectorFlagAction(collector)).Bool()</span><br><span class="line"></span><br><span class="line">    <span class="comment">// collectorState 保存 Collector 启用/禁用状态</span></span><br><span class="line">    collectorState[collector] = flag</span><br><span class="line"></span><br><span class="line">    <span class="comment">// factories 保存 Collector 对应的工厂函数</span></span><br><span class="line">    factories[collector] = factory</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// collector/meminfo.go</span></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"fmt"</span></span><br><span class="line">    <span class="string">"strings"</span></span><br><span class="line"></span><br><span class="line">    <span class="string">"github.com/go-kit/kit/log"</span></span><br><span class="line">    <span class="string">"github.com/go-kit/kit/log/level"</span></span><br><span class="line">    <span class="string">"github.com/prometheus/client_golang/prometheus"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> (</span><br><span class="line">    memInfoSubsystem = <span class="string">"memory"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> meminfoCollector <span class="keyword">struct</span> &#123;</span><br><span class="line">    logger log.Logger</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// 将定义的 Collector 进行注册/启用</span></span><br><span class="line">    registerCollector(<span class="string">"meminfo"</span>, defaultEnabled, NewMeminfoCollector)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewMeminfoCollector</span><span class="params">(logger log.Logger)</span> <span class="params">(Collector, error)</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> &amp;meminfoCollector&#123;logger&#125;, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// meminfoCollector 实现了 Collector 接口,该函数应该在数据指标更新时调动.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *meminfoCollector)</span> <span class="title">Update</span><span class="params">(ch <span class="keyword">chan</span>&lt;- prometheus.Metric)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> metricType prometheus.ValueType <span class="comment">// prometheus 的数据类型,可选值有 CounterValue(1),GaugeValue(2),UntypedValue(3)</span></span><br><span class="line">    memInfo, err := c.getMemInfo() <span class="comment">// 获取 内存信息,不再展开</span></span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">       <span class="keyword">return</span> fmt.Errorf(<span class="string">"couldn't get meminfo: %s"</span>, err)</span><br><span class="line">    &#125;</span><br><span class="line">    level.Debug(c.logger).Log(<span class="string">"msg"</span>, <span class="string">"Set node_mem"</span>, <span class="string">"memInfo"</span>, memInfo)</span><br><span class="line">    <span class="comment">// 对其中数据进行遍历</span></span><br><span class="line">    <span class="keyword">for</span> k, v := <span class="keyword">range</span> memInfo &#123;</span><br><span class="line">        <span class="comment">// 判断数据类型,并将对应的数据与数据类型组成的 `constMetric` 发送到 `prometheus.Metric` 类型的管道中</span></span><br><span class="line">        <span class="keyword">if</span> strings.HasSuffix(k, <span class="string">"_total"</span>) &#123;</span><br><span class="line">            metricType = prometheus.CounterValue</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            metricType = prometheus.GaugeValue</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// `prometheus.MustNewConstMetric()` 返回 `prometheus.constMetric` 对象,由描述信息,指标类型,指标值构成.如下指标</span></span><br><span class="line">        <span class="comment">// # HELP go_info Information about the Go environment.</span></span><br><span class="line">        <span class="comment">// # TYPE go_info gauge</span></span><br><span class="line">        <span class="comment">// go_info&#123;version="go1.14.4"&#125; 1</span></span><br><span class="line">        ch &lt;- prometheus.MustNewConstMetric(</span><br><span class="line">            prometheus.NewDesc(</span><br><span class="line">                <span class="comment">// 数据指标的描述信息由数据指标的名称,帮助信息(HELP xxx),指标变量标签(version),指标常量标签构成</span></span><br><span class="line">                prometheus.BuildFQName(namespace, memInfoSubsystem, k),</span><br><span class="line">                fmt.Sprintf(<span class="string">"Memory information field %s."</span>, k),</span><br><span class="line">                <span class="literal">nil</span>, <span class="literal">nil</span>,</span><br><span class="line">            ),</span><br><span class="line">            metricType, v,</span><br><span class="line">        )</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="main-入口函数"><a href="#main-入口函数" class="headerlink" title="main() 入口函数"></a><code>main()</code> 入口函数</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="comment">// 使用 kingpin 定义了众多标志</span></span><br><span class="line">    <span class="keyword">var</span> (</span><br><span class="line">        listenAddress = kingpin.Flag(</span><br><span class="line">            <span class="string">"web.listen-address"</span>,</span><br><span class="line">            <span class="string">"Address on which to expose metrics and web interface."</span>,</span><br><span class="line">        ).Default(<span class="string">":9100"</span>).String()</span><br><span class="line">        metricsPath = kingpin.Flag(</span><br><span class="line">            <span class="string">"web.telemetry-path"</span>,</span><br><span class="line">            <span class="string">"Path under which to expose metrics."</span>,</span><br><span class="line">        ).Default(<span class="string">"/metrics"</span>).String()</span><br><span class="line">        disableExporterMetrics = kingpin.Flag(</span><br><span class="line">            <span class="string">"web.disable-exporter-metrics"</span>,</span><br><span class="line">            <span class="string">"Exclude metrics about the exporter itself (promhttp_*, process_*, go_*)."</span>,</span><br><span class="line">        ).Bool()</span><br><span class="line">        maxRequests = kingpin.Flag(</span><br><span class="line">            <span class="string">"web.max-requests"</span>,</span><br><span class="line">            <span class="string">"Maximum number of parallel scrape requests. Use 0 to disable."</span>,</span><br><span class="line">        ).Default(<span class="string">"40"</span>).Int()</span><br><span class="line">        disableDefaultCollectors = kingpin.Flag(</span><br><span class="line">            <span class="string">"collector.disable-defaults"</span>,</span><br><span class="line">            <span class="string">"Set all collectors to disabled by default."</span>,</span><br><span class="line">        ).Default(<span class="string">"false"</span>).Bool()</span><br><span class="line">        configFile = kingpin.Flag(</span><br><span class="line">            <span class="string">"web.config"</span>,</span><br><span class="line">            <span class="string">"[EXPERIMENTAL] Path to config yaml file that can enable TLS or authentication."</span>,</span><br><span class="line">        ).Default(<span class="string">""</span>).String()</span><br><span class="line">    )</span><br><span class="line">    promlogConfig := &amp;promlog.Config&#123;&#125;</span><br><span class="line">    flag.AddFlags(kingpin.CommandLine, promlogConfig)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 定义 Version 的输出信息,HelpFlag 的短字段</span></span><br><span class="line">    kingpin.Version(version.Print(<span class="string">"node_exporter"</span>))</span><br><span class="line">    kingpin.HelpFlag.Short(<span class="string">'h'</span>)</span><br><span class="line">    kingpin.Parse()</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 定义日志记录器</span></span><br><span class="line">    logger := promlog.New(promlogConfig)</span><br><span class="line">    <span class="comment">// 如果指定了 `collector.disable-defaults` 选项,则调用 collector.DisableDefaultCollectors() 函数</span></span><br><span class="line">    <span class="keyword">if</span> *disableDefaultCollectors &#123;</span><br><span class="line">        collector.DisableDefaultCollectors()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    level.Info(logger).Log(<span class="string">"msg"</span>, <span class="string">"Starting node_exporter"</span>, <span class="string">"version"</span>, version.Info())</span><br><span class="line">    level.Info(logger).Log(<span class="string">"msg"</span>, <span class="string">"Build context"</span>, <span class="string">"build_context"</span>, version.BuildContext())</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 处理 `metricsPath` 请求,默认为 `/metrics`.后续着重分析一下 newHandler() 函数</span></span><br><span class="line">    http.Handle(*metricsPath, newHandler(!*disableExporterMetrics, *maxRequests, logger))</span><br><span class="line">    <span class="comment">// 处理 `/` 请求</span></span><br><span class="line">    http.HandleFunc(<span class="string">"/"</span>, <span class="function"><span class="keyword">func</span><span class="params">(w http.ResponseWriter, r *http.Request)</span></span> &#123;</span><br><span class="line">        w.Write([]<span class="keyword">byte</span>(<span class="string">`&lt;html&gt;</span></span><br><span class="line"><span class="string">            &lt;head&gt;&lt;title&gt;Node Exporter&lt;/title&gt;&lt;/head&gt;</span></span><br><span class="line"><span class="string">            &lt;body&gt;</span></span><br><span class="line"><span class="string">            &lt;h1&gt;Node Exporter&lt;/h1&gt;</span></span><br><span class="line"><span class="string">            &lt;p&gt;&lt;a href="`</span> + *metricsPath + <span class="string">`"&gt;Metrics&lt;/a&gt;&lt;/p&gt;</span></span><br><span class="line"><span class="string">            &lt;/body&gt;</span></span><br><span class="line"><span class="string">            &lt;/html&gt;`</span>))</span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">    level.Info(logger).Log(<span class="string">"msg"</span>, <span class="string">"Listening on"</span>, <span class="string">"address"</span>, *listenAddress)</span><br><span class="line">    <span class="comment">// 定义 http server 及其监听端口.</span></span><br><span class="line">    server := &amp;http.Server&#123;Addr: *listenAddress&#125;</span><br><span class="line">    <span class="comment">// 调用使用 https.Listen() 启动服务.该方法会根据是否指定 `--web.config` 判断是否启用 https 服务</span></span><br><span class="line">    <span class="keyword">if</span> err := https.Listen(server, *configFile, logger); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        level.Error(logger).Log(<span class="string">"err"</span>, err)</span><br><span class="line">        os.Exit(<span class="number">1</span>)</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// collector/collector.go#L84</span></span><br><span class="line"><span class="comment">// 该函数对 collectorState 中保存的 Collector 进行遍历,将不在 forcedCollectors 中的 Collector 设置为 false.(不启用)</span></span><br><span class="line"><span class="comment">// 仅保留一些必须启用的 Collector</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">DisableDefaultCollectors</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">for</span> c := <span class="keyword">range</span> collectorState &#123;</span><br><span class="line">        <span class="keyword">if</span> _, ok := forcedCollectors[c]; !ok &#123;</span><br><span class="line">            *collectorState[c] = <span class="literal">false</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// https/tls_config.go#L168</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Listen</span><span class="params">(server *http.Server, tlsConfigPath <span class="keyword">string</span>, logger log.Logger)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> tlsConfigPath == <span class="string">""</span> &#123;</span><br><span class="line">        level.Info(logger).Log(<span class="string">"msg"</span>, <span class="string">"TLS is disabled and it cannot be enabled on the fly."</span>, <span class="string">"http2"</span>, <span class="literal">false</span>)</span><br><span class="line">        <span class="comment">// 调用了 net/http 包的 ListenAndServe() 函数(net/http/server.go#L2813)</span></span><br><span class="line">        <span class="keyword">return</span> server.ListenAndServe()</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// ....</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="newHandler-函数"><a href="#newHandler-函数" class="headerlink" title="newHandler() 函数"></a><code>newHandler()</code> 函数</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// node.exporter.go#L49</span></span><br><span class="line"><span class="comment">// 返回了处理 http 请求的 handler,当请求到来时,调用 handler.ServeHTTP(ResponseWriter, *Request) 处理请求,并写入响应</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">newHandler</span><span class="params">(includeExporterMetrics <span class="keyword">bool</span>, maxRequests <span class="keyword">int</span>, logger log.Logger)</span> *<span class="title">handler</span></span> &#123;</span><br><span class="line">    h := &amp;handler&#123;</span><br><span class="line">       exporterMetricsRegistry: prometheus.NewRegistry(),</span><br><span class="line">       includeExporterMetrics:  includeExporterMetrics,</span><br><span class="line">       maxRequests:             maxRequests,</span><br><span class="line">       logger:                  logger,</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 如果没有指定 `--web.disable-exporter-metrics` 选项,则传入 `includeExporterMetrics` 参数为 true</span></span><br><span class="line">    <span class="keyword">if</span> h.includeExporterMetrics &#123;</span><br><span class="line">        h.exporterMetricsRegistry.MustRegister(</span><br><span class="line">            <span class="comment">// 注册了 processCollector,goCollector.在查看 `/metrics` 时也会看到相关数据指标.如</span></span><br><span class="line">            <span class="comment">// process_cpu_seconds_total,process_max_fds</span></span><br><span class="line">            <span class="comment">// go_goroutines,go_info 等</span></span><br><span class="line">            prometheus.NewProcessCollector(prometheus.ProcessCollectorOpts&#123;&#125;),</span><br><span class="line">            prometheus.NewGoCollector(),</span><br><span class="line">       )</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 调用 innerHandler 创建 innerHandler</span></span><br><span class="line">    <span class="keyword">if</span> innerHandler, err := h.innerHandler(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="built_in">panic</span>(fmt.Sprintf(<span class="string">"Couldn't create metrics handler: %s"</span>, err))</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        h.unfilteredHandler = innerHandler</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> h</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ServeHTTP implements http.Handler.</span></span><br><span class="line"><span class="comment">// 处理请求的方法</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(h *handler)</span> <span class="title">ServeHTTP</span><span class="params">(w http.ResponseWriter, r *http.Request)</span></span> &#123;</span><br><span class="line">    <span class="comment">// 开启 debug 日志级别后发现,filters 为 "unsupported value type"</span></span><br><span class="line">    filters := r.URL.Query()[<span class="string">"collect[]"</span>]</span><br><span class="line">    level.Debug(h.logger).Log(<span class="string">"msg"</span>, <span class="string">"collect query:"</span>, <span class="string">"filters"</span>, filters)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(filters) == <span class="number">0</span> &#123;</span><br><span class="line">       <span class="comment">// No filters, use the prepared unfiltered handler.</span></span><br><span class="line">       h.unfilteredHandler.ServeHTTP(w, r)</span><br><span class="line">       <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// To serve filtered metrics, we create a filtering handler on the fly.</span></span><br><span class="line">    <span class="comment">// 动态创建 filteredHandler</span></span><br><span class="line">    filteredHandler, err := h.innerHandler(filters...)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">       level.Warn(h.logger).Log(<span class="string">"msg"</span>, <span class="string">"Couldn't create filtered metrics handler:"</span>, <span class="string">"err"</span>, err)</span><br><span class="line">       w.WriteHeader(http.StatusBadRequest)</span><br><span class="line">       w.Write([]<span class="keyword">byte</span>(fmt.Sprintf(<span class="string">"Couldn't create filtered metrics handler: %s"</span>, err)))</span><br><span class="line">       <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    filteredHandler.ServeHTTP(w, r)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// innerHandler is used to create both the one unfiltered http.Handler to be</span></span><br><span class="line"><span class="comment">// wrapped by the outer handler and also the filtered handlers created on the</span></span><br><span class="line"><span class="comment">// fly. The former is accomplished by calling innerHandler without any arguments</span></span><br><span class="line"><span class="comment">// (in which case it will log all the collectors enabled via command-line</span></span><br><span class="line"><span class="comment">// flags).</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(h *handler)</span> <span class="title">innerHandler</span><span class="params">(filters ...<span class="keyword">string</span>)</span> <span class="params">(http.Handler, error)</span></span> &#123;</span><br><span class="line">    <span class="comment">// 根据 filters 指定字符串 Collector,用于创建 `collector.NodeCollector`</span></span><br><span class="line">    nc, err := collector.NewNodeCollector(h.logger, filters...)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span>, fmt.Errorf(<span class="string">"couldn't create collector: %s"</span>, err)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Only log the creation of an unfiltered handler, which should happen</span></span><br><span class="line">    <span class="comment">// only once upon startup.</span></span><br><span class="line">    <span class="comment">// 这里将在 node_exporter 启动时打印启用的 Collector 相关日志</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(filters) == <span class="number">0</span> &#123;</span><br><span class="line">        level.Info(h.logger).Log(<span class="string">"msg"</span>, <span class="string">"Enabled collectors"</span>)</span><br><span class="line">        collectors := []<span class="keyword">string</span>&#123;&#125;</span><br><span class="line">        <span class="keyword">for</span> n := <span class="keyword">range</span> nc.Collectors &#123;</span><br><span class="line">            collectors = <span class="built_in">append</span>(collectors, n)</span><br><span class="line">        &#125;</span><br><span class="line">        sort.Strings(collectors)</span><br><span class="line">        <span class="keyword">for</span> _, c := <span class="keyword">range</span> collectors &#123;</span><br><span class="line">            level.Info(h.logger).Log(<span class="string">"collector"</span>, c)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    r := prometheus.NewRegistry()</span><br><span class="line">    r.MustRegister(version.NewCollector(<span class="string">"node_exporter"</span>))</span><br><span class="line">    <span class="keyword">if</span> err := r.Register(nc); err != <span class="literal">nil</span> &#123;</span><br><span class="line">       <span class="keyword">return</span> <span class="literal">nil</span>, fmt.Errorf(<span class="string">"couldn't register node collector: %s"</span>, err)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 这里应该是收集指标数据的过程</span></span><br><span class="line">    handler := promhttp.HandlerFor(</span><br><span class="line">        <span class="comment">// 传入的 Gatherers 内部保存了实现 Gatherer 接口的 Registry,将来 Registry 会在 Gather() 方法中通过其中保存的 Collector 对象调用 Collect() 方法收集数据指标.</span></span><br><span class="line">        <span class="comment">// 同时 Collector 对象的 Collect() 方法内部会调用 Collector.Update() 方法获取数据指标相关信息</span></span><br><span class="line">        prometheus.Gatherers&#123;h.exporterMetricsRegistry, r&#125;,</span><br><span class="line">        promhttp.HandlerOpts&#123;</span><br><span class="line">            ErrorHandling:       promhttp.ContinueOnError,</span><br><span class="line">            MaxRequestsInFlight: h.maxRequests,</span><br><span class="line">            Registry:            h.exporterMetricsRegistry,</span><br><span class="line">        &#125;,</span><br><span class="line">    )</span><br><span class="line">    <span class="comment">// 如果没有指定 --web.disable-exporter-metrics` 选项,则 `h.includeExporterMetrics = true`</span></span><br><span class="line">    <span class="keyword">if</span> h.includeExporterMetrics &#123;</span><br><span class="line">        <span class="comment">// Note that we have to use h.exporterMetricsRegistry here to</span></span><br><span class="line">        <span class="comment">// use the same promhttp metrics for all expositions.</span></span><br><span class="line">        <span class="comment">// 调用 InstrumentMetricHandler 方法,对 promhttp_metric_handler_requests_total,promhttp_metric_handler_requests_in_flight 值进行设置</span></span><br><span class="line">        handler = promhttp.InstrumentMetricHandler(</span><br><span class="line">            h.exporterMetricsRegistry, handler,</span><br><span class="line">        )</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> handler, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="自定义-metrics"><a href="#自定义-metrics" class="headerlink" title="自定义 metrics"></a>自定义 metrics</h2><p>以上,我们只需要在 <code>collector</code> 包中创建如下内容,再通过 <code>node_exporter</code> 帮我们实现自定义 metrics.</p>
+<ol>
+<li>自定义 <code>customCollector</code> 结构体,实现 Collector 接口,也就是实现 <code>Update(ch chan&lt;- prometheus.Metric)</code> 方法.在 <code>Update()</code> 方法中,要借助 <code>prometheus.MustNewConst&lt;Histogram,Metric,Summary&gt;</code> 等方法创建 <code>prometheus.Metric</code> 接口的实现对象,并将其传入管道 <code>ch</code>.</li>
+<li>在 <code>init()</code> 函数中调用 <code>registerCollector()</code> 函数注册自定义 customCollector 结构体.</li>
+</ol>
+<p>代码示例如下:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> collector</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"fmt"</span></span><br><span class="line"></span><br><span class="line">    <span class="string">"github.com/go-kit/kit/log"</span></span><br><span class="line">    <span class="string">"github.com/go-kit/kit/log/level"</span></span><br><span class="line">    <span class="string">"github.com/prometheus/client_golang/prometheus"</span></span><br><span class="line"></span><br><span class="line">    kingpin <span class="string">"gopkg.in/alecthomas/kingpin.v2"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> (</span><br><span class="line">    <span class="comment">// 定义自定义数据指标的子系统名称</span></span><br><span class="line">    customMetricsSubsystem = <span class="string">"metrics"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义 customMetricsCollector 结构体</span></span><br><span class="line"><span class="keyword">type</span> customMetricsCollector <span class="keyword">struct</span> &#123;</span><br><span class="line">    logger log.Logger</span><br><span class="line">    <span class="comment">//...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义 customMetricsCollector 的工厂函数,后续传入 registerCollector() 函数中,以便创建 customMetricsCollector 对象</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewCustomMetricsCollector</span><span class="params">(logger log.Logger)</span> <span class="params">(Collector, error)</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> &amp;customMetricsCollector&#123;</span><br><span class="line">        logger: logger,</span><br><span class="line">    &#125;, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 实现 Update() 函数,以便在处理请求时被 Collector.Collect() 调用</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *customMetricsCollector)</span> <span class="title">Update</span><span class="params">(ch <span class="keyword">chan</span>&lt;- prometheus.Metric)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> metricType prometheus.ValueType</span><br><span class="line">    <span class="keyword">var</span> value = <span class="number">1.1</span></span><br><span class="line">    metricType = prometheus.CounterValue</span><br><span class="line">    level.Debug(c.logger).Log(<span class="string">"msg"</span>, <span class="string">"Set custom_metrics"</span>, <span class="string">"metrics"</span>, value)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 通过 `prometheus.MustNewConstMetric` 创建自定义 `prometheus.Metric` 接口对象 `prometheus.constMetric`,并将其传入`prometheus.Metric` 管道</span></span><br><span class="line">    ch &lt;- prometheus.MustNewConstMetric(</span><br><span class="line">        <span class="comment">// 需要传入 Metric 实现对象的描述信息,对象数据类型,值</span></span><br><span class="line">        prometheus.NewDesc(</span><br><span class="line">            <span class="comment">// 描述信息包括 数据指标名称(由 `BuildFQName()`函数组合而成),帮助信息,变量标签,常量标签</span></span><br><span class="line">            prometheus.BuildFQName(namespace, customMetricsSubsystem, <span class="string">"custom_metrics"</span>),</span><br><span class="line">            fmt.Sprintf(<span class="string">"Custom metrics field %s."</span>, <span class="string">"custom_metrics"</span>),</span><br><span class="line">            <span class="literal">nil</span>, <span class="literal">nil</span>,</span><br><span class="line">        ),</span><br><span class="line">        metricType, value,</span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// 在该函数中调用 registerCollector() 函数,注册自定义 customMetricsCollector</span></span><br><span class="line">    registerCollector(<span class="string">"custom_metrics"</span>, defaultEnabled, NewCustomMetricsCollector)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>编译后,执行 <code>./node_exporter</code> 发现 <code>/metrics</code> 中包含自定义数据指标.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># HELP node_metrics_custom_metrics Custom metrics field custom_metrics.</span><br><span class="line"># TYPE node_metrics_custom_metrics counter</span><br><span class="line">node_metrics_custom_metrics 1.1</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>Buy me a cup of coffee.</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    <!--打赏-->
+    赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="纸盒人 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="纸盒人 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>纸盒人
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://hulining.github.io/2020/07/01/node_exporter-source-code-analysis/" title="node_exporter 源码解析">https://hulining.github.io/2020/07/01/node_exporter-source-code-analysis/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/go/" rel="tag"><i class="fa fa-tag"></i> go</a>
+              <a href="/tags/node-exporter/" rel="tag"><i class="fa fa-tag"></i> node_exporter</a>
+              <a href="/tags/Prometheus/" rel="tag"><i class="fa fa-tag"></i> Prometheus</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/07/01/prometheus-client_golang-Introduction/" rel="prev" title="prometheus client_golang 简单使用">
+      <i class="fa fa-chevron-left"></i> prometheus client_golang 简单使用
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/07/06/go-http-package-process-request-analysis/" rel="next" title="go http 包处理请求过程分析">
+      go http 包处理请求过程分析 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          <!--文章目录-->
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          <!--站点概览-->
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#代码组织"><span class="nav-number">1.</span> <span class="nav-text">代码组织</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#node-exporter-go"><span class="nav-number">2.</span> <span class="nav-text">node_exporter.go</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#导包"><span class="nav-number">2.1.</span> <span class="nav-text">导包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#main-入口函数"><span class="nav-number">2.2.</span> <span class="nav-text">main() 入口函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#newHandler-函数"><span class="nav-number">2.3.</span> <span class="nav-text">newHandler() 函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自定义-metrics"><span class="nav-number">3.</span> <span class="nav-text">自定义 metrics</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="纸盒人"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">纸盒人</p>
+  <div class="site-description" itemprop="description">Keep it simple,Keep improving</div>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/hulining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;hulining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:loserkid@163.com" title="E-Mail → mailto:loserkid@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://music.163.com/#/user/home?id=71153860" title="网易云音乐 → https:&#x2F;&#x2F;music.163.com&#x2F;#&#x2F;user&#x2F;home?id&#x3D;71153860" rel="noopener" target="_blank"><i class="fa fa-fw fa-music"></i></a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">纸盒人</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+    <div id="pjax">
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'a61ca599f9a038ebe5b3',
+      clientSecret: 'bcc9edf1847c09ad9452180f0fa44d69a11a4c9f',
+      repo        : 'https://github.com/hulining/hulining.github.io.git',
+      owner       : 'hulining',
+      admin       : ['hulining'],
+      id          : '5ab85d5501f03128fd0028bfde7cb054',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Times New Roman:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"hulining.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="本文章主要包含 GitLab CI&#x2F;CD 中 .gitlab-ci.yml 文件中可使用的关键字语法及用法详解.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GitLab CI&#x2F;CD 管道配置详解">
+<meta property="og:url" content="https://hulining.github.io/2020/05/22/gitlab-ci-pipeline-configuration/index.html">
+<meta property="og:site_name" content="纸盒人">
+<meta property="og:description" content="本文章主要包含 GitLab CI&#x2F;CD 中 .gitlab-ci.yml 文件中可使用的关键字语法及用法详解.">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-05-21T16:00:00.000Z">
+<meta property="article:modified_time" content="2021-11-12T07:44:23.825Z">
+<meta property="article:author" content="纸盒人">
+<meta property="article:tag" content="GitLab">
+<meta property="article:tag" content="CI&#x2F;CD">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://hulining.github.io/2020/05/22/gitlab-ci-pipeline-configuration/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>GitLab CI/CD 管道配置详解 | 纸盒人</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">纸盒人</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">纸小呆</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">45</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">16</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">97</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/hulining" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://hulining.github.io/2020/05/22/gitlab-ci-pipeline-configuration/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="纸盒人">
+      <meta itemprop="description" content="Keep it simple,Keep improving">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="纸盒人">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          GitLab CI/CD 管道配置详解
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-05-22 00:00:00" itemprop="dateCreated datePublished" datetime="2020-05-22T00:00:00+08:00">2020-05-22</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CI-CD/" itemprop="url" rel="index"><span itemprop="name">CI/CD</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+          <!--添加字数统计-->
+          
+            <span class="post-letters-count">
+              &nbsp; | &nbsp;
+              <span>4.1k 字</span>
+              &nbsp; | &nbsp;
+              <span>16 min</span>
+             </span>
+           
+            <div class="post-description">本文章主要包含 GitLab CI/CD 中 .gitlab-ci.yml 文件中可使用的关键字语法及用法详解.</div>
+
+
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>在每个 GitLab 项目中,使用名为 <code>.gitlab-ci.yml</code> 的 YAML 文件配置 GitLab CI/CD  pipelines (管道).</p>
+<p><code>.gitlab-ci.yml</code> 文件定义 pipeline 的结构和执行顺序,并确定了如下内容</p>
+<ul>
+<li>GitLab Runner(负责运行管道的实例)执行什么任务</li>
+<li>GitLab Runner 的高级配置,可用于配置 GitLab Runner</li>
+</ul>
+<p>有关 <code>.gitlab-ci.yml</code> 文件示例参考可从如下位置找到</p>
+<ul>
+<li><a href="https://docs.gitlab.com/ee/ci/examples/README.html" target="_blank" rel="noopener">GitLab CI/CD Examples</a></li>
+<li><a href="https://gitlab.com/gitlab-org/gitlab/blob/master/.gitlab-ci.yml" target="_blank" rel="noopener">gitlab 的 .gitlab-ci.yml 文件</a></li>
+</ul>
+<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>pipeline 配置从 job(作业)开始.作业是组成 <code>.gitlab-ci.yml</code> 的最基本元素.它主要有下功能或特性</p>
+<ul>
+<li>定义约束,指出应在什么条件下执行它们</li>
+<li>任意名称的顶级元素,至少包含 <code>script</code> 子句</li>
+<li>可以定义多个</li>
+</ul>
+<p>简单示例如下</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">job1:</span></span><br><span class="line">  <span class="attr">script:</span> <span class="string">"execute-script-for-job1"</span></span><br><span class="line"></span><br><span class="line"><span class="attr">job2:</span></span><br><span class="line">  <span class="attr">script:</span> <span class="string">"execute-script-for-job2"</span></span><br></pre></td></tr></table></figure>
+
+<p>以上两个示例是具有两个单独作业的 CI/CD 配置,每个作业执行一个命令.当然,此命令可以在存储库中直接执行代码或运行脚本.</p>
+<p>作业由 Runner 提取并在 Runner 系统环境中运行.每个作业彼此独立运行.</p>
+<h3 id="验证-gitlab-ci-yml"><a href="#验证-gitlab-ci-yml" class="headerlink" title="验证 .gitlab-ci.yml"></a>验证 <code>.gitlab-ci.yml</code></h3><p>每个 GitLab CI/CD 实例都有一个成为 Lint 的嵌入式调试工具,该工具可验证 <code>.gitlab-ci.yml</code> 文件的内容,您可以在项目名称空间的 <code>$PATH_TO_PROJECT/-/ci/lint</code>($PATH_TO_PROJECT=$GitLab_URL/user_or_group_name/project_name)路径下找到.如 <code>https://gitlab.example.com/gitlab-org/project-123/-/ci/lint</code>.</p>
+<h3 id="作业命名规范"><a href="#作业命名规范" class="headerlink" title="作业命名规范"></a>作业命名规范</h3><p>每个作业都有唯一的名称,且以下保留关键字不能作为作业的名称:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">image</span><br><span class="line">services</span><br><span class="line">stages</span><br><span class="line">types</span><br><span class="line">before_script</span><br><span class="line">after_script</span><br><span class="line">variables</span><br><span class="line">cache</span><br><span class="line">include</span><br></pre></td></tr></table></figure>
+
+<h2 id="配置参数"><a href="#配置参数" class="headerlink" title="配置参数"></a>配置参数</h2><p>作业通过一系列参数定义作业的行为.以下列出了作业的可用参数:</p>
+<table>
+<thead>
+<tr>
+<th align="center">关键字</th>
+<th align="center">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><code>script</code></td>
+<td align="center">由 Runner 执行的脚本</td>
+</tr>
+<tr>
+<td align="center"><code>image</code></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center"><code>services</code></td>
+<td align="center">使用 docker 服务镜像.也可用 <code>services:name</code>, <code>services:alias</code>, <code>services:entrypoint</code>, <code>services:command</code></td>
+</tr>
+<tr>
+<td align="center"><code>before_script</code></td>
+<td align="center">包含执行作业之前的一组命令</td>
+</tr>
+<tr>
+<td align="center"><code>after_script</code></td>
+<td align="center">包含执行作业之后的一组命令</td>
+</tr>
+<tr>
+<td align="center"><code>stage</code></td>
+<td align="center">定义作业的阶段(默认值为 <code>test</code>)</td>
+</tr>
+<tr>
+<td align="center"><code>only</code></td>
+<td align="center">限定作业何时创建.也可用 <code>only:refs</code>, <code>only:kubernetes</code>, <code>only:variables</code>, <code>only:changes</code></td>
+</tr>
+<tr>
+<td align="center"><code>except</code></td>
+<td align="center">限定作业不创建.也可用  <code>except:refs</code>, <code>except:kubernetes</code>, <code>except:variables</code>, <code>except:changes</code></td>
+</tr>
+<tr>
+<td align="center"><code>rules</code></td>
+<td align="center">根据作业的属性评估确定是否创建工作的条件列表.不得与 <code>only/except</code> 一起使用</td>
+</tr>
+<tr>
+<td align="center"><code>tags</code></td>
+<td align="center">用于选择 Runner(运行器) 的标签列表</td>
+</tr>
+<tr>
+<td align="center"><code>allow_failure</code></td>
+<td align="center">是否允许作业失败</td>
+</tr>
+<tr>
+<td align="center"><code>when</code></td>
+<td align="center">限定什么时候开始作业.也可用<code>when:manual</code>, <code>when:delayed</code></td>
+</tr>
+<tr>
+<td align="center"><code>environment</code></td>
+<td align="center">作业部署到的环境名称.也可用 <code>environment:name</code>, <code>environment:url</code>, <code>environment:on_stop</code>, <code>environment:auto_stop_in</code>, <code>environment:action</code></td>
+</tr>
+<tr>
+<td align="center"><code>cache</code></td>
+<td align="center">缓存文件列表,以备在后续的作业中使用.也可用 <code>cache:paths</code>, <code>cache:key</code>, <code>cache:untracked</code>, <code>cache:policy</code></td>
+</tr>
+<tr>
+<td align="center"><code>artifacts</code></td>
+<td align="center">成功时附加到作业的文件和目录列表</td>
+</tr>
+<tr>
+<td align="center"><code>dependencies</code></td>
+<td align="center">指定本次作业的依赖作业列表,该列表中作业由 <code>artifacts</code> 附加的文件或目录会作为本次作业的依赖</td>
+</tr>
+<tr>
+<td align="center"><code>coverage</code></td>
+<td align="center">提供正则表达式,从作业输出中提取指定的内容</td>
+</tr>
+<tr>
+<td align="center"><code>retry</code></td>
+<td align="center">出现问题时可自动重试作业的条件和次数</td>
+</tr>
+<tr>
+<td align="center"><code>timeout</code></td>
+<td align="center">定义作业级别的超时时间</td>
+</tr>
+<tr>
+<td align="center"><code>parallel</code></td>
+<td align="center">可并行运行的作业实例个数</td>
+</tr>
+<tr>
+<td align="center"><code>trigger</code></td>
+<td align="center">定义下游管道触发器</td>
+</tr>
+<tr>
+<td align="center"><code>include</code></td>
+<td align="center">此作业包含的外部 yaml 文件.也可用 <code>include:local</code>, <code>include:file</code>, <code>include:template</code>, <code>include:remote</code></td>
+</tr>
+<tr>
+<td align="center"><code>extends</code></td>
+<td align="center">该作业要继承的配置条目</td>
+</tr>
+<tr>
+<td align="center"><code>pages</code></td>
+<td align="center">上传作业结果,用于在 GitLab Pages 展示</td>
+</tr>
+<tr>
+<td align="center"><code>variables</code></td>
+<td align="center">定义作业级别的变量</td>
+</tr>
+<tr>
+<td align="center"><code>interruptible</code></td>
+<td align="center">定义新的作业运行是否可以取消作业</td>
+</tr>
+<tr>
+<td align="center"><code>resource_group</code></td>
+<td align="center">限制作业并发</td>
+</tr>
+</tbody></table>
+<h2 id="全局参数"><a href="#全局参数" class="headerlink" title="全局参数"></a>全局参数</h2><p>可以在全局级别定义一些参数,这会影响管道中的所有作业.</p>
+<p>以下参数可以使用 <code>default</code> 关键字配置块将某些全局参数设置为所有作业的默认值.作业可以覆盖这些默认值.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">image</span><br><span class="line">services</span><br><span class="line">before_script</span><br><span class="line">after_script</span><br><span class="line">tags</span><br><span class="line">cache</span><br><span class="line">artifacts</span><br><span class="line">retry</span><br><span class="line">timeout</span><br><span class="line">interruptible</span><br></pre></td></tr></table></figure>
+
+<p>示例如下,默认使用 <code>image: ruby:2.5</code> 镜像,而 <code>rspec 2.6</code> 作业使用 <code>image: ruby:2.6</code> 镜像</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">default:</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">ruby:2.5</span></span><br><span class="line"></span><br><span class="line"><span class="attr">rspec:</span></span><br><span class="line">  <span class="attr">script:</span> <span class="string">bundle</span> <span class="string">exec</span> <span class="string">rspec</span></span><br><span class="line"></span><br><span class="line"><span class="attr">rspec 2.6:</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">ruby:2.6</span></span><br><span class="line">  <span class="attr">script:</span> <span class="string">bundle</span> <span class="string">exec</span> <span class="string">rspec</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="stages"><a href="#stages" class="headerlink" title="stages"></a><code>stages</code></h3><p><code>stages</code> 用于定义使用的阶段作业,且是全局的</p>
+<p><code>stages</code> 允许具有灵活的多级管道,<code>stages</code> 中的元素定义了作业执行的顺序:</p>
+<ul>
+<li>同一阶段的作业并行运行</li>
+<li>前一阶段的作业成功运行后,才运行下一阶段作业</li>
+</ul>
+<p>还有两种情况需要注意:</p>
+<ul>
+<li>如果 <code>.gitlab-ci.yml</code> 中未定义 <code>stages</code>,默认运行 <code>build</code>, <code>test</code>, <code>deploy</code> 阶段的作业</li>
+<li>如果作业没有指定阶段,则默认将该作业分配为 <code>test</code> 阶段</li>
+</ul>
+<h3 id="include"><a href="#include" class="headerlink" title="include"></a><code>include</code></h3><p><code>include</code> 关键字用于包含外部 YAML 文件,可将 CI/CD 配置分解为多个文件,提高配置文件的可读性.</p>
+<p><code>include</code> 要求外部 YAML 文件具有 <code>.yml</code> 或 <code>.yaml</code> 后缀名,否则不会被导入</p>
+<p><code>include</code> 支持如下方法,默认方法是 <code>local</code>.在进行 include 配置时支持直接引入对应文件路径,<code>include</code> 会自动分析方法. <a href="https://docs.gitlab.com/ee/ci/yaml/includes.html" target="_blank" rel="noopener">示例</a></p>
+<table>
+<thead>
+<tr>
+<th align="center">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><code>local</code></td>
+<td align="left">本项目代码库中的文件</td>
+</tr>
+<tr>
+<td align="center"><code>file</code></td>
+<td align="left">其它项目代码库中的文件</td>
+</tr>
+<tr>
+<td align="center"><code>remote</code></td>
+<td align="left">远程 URL 的文件</td>
+</tr>
+<tr>
+<td align="center"><code>template</code></td>
+<td align="left">GitLab 提供的模版</td>
+</tr>
+</tbody></table>
+<h4 id="include-local"><a href="#include-local" class="headerlink" title="include:local"></a><code>include:local</code></h4><p><code>include:local</code> 用于引入与 <code>.gitlab-ci.yml</code> 来自同一代码库同一分支的文件,请确保 <code>.gitlab-ci.yml</code> 与要引入的文件在同一分支上</p>
+<p><code>include:local</code> 使用代码仓库 <code>/</code> 根路径进行引用.</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">include:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">local:</span> <span class="string">'/templates/.gitlab-ci-template.yml'</span></span><br><span class="line"></span><br><span class="line"><span class="attr">include:</span> <span class="string">'.gitlab-ci-production.yml'</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="include-file"><a href="#include-file" class="headerlink" title="include:file"></a><code>include:file</code></h4><p><code>include:file</code> 支持引入同一个 GitLab 实例中另一个代码仓库中的文件. 并使用代码仓库 <code>/</code> 根路径进行引用.</p>
+<p>您也可以通过 <code>ref</code> 指定代码仓库的分支或 <code>HEAD</code> 以确保引入正确仓库分支中的文件</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">include:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">project:</span> <span class="string">'my-group/my-project'</span></span><br><span class="line">    <span class="attr">ref:</span> <span class="string">master</span></span><br><span class="line">    <span class="attr">file:</span> <span class="string">'/templates/.gitlab-ci-template.yml'</span></span><br><span class="line"></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">project:</span> <span class="string">'my-group/my-project'</span></span><br><span class="line">    <span class="attr">ref:</span> <span class="string">v1.0.0</span></span><br><span class="line">    <span class="attr">file:</span> <span class="string">'/templates/.gitlab-ci-template.yml'</span></span><br><span class="line"></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">project:</span> <span class="string">'my-group/my-project'</span></span><br><span class="line">    <span class="attr">ref:</span> <span class="string">787123b47f14b552955ca2786bc9542ae66fee5b</span> <span class="comment"># Git SHA</span></span><br><span class="line">    <span class="attr">file:</span> <span class="string">'/templates/.gitlab-ci-template.yml'</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="include-remote"><a href="#include-remote" class="headerlink" title="include:remote"></a><code>include:remote</code></h4><p><code>include:remote</code> 支持通过 HTTP/HTTPS 引入来自其他位置中的文件,远程文件必须可通过 GET 请求公开访问</p>
+<p>远程文件使用完整 URL 引用.</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">include:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">remote:</span> <span class="string">'https://gitlab.com/awesome-project/raw/master/.gitlab-ci-template.yml'</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="include-template"><a href="#include-template" class="headerlink" title="include:template"></a><code>include:template</code></h4><p><code>include:template</code> 支持引入 GitLab 提供的 <code>.gitlab-ci.yml</code> 模版文件</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">include:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">template:</span> <span class="string">Auto-DevOps.gitlab-ci.yml</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="参数详解"><a href="#参数详解" class="headerlink" title="参数详解"></a>参数详解</h2><h3 id="image"><a href="#image" class="headerlink" title="image"></a><code>image</code></h3><p>指定一个 Docker 镜像来运行作业.详见<a href="https://docs.gitlab.com/ee/ci/docker/using_docker_images.html#define-image-and-services-from-gitlab-ciyml" target="_blank" rel="noopener">使用 Docker 镜像</a></p>
+<h3 id="script"><a href="#script" class="headerlink" title="script"></a><code>script</code></h3><p><code>script</code> 是脚本所必须的关键字,它是由 Runner 执行的 shell 脚本.支持使用包含多个命令的数组以便顺序执行命令</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">job:</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">uname</span> <span class="string">-a</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">bundle</span> <span class="string">exec</span> <span class="string">rspec</span></span><br></pre></td></tr></table></figure>
+
+<p>如果有命令的退出代码不为 0,则作业将失败,且不会执行其他命令.通过将退出代码存储在变量中,可以避免这种情况:</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">job:</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="literal">false</span> <span class="string">||</span> <span class="string">exit_code=$?</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">if</span> <span class="string">[</span> <span class="string">$exit_code</span> <span class="string">-ne</span> <span class="number">0</span> <span class="string">];</span> <span class="string">then</span> <span class="string">echo</span> <span class="string">"Previous command failed"</span><span class="string">;</span> <span class="string">fi;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="before-script-和-after-script"><a href="#before-script-和-after-script" class="headerlink" title="before_script 和 after_script"></a><code>before_script</code> 和 <code>after_script</code></h3><p><code>before_script</code> 用于定义在每个作业(包括部署作业)之前运行的命令,<code>after_script</code> 用于定义在每个作业(包括失败的作业)之后运行的命令.它们都是一个数组</p>
+<p><code>before_script</code> 中指定的脚本与主脚本中指定的脚本串联在一起,并在单个 shell 中一起执行</p>
+<p><code>after_script</code> 中指定的脚本在新的shell中执行,与任何 <code>before_script</code> 或 <code>script</code> 定义的命令分开.</p>
+<p>它们有如下需要注意的地方:</p>
+<ul>
+<li>当前工作目录设置为默认目录</li>
+<li>无法访问 <code>before_script</code> 或 <code>script</code> 定义的脚本完成的修改.<ul>
+<li><code>script</code> 中定义的命令别名和变量</li>
+<li>由 before_script 或 <code>script</code> 安装的软件</li>
+</ul>
+</li>
+<li>独立的超时时间,默认为 5 分钟</li>
+<li>不影响作业的退出代码.如果 <code>script</code> 成功,但 <code>after_script</code> 超时或失败,作业将标记为成功作业</li>
+</ul>
+<h3 id="stage"><a href="#stage" class="headerlink" title="stage"></a><code>stage</code></h3><p><code>stage</code> 是按照每个作业定义的,且依赖于全局定义的 <code>stages</code>. 它将作业分为不同的阶段,同一阶段的作业可以并行执行</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">stages:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">build</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">test</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">deploy</span></span><br><span class="line"></span><br><span class="line"><span class="attr">job 0:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">.pre</span></span><br><span class="line">  <span class="attr">script:</span> <span class="string">make</span> <span class="string">something</span> <span class="string">useful</span> <span class="string">before</span> <span class="string">build</span> <span class="string">stage</span></span><br><span class="line"></span><br><span class="line"><span class="attr">job 1:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">build</span></span><br><span class="line">  <span class="attr">script:</span> <span class="string">make</span> <span class="string">build</span> <span class="string">dependencies</span></span><br><span class="line"></span><br><span class="line"><span class="attr">job 2:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">build</span></span><br><span class="line">  <span class="attr">script:</span> <span class="string">make</span> <span class="string">build</span> <span class="string">artifacts</span></span><br><span class="line"></span><br><span class="line"><span class="attr">job 3:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">test</span></span><br><span class="line">  <span class="attr">script:</span> <span class="string">make</span> <span class="string">test</span></span><br><span class="line"></span><br><span class="line"><span class="attr">job 4:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">deploy</span></span><br><span class="line">  <span class="attr">script:</span> <span class="string">make</span> <span class="string">deploy</span></span><br><span class="line"></span><br><span class="line"><span class="attr">job 5:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">.post</span></span><br><span class="line">  <span class="attr">script:</span> <span class="string">make</span> <span class="string">something</span> <span class="string">useful</span> <span class="string">at</span> <span class="string">the</span> <span class="string">end</span> <span class="string">of</span> <span class="string">pipeline</span></span><br></pre></td></tr></table></figure>
+
+<p>默认情况下,GitLab Runner 一次仅运行一个作业.可通过设置作业在不同的 Runner 上运行或修改 Runner 的 <code>concurrent</code> 配置来使作业并行运行.</p>
+<blockquote>
+<p>(GitLab 12.4 新增)无论在 <code>stages</code> 中 顺序如何,<code>.per</code> 始终是管道中的第一个阶段.<code>.post</code> 始终是管道中的最后一个阶段.用户定义的阶段在这两个阶段之间运行</p>
+</blockquote>
+<h3 id="extends"><a href="#extends" class="headerlink" title="extends"></a><code>extends</code></h3><p><code>extends</code> 定义使用 <code>extends</code> 关键字的作业(子作业)要继承的作业(父作业).<code>extends</code> 会将子作业内容递归合并到父作业中</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">.tests:</span></span><br><span class="line">  <span class="attr">script:</span> <span class="string">rake</span> <span class="string">test</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">test</span></span><br><span class="line">  <span class="attr">only:</span></span><br><span class="line">    <span class="attr">refs:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">branches</span></span><br><span class="line"></span><br><span class="line"><span class="attr">rspec:</span></span><br><span class="line">  <span class="attr">extends:</span> <span class="string">.tests</span></span><br><span class="line">  <span class="attr">script:</span> <span class="string">rake</span> <span class="string">rspec</span></span><br><span class="line">  <span class="attr">only:</span></span><br><span class="line">    <span class="attr">variables:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">$RSPEC</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 等价于</span></span><br><span class="line"><span class="attr">rspec:</span></span><br><span class="line">  <span class="attr">script:</span> <span class="string">rake</span> <span class="string">rspec</span>  <span class="comment"># 作业中相同关键字的 key 已经被重写</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">test</span></span><br><span class="line">  <span class="attr">only:</span></span><br><span class="line">    <span class="attr">refs:</span>             <span class="comment"># 子作业中没有的关键字会继承父作业中关键字及其值</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">branches</span></span><br><span class="line">    <span class="attr">variables:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">$RSPEC</span></span><br></pre></td></tr></table></figure>
+
+<p>且如果 <code>extends</code> 包含多个值,则会按照 <code>extends</code> 中定义的作业列表顺序进行继承.如果作业列表有相同的关键字,则后面作业中关键字的值会覆盖前面作业关键字的值.</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">.only-important:</span></span><br><span class="line">  <span class="attr">only:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">master</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">stable</span></span><br><span class="line">  <span class="attr">tags:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">production</span></span><br><span class="line"></span><br><span class="line"><span class="string">.in-docker:</span></span><br><span class="line">  <span class="attr">tags:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">docker</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">alpine</span></span><br><span class="line"></span><br><span class="line"><span class="attr">rspec:</span></span><br><span class="line">  <span class="attr">extends:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">.only-important</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">.in-docker</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">rake</span> <span class="string">rspec</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 等价于</span></span><br><span class="line"><span class="attr">rspec:</span></span><br><span class="line">  <span class="attr">only:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">master</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">stable</span></span><br><span class="line">  <span class="attr">tags:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">docker</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">alpine</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">rake</span> <span class="string">rspec</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="rules"><a href="#rules" class="headerlink" title="rules"></a><code>rules</code></h3><blockquote>
+<p>GitLab 12.3 新增</p>
+</blockquote>
+<p><code>rules</code> 将按照顺序评估列表中的规则,直到有规则匹配到,实现为作业动态提供属性的功能.<code>rules</code> 不能与 <code>only/except</code> 同时使用,它旨在替换该功能</p>
+<p>可用的规则字句字段包括</p>
+<ul>
+<li><code>if</code>(与 <code>only:variables</code> 类似)</li>
+<li><code>changes</code> (与 <code>only:changes</code> 类似)</li>
+<li><code>exists</code></li>
+</ul>
+<h4 id="rules-if"><a href="#rules-if" class="headerlink" title="rules:if"></a><code>rules:if</code></h4><p><code>rules:if</code> 使用定义的 if 规则设置作业执行的时机</p>
+<p><code>rules:if</code> 与 <code>only:variables</code> 略有不同.<code>only:variables</code> 仅接收单个表达式字符串,而 <code>rules:if</code> 支持表达式字符串数组形式,支持多个条件判断.支持使用 <code>&amp;&amp;</code> 或 <code>||</code> 将表达式集合组合为一个表达式,且支持使用变量匹配语法.</p>
+<p>如果提供的规则均不匹配,则作业将被默认设置为 <code>when:never</code>,且不包含在执行作业的管道中.如果配置中不包含 <code>rules:when</code>,则继承 <code>job:when</code> 的值,默认为 <code>on_success</code>.</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">job:</span></span><br><span class="line">  <span class="attr">script:</span> <span class="string">"echo Hello, Rules!"</span></span><br><span class="line">  <span class="attr">rules:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">if:</span> <span class="string">'$NAME =~ /^always/ # 如果变量 NAME 匹配 always,则设置 when: always</span></span><br><span class="line"><span class="string">      when: always</span></span><br><span class="line"><span class="string">    - if: '</span><span class="string">$NAME</span> <span class="string">=~</span> <span class="string">/^manual/</span> <span class="comment"># 如果变量 NAME 匹配 manual,则设置为 when: manual</span></span><br><span class="line">      <span class="attr">when:</span> <span class="string">manual</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">if:</span> <span class="string">'$NAME'</span>  <span class="comment"># 如果变量 NAME 设置了,且不为空,则设置为 when: on_success</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 如果以上均没有匹配,则设置 when: never</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="rules-changes"><a href="#rules-changes" class="headerlink" title="rules:changes"></a><code>rules:changes</code></h4><p><code>rules:changes</code> 与 <code>only:changes</code> 和 <code>except:changes</code> 工作方式相同,它接受路径的数组,并监控它.如果没有对监控中的文件路径做修改,则不会返回 true</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">docker build:</span></span><br><span class="line">  <span class="attr">script:</span> <span class="string">docker</span> <span class="string">build</span> <span class="string">-t</span> <span class="string">my-image:$CI_COMMIT_REF_SLUG</span> <span class="string">.</span></span><br><span class="line">  <span class="attr">rules:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">changes:</span> <span class="comment"># 如果 Dockerfile 文件被修改,则将其设置为 `when: manual`</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">Dockerfile</span></span><br><span class="line">      <span class="attr">when:</span> <span class="string">manual</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="rules-exists"><a href="#rules-exists" class="headerlink" title="rules:exists"></a><code>rules:exists</code></h4><blockquote>
+<p>GitLab 12.4 新增</p>
+</blockquote>
+<p><code>rules:exists</code> 接受文件路径或文件路径匹配的数组.如果其中任何一个文件路径在代码仓库中存在,则将匹配,作业将在管道中运行</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">job:</span></span><br><span class="line">  <span class="attr">script:</span> <span class="string">bundle</span> <span class="string">exec</span> <span class="string">rspec</span></span><br><span class="line">  <span class="attr">rules:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">exists:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">spec/**.rb</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="rules-allow-failure"><a href="#rules-allow-failure" class="headerlink" title="rules:allow_failure"></a><code>rules:allow_failure</code></h4><blockquote>
+<p>GitLab 12.8 新增</p>
+</blockquote>
+<p>您可以在规则中使用 <code>allow_failure: true</code>,在不停止作业管道的情况下允许作业失败或手动作业等待操作.所有使用规则的作业默认为 <code>allow_failure: false</code>.</p>
+<h3 id="only-except"><a href="#only-except" class="headerlink" title="only/except"></a><code>only/except</code></h3><p><code>only</code> 和 <code>except</code> 是用于限制什么时候创建作业的两个参数.<code>only</code> 用于定义要运行的作业的分支和标签.<code>except</code> 恰好相反,用于定义不运行的作业的分支和标签.</p>
+<ul>
+<li>它支持正则表达式匹配.</li>
+<li>它支持直接指定存储库路径以便于过滤仓库 fork 的作业</li>
+</ul>
+<p><code>only</code> 和 <code>except</code> 允许使用如下关键字,且如果有作业没有关键字限定,则 <code>only</code> 默认为 <code>[&#39;branches&#39;, &#39;tags&#39;]</code>,<code>except</code> 默认为空.</p>
+<table>
+<thead>
+<tr>
+<th align="center">值</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><code>branches</code></td>
+<td align="left">当管道的 git 引用是分支时</td>
+</tr>
+<tr>
+<td align="center"><code>tags</code></td>
+<td align="left">当管道的 git 引用是标签时</td>
+</tr>
+<tr>
+<td align="center"><code>external</code></td>
+<td align="left">当时用 GitLab 以外的 CI 服务时</td>
+</tr>
+<tr>
+<td align="center"><code>pushes</code></td>
+<td align="left">由用户的 git push 触发</td>
+</tr>
+<tr>
+<td align="center"><code>schedules</code></td>
+<td align="left">用于自动调度的管道</td>
+</tr>
+<tr>
+<td align="center"><code>triggers</code></td>
+<td align="left">使用触发令牌创建的管道</td>
+</tr>
+<tr>
+<td align="center"><code>web</code></td>
+<td align="left">对于在 GitLab UI 中使用 “Run” 按钮创建的管道</td>
+</tr>
+<tr>
+<td align="center"><code>merge_requests</code></td>
+<td align="left">在创建或更新合并请求时</td>
+</tr>
+</tbody></table>
+<p>示例如下:</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">job1:</span></span><br><span class="line">  <span class="attr">only:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">/^issue-.*$/i</span>  <span class="comment"># 使用正则表达式,`i` 表示忽略大小写</span></span><br><span class="line">  <span class="attr">except:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">branches</span>  <span class="comment"># 使用关键字,所有的分支都将被跳过</span></span><br><span class="line"></span><br><span class="line"><span class="attr">job2:</span></span><br><span class="line">  <span class="attr">only:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">branches@gitlab-org/gitlab</span>  <span class="comment"># 仅对 branches 仓库执行作业,而不对其 fork 执行</span></span><br><span class="line">  <span class="attr">except:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">master@gitlab-org/gitlab</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">/^release/.*$/@gitlab-org/gitlab</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>only:refs/except:refs</code>: 语法与上述一致</li>
+<li><code>only:kubernetes/except:kubernetes</code>: 仅接受 <code>active</code> 参数,表示仅当 kubernetes 服务启动时才执行此作业</li>
+<li><code>only:variables/except:variables</code>: 接受自定义变量表达式,以此决定是否创建作业</li>
+<li><code>only:changes/except:changes</code>: 接受文件路径,并监控是否改变,以此决定是否创建作业</li>
+</ul>
+<p>单个关键字中定义的条件列表是<strong>或</strong>的关系,有一个条件满足,则可以认为该关键字表示为 true.</p>
+<p>对于 <code>only</code> 创建作业来说,以上关键字之间是<strong>与</strong>的关系,当定义的以上关键字均为 true 时候,才会创建作业.对于 <code>except</code> 不创建作业来说,以上关键字之间是<strong>或</strong>的关系,当定义的以上关键字任意一个为 true 时候,则不会创建作业.</p>
+<p>示例如下:</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 该作业在以下条件均满足时创建</span></span><br><span class="line"><span class="comment"># - 管道是被调度的或在 `master` 分支上运行</span></span><br><span class="line"><span class="comment"># - $CI_COMMIT_MESSAGE 变量正则匹配 /run-end-to-end-tests/</span></span><br><span class="line"><span class="comment"># - kubernetes 服务运行</span></span><br><span class="line"><span class="attr">test:</span></span><br><span class="line">  <span class="attr">script:</span> <span class="string">npm</span> <span class="string">run</span> <span class="string">test</span></span><br><span class="line">  <span class="attr">only:</span></span><br><span class="line">    <span class="attr">refs:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">master</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">schedules</span></span><br><span class="line">    <span class="attr">variables:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">$CI_COMMIT_MESSAGE</span> <span class="string">=~</span> <span class="string">/run-end-to-end-tests/</span></span><br><span class="line">    <span class="attr">kubernetes:</span> <span class="string">active</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 该作业任意条件满足时不创建</span></span><br><span class="line"><span class="comment"># - 管道是被调度的或在 `master` 分支上运行</span></span><br><span class="line"><span class="comment"># - README.md 文件被修改</span></span><br><span class="line"><span class="attr">test:</span></span><br><span class="line">  <span class="attr">script:</span> <span class="string">npm</span> <span class="string">run</span> <span class="string">test</span></span><br><span class="line">  <span class="attr">except:</span></span><br><span class="line">    <span class="attr">refs:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">master</span></span><br><span class="line">    <span class="attr">changes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">"README.md"</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="needs"><a href="#needs" class="headerlink" title="needs"></a><code>needs</code></h3><p><code>needs</code> 关键字允许不按照 stages 顺序执行作业,而按照依赖顺序执行作业.这样无需考虑阶段顺序,可以让多个阶段同时运行.</p>
+<p>示例:</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">linux:build:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">build</span></span><br><span class="line"></span><br><span class="line"><span class="attr">mac:build:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">build</span></span><br><span class="line"></span><br><span class="line"><span class="attr">lint:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">test</span></span><br><span class="line">  <span class="attr">needs:</span> <span class="string">[]</span></span><br><span class="line"></span><br><span class="line"><span class="attr">linux:rspec:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">test</span></span><br><span class="line">  <span class="attr">needs:</span> <span class="string">["linux:build"]</span></span><br><span class="line"></span><br><span class="line"><span class="attr">linux:rubocop:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">test</span></span><br><span class="line">  <span class="attr">needs:</span> <span class="string">["linux:build"]</span></span><br><span class="line"></span><br><span class="line"><span class="attr">mac:rspec:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">test</span></span><br><span class="line">  <span class="attr">needs:</span> <span class="string">["mac:build"]</span></span><br><span class="line"></span><br><span class="line"><span class="attr">mac:rubocop:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">test</span></span><br><span class="line">  <span class="attr">needs:</span> <span class="string">["mac:build"]</span></span><br><span class="line"></span><br><span class="line"><span class="attr">production:</span></span><br><span class="line">  <span class="attr">stage:</span> <span class="string">deploy</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Linux 作业线: <code>linux:build</code> 作业完成后,将立即运行 <code>linux:rspec</code> 和 <code>linux:rubocop</code> 作业,而无需等待 <code>mac:build</code> 结束</li>
+<li>macOS 作业线: <code>mac:build</code> 作业完成后,将立即运行 <code>mac:rspec</code> 和 <code>mac:rubocop</code> 作业,而无需等待 <code>linux:build</code> 结束</li>
+<li>production 作业会等待 <code>deploy</code> 阶段之前的作业完成后再运行</li>
+</ul>
+<h3 id="tags"><a href="#tags" class="headerlink" title="tags"></a><code>tags</code></h3><p><code>tags</code> 用于从允许运行该项目的所有 Runner 列表中选择特定的 Runner.在注册 Runner 时,您可以指定 Runner 的标签,例如 ruby,postgres,development 等.</p>
+<p><code>tags</code> 也是在不同平台上运行不同作业的好方法.例如，给定带有 <code>osx</code> 标签的 OS X Runner 和带有 <code>windows</code> 标签的 Windows Runner,以下作业将在各自的平台上运行:</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">windows job:</span></span><br><span class="line">  <span class="attr">stage:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">build</span></span><br><span class="line">  <span class="attr">tags:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">windows</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">echo</span> <span class="string">Hello,</span> <span class="string">%USERNAME%!</span></span><br><span class="line"></span><br><span class="line"><span class="attr">osx job:</span></span><br><span class="line">  <span class="attr">stage:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">build</span></span><br><span class="line">  <span class="attr">tags:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">osx</span></span><br><span class="line">  <span class="attr">script:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">echo</span> <span class="string">"Hello, $USER!"</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="allow-failure"><a href="#allow-failure" class="headerlink" title="allow_failure"></a><code>allow_failure</code></h3><p><code>allow_failure</code> 关键字用于指定作业可以失败,而不会影响其余的作业.</p>
+<p>设置为 true 后,如果该作业失败，该作业将在用户界面中显示橙色警告,管道的逻辑流程将认为作业成功/通过,并且不会被阻塞</p>
+<h3 id="when"><a href="#when" class="headerlink" title="when"></a><code>when</code></h3><p><code>when</code> 关键字用于在发生故障或发生故障时运行的作业.支持以下值</p>
+<ul>
+<li><code>on_success</code>: 前面阶段的所有作业都成功时,才执行作业.是默认值</li>
+<li><code>on_failure</code>: 仅在前面阶段至少一个作业失败时才执行作业.</li>
+<li><code>always</code>: 总是执行作业,不管前面作业的执行状态</li>
+<li><code>manual</code>: 手动执行作业时才执行此作业</li>
+<li><code>delayed</code>: 一段时间后执行此作业.需要设置 <code>start_in</code> 关键字,并设置 <strong>1 周</strong>之内的延迟时间,用于表示在指定延迟时间后开始作业.支持 seconds,minutes,hours,days,week 单位,默认单位是 seconds</li>
+</ul>
+<h3 id="其它常用"><a href="#其它常用" class="headerlink" title="其它常用"></a>其它常用</h3><ul>
+<li><code>retry</code> 允许你在失败的情况下重试作业的次数.重试值必须是一个整数,等于或大于0,但小于等于2</li>
+<li><code>timeout</code> 设置指定作业的超时时间,</li>
+<li><code>parallel</code> 配置并行运行的作业实例,名称为 <code>job_name 1/N</code> 到 <code>job_name N/N</code> (2&lt;=N&lt;=50)</li>
+<li><code>trigger</code> 用于定义触发的下游管道的触发器.当定义 <code>trigger</code> 的作业完成时,将触发下一个作业的执行</li>
+<li><code>variables</code> 用于在 <code>.gitlab-ci.yml</code> 中定义变量,然后在作业中使用.</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>Buy me a cup of coffee.</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    <!--打赏-->
+    赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="纸盒人 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="纸盒人 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>纸盒人
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://hulining.github.io/2020/05/22/gitlab-ci-pipeline-configuration/" title="GitLab CI&#x2F;CD 管道配置详解">https://hulining.github.io/2020/05/22/gitlab-ci-pipeline-configuration/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/GitLab/" rel="tag"><i class="fa fa-tag"></i> GitLab</a>
+              <a href="/tags/CI-CD/" rel="tag"><i class="fa fa-tag"></i> CI/CD</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/05/22/go-study-notes-package-x509/" rel="prev" title="go 学习笔记之 x509 包">
+      <i class="fa fa-chevron-left"></i> go 学习笔记之 x509 包
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/05/22/ELK-Stack-Logstash-plugins/" rel="next" title="ELK 之 Logstash 插件介绍">
+      ELK 之 Logstash 插件介绍 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          <!--文章目录-->
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          <!--站点概览-->
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#介绍"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#验证-gitlab-ci-yml"><span class="nav-number">1.1.</span> <span class="nav-text">验证 .gitlab-ci.yml</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#作业命名规范"><span class="nav-number">1.2.</span> <span class="nav-text">作业命名规范</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#配置参数"><span class="nav-number">2.</span> <span class="nav-text">配置参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#全局参数"><span class="nav-number">3.</span> <span class="nav-text">全局参数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#stages"><span class="nav-number">3.1.</span> <span class="nav-text">stages</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#include"><span class="nav-number">3.2.</span> <span class="nav-text">include</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参数详解"><span class="nav-number">4.</span> <span class="nav-text">参数详解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#image"><span class="nav-number">4.1.</span> <span class="nav-text">image</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#script"><span class="nav-number">4.2.</span> <span class="nav-text">script</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#before-script-和-after-script"><span class="nav-number">4.3.</span> <span class="nav-text">before_script 和 after_script</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#stage"><span class="nav-number">4.4.</span> <span class="nav-text">stage</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#extends"><span class="nav-number">4.5.</span> <span class="nav-text">extends</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#rules"><span class="nav-number">4.6.</span> <span class="nav-text">rules</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#only-except"><span class="nav-number">4.7.</span> <span class="nav-text">only&#x2F;except</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#needs"><span class="nav-number">4.8.</span> <span class="nav-text">needs</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#tags"><span class="nav-number">4.9.</span> <span class="nav-text">tags</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#allow-failure"><span class="nav-number">4.10.</span> <span class="nav-text">allow_failure</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#when"><span class="nav-number">4.11.</span> <span class="nav-text">when</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其它常用"><span class="nav-number">4.12.</span> <span class="nav-text">其它常用</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="纸盒人"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">纸盒人</p>
+  <div class="site-description" itemprop="description">Keep it simple,Keep improving</div>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/hulining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;hulining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:loserkid@163.com" title="E-Mail → mailto:loserkid@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://music.163.com/#/user/home?id=71153860" title="网易云音乐 → https:&#x2F;&#x2F;music.163.com&#x2F;#&#x2F;user&#x2F;home?id&#x3D;71153860" rel="noopener" target="_blank"><i class="fa fa-fw fa-music"></i></a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">纸盒人</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+    <div id="pjax">
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'a61ca599f9a038ebe5b3',
+      clientSecret: 'bcc9edf1847c09ad9452180f0fa44d69a11a4c9f',
+      repo        : 'https://github.com/hulining/hulining.github.io.git',
+      owner       : 'hulining',
+      admin       : ['hulining'],
+      id          : '12797a88fb4dccd80bf9ff420f2ca8ef',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

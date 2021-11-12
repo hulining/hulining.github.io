@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Times New Roman:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"hulining.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="根据 Prometheus client_golang 官方文档总结的简单使用方法.记录以作备忘.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="prometheus client_golang 简单使用">
+<meta property="og:url" content="https://hulining.github.io/2020/07/01/prometheus-client_golang-Introduction/index.html">
+<meta property="og:site_name" content="纸盒人">
+<meta property="og:description" content="根据 Prometheus client_golang 官方文档总结的简单使用方法.记录以作备忘.">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-06-30T16:00:00.000Z">
+<meta property="article:modified_time" content="2021-11-12T07:44:23.841Z">
+<meta property="article:author" content="纸盒人">
+<meta property="article:tag" content="go">
+<meta property="article:tag" content="Prometheus">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://hulining.github.io/2020/07/01/prometheus-client_golang-Introduction/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>prometheus client_golang 简单使用 | 纸盒人</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">纸盒人</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">纸小呆</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">45</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">16</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">97</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/hulining" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://hulining.github.io/2020/07/01/prometheus-client_golang-Introduction/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="纸盒人">
+      <meta itemprop="description" content="Keep it simple,Keep improving">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="纸盒人">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          prometheus client_golang 简单使用
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-07-01 00:00:00" itemprop="dateCreated datePublished" datetime="2020-07-01T00:00:00+08:00">2020-07-01</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Prometheus/" itemprop="url" rel="index"><span itemprop="name">Prometheus</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+          <!--添加字数统计-->
+          
+            <span class="post-letters-count">
+              &nbsp; | &nbsp;
+              <span>5.7k 字</span>
+              &nbsp; | &nbsp;
+              <span>24 min</span>
+             </span>
+           
+            <div class="post-description">根据 Prometheus client_golang 官方文档总结的简单使用方法.记录以作备忘.</div>
+
+
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><a href="https://prometheus.io/" target="_blank" rel="noopener">Prometheus</a> 生态是一款优秀的开源监控解决方案,其中包括如下组件</p>
+<ul>
+<li><a href="https://github.com/prometheus/prometheus" target="_blank" rel="noopener">Prometheus</a></li>
+</ul>
+<p>通过配置各个采集任务,采集各个 expoter 或 pushgateway 数据,保存到其内部的时间序列数据库(TSDB)中.并根据规则对采集到的数据指标进行计算或重新保存为新的数据指标,判断是否达到阈值并向 Alertmanager 推送告警信息.</p>
+<ul>
+<li><a href="https://github.com/prometheus/alertmanager" target="_blank" rel="noopener">Alertmanager</a></li>
+</ul>
+<p>接收 Prometheus 推送过来的告警信息,通过告警路由,向集成的组件/工具发送告警信息.</p>
+<ul>
+<li>各种 <a href="https://prometheus.io/docs/instrumenting/exporters/" target="_blank" rel="noopener">Exporter</a></li>
+</ul>
+<p>收集系统或进程信息,转换为 Prometheus 可以识别的数据指标,以 http 或 https 服务的方式暴露给 Prometheus.</p>
+<ul>
+<li>[Pushgateway]</li>
+</ul>
+<p>收集系统或进程信息,转换为 Prometheus 可以识别的数据指标,向 Prometheus 推送数据指标.</p>
+<p>本篇文章主要内容为根据 <a href="https://godoc.org/github.com/prometheus/client_golang" target="_blank" rel="noopener">Prometheus client_golang 官方文档</a>总结的 Prometheus client_golang 简单使用方法.</p>
+<h2 id="包结构"><a href="#包结构" class="headerlink" title="包结构"></a>包结构</h2><p><a href="https://github.com/prometheus/client_golang" target="_blank" rel="noopener">prometheus/client_golang</a> 包结构如下:</p>
+<table>
+<thead>
+<tr>
+<th align="center">包路径</th>
+<th align="center">简介</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">api</td>
+<td align="center">api 包提供了 Prometheus HTTP API</td>
+</tr>
+<tr>
+<td align="center">api/prometheus/v1</td>
+<td align="center">v1 包提供了 v1 版本的 Prometheus HTTP API,详见 <a href="http://prometheus.io/docs/querying/api/" target="_blank" rel="noopener">http://prometheus.io/docs/querying/api/</a></td>
+</tr>
+<tr>
+<td align="center">examples/random</td>
+<td align="center">一个简单的示例,将具有不同类型的随机分布(均匀,正态和指数)的虚构 RPC 延迟公开为 Prometheus 数据指标</td>
+</tr>
+<tr>
+<td align="center">examples/simple</td>
+<td align="center">一个使用 Prometheus 工具的最小示例</td>
+</tr>
+<tr>
+<td align="center">prometheus</td>
+<td align="center">prometheus 包是 prometheus/client_golang 的核心包</td>
+</tr>
+<tr>
+<td align="center">prometheus/graphite</td>
+<td align="center">graphite 包提供了将 Prometheus 数据指标推送到 Graphite 服务的相关代码</td>
+</tr>
+<tr>
+<td align="center">prometheus/internal</td>
+<td align="center">内部包</td>
+</tr>
+<tr>
+<td align="center">prometheus/promauto</td>
+<td align="center">promauto 包提供了 Prometheus 指标的基本数据类型及其 <code>…Vec</code> 和 <code>…Func</code> 变体数据类型的构造函数</td>
+</tr>
+<tr>
+<td align="center">prometheus/promhttp</td>
+<td align="center">promhttp 包提供了 HTTP 服务端和客户端相关工具</td>
+</tr>
+<tr>
+<td align="center">prometheus/push</td>
+<td align="center">push 包提供了将指标推送到 Pushgateway 的函数</td>
+</tr>
+<tr>
+<td align="center">prometheus/testutil</td>
+<td align="center">testutil 包提供了测试使用 prometheus/client_golang 编写的代码的帮助程序</td>
+</tr>
+<tr>
+<td align="center">prometheus/testutil/promlint</td>
+<td align="center">promlint 包为 Prometheus 数据指标提供一个参考.</td>
+</tr>
+</tbody></table>
+<h2 id="prometheus-包"><a href="#prometheus-包" class="headerlink" title="prometheus 包"></a><code>prometheus</code> 包</h2><p>导入方式 <code>import &quot;github.com/prometheus/client_golang/prometheus&quot;</code>.</p>
+<p><code>prometheus</code> 包是 prometheus/client_golang 的核心包.它为工具代码提供原生数据指标用于监控,并为数据指标对象提供了注册表.<code>promauto</code> 为数据指标提供自动注册的构造函数,<code>promhttp</code> 子包允许通过 HTTP 公开已注册的数据指标,<code>push</code> 子包可以将已注册的数据指标推送到 Pushgateway.</p>
+<p>示例如下:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"log"</span></span><br><span class="line">    <span class="string">"net/http"</span></span><br><span class="line"></span><br><span class="line">    <span class="string">"github.com/prometheus/client_golang/prometheus"</span></span><br><span class="line">    <span class="string">"github.com/prometheus/client_golang/prometheus/promhttp"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> (</span><br><span class="line">    <span class="comment">// 通过 NewGauge() 方法创建 Gauge 接口的实现对象</span></span><br><span class="line">    cpuTemp = prometheus.NewGauge(prometheus.GaugeOpts&#123;</span><br><span class="line">        Name: <span class="string">"cpu_temperature_celsius"</span>,</span><br><span class="line">        Help: <span class="string">"Current temperature of the CPU."</span>,</span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="comment">// 通过 NewCounterVec() 方法创建带"标签"的 CounterVec 对象</span></span><br><span class="line">    hdFailures = prometheus.NewCounterVec(</span><br><span class="line">        prometheus.CounterOpts&#123;</span><br><span class="line">            Name: <span class="string">"hd_errors_total"</span>,</span><br><span class="line">            Help: <span class="string">"Number of hard-disk errors."</span>,</span><br><span class="line">        &#125;,</span><br><span class="line">        []<span class="keyword">string</span>&#123;<span class="string">"device"</span>&#125;,</span><br><span class="line">    )</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// Metrics 数据指标必须被注册后才会被公开</span></span><br><span class="line">    prometheus.MustRegister(cpuTemp)</span><br><span class="line">    prometheus.MustRegister(hdFailures)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    cpuTemp.Set(<span class="number">65.3</span>)</span><br><span class="line">    hdFailures.With(prometheus.Labels&#123;<span class="string">"device"</span>:<span class="string">"/dev/sda"</span>&#125;).Inc()</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Handler 函数提供了默认的处理程序,以便通过 HTTP 服务公开指标.通常使用 "/metrics" 作为入口点.</span></span><br><span class="line">    http.Handle(<span class="string">"/metrics"</span>, promhttp.Handler())</span><br><span class="line">    log.Fatal(http.ListenAndServe(<span class="string">":8080"</span>, <span class="literal">nil</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="数据指标"><a href="#数据指标" class="headerlink" title="数据指标"></a>数据指标</h3><p><code>prometheus</code> 包提供了四种基本的数据指标类型,<code>Counter</code>,<code>Gauge</code>,<code>Histogram</code> 和 <code>Summary</code>.可以在<a href="https://prometheus.io/docs/concepts/metric_types/" target="_blank" rel="noopener">Prometheus docs</a> 中找到对这四种度量标准类型的更全面的描述.</p>
+<p>除了四种基本的数据指标类型外,Prometheus 数据模型的一个非常重要的部分是沿着称为 “标签” 的维度对数据指标样本进行划分,这就产生了数据指标向量(metric vectors).<code>prometheus</code> 分为为四种基本数据指标类型提供了相应的数据指标向量,分别是 <code>CounterVec</code>,<code>GaugeVec</code>,<code>HistogramVec</code> 和 <code>SummaryVec</code>.</p>
+<p>数据指标向量的方法如下:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Collect(ch <span class="keyword">chan</span>&lt;- Metric)  <span class="comment">// 实现 Collector 接口的 Collect() 方法</span></span><br><span class="line">CurryWith(labels Labels)  <span class="comment">// 返回带有指定标签的向量指标及可能发生的错误.多用于 promhttp 包中的中间件.</span></span><br><span class="line">Delete(labels Labels)  <span class="comment">// 删除带有指定标签的向量指标.如果删除了指标,返回 true</span></span><br><span class="line">DeleteLabelValues(lvs ...<span class="keyword">string</span>)  <span class="comment">// 删除带有指定标签和标签值的向量指标.如果删除了指标,返回 true</span></span><br><span class="line">Describe(ch <span class="keyword">chan</span>&lt;- *Desc)  <span class="comment">// 实现 Collector 接口的 Describe() 方法</span></span><br><span class="line">GetMetricWith(labels Labels)  <span class="comment">// 返回带有指定标签的数据指标及可能发生的错误</span></span><br><span class="line">GetMetricWithLabelValues(lvs ...<span class="keyword">string</span>)  <span class="comment">// 返回带有指定标签和标签值的数据指标及可能发生的错误</span></span><br><span class="line">MustCurryWith(labels Labels)  <span class="comment">// 与 CurryWith 相同,但如果出现错误,则引发 panics</span></span><br><span class="line">Reset()  <span class="comment">// 删除此指标向量中的所有数据指标</span></span><br><span class="line">With(labels Labels)  <span class="comment">// 与 GetMetricWithLabels 相同,但如果出现错误,则引发 panics</span></span><br><span class="line">WithLabelValues(lvs ...<span class="keyword">string</span>)  <span class="comment">// 与 GetMetricWithLabelValues 相同,但如果出现错误,则引发 panics</span></span><br></pre></td></tr></table></figure>
+
+<p>要创建 <code>Metrics</code> 及其向量版本的实例,您需要一个合适的<code>…Opts</code>结构,即 <code>GaugeOpts</code>,<code>CounterOpts</code>,<code>SummaryOpts</code> 或 <code>HistogramOpts</code>.结构体如下:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 其中 GaugeOpts, CounterOpts 实际上均为 Opts 的别名</span></span><br><span class="line"><span class="keyword">type</span> CounterOpts Opts</span><br><span class="line"><span class="keyword">type</span> GaugeOpts Opts</span><br><span class="line"><span class="keyword">type</span> Opts <span class="keyword">struct</span> &#123;</span><br><span class="line">    <span class="comment">// Namespace, Subsystem, and Name  是 Metric 名称的组成部分(通过 "_" 将这些组成部分连接起来),只有 Name 是必需的.</span></span><br><span class="line">    Namespace <span class="keyword">string</span></span><br><span class="line">    Subsystem <span class="keyword">string</span></span><br><span class="line">    Name      <span class="keyword">string</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// Help 提供 Metric 的信息.具有相同名称的 Metric 必须具有相同的 Help 信息</span></span><br><span class="line">    Help <span class="keyword">string</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// ConstLabels 用于将固定标签附加到该指标.很少使用.</span></span><br><span class="line">    ConstLabels Labels</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> HistogramOpts <span class="keyword">struct</span> &#123;</span><br><span class="line">    <span class="comment">// Namespace, Subsystem, and Name  是 Metric 名称的组成部分(通过 "_" 将这些组成部分连接起来),只有 Name 是必需的.</span></span><br><span class="line">    Namespace <span class="keyword">string</span></span><br><span class="line">    Subsystem <span class="keyword">string</span></span><br><span class="line">    Name      <span class="keyword">string</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">//  Help 提供 Metric 的信息.具有相同名称的 Metric 必须具有相同的 Help 信息</span></span><br><span class="line">    Help <span class="keyword">string</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// ConstLabels 用于将固定标签附加到该指标.很少使用.</span></span><br><span class="line">    ConstLabels Labels</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Buckets 定义了观察值的取值区间.切片中的每个元素值都是区间的上限,元素值必须按升序排序.</span></span><br><span class="line">    <span class="comment">// Buckets 会隐式添加 `+Inf` 值作为取值区间的最大值</span></span><br><span class="line">    <span class="comment">// 默认值是 DefBuckets =  []float64&#123;.005, .01, .025, .05, .1, .25, .5, 1, 2.5, 5, 10&#125;</span></span><br><span class="line">    Buckets []<span class="keyword">float64</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> SummaryOpts <span class="keyword">struct</span> &#123;</span><br><span class="line">    <span class="comment">// Namespace, Subsystem, and Name  是 Metric 名称的组成部分(通过 "_" 将这些组成部分连接起来),只有 Name 是必需的.</span></span><br><span class="line">    Namespace <span class="keyword">string</span></span><br><span class="line">    Subsystem <span class="keyword">string</span></span><br><span class="line">    Name      <span class="keyword">string</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">//  Help 提供 Metric 的信息.具有相同名称的 Metric 必须具有相同的 Help 信息</span></span><br><span class="line">    Help <span class="keyword">string</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// ConstLabels 用于将固定标签附加到该指标.很少使用.</span></span><br><span class="line">    ConstLabels Labels</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Objectives 定义了分位数等级估计及其各自的绝对误差.如果 Objectives[q] = e，则 q 报告的值将是 [q-e, q + e]之间某个 φ 的 φ 分位数</span></span><br><span class="line">    <span class="comment">// 默认值为空 map,表示没有分位数的摘要</span></span><br><span class="line">    Objectives <span class="keyword">map</span>[<span class="keyword">float64</span>]<span class="keyword">float64</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// MaxAge 定义观察值与摘要保持相关的持续时间.必须是正数.默认值为 DefMaxAge = 10 * time.Minute</span></span><br><span class="line">    MaxAge time.Duration</span><br><span class="line"></span><br><span class="line">    <span class="comment">// AgeBuckets 用于从摘要中排除早于 MaxAge 的观察值的取值区间.默认值为 DefAgeBuckets = 5</span></span><br><span class="line">    AgeBuckets <span class="keyword">uint32</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// BufCap 定义默认样本流缓冲区大小.默认值为 DefBufCap = 500.</span></span><br><span class="line">    BufCap <span class="keyword">uint32</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里需要注意的是 <code>Counter</code>,<code>Gauge</code>,<code>Histogram</code>,<code>Summary</code> 都继承了 <code>Metric</code> 和 <code>Collector</code> 接口,其本身是接口类型.而 <code>CounterVec</code>,<code>GaugeVec</code>,<code>HistogramVec</code>, <code>SummaryVec</code> 均继承自 <code>metricVec</code> 结构体,其本身的是结构体,而它们只实现了 <code>Collector</code> 接口.</p>
+<h3 id="自定义-Collectors-和常量指标"><a href="#自定义-Collectors-和常量指标" class="headerlink" title="自定义 Collectors 和常量指标"></a>自定义 Collectors 和常量指标</h3><p><code>prometheus</code> 包提供了 <code>NewConstMetric()</code>,<code>NewConstHistogram()</code>,<code>NewConstSummary()</code> 及其各自的 <code>Must…</code> 版本的函数 “动态” 创建 <code>Metric</code> 实例.其中 <code>NewConstMetric()</code> 函数用于创建仅以 float64 数据作为其值的数据指标类型对象,如 <code>Counter</code>,<code>Gauge</code> 及 <code>Untyped</code> 特殊类型对象.<code>Metric</code> 实例的创建在 <code>Collect()</code> 方法中进行.</p>
+<p><code>prometheus</code> 包提供了 <code>NewDesc()</code> 函数创建用于描述以上 <code>Metric</code> 实例的 <code>Desc</code> 对象,其中主要包含  <code>Metric</code> 实例的名称与帮助信息.</p>
+<p><code>prometheus</code> 包还提供了 <code>NewCounterFunc()</code>,<code>NewGaugeFunc()</code> 或 <code>NewUntypedFunc()</code> 函数用于创建实现了 <code>CounterFunc</code>, <code>GaugeFunc</code>, <code>UntypedFunc</code> 接口的 <code>valueFunc</code> 对象,用于只需要以传入函数的浮点数返回值作为数据指标值创建数据指标的场景.</p>
+<h3 id="Registry-的高级用法"><a href="#Registry-的高级用法" class="headerlink" title="Registry 的高级用法"></a>Registry 的高级用法</h3><p><code>prometheus</code> 包提供了 <code>MustRegister()</code> 函数用于注册 <code>Collector</code>,但如果注册过程中发生错误,程序会引发 panics.而使用 <code>Register()</code> 函数可以实现注册 <code>Collector</code> 的同时处理可能发生的错误.</p>
+<p><code>prometheus</code> 包中所有的注册都是在默认的注册表上进行的,可以在全局变量 <code>DefaultRegisterer</code> 中找到该对象.<code>prometheus</code> 包提供了 <code>NewRegistry()</code> 函数用于创建自定义注册表,甚至可以自己实现 <code>Registerer</code> 或 <code>Gatherer</code> 接口.</p>
+<p> <code>prometheus</code> 通过 <code>NewGoCollector()</code> 和 <code>NewProcessCollector()</code> 函数创建 Go 运行时数据指标的 <code>Collector</code> 和进程数据指标的 <code>Collector</code>.而这两个 <code>Collector</code> 已在默认的注册表 <code>DefaultRegisterer</code> 中注册.使用自定义注册表,您可以控制并自行决定要注册的 <code>Collector</code>.</p>
+<h3 id="HTTP-公开数据指标"><a href="#HTTP-公开数据指标" class="headerlink" title="HTTP 公开数据指标"></a>HTTP 公开数据指标</h3><p>注册表(<code>Registry</code> 结构体)实现了 <code>Gatherer</code> 接口,实现了 <code>Gather()</code> 方法.<code>Gather()</code> 方法的调用者可以以某种方式公开收集的数据指标.通常通过 <code>/metrics</code> 入口以 HTTP 方式提供.通过 HTTP 公开数据指标的工具在 <code>promhttp</code> 包中.</p>
+<h3 id="推送数据指标到-Pushgateway"><a href="#推送数据指标到-Pushgateway" class="headerlink" title="推送数据指标到 Pushgateway"></a>推送数据指标到 Pushgateway</h3><p>在 <code>push</code> 子包中可以找到用于推送到 Pushgateway 的函数.</p>
+<h2 id="promauto-包"><a href="#promauto-包" class="headerlink" title="promauto 包"></a><code>promauto</code> 包</h2><p>导入方式: <code>import &quot;github.com/prometheus/client_golang/prometheus/promauto&quot;</code></p>
+<p><code>promauto</code> 包提供了 Prometheus 指标的基本数据类型及其 <code>…Vec</code> 和 <code>…Func</code> 变体数据类型的构造函数.与 <code>prometheus</code> 包中提供的构造函数不同的是,<code>promauto</code> 包中的构造函数返回已经注册的 <code>Collector</code> 对象.</p>
+<p><code>promauto</code> 包中包含三组构造函数,<code>New&lt;Metric&gt;</code>, <code>New&lt;Metric&gt;Vec</code> 与 <code>New&lt;Metric&gt;Func</code>.</p>
+<p><code>promauto</code> 包中 <code>NewXXX</code> 函数,其实都是调用了 <code>prometheus</code> 包中对应的 <code>NewXXX</code> 函数创建了 <code>Collector</code> 对象,并将此 <code>Collector</code> 对象在 <code>prometheus.DefaultRegisterer</code> 中调用 <code>MustRegister()</code> 方法注册.因此如果注册失败,所有构造函数都会引发 <code>panics</code>.</p>
+<p>以 <code>promauto.NewCounter()</code> 为例,源代码如下:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// github.com/prometheus/client_golang@v1.7.1/prometheus/promauto/auto.go#L167</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewCounter</span><span class="params">(opts prometheus.CounterOpts)</span> <span class="title">prometheus</span>.<span class="title">Counter</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> With(prometheus.DefaultRegisterer).NewCounter(opts)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(f Factory)</span> <span class="title">NewCounter</span><span class="params">(opts prometheus.CounterOpts)</span> <span class="title">prometheus</span>.<span class="title">Counter</span></span> &#123;</span><br><span class="line">    c := prometheus.NewCounter(opts) <span class="comment">// 调用 prometheus 包中对应方法,创建 Counter 实现对象</span></span><br><span class="line">    <span class="keyword">if</span> f.r != <span class="literal">nil</span> &#123;</span><br><span class="line">        f.r.MustRegister(c) <span class="comment">// 调用 `prometheus.DefaultRegisterer.MustRegister()` 方法对 Counter 进行注册</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> c <span class="comment">// 返回已注册的 Counter 实现对象</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>示例如下:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 通过 `promauto` 包中方法创建的 Collector 对象 histogramRegistered 已被注册,可直接被公开为数据指标</span></span><br><span class="line"><span class="keyword">var</span> histogramRegistered = promauto.NewHistogram(</span><br><span class="line">    prometheus.HistogramOpts&#123;</span><br><span class="line">        Name:    <span class="string">"random_number_registered"</span>,</span><br><span class="line">        Help:    <span class="string">"A histogram of normally distributed random numbers."</span>,</span><br><span class="line">        Buckets: prometheus.LinearBuckets(<span class="number">-3</span>, <span class="number">.1</span>, <span class="number">61</span>),</span><br><span class="line">    &#125;,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 通过 `prometheus` 包中方法创建的 Collector 对象 histogramNotRegistered 没有被注册,需要手动进行注册才被公开为数据指标</span></span><br><span class="line"><span class="keyword">var</span> histogramNotRegistered = prometheus.NewHistogram(</span><br><span class="line">    prometheus.HistogramOpts&#123;</span><br><span class="line">        Name:    <span class="string">"random_number_not_registered"</span>,</span><br><span class="line">        Help:    <span class="string">"A histogram of normally distributed random numbers."</span>,</span><br><span class="line">        Buckets: prometheus.LinearBuckets(<span class="number">-3</span>, <span class="number">.1</span>, <span class="number">61</span>),</span><br><span class="line">    &#125;,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 在 `init()` 函数中对 histogramNotRegistered 对象进行注册</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">    prometheus.Register(histogramNotRegistered)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>同时,<code>promauto</code> 包还提供了 <code>With()</code> 函数.该函数返回创建 <code>Collector</code> 的工厂对象.通过该工厂对象创建的 <code>Collector</code> 都在传入的 <code>Registerer</code> 中进行注册.</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">With</span><span class="params">(r prometheus.Registerer)</span> <span class="title">Factory</span></span> &#123; <span class="keyword">return</span> Factory&#123;r&#125; &#125;</span><br></pre></td></tr></table></figure>
+
+<p>示例如下:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> (</span><br><span class="line">    reg           = prometheus.NewRegistry()</span><br><span class="line">    factory       = promauto.With(reg) <span class="comment">// 使用 reg 定义工厂对象</span></span><br><span class="line">    <span class="comment">// 创建已在 reg 中注册的 histogram 类型的数据对象,该对象实现了 Histogram 接口与 Metric 接口</span></span><br><span class="line">    randomNumbers = factory.NewHistogram(prometheus.HistogramOpts&#123;</span><br><span class="line">        Name:    <span class="string">"random_numbers"</span>,</span><br><span class="line">        Help:    <span class="string">"A histogram of normally distributed random numbers."</span>,</span><br><span class="line">        Buckets: prometheus.LinearBuckets(<span class="number">-3</span>, <span class="number">.1</span>, <span class="number">61</span>),</span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="comment">// 创建已在 reg 中注册的带有标签的 counter 类型的数据对象,该对象实现了 Collector 接口</span></span><br><span class="line">    requestCount = factory.NewCounterVec(</span><br><span class="line">        prometheus.CounterOpts&#123;</span><br><span class="line">            Name: <span class="string">"http_requests_total"</span>,</span><br><span class="line">            Help: <span class="string">"Total number of HTTP requests by status code and method."</span>,</span><br><span class="line">        &#125;,</span><br><span class="line">        []<span class="keyword">string</span>&#123;<span class="string">"code"</span>, <span class="string">"method"</span>&#125;,</span><br><span class="line">    )</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h2 id="promhttp-包"><a href="#promhttp-包" class="headerlink" title="promhttp 包"></a><code>promhttp</code> 包</h2><p><code>promhttp</code> 包允许创建 <code>http.Handler</code> 实例通过 HTTP 公开 Prometheus 数据指标.</p>
+<h3 id="Handler-与-HandlerFor-函数"><a href="#Handler-与-HandlerFor-函数" class="headerlink" title="Handler() 与 HandlerFor() 函数"></a><code>Handler()</code> 与 <code>HandlerFor()</code> 函数</h3><p><code>promhttp</code> 包提供了 <code>Handler()</code> 函数使用默认的 <code>prometheus.DefaultGatherer</code> 返回一个 <code>http.Handler</code>.它将第一个错误报告为 HTTP 错误,没有错误记录.返回的 <code>http.Handler</code> 已使用 <code>InstrumentMetricHandler()</code> 函数和默认的 <code>prometheus.DefaultRegisterer</code> 进行检测.如果调用多个 <code>Handler()</code> 函数创建多个 <code>http.Handler</code>,则用于检测的数据指标将在它们之间共享,从而提供全局采集计数.如 <code>promhttp_metric_handler_requests_total</code> 和 <code>promhttp_metric_handler_requests_in_flight</code> 数据指标.</p>
+<p><code>promhttp</code> 包提供了<code>HandlerFor()</code> 函数,您可以为自定义注册表或实现 <code>Gatherer</code> 接口的任何内容创建处理程序,还允许通过传入 <code>HandlerOpts</code> 对象自定义错误处理行为或记录错误的对象.</p>
+<h3 id="InstrumentHandlerX-包装器函数"><a href="#InstrumentHandlerX-包装器函数" class="headerlink" title="InstrumentHandlerX 包装器函数"></a><code>InstrumentHandlerX</code> 包装器函数</h3><p><code>promhttp</code> 包提供了通过中间件来检测 <code>http.Handler</code> 实例的工具.中间件包装器遵循 <code>InstrumentHandlerX</code> 命名方案,其中 <code>X</code> 描述了中间件的预期用途.有关详细信息,请参见每个函数的文档注释.</p>
+<p><code>promhttp</code> 包提供以下中间件包装器:</p>
+<ul>
+<li><code>func InstrumentHandlerCounter(counter *prometheus.CounterVec, next http.Handler) http.HandlerFunc</code></li>
+</ul>
+<p><code>InstrumentHandlerCounter</code> 包装传入的 <code>http.Handler</code>,并通过传入的 <code>prometheus.CounterVec</code> 记录不同请求方法或响应状态分组的计数结果.</p>
+<p><code>CounterVec</code> 可以通过 HTTP 状态码或方法对 <code>CounterVec</code> 中带有相应标签实例的数据指标进行分组,其允许的标签名称是 <code>&quot;code&quot;</code> 和 <code>&quot;method&quot;</code>,否则该函数会引发 panics.对于未分区的计数,可使用不带标签的 <code>CounterVec</code>.如果装饰的 <code>Handler</code> 未设置状态码,默认为 200.</p>
+<ul>
+<li><code>func InstrumentHandlerDuration(obs prometheus.ObserverVec, next http.Handler) http.HandlerFunc</code></li>
+</ul>
+<p><code>InstrumentHandlerDuration</code> 包装传入的 <code>http.Handler</code>,并通过传入的 <code>prometheus.ObserverVec</code> 记录不同请求方法或响应状态分组的持续时间.持续时间以秒为单位.</p>
+<p>与 <code>CounterVec</code> 类似,<code>ObserverVec</code> 可以通过 HTTP 状态码或方法对 <code>ObserverVec</code> 中带有相应标签实例的数据指标进行分组,其默认允许的标签名称是 <code>&quot;code&quot;</code> 和 <code>&quot;method&quot;</code>,如果除 <code>method,code</code> 外有其它标签,需要在包装器中调用 <code>CurryWith()</code> 或 <code>MustCurryWith()</code> 传入标签的值,否则该函数会引发 panics.对于未分区的计数,可使用不带标签的 <code>ObserverVec</code>.如果装饰的 <code>Handler</code> 未设置状态码,默认为 200.</p>
+<ul>
+<li><code>func InstrumentHandlerInFlight(g prometheus.Gauge, next http.Handler) http.Handler</code></li>
+</ul>
+<p><code>InstrumentHandlerInFlight</code> 包装传入的 <code>http.Handler</code>,它通过传入的 <code>prometheus.Gauge</code> 记录处理的请求数</p>
+<ul>
+<li><code>func InstrumentHandlerRequestSize(obs prometheus.ObserverVec, next http.Handler) http.HandlerFunc</code></li>
+</ul>
+<p><code>InstrumentHandlerRequestSize</code> 包装传入的 <code>http.Handler</code>,它通过传入的 <code>prometheus.ObserverVec</code> 记录不同请求方法或响应状态分组的请求大小.请求大小以字节为单位.</p>
+<p>与 <code>CounterVec</code> 类似,<code>ObserverVec</code> 可以通过 HTTP 状态码或方法对 <code>ObserverVec</code> 中带有相应标签实例的数据指标进行分组,其默认允许的标签名称是 <code>&quot;code&quot;</code> 和 <code>&quot;method&quot;</code>,如果除 <code>method,code</code> 外有其它标签,需要在包装器中调用 <code>CurryWith()</code> 或 <code>MustCurryWith()</code> 传入标签的值,否则该函数会引发 panics.对于未分区的计数,可使用不带标签的 <code>ObserverVec</code>.如果装饰的 <code>Handler</code> 未设置状态码,默认为 200.</p>
+<ul>
+<li><code>func InstrumentHandlerResponseSize(obs prometheus.ObserverVec, next http.Handler) http.Handler</code></li>
+</ul>
+<p><code>InstrumentHandlerResponseSize</code> 包装传入的 <code>http.Handler</code>,它通过传入的 <code>prometheus.ObserverVec</code> 记录不同请求方法或响应状态分组的响应大小.响应大小以字节为单位.</p>
+<p>与 <code>CounterVec</code> 类似,<code>ObserverVec</code> 可以通过 HTTP 状态码或方法对 <code>ObserverVec</code> 中带有相应标签实例的数据指标进行分组,其默认允许的标签名称是 <code>&quot;code&quot;</code> 和 <code>&quot;method&quot;</code>,如果除 <code>method,code</code> 外有其它标签,需要在包装器中调用 <code>CurryWith()</code> 或 <code>MustCurryWith()</code> 传入标签的值,否则该函数会引发 panics.对于未分区的计数,可使用不带标签的 <code>ObserverVec</code>.如果装饰的 <code>Handler</code> 未设置状态码,默认为 200.</p>
+<ul>
+<li><code>func InstrumentHandlerTimeToWriteHeader(obs prometheus.ObserverVec, next http.Handler) http.HandlerFunc</code></li>
+</ul>
+<p><code>InstrumentHandlerResponseSize</code> 包装传入的 <code>http.Handler</code>,它通过传入的 <code>prometheus.ObserverVec</code> 记录不同请求方法或响应状态分组的写入响应头部的时间.持续时间以秒为单位.</p>
+<p>与 <code>CounterVec</code> 类似,<code>ObserverVec</code> 可以通过 HTTP 状态码或方法对 <code>ObserverVec</code> 中带有相应标签实例的数据指标进行分组,其默认允许的标签名称是 <code>&quot;code&quot;</code> 和 <code>&quot;method&quot;</code>,如果除 <code>method,code</code> 外有其它标签,需要在包装器中调用 <code>CurryWith()</code> 或 <code>MustCurryWith()</code> 传入标签的值,否则该函数会引发 panics.对于未分区的计数,可使用不带标签的 <code>ObserverVec</code>.如果装饰的 <code>Handler</code> 未设置状态码,默认为 200.</p>
+<ul>
+<li><code>func InstrumentMetricHandler(reg prometheus.Registerer, handler http.Handler) http.Handler</code></li>
+</ul>
+<p><code>InstrumentMetricHandler</code> 通常与 <code>HandlerFor</code> 函数返回的 <code>http.Handler</code> 一起使用.它使用两个数据指标为传入的 <code>http.Handler</code> 进行包装: <code>promhttp_metric_handler_requests_total</code>(<code>CounterVec</code> 类型) 对按 HTTP 响应状态码分组的请求进行计数,<code>promhttp_metric_handler_requests_in_flight</code>(<code>Gauge</code> 类型) 跟踪同时进行的请求数量.</p>
+<p>如上两个数据指标对于查看多少数据指标采集请求发送到监控目标上以及它们的重复率(同时有多少个采集请求)非常有用.</p>
+<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><p>中间件包装器示例如下:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    inFlightGauge := prometheus.NewGauge(prometheus.GaugeOpts&#123;</span><br><span class="line">        Name: <span class="string">"in_flight_requests"</span>,</span><br><span class="line">        Help: <span class="string">"A gauge of requests currently being served by the wrapped handler."</span>,</span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="comment">// 带有 "code", "method" 标签的计数器</span></span><br><span class="line">    counter := prometheus.NewCounterVec(</span><br><span class="line">        prometheus.CounterOpts&#123;</span><br><span class="line">            Name: <span class="string">"api_requests_total"</span>,</span><br><span class="line">            Help: <span class="string">"A counter for requests to the wrapped handler."</span>,</span><br><span class="line">        &#125;,</span><br><span class="line">        []<span class="keyword">string</span>&#123;<span class="string">"code"</span>, <span class="string">"method"</span>&#125;,</span><br><span class="line">    )</span><br><span class="line">    <span class="comment">// 带标签的 duration.如果除 `method,code` 外有其它标签,需要在包装器中调用 `CurryWith()` 或 `MustCurryWith()` 传入标签的值.</span></span><br><span class="line">    duration := prometheus.NewHistogramVec(</span><br><span class="line">        prometheus.HistogramOpts&#123;</span><br><span class="line">            Name:    <span class="string">"request_duration_seconds"</span>,</span><br><span class="line">            Help:    <span class="string">"A histogram of latencies for requests."</span>,</span><br><span class="line">            Buckets: []<span class="keyword">float64</span>&#123;<span class="number">.25</span>, <span class="number">.5</span>, <span class="number">1</span>, <span class="number">2.5</span>, <span class="number">5</span>, <span class="number">10</span>&#125;,</span><br><span class="line">        &#125;,</span><br><span class="line">        []<span class="keyword">string</span>&#123;<span class="string">"handler"</span>, <span class="string">"method"</span>&#125;,</span><br><span class="line">    )</span><br><span class="line">    <span class="comment">// 不带标签的 responseSize</span></span><br><span class="line">    responseSize := prometheus.NewHistogramVec(</span><br><span class="line">        prometheus.HistogramOpts&#123;</span><br><span class="line">            Name:    <span class="string">"response_size_bytes"</span>,</span><br><span class="line">            Help:    <span class="string">"A histogram of response sizes for requests."</span>,</span><br><span class="line">            Buckets: []<span class="keyword">float64</span>&#123;<span class="number">200</span>, <span class="number">500</span>, <span class="number">900</span>, <span class="number">1500</span>&#125;,</span><br><span class="line">        &#125;,</span><br><span class="line">        []<span class="keyword">string</span>&#123;&#125;,</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建将被中间件包装的 Handlers</span></span><br><span class="line">    pushHandler := http.HandlerFunc(<span class="function"><span class="keyword">func</span><span class="params">(w http.ResponseWriter, r *http.Request)</span></span> &#123;</span><br><span class="line">        w.Write([]<span class="keyword">byte</span>(<span class="string">"Push"</span>))</span><br><span class="line">    &#125;)</span><br><span class="line">    pullHandler := http.HandlerFunc(<span class="function"><span class="keyword">func</span><span class="params">(w http.ResponseWriter, r *http.Request)</span></span> &#123;</span><br><span class="line">        w.Write([]<span class="keyword">byte</span>(<span class="string">"Pull"</span>))</span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 在默认的注册表中注册所有的数据指标</span></span><br><span class="line">    prometheus.MustRegister(inFlightGauge, counter, duration, responseSize)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 按照以上定义的数据指标将 Handler 分组,并通过 `ObserverVec` 接口的 `MustCurryWith()` 方法传入 "handler" 标签</span></span><br><span class="line">    pushChain := promhttp.InstrumentHandlerInFlight(inFlightGauge,</span><br><span class="line">        promhttp.InstrumentHandlerDuration(duration.MustCurryWith(prometheus.Labels&#123;<span class="string">"handler"</span>: <span class="string">"push"</span>&#125;),</span><br><span class="line">            promhttp.InstrumentHandlerCounter(counter,</span><br><span class="line">                promhttp.InstrumentHandlerResponseSize(responseSize, pushHandler),</span><br><span class="line">            ),</span><br><span class="line">        ),</span><br><span class="line">    )</span><br><span class="line">    pullChain := promhttp.InstrumentHandlerInFlight(inFlightGauge,</span><br><span class="line">        promhttp.InstrumentHandlerDuration(duration.MustCurryWith(prometheus.Labels&#123;<span class="string">"handler"</span>: <span class="string">"pull"</span>&#125;),</span><br><span class="line">            promhttp.InstrumentHandlerCounter(counter,</span><br><span class="line">                promhttp.InstrumentHandlerResponseSize(responseSize, pullHandler),</span><br><span class="line">            ),</span><br><span class="line">        ),</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    http.Handle(<span class="string">"/metrics"</span>, promhttp.Handler())</span><br><span class="line">    <span class="comment">// 对不同的 HTTP 入口端点请求应用到带有不同标签的 Handler 中间件包装器</span></span><br><span class="line">    http.Handle(<span class="string">"/pull"</span>, pullChain)</span><br><span class="line">    http.Handle(<span class="string">"/push"</span>, pushChain)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> err := http.ListenAndServe(<span class="string">":3000"</span>, <span class="literal">nil</span>); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        log.Fatal(err)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="push-包"><a href="#push-包" class="headerlink" title="push 包"></a><code>push</code> 包</h2><p><code>push</code> 包提供了将数据指标推送到 Pushgateway 的函数,它使用构造其函数 <code>New()</code> 创建 <code>Pusher</code> 对象,然后使用其实例方法添加各种选项,最后调用 <code>Add()</code> 或 <code>Push()</code> 方法向 Pushgateway 推送数据指标.</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">push.New(<span class="string">"http://example.org/metrics"</span>, <span class="string">"my_job"</span>).Gatherer(myRegistry).Push()</span><br><span class="line"></span><br><span class="line"><span class="comment">// Complex case:</span></span><br><span class="line">push.New(<span class="string">"http://example.org/metrics"</span>, <span class="string">"my_job"</span>).</span><br><span class="line">    Collector(myCollector1).</span><br><span class="line">    Collector(myCollector2).</span><br><span class="line">    Grouping(<span class="string">"zone"</span>, <span class="string">"xy"</span>).</span><br><span class="line">    Client(&amp;myHTTPClient).</span><br><span class="line">    BasicAuth(<span class="string">"top"</span>, <span class="string">"secret"</span>).</span><br><span class="line">    Add()</span><br></pre></td></tr></table></figure>
+
+<p>源码解析如下:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// github.com/prometheus/client_golang/prometheus/push/push.go</span></span><br><span class="line"><span class="comment">// 定义 Pusher 结构体及构造方法</span></span><br><span class="line"><span class="keyword">type</span> Pusher <span class="keyword">struct</span> &#123;</span><br><span class="line">    error error</span><br><span class="line">    url, job <span class="keyword">string</span></span><br><span class="line">    grouping <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span>  </span><br><span class="line">    gatherers  prometheus.Gatherers</span><br><span class="line">    registerer prometheus.Registerer=</span><br><span class="line">    client             HTTPDoer</span><br><span class="line">    useBasicAuth       <span class="keyword">bool</span></span><br><span class="line">    username, password <span class="keyword">string</span></span><br><span class="line">    expfmt expfmt.Format</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">New</span><span class="params">(url, job <span class="keyword">string</span>)</span> *<span class="title">Pusher</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> (</span><br><span class="line">        reg = prometheus.NewRegistry()</span><br><span class="line">        err error</span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">if</span> job == <span class="string">""</span> &#123;</span><br><span class="line">        err = errJobEmpty</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> !strings.Contains(url, <span class="string">"://"</span>) &#123;</span><br><span class="line">        url = <span class="string">"http://"</span> + url</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> strings.HasSuffix(url, <span class="string">"/"</span>) &#123;</span><br><span class="line">        url = url[:<span class="built_in">len</span>(url)<span class="number">-1</span>]</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> &amp;Pusher&#123;</span><br><span class="line">        error:      err,</span><br><span class="line">        url:        url,</span><br><span class="line">        job:        job,</span><br><span class="line">        grouping:   <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span>&#123;&#125;,</span><br><span class="line">        gatherers:  prometheus.Gatherers&#123;reg&#125;,</span><br><span class="line">        registerer: reg,</span><br><span class="line">        client:     &amp;http.Client&#123;&#125;, <span class="comment">// 使用默认的 HTTP 客户端</span></span><br><span class="line">        expfmt:     expfmt.FmtProtoDelim, <span class="comment">// 默认使用 expfmt.FmtProtoDelim</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 添加 Gatherer 对象到 Pusher 中</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *Pusher)</span> <span class="title">Gatherer</span><span class="params">(g prometheus.Gatherer)</span> *<span class="title">Pusher</span></span> &#123;</span><br><span class="line">    p.gatherers = <span class="built_in">append</span>(p.gatherers, g)</span><br><span class="line">    <span class="keyword">return</span> p</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 添加 Collector 对象到 Pusher 中</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *Pusher)</span> <span class="title">Collector</span><span class="params">(c prometheus.Collector)</span> *<span class="title">Pusher</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> p.error == <span class="literal">nil</span> &#123;</span><br><span class="line">        p.error = p.registerer.Register(c)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> p</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 对 Pusher 添加键值对分组</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *Pusher)</span> <span class="title">Grouping</span><span class="params">(name, value <span class="keyword">string</span>)</span> *<span class="title">Pusher</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> p.error == <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> !model.LabelName(name).IsValid() &#123;</span><br><span class="line">            p.error = fmt.Errorf(<span class="string">"grouping label has invalid name: %s"</span>, name)</span><br><span class="line">            <span class="keyword">return</span> p</span><br><span class="line">        &#125;</span><br><span class="line">        p.grouping[name] = value</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> p</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 自定义 Pusher 向 Pushgateway 发送请求的 HTTP 客户端</span></span><br><span class="line"><span class="comment">// HTTP 客户端是 `HTTPDoer` 接口的实现类,也就是实现了 `Do(*http.Request)` 方法</span></span><br><span class="line"><span class="comment">// 默认的 http.Client 满足这个要求,因此可以直接使用</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *Pusher)</span> <span class="title">Client</span><span class="params">(c HTTPDoer)</span> *<span class="title">Pusher</span></span> &#123;</span><br><span class="line">    p.client = c</span><br><span class="line">    <span class="keyword">return</span> p</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// BasicAuth 配置 Pusher 使用 HTTP Basic Authentication</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *Pusher)</span> <span class="title">BasicAuth</span><span class="params">(username, password <span class="keyword">string</span>)</span> *<span class="title">Pusher</span></span> &#123;</span><br><span class="line">    p.useBasicAuth = <span class="literal">true</span></span><br><span class="line">    p.username = username</span><br><span class="line">    p.password = password</span><br><span class="line">    <span class="keyword">return</span> p</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Format 配置 Pusher 使用 `expfmt.Format` 的编码类型.默认为 `expfmt.FmtProtoDelim`</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *Pusher)</span> <span class="title">Format</span><span class="params">(format expfmt.Format)</span> *<span class="title">Pusher</span></span> &#123;</span><br><span class="line">    p.expfmt = format</span><br><span class="line">    <span class="keyword">return</span> p</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Pusher 向 Pushgateway 发送 DELETE 请求,删除 URL 下所有数据指标.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *Pusher)</span> <span class="title">Delete</span><span class="params">()</span> <span class="title">error</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> p.error != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> p.error</span><br><span class="line">    &#125;</span><br><span class="line">    req, err := http.NewRequest(http.MethodDelete, p.fullURL(), <span class="literal">nil</span>)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> p.useBasicAuth &#123;</span><br><span class="line">        req.SetBasicAuth(p.username, p.password)</span><br><span class="line">    &#125;</span><br><span class="line">    resp, err := p.client.Do(req)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">defer</span> resp.Body.Close()</span><br><span class="line">    <span class="keyword">if</span> resp.StatusCode != http.StatusAccepted &#123;</span><br><span class="line">        body, _ := ioutil.ReadAll(resp.Body) <span class="comment">// Ignore any further error as this is for an error message only.</span></span><br><span class="line">        <span class="keyword">return</span> fmt.Errorf(<span class="string">"unexpected status code %d while deleting %s: %s"</span>, resp.StatusCode, p.fullURL(), body)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Push 从添加到此 Pusher 的所有 Collector 和 Gatherer 收集所有指标,然后使用配置的作业名称和分组标签作为分组键,将指标推送到配置的 Pushgateway</span></span><br><span class="line"><span class="comment">// 具有该作业和其他分组标签的所有先前推送的数据指标将被此调用推送的指标替换.一般用于第一次推送(类似于删除原来推送的数据,后重新推送)</span></span><br><span class="line"><span class="comment">// Push 方法向 Pushgateway 发送 PUT 请求</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *Pusher)</span> <span class="title">Push</span><span class="params">()</span> <span class="title">error</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> p.push(http.MethodPut)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Add 的工作方式类似于 Push,但只会替换具有相同名称(以及相同的作业和其他分组标签)的先前推送的指标.一般用于后续推送(类似于对此次推送的数据做更新或添加)</span></span><br><span class="line"><span class="comment">// Add 方法向 Pushgateway 发送 POST 请求</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *Pusher)</span> <span class="title">Add</span><span class="params">()</span> <span class="title">error</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> p.push(http.MethodPost)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// github.com/prometheus/client_golang/prometheus/push/push.goL236</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *Pusher)</span> <span class="title">push</span><span class="params">(method <span class="keyword">string</span>)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> p.error != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> p.error</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 这里应该是收集各个注册的 Collector 的数据指标</span></span><br><span class="line">    mfs, err := p.gatherers.Gather()</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line">    buf := &amp;bytes.Buffer&#123;&#125;</span><br><span class="line">    enc := expfmt.NewEncoder(buf, p.expfmt)</span><br><span class="line">    <span class="comment">// Check for pre-existing grouping labels:</span></span><br><span class="line">    <span class="keyword">for</span> _, mf := <span class="keyword">range</span> mfs &#123;</span><br><span class="line">        <span class="keyword">for</span> _, m := <span class="keyword">range</span> mf.GetMetric() &#123;</span><br><span class="line">            <span class="keyword">for</span> _, l := <span class="keyword">range</span> m.GetLabel() &#123;</span><br><span class="line">                <span class="keyword">if</span> l.GetName() == <span class="string">"job"</span> &#123;</span><br><span class="line">                    <span class="keyword">return</span> fmt.Errorf(<span class="string">"pushed metric %s (%s) already contains a job label"</span>, mf.GetName(), m)</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> _, ok := p.grouping[l.GetName()]; ok &#123;</span><br><span class="line">                    <span class="keyword">return</span> fmt.Errorf(</span><br><span class="line">                        <span class="string">"pushed metric %s (%s) already contains grouping label %s"</span>,</span><br><span class="line">                        mf.GetName(), m, l.GetName(),</span><br><span class="line">                    )</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 这里应该是将 mf 序列化后写入了请求体 buf</span></span><br><span class="line">        enc.Encode(mf)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 使用 http 包创建新请求,请求使用指定的 方法,URL 与 请求体 buf,并配置请求的各种参数</span></span><br><span class="line">    req, err := http.NewRequest(method, p.fullURL(), buf)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> p.useBasicAuth &#123;</span><br><span class="line">        req.SetBasicAuth(p.username, p.password)</span><br><span class="line">    &#125;</span><br><span class="line">    req.Header.Set(contentTypeHeader, <span class="keyword">string</span>(p.expfmt))</span><br><span class="line">    <span class="comment">// 发送请求</span></span><br><span class="line">    resp, err := p.client.Do(req)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">defer</span> resp.Body.Close()</span><br><span class="line">    <span class="comment">// Depending on version and configuration of the PGW, StatusOK or StatusAccepted may be returned.</span></span><br><span class="line">    <span class="keyword">if</span> resp.StatusCode != http.StatusOK &amp;&amp; resp.StatusCode != http.StatusAccepted &#123;</span><br><span class="line">        body, _ := ioutil.ReadAll(resp.Body) <span class="comment">// Ignore any further error as this is for an error message only.</span></span><br><span class="line">        <span class="keyword">return</span> fmt.Errorf(<span class="string">"unexpected status code %d while pushing to %s: %s"</span>, resp.StatusCode, p.fullURL(), body)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>Buy me a cup of coffee.</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    <!--打赏-->
+    赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="纸盒人 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="纸盒人 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>纸盒人
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://hulining.github.io/2020/07/01/prometheus-client_golang-Introduction/" title="prometheus client_golang 简单使用">https://hulining.github.io/2020/07/01/prometheus-client_golang-Introduction/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/go/" rel="tag"><i class="fa fa-tag"></i> go</a>
+              <a href="/tags/Prometheus/" rel="tag"><i class="fa fa-tag"></i> Prometheus</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/06/28/whether-linkedlist-has-ring/" rel="prev" title="判断一个链表是否有环">
+      <i class="fa fa-chevron-left"></i> 判断一个链表是否有环
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/07/01/node_exporter-source-code-analysis/" rel="next" title="node_exporter 源码解析">
+      node_exporter 源码解析 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          <!--文章目录-->
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          <!--站点概览-->
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#包结构"><span class="nav-number">1.</span> <span class="nav-text">包结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#prometheus-包"><span class="nav-number">2.</span> <span class="nav-text">prometheus 包</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据指标"><span class="nav-number">2.1.</span> <span class="nav-text">数据指标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自定义-Collectors-和常量指标"><span class="nav-number">2.2.</span> <span class="nav-text">自定义 Collectors 和常量指标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Registry-的高级用法"><span class="nav-number">2.3.</span> <span class="nav-text">Registry 的高级用法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP-公开数据指标"><span class="nav-number">2.4.</span> <span class="nav-text">HTTP 公开数据指标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#推送数据指标到-Pushgateway"><span class="nav-number">2.5.</span> <span class="nav-text">推送数据指标到 Pushgateway</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#promauto-包"><span class="nav-number">3.</span> <span class="nav-text">promauto 包</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#promhttp-包"><span class="nav-number">4.</span> <span class="nav-text">promhttp 包</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Handler-与-HandlerFor-函数"><span class="nav-number">4.1.</span> <span class="nav-text">Handler() 与 HandlerFor() 函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#InstrumentHandlerX-包装器函数"><span class="nav-number">4.2.</span> <span class="nav-text">InstrumentHandlerX 包装器函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#示例"><span class="nav-number">4.3.</span> <span class="nav-text">示例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#push-包"><span class="nav-number">5.</span> <span class="nav-text">push 包</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="纸盒人"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">纸盒人</p>
+  <div class="site-description" itemprop="description">Keep it simple,Keep improving</div>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/hulining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;hulining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:loserkid@163.com" title="E-Mail → mailto:loserkid@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://music.163.com/#/user/home?id=71153860" title="网易云音乐 → https:&#x2F;&#x2F;music.163.com&#x2F;#&#x2F;user&#x2F;home?id&#x3D;71153860" rel="noopener" target="_blank"><i class="fa fa-fw fa-music"></i></a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">纸盒人</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+    <div id="pjax">
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'a61ca599f9a038ebe5b3',
+      clientSecret: 'bcc9edf1847c09ad9452180f0fa44d69a11a4c9f',
+      repo        : 'https://github.com/hulining/hulining.github.io.git',
+      owner       : 'hulining',
+      admin       : ['hulining'],
+      id          : '88cad2a889d2d0bee78b2367f40e2a1a',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

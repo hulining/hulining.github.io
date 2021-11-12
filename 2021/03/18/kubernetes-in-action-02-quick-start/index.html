@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Times New Roman:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"hulining.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="本文为 K8S 实战的第二个章节.主要了解 K8S 集群的核心对象,并使用 kubeadm 简单部署集群,了解 K8S 命令行管理工具 kubectl 的使用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="K8S 实战 - 02 快速开始">
+<meta property="og:url" content="https://hulining.github.io/2021/03/18/kubernetes-in-action-02-quick-start/index.html">
+<meta property="og:site_name" content="纸盒人">
+<meta property="og:description" content="本文为 K8S 实战的第二个章节.主要了解 K8S 集群的核心对象,并使用 kubeadm 简单部署集群,了解 K8S 命令行管理工具 kubectl 的使用">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-03-17T18:00:00.000Z">
+<meta property="article:modified_time" content="2021-11-12T07:44:23.837Z">
+<meta property="article:author" content="纸盒人">
+<meta property="article:tag" content="Kubernetes">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://hulining.github.io/2021/03/18/kubernetes-in-action-02-quick-start/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>K8S 实战 - 02 快速开始 | 纸盒人</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">纸盒人</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">纸小呆</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">45</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">16</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">97</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/hulining" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://hulining.github.io/2021/03/18/kubernetes-in-action-02-quick-start/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="纸盒人">
+      <meta itemprop="description" content="Keep it simple,Keep improving">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="纸盒人">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          K8S 实战 - 02 快速开始
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-03-18 02:00:00" itemprop="dateCreated datePublished" datetime="2021-03-18T02:00:00+08:00">2021-03-18</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kubernetes/" itemprop="url" rel="index"><span itemprop="name">Kubernetes</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+          <!--添加字数统计-->
+          
+            <span class="post-letters-count">
+              &nbsp; | &nbsp;
+              <span>3.5k 字</span>
+              &nbsp; | &nbsp;
+              <span>14 min</span>
+             </span>
+           
+            <div class="post-description">本文为 K8S 实战的第二个章节.主要了解 K8S 集群的核心对象,并使用 kubeadm 简单部署集群,了解 K8S 命令行管理工具 kubectl 的使用</div>
+
+
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="Kubernetes-的核心对象"><a href="#Kubernetes-的核心对象" class="headerlink" title="Kubernetes 的核心对象"></a>Kubernetes 的核心对象</h2><h3 id="Pod-资源对象"><a href="#Pod-资源对象" class="headerlink" title="Pod 资源对象"></a>Pod 资源对象</h3><p>Pod 资源对象是一种集合了一个到多个应用容器,存储资源,专用 IP 及支撑容器运行的其它选项的逻辑组件,是 Kubernetes 的部署单元及原子运行单元.它通常由共享资源紧密的一个或多个应用容器组成.</p>
+<p>Kubernetes 的网络模型要求各 Pod 对象的 IP 地址位于同一网络平面中,各 Pod 之间使用其 IP 地址直接进行通信,无论它们运行于集群内的哪个工作节点上,这些 Pod 对象都像是运行于同一局域网中的多个主机</p>
+<p>Pod 对象中的各进程均运行于彼此隔离的容器中,并于各容器间共享两种关键资源: 网络和存储卷</p>
+<ul>
+<li>网络</li>
+</ul>
+<p>每个 Pod 对象都会被分配一个集群内专用的 IP 地址,称为 Pod IP.同一 Pod 内部的所有容器共享 Pod 对象的 Network 和 UTS 名称空间,包括主机名,IP 地址和端口等.因此,Pod 内容器间通信可基于本地回环接口进行,Pod 外的其它组件通信则需要使用 Service 资源对象的 ClusterIP 及其相应端口完成</p>
+<ul>
+<li>存储卷</li>
+</ul>
+<p>存储卷资源可以共享给 Pod 内部的所有容器使用,从而完成容器间数据的共享.存储卷还可以确保在容器终止后被重启/删除后数据不会丢失,从而保证了声明周期内的 Pod 对象数据的持久化存储.</p>
+<p>一个 Pod 对象代表某个应用程序的一个特定实例,如果需要扩展应用程序,则需要为此应用程序同时创建多个 Pod 实例,每个实例均代表应用程序的一个运行的副本.这些副本化的 Pod 对象的创建和管理通常被称为”控制器”.</p>
+<p>创建 Pod 时,可以使用 Pod Preset 对象为 Pod 注入特定的信息,如 ConfigMap,Secret,存储卷和环境变量等.</p>
+<p>基于期望的目标状态和各节点的资源可用性,Master 会将 Pod 对象调度至某选定的工作节点运行,工作节点从指定的镜像仓库下载镜像,并于本地的容器运行时环境中启动容器.Master 会将整个集群的状态保存于 etcd 中,并通过 API Server 共享给集群中的各组件及客户端.</p>
+<h3 id="Controller"><a href="#Controller" class="headerlink" title="Controller"></a>Controller</h3><p>Kubernetes 使用控制器实现对 Pod 对象的管理操作,从而实现 Pod 对象的扩缩容,滚动更新和自愈能力等</p>
+<p>控制器本身也是一种资源类型,其中与工作负载相关的实现如 <code>ReplicationController,Deployment,StatefulSet,DaemonSet,Jobs</code>等,可以统称它们为 Pod 控制器</p>
+<p>Pod 控制器的定义通常由期望的 Pod 副本数量,Pod 模版和标签选择器组成.Pod 控制器会根据标签选择器对 Pod 对象的标签进行匹配检查,所有满足选择条件的 Pod 对象都将受控于当前控制器并计入其副本总数,并确保此数目能够精确反映期望的副本数.</p>
+<p>在实际应用场景中,用户需要手动修改 Pod 控制器中期望副本数量以实现应用规模的扩缩容.若集群中部署了 HeapSter 或 Prometheus 一类的资源指标监控附件时,用户可以使用 “HorizontalPodAutoscaler(HPA)” 计算出合适的 Pod 副本数量,并自动修改 Pod 控制器中期望的副本数以实现应用规模的动态伸缩,提高资源利用率</p>
+<p>Kubernetes 集群中每个节点通过 cAdvisor 收集容器及节点的 CPU,内存,磁盘等资源的利用率指标数据,HPA 基于这些统计数据监控容器健康状态并做出扩展决策.</p>
+<h3 id="Service"><a href="#Service" class="headerlink" title="Service"></a>Service</h3><p>尽管 Pod 对象拥有 IP 地址,但此地址无法确保在 Pod 对象重启或重建后保持不变.Service 资源用于被访问的 Pod 对象中添加一个有着固定 IP 地址的中间层,客户端地址发起请求后由相关的 Service 资源调度并代理至后端的 Pod 对象</p>
+<p>Service 是微服务的一种实现,实际上是通过规则定义出由多个 Pod 对象组合而成的逻辑集合,并附带访问这组 Pod 对象的策略.Service 对象挑选,关联 Pod 对象的方式同 Pod 控制器一样,都需要基于标签选择器进行定义.</p>
+<p>Service 主要有三种常用类型:</p>
+<ul>
+<li>仅用于集群内部通信的 <code>ClusterIP</code></li>
+<li>接入集群外部请求的 <code>NodePort</code> 类型,它通过端口映射来实现,工作于每个节点的主机 IP 之上</li>
+<li><code>LoadBalancer</code> 类型,将外部请求负载均衡至多个节点的 NodePort 之上.它主要用于云厂商环境中,使用云厂商提供的 LoadBalancer 负载均衡提供服务.</li>
+</ul>
+<h2 id="部署应用程序的主要过程"><a href="#部署应用程序的主要过程" class="headerlink" title="部署应用程序的主要过程"></a>部署应用程序的主要过程</h2><p>用户只需要向 API Server 请求创建一个 Pod 控制器,由控制器根据镜像等信息向 API Server 请求创建出一定数量的 Pod 对象,并由 Master 之上的调度器指派至选定的工作节点以运行容器化应用.</p>
+<p>用户还需要创建一个集体的 Service 对象以便为这些 Pod 对象建立起一个固定的访问入口,从而使客户端能够通过服务名称或 ClusterIP 进行访问</p>
+<h2 id="部署-Kubernetes-集群"><a href="#部署-Kubernetes-集群" class="headerlink" title="部署 Kubernetes 集群"></a>部署 Kubernetes 集群</h2><h2 id="kubeadm-部署工具"><a href="#kubeadm-部署工具" class="headerlink" title="kubeadm 部署工具"></a>kubeadm 部署工具</h2><p>kubeadm 仅关心如何初始化并启动集群,余下的其它操作则不在其考虑范围之内.</p>
+<p>kubeadm 集成了众多管理 Kubernetes 集群的命令行工具,其中</p>
+<ul>
+<li><code>kubeadm init</code> 用于集群的快速初始化,其核心功能是部署 Master 节点的各个组件.</li>
+<li><code>kubeadm join</code> 用于将节点快速加入到指定集群中</li>
+<li><code>kubeadm token</code> 可在集群构建后管理用于加入集群时使用的认证令牌(token)</li>
+<li><code>kubeadm reset</code> 删除构建集群过程中生成的文件并重置回初始状态</li>
+<li><code>kubeadm config</code> 管理 kubeadm 集群配置,该配置保留在集群的 ConfigMap 中.常用如下<ul>
+<li><code>kubeadm config images list/pull</code> 列出/拉取 kubeadm 构建需要的镜像</li>
+<li><code>kubeadm config print init-defaults/join-defaults</code> 打印初始化或加入节点的默认配置</li>
+<li><code>kubeadm config view</code> 查看当前 kubeadm 集群的配置</li>
+</ul>
+</li>
+<li><code>kubeadm upgrade</code> 用于平滑的升级 K8S 集群</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 集群初始化</span></span><br><span class="line">kubeadm init \</span><br><span class="line">  --config=/etc/kubernetes/kubeadm.yml  \ <span class="comment"># 指定初始化集群的相关配置文件</span></span><br><span class="line">  <span class="comment"># api-server 相关</span></span><br><span class="line">  --control-plane-endpoint=<span class="variable">$&#123;vip:port&#125;</span> \ <span class="comment"># 指定用于 api-server 高可用的代理地址,VIP:port</span></span><br><span class="line">  --apiserver-advertise-address=<span class="variable">$&#123;ip&#125;</span> \ <span class="comment"># 指定 api-server 的 IP 地址</span></span><br><span class="line">  --apiserver-bind-port=6443 \ <span class="comment"># 指定 api-server 监听端口</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># 证书相关</span></span><br><span class="line">  --cert-dir=/etc/kubernetes/pki \ <span class="comment"># 指定初始化过程中生成的证书地址</span></span><br><span class="line">  --cri-socket=/var/run/dockershim.sock \ <span class="comment"># 默认为空,docker 默认使用 /var/run/dockershim.sock 作为 cri-socket</span></span><br><span class="line">  --image-repository=<span class="variable">$&#123;image-repo&#125;</span> \ <span class="comment"># 指定拉取镜像的镜像仓库</span></span><br><span class="line">  --kubernetes-version=<span class="variable">$&#123;k8s-version&#125;</span> \ <span class="comment"># 指定 k8s 集群的版本,默认为 kubeadm 版本</span></span><br><span class="line">  --service-cidr=10.96.0.0/16 \ <span class="comment"># 指定 service VIP 地址段</span></span><br><span class="line">  --pod-network-cidr=10.244.0.0/16 \ <span class="comment"># 指定 pod 网络地址段</span></span><br><span class="line">  --node-name=<span class="variable">$&#123;HOSTNAME&#125;</span></span><br><span class="line">  --token=abcdef.0123456789abcdef \ <span class="comment"># 指定节点与集群间建立信任的 token</span></span><br><span class="line">  --upload-certs \ <span class="comment"># 将证书信息上传到 k8s 集群 kubeadm-certs Secret 对象</span></span><br><span class="line">  --ignore-preflight-errors=Swap,IsPrivilegedUser,all \ <span class="comment"># 忽略检查过程中产生的报错,而使用警告方式通知</span></span><br></pre></td></tr></table></figure>
+
+<p>集群初始化示例如下:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">kubeadm init --kubernetes-version=v1.15.0 --service-cidr=10.96.0.0/16 --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=192.168.2.3 --image-repository=registry.cn-hangzhou.aliyuncs.com/k8sxio</span><br><span class="line">mkdir -p <span class="variable">$HOME</span>/.kube</span><br><span class="line">sudo cp -i /etc/kubernetes/admin.conf <span class="variable">$HOME</span>/.kube/config</span><br><span class="line">sudo chown $(id -u):$(id -g) <span class="variable">$HOME</span>/.kube/config</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加节点</span></span><br><span class="line">kubeadm join 192.168.2.3:6443 --token 1cvajd.j94i1p8vxzc5kim9 \</span><br><span class="line">--discovery-token-ca-cert-hash sha256:27a53f3a71536eb9c78c380f302866ed6801b221fbbcc4ad71d632a19a9cfcda</span><br></pre></td></tr></table></figure>
+
+<p>其中,另外还可以使用配置文件方式初始化 kubernetes 集群,使用 <code>kubeadm config print init-defaults</code> 打印出的默认配置文件如下,可以在此基础上稍作修改</p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">kubeadm.k8s.io/v1beta2</span></span><br><span class="line"><span class="attr">bootstrapTokens:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">groups:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">system:bootstrappers:kubeadm:default-node-token</span></span><br><span class="line">  <span class="attr">token:</span> <span class="string">abcdef.0123456789abcdef</span>  <span class="comment"># 可使用 kubeadm token generate 生成随机 token</span></span><br><span class="line">  <span class="attr">ttl:</span> <span class="string">24h0m0s</span></span><br><span class="line">  <span class="attr">usages:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">signing</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">authentication</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">InitConfiguration</span></span><br><span class="line"><span class="comment"># 高可用 api-server </span></span><br><span class="line"><span class="comment"># controlPlaneEndpoint: "k8s-lb:16443"</span></span><br><span class="line"><span class="comment"># 单机 api-server </span></span><br><span class="line"><span class="attr">localAPIEndpoint:</span></span><br><span class="line">  <span class="attr">advertiseAddress:</span> <span class="number">1.2</span><span class="number">.3</span><span class="number">.4</span>   <span class="comment"># 单机 api-server 地址</span></span><br><span class="line">  <span class="attr">bindPort:</span> <span class="number">6443</span></span><br><span class="line"><span class="attr">nodeRegistration:</span></span><br><span class="line">  <span class="attr">criSocket:</span> <span class="string">/var/run/dockershim.sock</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">k8s-m3</span></span><br><span class="line">  <span class="attr">taints:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">effect:</span> <span class="string">NoSchedule</span></span><br><span class="line">    <span class="attr">key:</span> <span class="string">node-role.kubernetes.io/master</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiServer:</span></span><br><span class="line">  <span class="attr">timeoutForControlPlane:</span> <span class="string">4m0s</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">kubeadm.k8s.io/v1beta2</span></span><br><span class="line"><span class="attr">certificatesDir:</span> <span class="string">/etc/kubernetes/pki</span></span><br><span class="line"><span class="attr">clusterName:</span> <span class="string">kubernetes</span></span><br><span class="line"><span class="attr">controllerManager:</span> <span class="string">&#123;&#125;</span></span><br><span class="line"><span class="attr">dns:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">CoreDNS</span></span><br><span class="line"><span class="attr">etcd:</span></span><br><span class="line">  <span class="attr">local:</span></span><br><span class="line">    <span class="attr">dataDir:</span> <span class="string">/var/lib/etcd</span></span><br><span class="line">  <span class="comment"># 支持使用自建的 etcd</span></span><br><span class="line">  <span class="comment"># external:</span></span><br><span class="line">    <span class="comment"># endpoints:</span></span><br><span class="line">    <span class="comment"># - https://192.168.2.2:2379</span></span><br><span class="line">    <span class="comment"># - https://192.168.2.3:2379</span></span><br><span class="line">    <span class="comment"># - https://192.168.2.4:2379</span></span><br><span class="line">    <span class="comment"># caFile: /etc/kubernetes/pki/etcd/ca.pem  #搭建 etcd 集群时生成的ca证书</span></span><br><span class="line">    <span class="comment"># certFile: /etc/kubernetes/pki/apiserver-etcd-client.pem   # 访问 etcd 的客户端证书</span></span><br><span class="line">    <span class="comment"># keyFile: /etc/kubernetes/pki/apiserver-etcd-client-key.pem  # 访问 etcd 的客户端证书密钥文件</span></span><br><span class="line"></span><br><span class="line"><span class="attr">imageRepository:</span> <span class="string">k8s.gcr.io</span> <span class="comment"># 默认的镜像仓库</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ClusterConfiguration</span></span><br><span class="line"><span class="attr">kubernetesVersion:</span> <span class="string">v1.19.0</span> <span class="comment"># 默认的 k8s 版本</span></span><br><span class="line"><span class="attr">networking:</span></span><br><span class="line">  <span class="attr">dnsDomain:</span> <span class="string">cluster.local</span></span><br><span class="line">  <span class="attr">serviceSubnet:</span> <span class="number">10.96</span><span class="number">.0</span><span class="number">.0</span><span class="string">/12</span></span><br><span class="line"><span class="attr">scheduler:</span> <span class="string">&#123;&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-2-2-集群运行模式"><a href="#2-2-2-集群运行模式" class="headerlink" title="2.2.2 集群运行模式"></a>2.2.2 集群运行模式</h3><ul>
+<li>独立组件模式: 系统组件直接以守护进程方式运行于节点之上,各个组件之间相互协作构成集群.期间需要用到的证书及 Token 等认证信息也需要手动生成,过程较为繁琐.</li>
+<li>静态 Pod 模式: 除 kubelet 和 Docker 之外的其它组件都是都是以静态 Pod 对象运行于 Master 主机上</li>
+</ul>
+<h2 id="2-3-kubectl-命令详解"><a href="#2-3-kubectl-命令详解" class="headerlink" title="2.3 kubectl 命令详解"></a>2.3 kubectl 命令详解</h2><p>详见 <a href="https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands" target="_blank" rel="noopener">kubectl</a> 命令行官网</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br></pre></td><td class="code"><pre><span class="line">get: 显示一个或多个资源</span><br><span class="line">    pods(pods信息) | cs/componentstatus(运行状态信息) | nodes(节点) | namespace(名称空间) | deployment(资源部署) | svc(pods的service): 相关资源可通过 `kubectl api-resources` 查看</span><br><span class="line"> -o --output wide | json | yaml: 指定输出格式</span><br><span class="line"> -n default | kube-system | kube-public : 指定名称空间</span><br><span class="line"> -l --selector= key [=value] : 指定带有指定标签或标签值的资源</span><br><span class="line"> -L --label-column= k1,k2: 输出各个指定标签的标签值</span><br><span class="line">    --show-labels : 输出 label 信息</span><br><span class="line"></span><br><span class="line">create: 根据命令行临时创建一个资源,可能主要用于测试</span><br><span class="line">    <span class="comment"># 创建用于 imagePullSecret 指定拉取镜像的认证信息</span></span><br><span class="line">    kubectl create secret docker-registry &lt;NAME&gt; \</span><br><span class="line">      --docker-username=user --docker-password=password \</span><br><span class="line">      --docker-email=email --docker-server=https://index.docker.io/v1/</span><br><span class="line"></span><br><span class="line">run: 在集群上运行镜像</span><br><span class="line">    kubectl run &lt;NAME&gt; --image=&lt;IMAGE&gt; : 运行镜像,并指定pod名称&lt;NAME&gt;</span><br><span class="line">    --port=&lt;PORT&gt;: 指定被暴露的端口</span><br><span class="line">    --env=<span class="string">"&lt;KEY&gt;=&lt;VALUE&gt;"</span>: 环境变量,可以指定多次,但每次只能指定一个变量</span><br><span class="line"> -l --labels=<span class="string">"&lt;K1&gt;=&lt;V1,K2=V2&gt;"</span>: 指定标签,可以一次指定多个</span><br><span class="line"> -r --replicas=1: 指定运行的实例个数</span><br><span class="line">    --dry-run= <span class="literal">false</span> | <span class="literal">true</span>: 如果为<span class="literal">true</span>,则打印相应的API对象而不创建</span><br><span class="line">    --restart= Always | OnFailure | Never: pod的重启策略</span><br><span class="line">    -- &lt;COMMAND&gt; &lt;arg1&gt; &lt;arg2&gt; ... &lt;argN&gt;: 运行<span class="built_in">command</span>及其参数,而不运行镜像默认程序</span><br><span class="line">    --schedule=<span class="string">"0/5 * * * ?"</span>: 开启周期调度任务</span><br><span class="line">    --expose= <span class="literal">false</span> | <span class="literal">true</span> : 如果为<span class="literal">true</span>,则为运行的容器创建公共外部服务,相当于 `kubectl expose`</span><br><span class="line">    --limits=<span class="string">''</span>: 资源限定,如 cpu=200m,memory=512Mi</span><br><span class="line"> -o --output wide | json | yaml: 指定输出格式</span><br><span class="line"> -it: 交互式启动</span><br><span class="line"> -w: 监控,类似于 watch 命令</span><br><span class="line"></span><br><span class="line">apply: 将指定文件中的配置用于创建资源</span><br><span class="line"> -f --filename: 指定yaml文件创建资源</span><br><span class="line"></span><br><span class="line">config: kubectl的配置相关</span><br><span class="line">    current-context: 打印当前使用的上下文</span><br><span class="line">    <span class="built_in">set</span>-cluster NAME --server=&lt;serverIP:PORT&gt; --certificate-authority=&lt;ca.crt&gt; --embed-certs=<span class="literal">true</span>: 添加集群</span><br><span class="line">    <span class="built_in">set</span>-credentials NAME --client-certificate=&lt;crt_file&gt; --client-key=&lt;key_file&gt; --embed-certs=<span class="literal">true</span>: 添加用户</span><br><span class="line">    <span class="built_in">set</span>-context NAME --cluster=&lt;cluster_name&gt; --user=&lt;user_name&gt;: 添加/设置上下文</span><br><span class="line">    delete-cluster NAME: 删除指定集群</span><br><span class="line">    use-context CONTEXT_NAME: 使用指定上下文</span><br><span class="line">    view: 打印默认的 kubeconfig</span><br><span class="line"></span><br><span class="line">describe: 资源或资源组的详细信</span><br><span class="line">    pod | svc | node | deployment [name]</span><br><span class="line"> -l --selector=<span class="string">''</span>: 通过指定的标签筛选查看,如 key=value  </span><br><span class="line"></span><br><span class="line">edit: 对资源配置进行编辑,默认使用vi编辑器</span><br><span class="line">    RESOURCE NAME: 如 `kubectl edit svc &lt;svc_name&gt;`</span><br><span class="line"></span><br><span class="line">explain: 列出资源支持的字段.可用作构建yaml文件时的参考文档</span><br><span class="line">    kubectl explain RESOURCE: RESOURCE 支持多级嵌套</span><br><span class="line"></span><br><span class="line">expose: 暴露出一个资源作为 kubenetes 公共外部服务,可以理解为 k8s 中的 pods 的 service</span><br><span class="line">    deployment &lt;pod名称&gt;: 创建service服务</span><br><span class="line">    --name=&lt;deployment_name&gt;: 指定公共服务名称</span><br><span class="line">    --port=&lt;PORT&gt;: 指定映射pod中的端口</span><br><span class="line">    --target-port=&lt;PORT&gt;: 指定映射 service 中的端口</span><br><span class="line">    --protocol= TCP | UDP : 指定协议</span><br><span class="line">    --<span class="built_in">type</span>=</span><br><span class="line">        ClusterIP: 只有 k8s 集群才可以访问</span><br><span class="line">        NodePort: 将端口映射到本地 kube-proxy 进程,端口随机.可通过外部服务进行访问</span><br><span class="line"></span><br><span class="line">label: 为已经创建/存在的资源添加标签</span><br><span class="line">    kubectl label TYPE NAME KEY=VALUE</span><br><span class="line">    --overwrite: 是否进行覆盖,如果不指定,且已经有该标签,则报错</span><br><span class="line">    --all: 更新所有名称空间内的资源标签</span><br><span class="line">    <span class="comment"># 为 k8s 集群节点添加/删除 role</span></span><br><span class="line">    <span class="comment"># kubectl label node k8s-m1 node-role.kubernetes.io/master=</span></span><br><span class="line">    <span class="comment"># kubectl label node k8s-m1 node-role.kubernetes.io/master-</span></span><br><span class="line"></span><br><span class="line">patch: 使用指定的 PATCH 合并修补程序, PATCH 格式为 JSON 格式</span><br><span class="line">    kubectl patch TYPE NAME -p PATCH </span><br><span class="line"></span><br><span class="line">rollout: 管理资源的部署</span><br><span class="line">    <span class="built_in">history</span>: 查看 deployment 的更新历史, 如, `kubectl rollout <span class="built_in">history</span> deployment deploy-demo`</span><br><span class="line">    undo: 对之前的设定做回滚,如 `kubectl rollout undo deployment nginx-deploy`</span><br><span class="line">        --to-revision: 指定回滚到哪个版本,默认回滚到上一个版本</span><br><span class="line"></span><br><span class="line">scale: 改变 Deployment,ReplicaSet 等的对象的数量</span><br><span class="line">    --replicas=&lt;num&gt; TYPE NAME</span><br><span class="line"></span><br><span class="line"><span class="built_in">set</span>: 设定对象的特定功能</span><br><span class="line">    env(环境变量)</span><br><span class="line">    image(镜像):</span><br><span class="line">        TYPE NAME CONTAINER_NAME=CONTAINER_IMAGE: 更换镜像,如 `kubectl <span class="built_in">set</span> image deployment nginx-deploy nginx-deploy=&lt;image_name&gt;` </span><br><span class="line"></span><br><span class="line">taint: 管理污点</span><br><span class="line">    kubectl taint &lt;node&gt; &lt;污点名&gt; key=value</span><br><span class="line">    <span class="comment"># 为 k8s 节点添加/删除 NoSchedule</span></span><br><span class="line">    <span class="comment"># kubectl taint nodes k8s-master node-role.kubernetes.io/master:NoSchedule</span></span><br><span class="line">    <span class="comment"># kubectl taint nodes k8s-master node-role.kubernetes.io/master:NoSchedule-</span></span><br><span class="line"></span><br><span class="line">token: 管理 token</span><br><span class="line">    create: 创建token</span><br><span class="line">      --<span class="built_in">print</span>-join-command: 创建加入节点的token</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>Buy me a cup of coffee.</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    <!--打赏-->
+    赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="纸盒人 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="纸盒人 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>纸盒人
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://hulining.github.io/2021/03/18/kubernetes-in-action-02-quick-start/" title="K8S 实战 - 02 快速开始">https://hulining.github.io/2021/03/18/kubernetes-in-action-02-quick-start/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/Kubernetes/" rel="tag"><i class="fa fa-tag"></i> Kubernetes</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/03/18/kubernetes-in-action-01-system-basis/" rel="prev" title="K8S 实战 - 01 系统基础">
+      <i class="fa fa-chevron-left"></i> K8S 实战 - 01 系统基础
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/03/18/kubernetes-in-action-03-resource-management/" rel="next" title="K8S 实战 - 03 资源管理">
+      K8S 实战 - 03 资源管理 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          <!--文章目录-->
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          <!--站点概览-->
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Kubernetes-的核心对象"><span class="nav-number">1.</span> <span class="nav-text">Kubernetes 的核心对象</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Pod-资源对象"><span class="nav-number">1.1.</span> <span class="nav-text">Pod 资源对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Controller"><span class="nav-number">1.2.</span> <span class="nav-text">Controller</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Service"><span class="nav-number">1.3.</span> <span class="nav-text">Service</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#部署应用程序的主要过程"><span class="nav-number">2.</span> <span class="nav-text">部署应用程序的主要过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#部署-Kubernetes-集群"><span class="nav-number">3.</span> <span class="nav-text">部署 Kubernetes 集群</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#kubeadm-部署工具"><span class="nav-number">4.</span> <span class="nav-text">kubeadm 部署工具</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-2-集群运行模式"><span class="nav-number">4.1.</span> <span class="nav-text">2.2.2 集群运行模式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-kubectl-命令详解"><span class="nav-number">5.</span> <span class="nav-text">2.3 kubectl 命令详解</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="纸盒人"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">纸盒人</p>
+  <div class="site-description" itemprop="description">Keep it simple,Keep improving</div>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/hulining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;hulining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:loserkid@163.com" title="E-Mail → mailto:loserkid@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://music.163.com/#/user/home?id=71153860" title="网易云音乐 → https:&#x2F;&#x2F;music.163.com&#x2F;#&#x2F;user&#x2F;home?id&#x3D;71153860" rel="noopener" target="_blank"><i class="fa fa-fw fa-music"></i></a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">纸盒人</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+    <div id="pjax">
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'a61ca599f9a038ebe5b3',
+      clientSecret: 'bcc9edf1847c09ad9452180f0fa44d69a11a4c9f',
+      repo        : 'https://github.com/hulining/hulining.github.io.git',
+      owner       : 'hulining',
+      admin       : ['hulining'],
+      id          : 'a67af602e623e2ccb006ce32a8c8a883',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

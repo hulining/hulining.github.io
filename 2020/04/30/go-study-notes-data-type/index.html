@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Times New Roman:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"hulining.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="记录在学习 Go 过程中容易出错, 容易忘记的知识点, 主要包含 Go 中字符串, 数组, 切片, 字典, 结构体等数据类型的定义方式及其注意事项">
+<meta property="og:type" content="article">
+<meta property="og:title" content="go 学习笔记之常用数据类型">
+<meta property="og:url" content="https://hulining.github.io/2020/04/30/go-study-notes-data-type/index.html">
+<meta property="og:site_name" content="纸盒人">
+<meta property="og:description" content="记录在学习 Go 过程中容易出错, 容易忘记的知识点, 主要包含 Go 中字符串, 数组, 切片, 字典, 结构体等数据类型的定义方式及其注意事项">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-04-29T16:00:00.000Z">
+<meta property="article:modified_time" content="2021-11-12T07:44:23.825Z">
+<meta property="article:author" content="纸盒人">
+<meta property="article:tag" content="go">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://hulining.github.io/2020/04/30/go-study-notes-data-type/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>go 学习笔记之常用数据类型 | 纸盒人</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">纸盒人</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">纸小呆</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">45</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">16</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">97</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/hulining" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://hulining.github.io/2020/04/30/go-study-notes-data-type/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="纸盒人">
+      <meta itemprop="description" content="Keep it simple,Keep improving">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="纸盒人">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          go 学习笔记之常用数据类型
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-04-30 00:00:00" itemprop="dateCreated datePublished" datetime="2020-04-30T00:00:00+08:00">2020-04-30</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+          <!--添加字数统计-->
+          
+            <span class="post-letters-count">
+              &nbsp; | &nbsp;
+              <span>2.5k 字</span>
+              &nbsp; | &nbsp;
+              <span>10 min</span>
+             </span>
+           
+            <div class="post-description">记录在学习 Go 过程中容易出错, 容易忘记的知识点, 主要包含 Go 中字符串, 数组, 切片, 字典, 结构体等数据类型的定义方式及其注意事项</div>
+
+
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="字符串-string"><a href="#字符串-string" class="headerlink" title="字符串 string"></a>字符串 <code>string</code></h2><p>字符串 <code>string</code> 是 Go 中的基本类型, 它是一个不可变的 UTF-8 字符(byte)序列.</p>
+<p>特点和注意事项如下:</p>
+<ul>
+<li>字符串默认值不是 <code>nil</code>, 而是 <code>&quot;&quot;</code></li>
+<li>允许以索引方式访问字节数组, 但不能获取元素地址或对其中元素修改</li>
+<li>可以使用反引号(`)定义不做任何转义处理的原始字符串, 支持跨行</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"fmt"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">var</span> str <span class="keyword">string</span></span><br><span class="line">    fmt.Println(str) <span class="comment">// ""</span></span><br><span class="line">    str = <span class="string">"string"</span></span><br><span class="line">    fmt.Print(str[<span class="number">1</span>:<span class="number">3</span>])       <span class="comment">// tr</span></span><br><span class="line">    <span class="comment">// fmt.Printf("%p", &amp;str[1]) // 报错 cannot take the address of 'str[1]', 不能获取 str[1] 的指针地址</span></span><br><span class="line">    <span class="comment">// str[1] = 'x'              // 报错, cannot assign to str[1], 字符串是不可变的, 不能对其中元素进行修改</span></span><br><span class="line">    multiLine := <span class="string">`line \n</span></span><br><span class="line"><span class="string">            line2`</span></span><br><span class="line">    fmt.Println(multiLine)    <span class="comment">// 会按照  multiLine 的原始字符输出,不做任何转义操作</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>使用 for 循环遍历字符串时, 分 <code>byte</code> 和 <code>rune</code> 两种方式</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"fmt"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    str := <span class="string">"Hello 北京!"</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(str); i++ &#123;</span><br><span class="line">        fmt.Printf(<span class="string">"%v: %v\n"</span>, i, str[i])</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span> i, v := <span class="keyword">range</span> str &#123;</span><br><span class="line">        fmt.Printf(<span class="string">"%v: %v\n"</span>, i, v)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 可以看到 for-range (rune)方式输出可以看到中文字符, 而 for-i (byte)方式则不能</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>要修改字符串, 需要将其转换为 <code>[]rune</code> 或 <code>[]byte</code> 数组, 待修改完成后再使用 <code>string()</code> 强制转换回来.</li>
+</ul>
+<h2 id="数组-array"><a href="#数组-array" class="headerlink" title="数组 array"></a>数组 <code>array</code></h2><p>数组的一般形式如下:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> name [<span class="built_in">len</span>]Type = [<span class="built_in">len</span>]Type&#123;element1, element2, element3...&#125;</span><br></pre></td></tr></table></figure>
+
+<p>特点和注意事项如下:</p>
+<ul>
+<li>数组用于保存相同类型元素的集合, 数组是有长度的. 只有元素类型与长度都相同的数组才属于同一种类型.</li>
+<li>数组支持使用索引访问元素内容</li>
+<li>对于定义时不确定长度的数组, 可用 <code>[...]Type</code> 进行定义, 但一旦初始化赋值, 其长度也会随之确定. 定义多维数组时, 仅允许第一维数组长度使用 <code>...</code></li>
+<li>内置函数 <code>len()</code>, <code>cap()</code> 均返回数组的第一维长度</li>
+<li>指针数组是指元素为指针的数组, 如 <code>arr := [3]*int{&amp;x, &amp;y}</code> , 数组指针是内存中数组的地址, 如<code>&amp;arr</code>. 数组指针可来操作元素</li>
+<li>数组是值类型, 赋值和传参都会复制整个数组数据, 可以使用指针或切片,避免数据复制</li>
+</ul>
+<p>代码示例如下:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"fmt"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">test1</span><span class="params">(x [2]<span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    fmt.Printf(<span class="string">"x: %p, %v\n"</span>, &amp;x, x)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">test2</span><span class="params">(p *[2]<span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    fmt.Printf(<span class="string">"p: %p, %v\n"</span>, p, *p)</span><br><span class="line">    p[<span class="number">1</span>] += <span class="number">100</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    a := [<span class="number">2</span>]<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>&#125;</span><br><span class="line">    b := a</span><br><span class="line">    fmt.Printf(<span class="string">"a: %p, %v\n"</span>, &amp;a, a)</span><br><span class="line">    fmt.Printf(<span class="string">"b: %p, %v\n"</span>, &amp;b, b)</span><br><span class="line">    test1(a)</span><br><span class="line">    test2(&amp;a)</span><br><span class="line">    fmt.Printf(<span class="string">"a: %p, %v\n"</span>, &amp;a, a)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// a: 0xc00000a0d0, [1 2]</span></span><br><span class="line"><span class="comment">// b: 0xc00000a0e0, [1 2]</span></span><br><span class="line"><span class="comment">// x: 0xc00000a130, [1 2]</span></span><br><span class="line"><span class="comment">// p: 0xc00000a0d0, [1 2]</span></span><br><span class="line"><span class="comment">// a: 0xc00000a0d0, [1 102]</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="切片-slice"><a href="#切片-slice" class="headerlink" title="切片 slice"></a>切片 <code>slice</code></h2><p>切片的一般形式如下</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> sliceName []Type = []Type&#123;element1, element2, element3...&#125;</span><br></pre></td></tr></table></figure>
+
+<p>特点和注意事项如下:</p>
+<ul>
+<li>可使用内置函数 <code>make([]Type, len, cap)</code> 初始化一个长度为 <code>len</code> 元素值为默认值的切片, 并完成长度为 <code>cap</code> 用于存储底层数据的数组的内存分配. 其中 <code>cap</code> 为容量, 可以省略(默认为 <code>len</code>), 否则必须大于等于 <code>len</code>. 切片的长度及容量均可超过其初始定义时的长度和容量, 此时会为底层数组重新分配内存地址空间</li>
+<li>切片是<strong>引用类型</strong>, 所有在函数内的对其元素的操作都会作用到其底层数据结构上</li>
+<li>可基于数组或数组指针创建切片, 以开始索引或结束索引确定切片所引用的数据字段. 不支持反向索引</li>
+<li>使用形如 <code>var s []int</code> 创建的切片为 <code>nil</code></li>
+<li>切片支持使用索引号访问元素内容</li>
+<li><code>append()</code> 可用于向切片尾部添加数据, 返回对象的内存地址不会发生改变, 但是如果 <code>append</code> 后的切片超过 <code>cap</code> 容量, 则会为底层数组重新分配内存空间. 新分配的 <code>cap</code> 容量为一般初始 <code>cap</code> 容量的整数倍</li>
+<li><code>copy(dst, src []Type)</code> 可用于在两个切片对象间复制数据, 最终所复制的数据以较短的切片长度为准.</li>
+</ul>
+<p>代码示例如下:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"fmt"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> nilSli []<span class="keyword">int</span></span><br><span class="line">    fmt.Println(nilArr == <span class="literal">nil</span>)  <span class="comment">// true</span></span><br><span class="line">    sli := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">2</span>, <span class="number">5</span>)</span><br><span class="line">    fmt.Printf(<span class="string">"%p,%v,%v,%p\n"</span>, &amp;sli, <span class="built_in">len</span>(sli), <span class="built_in">cap</span>(sli), &amp;sli[<span class="number">0</span>])</span><br><span class="line">    arr = <span class="built_in">append</span>(arr, []<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>&#125;...)</span><br><span class="line">    fmt.Printf(<span class="string">"%p,%v,%v,%p\n"</span>, &amp;sli, <span class="built_in">len</span>(sli), <span class="built_in">cap</span>(sli), &amp;sli[<span class="number">0</span>])  </span><br><span class="line">    <span class="comment">// 可以看到 append 前后 `&amp;arr` 没有变化, 但是 `cap(arr) 变为原来的 2 倍,实际上是对底层数组重新分配了新的内存空间(原来数组的内存空间也会被重新分配)</span></span><br><span class="line">    p := &amp;sli</span><br><span class="line">    p0 := &amp;sli[<span class="number">0</span>]</span><br><span class="line">    p1 := &amp;sli[<span class="number">1</span>]</span><br><span class="line">    fmt.Printf(<span class="string">"%p,%p,%p\n"</span>, p, p0, p1)</span><br><span class="line">    (*p)[<span class="number">0</span>] += <span class="number">100</span></span><br><span class="line">    *p1 += <span class="number">100</span></span><br><span class="line">    fmt.Printf(<span class="string">"%v\n"</span>, sli) <span class="comment">// [100 100 1 2 3 4 5 6]</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 输出</span></span><br><span class="line"><span class="comment">// true</span></span><br><span class="line"><span class="comment">// 0xc0000044c0,2,5,0xc00000c300</span></span><br><span class="line"><span class="comment">// 0xc0000044c0,8,10,0xc000014190</span></span><br><span class="line"><span class="comment">// 0xc0000044c0,0xc000014190,0xc000014198</span></span><br><span class="line"><span class="comment">// [100 100 1 2 3 4 5 6]</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">"fmt"</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">change</span><span class="params">(s []<span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    s[<span class="number">0</span>] += <span class="number">100</span></span><br><span class="line">    fmt.Printf(<span class="string">"%v,%p\n"</span>, s, &amp;s)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    s := []<span class="keyword">int</span>&#123;<span class="number">1</span>, <span class="number">20</span>, <span class="number">32</span>&#125;  <span class="comment">// 等价于 var s = make([]int, 3, 3); s = []int&#123;1, 20, 32&#125;</span></span><br><span class="line">    fmt.Printf(<span class="string">"%v,%p\n"</span>, s, &amp;s)</span><br><span class="line">    change(s)</span><br><span class="line">    fmt.Printf(<span class="string">"%v,%p\n"</span>, s, &amp;s)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 输出</span></span><br><span class="line"><span class="comment">// [1 20 32],0xc0000044c0</span></span><br><span class="line"><span class="comment">// [101 20 32],0xc000004520</span></span><br><span class="line"><span class="comment">// [101 20 32],0xc0000044c0</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="字典-map"><a href="#字典-map" class="headerlink" title="字典 map"></a>字典 <code>map</code></h2><p>字典的一般形式如下:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> mapName <span class="keyword">map</span>[KeyType]ValueType = <span class="keyword">map</span>[KeyType]ValueType&#123;</span><br><span class="line">    KeyType: ValueType,</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>特点和注意事项如下:</p>
+<ul>
+<li>字典是引用类型, 一般使用 <code>make(map[KeyType]ValueType, size)</code> 或初始化语句表达式创建. 内容为空的字典已经做了初始化操作, 与 <code>nil</code> 是不同的</li>
+<li>函数 <code>len()</code> 返回当前键值对数量</li>
+<li>Key 必须支持等值比较(<code>==</code>, <code>!=</code>), 类型可以为数字,字符串,指针,数组,结构体,接口等类型.常见的一般为字符串</li>
+<li>访问键值时, 推荐使用 <code>v, ok := m[key]</code> 模式. 可以通过 <code>ok</code> 判断键是否存在. 如果存在, <code>ok</code> 会返回 <code>true</code>; 否则, 返回 <code>false</code></li>
+<li>字典是一种无序键值对集合, 对字典进行 for-range 遍历, 每次遍历的次序都不相同</li>
+<li>因为访问安全和哈希算法的缘故, 字典被设计为 “not addressable”, 因此不能直接修改 <code>value</code> 成员(结构体或数组). 只能返回整个 <code>value</code>, 修改后重新对字典赋值. 或直接使用指针类型</li>
+</ul>
+<p>示例代码如下:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"fmt"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> nilMap <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span></span><br><span class="line">    fmt.Println(nilMap == <span class="literal">nil</span>)</span><br><span class="line">    m := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]user, <span class="number">2</span>)</span><br><span class="line">    fmt.Printf(<span class="string">"%p,%v\n"</span>, &amp;m, m)</span><br><span class="line">    m[<span class="string">"tom"</span>] = user&#123;<span class="string">"tom"</span>, <span class="number">20</span>&#125;</span><br><span class="line">    m[<span class="string">"jack"</span>] = user&#123;<span class="string">"jack"</span>, <span class="number">21</span>&#125;</span><br><span class="line">    m[<span class="string">"lucy"</span>] = user&#123;<span class="string">"lucy"</span>, <span class="number">19</span>&#125;</span><br><span class="line">    v, ok := m[<span class="string">"liming"</span>]</span><br><span class="line">    <span class="keyword">if</span> ok &#123;</span><br><span class="line">        fmt.Println(v)</span><br><span class="line">    &#125;</span><br><span class="line">    fmt.Printf(<span class="string">"%p,%v\n"</span>, &amp;m, m)</span><br><span class="line">    <span class="keyword">for</span> k, v := <span class="keyword">range</span> m &#123;</span><br><span class="line">        fmt.Println(k, v)  <span class="comment">// 每次输出循序都不一样</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//m["lucy"].age += 1 // 报错, cannot assign to `m["lucy"].age`, 不能对字典值的成员变量直接赋值</span></span><br><span class="line">    lucy := m[<span class="string">"lucy"</span>]</span><br><span class="line">    lucy.age += <span class="number">1</span></span><br><span class="line">    m[<span class="string">"lucy"</span>] = lucy</span><br><span class="line">    fmt.Println(m)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 输出如下</span></span><br><span class="line"><span class="comment">// true</span></span><br><span class="line"><span class="comment">// 0xc000006030,map[]</span></span><br><span class="line"><span class="comment">// 0xc000006030,map[jack:&#123;jack 21&#125; lucy:&#123;tom 19&#125; tom:&#123;tom 20&#125;]</span></span><br><span class="line"><span class="comment">// tom &#123;tom 20&#125;</span></span><br><span class="line"><span class="comment">// jack &#123;jack 21&#125;</span></span><br><span class="line"><span class="comment">// lucy &#123;tom 19&#125;</span></span><br><span class="line"><span class="comment">// map[jack:&#123;jack 21&#125; lucy:&#123;tom 20&#125; tom:&#123;tom 20&#125;]</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="结构体-struct"><a href="#结构体-struct" class="headerlink" title="结构体 struct"></a>结构体 <code>struct</code></h2><p><code>struct</code> 将多个不通类型的字段序列打包成一个复合类型, 类似于<code>类</code>的概念. 一般定义方式如下</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> structName <span class="keyword">struct</span>&#123;</span><br><span class="line">    fieldName fieldType</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>特点和注意事项如下:</p>
+<ul>
+<li>字段名必须唯一, 支持使用 <code>_</code> 补位字段名(忽略该字段). 支持直接指定字段类型, 从而使用匿名字段, 实际上是使用与类型名相同的字段</li>
+<li>可直接使用 <code>structName.fieldName</code> 访问结构体字段. 对于匿名字段, 可以使用 <code>structName.fieldType</code> 访问该匿名字段</li>
+<li>由于 Go 语言底层的优化, 可使用结构体指针直接操作结构体字段 如, 如果 <code>p := &amp;structName</code>, 则 <code>*(p).fieldName</code> 等价于 <code>p.fieldName</code></li>
+<li>结构体支持多个结构体嵌套, 可以理解为:<strong>内层结构体作为外层结构体一个或多个匿名或非匿名字段</strong>.</li>
+<li><strong>结构体嵌套过程中, 如果内层结构体(innerStructName)与外层结构体(outerStructName)有相同的字段 <code>fieldName</code>, 则 <code>outerStructName.fieldName</code> 表示访问外层结构体. 内层结构体 <code>fieldName</code> 字段只能通过 <code>outerStructName.innerStructFieldName.fieldName</code> 访问.<br>如果外层结构体没有内层结构体字段<code>innerFieldName</code>, 则可以通过 <code>outerStructName.innerFieldName</code> 访问 <code>innerFieldName</code> 字段.其实就是就近原则</strong></li>
+<li>如果多个内层结构体有相同的字段, 则必须指定内层结构体名称才能访问到该字段,否则会编译报错</li>
+</ul>
+<p>示例代码如下:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"fmt"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> test <span class="keyword">struct</span> &#123;</span><br><span class="line">    Name <span class="keyword">string</span></span><br><span class="line">    Age  <span class="keyword">int</span></span><br><span class="line">    _    <span class="keyword">string</span></span><br><span class="line">    _    <span class="keyword">string</span></span><br><span class="line">    <span class="keyword">int</span></span><br><span class="line">    <span class="comment">//int  // 报错, 重复定义 int</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">type</span> user <span class="keyword">struct</span> &#123;</span><br><span class="line">    name <span class="keyword">string</span></span><br><span class="line">    inneruser1</span><br><span class="line">    inneruser2</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">type</span> inneruser1 <span class="keyword">struct</span> &#123;</span><br><span class="line">    name <span class="keyword">string</span></span><br><span class="line">    age  <span class="keyword">int</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">type</span> inneruser2 <span class="keyword">struct</span> &#123;</span><br><span class="line">    name  <span class="keyword">string</span></span><br><span class="line">    age   <span class="keyword">int</span></span><br><span class="line">    score <span class="keyword">float64</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    t := test&#123;</span><br><span class="line">        Name: <span class="string">"test"</span>,</span><br><span class="line">        Age:  <span class="number">20</span>,</span><br><span class="line">        <span class="keyword">int</span>:  <span class="number">4</span>,</span><br><span class="line">    &#125;</span><br><span class="line">    fmt.Println(t)</span><br><span class="line">    u := user&#123;</span><br><span class="line">        name:       <span class="string">"outeruser"</span>,</span><br><span class="line">        inneruser1: inneruser1&#123;<span class="string">"inneruser1"</span>, <span class="number">10</span>&#125;,</span><br><span class="line">        inneruser2: inneruser2&#123;<span class="string">"inneruser2"</span>, <span class="number">20</span>, <span class="number">89.5</span>&#125;,</span><br><span class="line">    &#125;</span><br><span class="line">    fmt.Println(u.name)</span><br><span class="line">    <span class="comment">// fmt.Println(u.age) // 报错, Ambiguous reference 'age', 编译器搞不清使用哪个 age</span></span><br><span class="line">    fmt.Println(u.inneruser1.age)</span><br><span class="line">    fmt.Println(u.score)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 输出</span></span><br><span class="line"><span class="comment">// &#123;test 20   4&#125;</span></span><br><span class="line"><span class="comment">// outeruser</span></span><br><span class="line"><span class="comment">// 10</span></span><br><span class="line"><span class="comment">// 89.5</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="字段标签"><a href="#字段标签" class="headerlink" title="字段标签"></a>字段标签</h3><p>字段标签并不是注释, 而是用来对字段进行描述的元数据.</p>
+<ul>
+<li>在运行期间, 可用反射获取标签信息, 常被用作格式校验, 数据库关系映射等.</li>
+<li>由于 Go 中私有变量与可导入变量是通过首字母大小写区分的. 因此对于可导入变量, 还可以用作 json 格式化输出字段</li>
+</ul>
+<p>示例如下:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"fmt"</span></span><br><span class="line">    <span class="string">"reflect"</span></span><br><span class="line">    <span class="string">"encoding/json"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> user <span class="keyword">struct</span> &#123;</span><br><span class="line">    Name <span class="keyword">string</span> <span class="string">`json:"name"`</span> <span class="comment">// `` 反引号中的内容为该字段的 tag 标签</span></span><br><span class="line">    Age  <span class="keyword">int</span>    <span class="string">`json:"age"`</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    u := user&#123;</span><br><span class="line">        Name: <span class="string">"tom"</span>,</span><br><span class="line">        Age:  <span class="number">10</span>,</span><br><span class="line">    &#125;</span><br><span class="line">    val := reflect.ValueOf(u)</span><br><span class="line">    valType := val.Type()</span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; val.NumField(); i++ &#123;</span><br><span class="line">        fmt.Printf(<span class="string">"%v: %v\n"</span>, valType.Field(i).Tag.Get(<span class="string">"json"</span>), val.Field(i))</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    str, err := json.Marshal(u)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Println(<span class="string">"格式转换出错"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    fmt.Println(<span class="keyword">string</span>(str))</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 输出如下:</span></span><br><span class="line"><span class="comment">// name: tom</span></span><br><span class="line"><span class="comment">// age: 10</span></span><br><span class="line"><span class="comment">// &#123;"name":"tom","age":10&#125;</span></span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>Buy me a cup of coffee.</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    <!--打赏-->
+    赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="纸盒人 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="纸盒人 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>纸盒人
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://hulining.github.io/2020/04/30/go-study-notes-data-type/" title="go 学习笔记之常用数据类型">https://hulining.github.io/2020/04/30/go-study-notes-data-type/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/go/" rel="tag"><i class="fa fa-tag"></i> go</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/04/30/go-study-notes-concurrency/" rel="prev" title="go 学习笔记之并发">
+      <i class="fa fa-chevron-left"></i> go 学习笔记之并发
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/04/30/go-study-notes-basis/" rel="next" title="go 学习笔记之基本类型">
+      go 学习笔记之基本类型 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          <!--文章目录-->
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          <!--站点概览-->
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#字符串-string"><span class="nav-number">1.</span> <span class="nav-text">字符串 string</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数组-array"><span class="nav-number">2.</span> <span class="nav-text">数组 array</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#切片-slice"><span class="nav-number">3.</span> <span class="nav-text">切片 slice</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#字典-map"><span class="nav-number">4.</span> <span class="nav-text">字典 map</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结构体-struct"><span class="nav-number">5.</span> <span class="nav-text">结构体 struct</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#字段标签"><span class="nav-number">5.1.</span> <span class="nav-text">字段标签</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="纸盒人"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">纸盒人</p>
+  <div class="site-description" itemprop="description">Keep it simple,Keep improving</div>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/hulining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;hulining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:loserkid@163.com" title="E-Mail → mailto:loserkid@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://music.163.com/#/user/home?id=71153860" title="网易云音乐 → https:&#x2F;&#x2F;music.163.com&#x2F;#&#x2F;user&#x2F;home?id&#x3D;71153860" rel="noopener" target="_blank"><i class="fa fa-fw fa-music"></i></a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">纸盒人</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+    <div id="pjax">
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'a61ca599f9a038ebe5b3',
+      clientSecret: 'bcc9edf1847c09ad9452180f0fa44d69a11a4c9f',
+      repo        : 'https://github.com/hulining/hulining.github.io.git',
+      owner       : 'hulining',
+      admin       : ['hulining'],
+      id          : '58c7ef477b2dace91c704da322c6b053',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

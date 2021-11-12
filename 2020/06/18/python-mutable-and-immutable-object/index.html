@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Times New Roman:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"hulining.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="本文主要整理 Python 中可变对象与不可变对象的区别,以及它们在实际应用时应当注意的内容.另外,本文还描述了 Python 两种对象在复制时的本质.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python 可变对象与不可变对象及其复制">
+<meta property="og:url" content="https://hulining.github.io/2020/06/18/python-mutable-and-immutable-object/index.html">
+<meta property="og:site_name" content="纸盒人">
+<meta property="og:description" content="本文主要整理 Python 中可变对象与不可变对象的区别,以及它们在实际应用时应当注意的内容.另外,本文还描述了 Python 两种对象在复制时的本质.">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hulining.github.io/2020/06/18/python-mutable-and-immutable-object/copy-and-deep-copy.jpg">
+<meta property="og:image" content="https://hulining.github.io/2020/06/18/python-mutable-and-immutable-object/copy-and-deep-copy-modify.jpg">
+<meta property="article:published_time" content="2020-06-17T16:00:00.000Z">
+<meta property="article:modified_time" content="2021-11-12T07:44:23.845Z">
+<meta property="article:author" content="纸盒人">
+<meta property="article:tag" content="Python">
+<meta property="article:tag" content="面试">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hulining.github.io/2020/06/18/python-mutable-and-immutable-object/copy-and-deep-copy.jpg">
+
+<link rel="canonical" href="https://hulining.github.io/2020/06/18/python-mutable-and-immutable-object/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Python 可变对象与不可变对象及其复制 | 纸盒人</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">纸盒人</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">纸小呆</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">45</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">16</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">97</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/hulining" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://hulining.github.io/2020/06/18/python-mutable-and-immutable-object/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="纸盒人">
+      <meta itemprop="description" content="Keep it simple,Keep improving">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="纸盒人">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Python 可变对象与不可变对象及其复制
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-06-18 00:00:00" itemprop="dateCreated datePublished" datetime="2020-06-18T00:00:00+08:00">2020-06-18</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+          <!--添加字数统计-->
+          
+            <span class="post-letters-count">
+              &nbsp; | &nbsp;
+              <span>2.4k 字</span>
+              &nbsp; | &nbsp;
+              <span>10 min</span>
+             </span>
+           
+            <div class="post-description">本文主要整理 Python 中可变对象与不可变对象的区别,以及它们在实际应用时应当注意的内容.另外,本文还描述了 Python 两种对象在复制时的本质.</div>
+
+
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="可变对象与不可变对象"><a href="#可变对象与不可变对象" class="headerlink" title="可变对象与不可变对象"></a>可变对象与不可变对象</h2><p>可变对象与不可变对象的区别在于对象本身是否可变.</p>
+<p>在 Python 常用的数据类型中,</p>
+<ul>
+<li>可变对象: list, dict, set</li>
+<li>不可变对象: int, float, str, bool, tuple</li>
+</ul>
+<p>如下示例直观的展示了 <code>list</code> 可变对象 与 <code>tuple</code> 不可变对象的区别</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 可变对象</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a[<span class="number">1</span>] = <span class="number">4</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a</span><br><span class="line">[<span class="number">1</span>, <span class="number">4</span>, <span class="number">3</span>]</span><br><span class="line"><span class="comment"># 不可变对象</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = (<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b[<span class="number">1</span>] = <span class="number">4</span></span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">"&lt;stdin&gt;"</span>, line <span class="number">1</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">TypeError: <span class="string">'tuple'</span> object does <span class="keyword">not</span> support item assignment</span><br></pre></td></tr></table></figure>
+
+<h3 id="元组的相对不可变性"><a href="#元组的相对不可变性" class="headerlink" title="元组的相对不可变性"></a>元组的相对不可变性</h3><p>元组与多数 Python 集合(list,dict,set 等等)一样,保存的是对象的引用.如果引用的元素是可变的,即便元组本身不可变,元素依然可变.也就是说,元组的不可变性其实是指 <code>tuple</code> 数据结构的物理内容(即保存的引用)不可变,与引用的对象无关</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>t1 = (<span class="number">1</span>, <span class="number">2</span>, [<span class="number">30</span>, <span class="number">40</span>])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>t2 = (<span class="number">1</span>, <span class="number">2</span>, [<span class="number">30</span>, <span class="number">40</span>])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>t1 == t2</span><br><span class="line"><span class="literal">True</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>id(t1[<span class="number">-1</span>])</span><br><span class="line"><span class="number">4302515784</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>t1[<span class="number">-1</span>].append(<span class="number">99</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>t1</span><br><span class="line">(<span class="number">1</span>, <span class="number">2</span>, [<span class="number">30</span>, <span class="number">40</span>, <span class="number">99</span>])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>id(t1[<span class="number">-1</span>])</span><br><span class="line"><span class="number">4302515784</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>t1 == t2</span><br><span class="line"><span class="literal">False</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="深浅拷贝"><a href="#深浅拷贝" class="headerlink" title="深浅拷贝"></a>深浅拷贝</h2><p>对于不可变对象来说,不管是深拷贝还是浅拷贝,都是对该对象添加一次引用,其内存地址及内部元素的内存地址均不会改变.如</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> copy</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义函数,打印其内存地址,并判断是否相同</span></span><br><span class="line"></span><br><span class="line">imutable_object = (<span class="string">'a'</span>, (<span class="string">'b'</span>, (<span class="string">'c'</span>, <span class="string">'d'</span>), <span class="string">'e'</span>), <span class="string">'f'</span>) <span class="comment"># 不可变对象</span></span><br><span class="line">imutable_copy_object = copy.copy(imutable_object)</span><br><span class="line">imutable_deepcopy_object = copy.deepcopy(imutable_object)</span><br><span class="line"></span><br><span class="line">print(<span class="string">'%s\t%s\t%s'</span> % (id(imutable_object), id(imutable_copy_object), id(imutable_deepcopy_object)))</span><br><span class="line">print(<span class="string">'%s\t%s\t%s'</span> % (id(imutable_object[<span class="number">1</span>]), id(imutable_copy_object[<span class="number">1</span>]), id(imutable_deepcopy_object[<span class="number">1</span>])))</span><br><span class="line">print(<span class="string">'%s\t%s\t%s'</span> % (id(imutable_object[<span class="number">1</span>][<span class="number">1</span>]), id(imutable_copy_object[<span class="number">1</span>][<span class="number">1</span>]), id(imutable_deepcopy_object[<span class="number">1</span>][<span class="number">1</span>])))</span><br><span class="line"><span class="comment"># 输出如下:</span></span><br><span class="line"><span class="number">2364244967072</span>   <span class="number">2364244967072</span>   <span class="number">2364244967072</span></span><br><span class="line"><span class="number">2364244737480</span>   <span class="number">2364244737480</span>   <span class="number">2364244737480</span></span><br><span class="line"><span class="number">2364244918728</span>   <span class="number">2364244918728</span>   <span class="number">2364244918728</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 不管是深拷贝还是浅拷贝,不可变对象的每一层元素的地址不会改变</span></span><br></pre></td></tr></table></figure>
+
+<p>而对于可变对象来说,深拷贝与浅拷贝的拷贝粒度是不相同的,如</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> copy</span><br><span class="line"></span><br><span class="line">mutable_object = [<span class="string">'a'</span>, [<span class="string">'b'</span>, [<span class="string">'c'</span>, <span class="string">'d'</span>], <span class="string">'e'</span>], <span class="string">'f'</span>] <span class="comment"># 可变对象</span></span><br><span class="line">mutable_copy_object = copy.copy(mutable_object)</span><br><span class="line">mutable_deepcopy_object = copy.deepcopy(mutable_object)</span><br><span class="line"></span><br><span class="line">print(<span class="string">'%s\t%s\t%s'</span> % (id(mutable_object), id(mutable_copy_object), id(mutable_deepcopy_object)))</span><br><span class="line">print(<span class="string">'%s\t%s\t%s'</span> % (id(mutable_object[<span class="number">0</span>]), id(mutable_copy_object[<span class="number">0</span>]), id(mutable_deepcopy_object[<span class="number">0</span>])))</span><br><span class="line">print(<span class="string">'%s\t%s\t%s'</span> % (id(mutable_object[<span class="number">1</span>]), id(mutable_copy_object[<span class="number">1</span>]), id(mutable_deepcopy_object[<span class="number">1</span>])))</span><br><span class="line">print(<span class="string">'%s\t%s\t%s'</span> % (id(mutable_object[<span class="number">1</span>][<span class="number">1</span>]), id(mutable_copy_object[<span class="number">1</span>][<span class="number">1</span>]), id(mutable_deepcopy_object[<span class="number">1</span>][<span class="number">1</span>])))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 输出如下</span></span><br><span class="line"><span class="number">1625855263240</span>   <span class="number">1625853920840</span>   <span class="number">1625855164296</span>  <span class="comment"># 对象的内存地址均发生改变</span></span><br><span class="line"><span class="number">1625816559208</span>   <span class="number">1625816559208</span>   <span class="number">1625816559208</span>  <span class="comment"># 对象中的不可变对象元素地址未发生改变,个人推测可能是 Python 在底层做了优化</span></span><br><span class="line"><span class="number">1625855263048</span>   <span class="number">1625855263048</span>   <span class="number">1625855164232</span>  <span class="comment"># 浅拷贝对象中可变对象元素地址未发生改变,深拷贝中可变对象元素地址发生改变</span></span><br><span class="line"><span class="number">1625846665032</span>   <span class="number">1625846665032</span>   <span class="number">1625855156360</span>  <span class="comment"># 浅拷贝对象中第二层可变对象元素地址未发生改变,深拷贝中第二层可变对象元素地址发生改变</span></span><br></pre></td></tr></table></figure>
+
+<p>因此总结如下</p>
+<ul>
+<li>浅拷贝可以理解为对象中不可变对象元素进行一次完整拷贝,并直接引用原来的可变对象元素.原始对象与浅拷贝对象不是同一个对象,只是值相同而已.修改浅深贝对象中的可变对象会对原始对象造成影响.</li>
+<li>深拷贝可以理解为对象中数据进行一次完整的拷贝,会重新分配内存地址.原始对象与深拷贝对象不是同一个对象,只是值相同而已.修改浅深贝对象不会对原始对象造成影响.</li>
+</ul>
+<p><img src="copy-and-deep-copy.jpg" alt="深拷贝与浅拷贝"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> copy</span><br><span class="line">a = [<span class="number">1</span>,<span class="number">2</span>,[<span class="number">3</span>,<span class="number">4</span>]]</span><br><span class="line">b = copy.copy(a)</span><br><span class="line">c = copy.deepcopy(a)</span><br><span class="line">b.insert(<span class="number">0</span>,<span class="number">0</span>)</span><br><span class="line">b[<span class="number">-1</span>].append(<span class="number">5</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img src="copy-and-deep-copy-modify.jpg" alt="深拷贝与浅拷贝的修改"></p>
+<p>可在此<a href="http://www.pythontutor.com/live.html#mode=edit" target="_blank" rel="noopener">网址</a>查看如上代码完整的过程.</p>
+<h3 id="什么时候发生深-浅拷贝-各自的应用场景有哪些"><a href="#什么时候发生深-浅拷贝-各自的应用场景有哪些" class="headerlink" title="什么时候发生深/浅拷贝,各自的应用场景有哪些"></a>什么时候发生深/浅拷贝,各自的应用场景有哪些</h3><p>以列表为例,如下情况发生浅拷贝:</p>
+<ul>
+<li>使用 copy 方法,如 <code>copy_list = copy.copy(list_1)</code></li>
+<li>构造方法,如 <code>copy_list = list(list_1)</code></li>
+<li>切片,如 <code>copy_list = list_1[:]</code></li>
+</ul>
+<p>应用如下:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 构造 person 模版,存款为0,并 copy 两个人,有共同 saving,比如说共同存款帐号</span></span><br><span class="line">person = [<span class="string">'name'</span>, [<span class="string">'saving'</span>, <span class="number">0</span>]]</span><br><span class="line">person_1 = person[:]</span><br><span class="line">person_2 = person[:]</span><br><span class="line">person_1[<span class="number">0</span>] = <span class="string">'name_1'</span></span><br><span class="line">person_2[<span class="number">0</span>] = <span class="string">'name_2'</span></span><br><span class="line">person_2[<span class="number">1</span>][<span class="number">1</span>] += <span class="number">100</span> <span class="comment"># 其中一个向其中存了 100</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>person <span class="comment"># 此时发现共同存款为 100</span></span><br><span class="line">[<span class="string">'name'</span>, [<span class="string">'saving'</span>, <span class="number">100</span>]]</span><br></pre></td></tr></table></figure>
+
+<p>其它情况发生的都是深拷贝</p>
+<h2 id="参数传递"><a href="#参数传递" class="headerlink" title="参数传递"></a>参数传递</h2><p>Python 中函数的传参与 Go 中函数参数传递类似.均可以理解为对变量值进行拷贝后进行传入函数中.只不过,对于不可变参数来说,传入的是对象的内存地址.而对于可变对象来说,传入的是指向对象内存地址的内存地址.</p>
+<p>Python 唯一支持的参数传递模式是共享传参.共享传参指函数的各个形式参数获得实参中各个引用的副本.也就是说,函数内部的形参是实参的别名.</p>
+<p>这种情况下,函数可能会修改作为参数传入的可变对象,但是无法修改那些对象的标识.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">f</span><span class="params">(a, b)</span>:</span></span><br><span class="line"><span class="meta">... </span>    a += b</span><br><span class="line"><span class="meta">... </span>    <span class="keyword">return</span> a</span><br><span class="line">...</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>x = <span class="number">1</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>y = <span class="number">2</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f(x, y)</span><br><span class="line"><span class="number">3</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>x, y</span><br><span class="line">(<span class="number">1</span>, <span class="number">2</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a = [<span class="number">1</span>, <span class="number">2</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = [<span class="number">3</span>, <span class="number">4</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f(a, b)</span><br><span class="line">[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>a, b</span><br><span class="line">([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>], [<span class="number">3</span>, <span class="number">4</span>])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>t = (<span class="number">10</span>, <span class="number">20</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>u = (<span class="number">30</span>, <span class="number">40</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>f(t, u)</span><br><span class="line">(<span class="number">10</span>, <span class="number">20</span>, <span class="number">30</span>, <span class="number">40</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>t, u</span><br><span class="line">((<span class="number">10</span>, <span class="number">20</span>), (<span class="number">30</span>, <span class="number">40</span>))</span><br></pre></td></tr></table></figure>
+
+<p>对于上述示例,可以总结如下:</p>
+<p>对于函数传参调用 <code>f(obj_1, obj_2)</code> 来说,函数内部其实是将 <code>obj_1</code> 添加了引用(或设置了别名/标签) <code>a</code>,<code>obj_2</code> 添加了引用(或设置了别名/标签)<code>b</code>,即执行了如下代码 <code>a=obj_1</code>,<code>b=obj_2</code>.因此,在函数中的 <code>+=</code> 操作会影响到原始对象.只不过对于不可变对象来说,<code>+=</code> 操作会重新分配内存空间,然后赋值给同名变量.</p>
+<h3 id="不要使用可变对象作为参数的默认值"><a href="#不要使用可变对象作为参数的默认值" class="headerlink" title="不要使用可变对象作为参数的默认值"></a>不要使用可变对象作为参数的默认值</h3><p>如果使用可变对象作为默认值,则在新创建对象时,所有的赋值操作都是对该可变对象添加新的引用(或贴新的标签),而其实底层使用的是同一个对象.</p>
+<p>如下是一个将空列表作为默认参数传入示例,简单说明可变默认值可能引发的问题.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">HauntedBus</span>:</span></span><br><span class="line">    <span class="string">"""备受幽灵乘客折磨的校车"""</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, passengers=[])</span>:</span></span><br><span class="line">        self.passengers = passengers</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">pick</span><span class="params">(self, name)</span>:</span></span><br><span class="line">        self.passengers.append(name)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">drop</span><span class="params">(self, name)</span>:</span></span><br><span class="line">        self.passengers.remove(name)</span><br></pre></td></tr></table></figure>
+
+<p>下面是对该类进行的引用</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>bus1 = HauntedBus([<span class="string">'Alice'</span>, <span class="string">'Bill'</span>]) <span class="comment"># bus1 不使用默认的参数值,对后续对象创建没有影响</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>bus1.passengers</span><br><span class="line">[<span class="string">'Alice'</span>, <span class="string">'Bill'</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>bus1.pick(<span class="string">'Charlie'</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>bus1.drop(<span class="string">'Alice'</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>bus1.passengers</span><br><span class="line">[<span class="string">'Bill'</span>, <span class="string">'Charlie'</span>]</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>bus2 = HauntedBus() <span class="comment"># 一开始,bus2 是空的,因此把默认的空列表赋值给 self.passengers</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>bus2.pick(<span class="string">'Carrie'</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>bus2.passengers</span><br><span class="line">[<span class="string">'Carrie'</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>bus3 = HauntedBus() <span class="comment"># bus3 一开始也是空的,因此还是赋值默认的列表</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>bus3.passengers <span class="comment"># 但是默认列表不为空,原因是 bus2 和 bus3 使用了同一个空列表.赋值操作只是对该空列表添加了引用.</span></span><br><span class="line">[<span class="string">'Carrie'</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>bus3.pick(<span class="string">'Dave'</span>) <span class="comment"># 修改 bus3 的列表,也会影响到 bus2 的列表</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>bus2.passengers</span><br><span class="line">[<span class="string">'Carrie'</span>, <span class="string">'Dave'</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>bus2.passengers <span class="keyword">is</span> bus3.passengers <span class="comment"># bus2 bus3 中列表为同一个列表</span></span><br><span class="line"><span class="literal">True</span></span><br></pre></td></tr></table></figure>
+
+<p>为解决上述问题,我们做如下修改:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TwilightBus</span>:</span></span><br><span class="line">    <span class="string">"""让乘客销声匿迹的校车"""</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, passengers=None)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> passengers <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">            self.passengers = [] <span class="comment"># 如果不传入参数,则创建并使用空列表</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self.passengers = passengers <span class="comment"># 否则,使用传入的参数</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">pick</span><span class="params">(self, name)</span>:</span></span><br><span class="line">        self.passengers.append(name)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">drop</span><span class="params">(self, name)</span>:</span></span><br><span class="line">        self.passengers.remove(name)</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>bus2 = TwilightBus() <span class="comment"># 一开始,bus2 是空的,因此创建一个新的空列表并将其赋值给 self.passengers</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>bus2.pick(<span class="string">'Carrie'</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>bus2.passengers</span><br><span class="line">[<span class="string">'Carrie'</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>bus3 = TwilightBus() <span class="comment"># bus3 一开始也是空的,因此创建一个新的空列表并将其赋值给 self.passengers</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>bus3.passengers <span class="comment"># 默认为空</span></span><br><span class="line">[]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>bus3.pick(<span class="string">'Alice'</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>bus2.passengers <span class="comment"># 对 bus3 中 passengers 操作不会响应到 bus2 中的 passengers</span></span><br><span class="line">[<span class="string">'Carrie'</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>bus2.passengers <span class="keyword">is</span> bus3.passengers</span><br><span class="line"><span class="literal">False</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># &gt;&gt;&gt; a = []</span></span><br><span class="line"><span class="comment"># &gt;&gt;&gt; b = []</span></span><br><span class="line"><span class="comment"># &gt;&gt;&gt; a is b</span></span><br><span class="line"><span class="comment"># False</span></span><br></pre></td></tr></table></figure>
+
+<p>以上示例虽然解决了前一个示例中两个对象引用一个列表的问题,但是当传入参数是可变对象(如 list) 时,所有对该 list 的操作会影响到外部 list.如</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>basketball_team = [<span class="string">'Sue'</span>, <span class="string">'Tina'</span>, <span class="string">'Maya'</span>, <span class="string">'Diana'</span>, <span class="string">'Pat'</span>] <span class="comment"># 假设我们这个队里有 5 个学生</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>bus = TwilightBus(basketball_team) <span class="comment"># 使用队学生初始化 TwilightBus</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>bus.drop(<span class="string">'Tina'</span>) <span class="comment"># 一个学生下车</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>bus.drop(<span class="string">'Pat'</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>basketball_team  <span class="comment"># 此时 basketball_team 变为了只有 3 个学生,显然是不符合逻辑的</span></span><br><span class="line">[<span class="string">'Sue'</span>, <span class="string">'Maya'</span>, <span class="string">'Diana'</span>]</span><br></pre></td></tr></table></figure>
+
+<p>产生上述问题的原因是由于对函数传入可变对象后,在函数中的所有操作都会影响到原始对象.因此做如下改进</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Bus</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, passengers=None)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> passengers <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">            self.passengers = []</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self.passengers = list(passengers)</span><br><span class="line">            <span class="comment"># 对传入参数进行拷贝后复制给 self.passengers,函数内所有操作在 self.passengers 上进行,而不影响传入的 passengers 参数</span></span><br><span class="line">            <span class="comment"># 这种传入参数更为灵活,可以是元组或其他任何可迭代对象</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">pick</span><span class="params">(self, name)</span>:</span></span><br><span class="line">        self.passengers.append(name)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">drop</span><span class="params">(self, name)</span>:</span></span><br><span class="line">        self.passengers.remove(name)</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>Buy me a cup of coffee.</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    <!--打赏-->
+    赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="纸盒人 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="纸盒人 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>纸盒人
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://hulining.github.io/2020/06/18/python-mutable-and-immutable-object/" title="Python 可变对象与不可变对象及其复制">https://hulining.github.io/2020/06/18/python-mutable-and-immutable-object/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/Python/" rel="tag"><i class="fa fa-tag"></i> Python</a>
+              <a href="/tags/%E9%9D%A2%E8%AF%95/" rel="tag"><i class="fa fa-tag"></i> 面试</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/06/17/python-decorator/" rel="prev" title="Python 装饰器">
+      <i class="fa fa-chevron-left"></i> Python 装饰器
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/06/19/python-reflection/" rel="next" title="Python 反射机制">
+      Python 反射机制 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          <!--文章目录-->
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          <!--站点概览-->
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#可变对象与不可变对象"><span class="nav-number">1.</span> <span class="nav-text">可变对象与不可变对象</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#元组的相对不可变性"><span class="nav-number">1.1.</span> <span class="nav-text">元组的相对不可变性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#深浅拷贝"><span class="nav-number">2.</span> <span class="nav-text">深浅拷贝</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#什么时候发生深-浅拷贝-各自的应用场景有哪些"><span class="nav-number">2.1.</span> <span class="nav-text">什么时候发生深&#x2F;浅拷贝,各自的应用场景有哪些</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参数传递"><span class="nav-number">3.</span> <span class="nav-text">参数传递</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#不要使用可变对象作为参数的默认值"><span class="nav-number">3.1.</span> <span class="nav-text">不要使用可变对象作为参数的默认值</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="纸盒人"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">纸盒人</p>
+  <div class="site-description" itemprop="description">Keep it simple,Keep improving</div>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/hulining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;hulining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:loserkid@163.com" title="E-Mail → mailto:loserkid@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://music.163.com/#/user/home?id=71153860" title="网易云音乐 → https:&#x2F;&#x2F;music.163.com&#x2F;#&#x2F;user&#x2F;home?id&#x3D;71153860" rel="noopener" target="_blank"><i class="fa fa-fw fa-music"></i></a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">纸盒人</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+    <div id="pjax">
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'a61ca599f9a038ebe5b3',
+      clientSecret: 'bcc9edf1847c09ad9452180f0fa44d69a11a4c9f',
+      repo        : 'https://github.com/hulining/hulining.github.io.git',
+      owner       : 'hulining',
+      admin       : ['hulining'],
+      id          : '479aaccbf9255305171af1ccb4356090',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>
