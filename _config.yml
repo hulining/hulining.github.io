@@ -16,6 +16,10 @@ timezone: ''
 url: https://hulining.github.io/
 root: /
 permalink: :year/:month/:day/:title/
+#permalink: :abbrlink/
+abbrlink:
+  alg: crc32  # 算法: crc16(default) or crc32
+  rep: hex    # 进制: dec(default) or hex
 permalink_defaults:
 pretty_urls:
   trailing_index: true # Set to false to remove trailing 'index.html' from permalinks
@@ -102,6 +106,8 @@ deploy:
   type: git
   repo: https://github_token@github.com/hulining/hulining.github.io.git
   branch: master
+  name: hulining
+  email: loserkid@163.com
 
 search:
   path: search.xml
