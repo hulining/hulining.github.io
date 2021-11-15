@@ -4,7 +4,7 @@ node_js: "13.13.0"
 
 env:
  global:
-   - URL_REPO: github.com/hulining/hulining.github.io.git
+   - URL_REPO: https://github.com/hulining/hulining.github.io.git
 
 # 设置钩子只检测 hexo 分支的push变动
 branches:
