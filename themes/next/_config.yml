@@ -247,7 +247,7 @@ post_meta:
   created_at: true
   updated_at:
     enable: false
-    another_day: true
+    another_day: false
   categories: true
 
 # Post wordcount display settings

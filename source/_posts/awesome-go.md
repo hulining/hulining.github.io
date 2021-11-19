@@ -12,12 +12,12 @@ description: 参考 https://github.com/avelino/awesome-go 汇总自己学习的 
 
 ### Standard CLI
 
-- [cobra](https://github.com/spf13/cobra) - Commander for modern Go CLI interactions. 跳转 {% post_link  cobra-quick-start 'cobra 快速开始' %} 
+- [cobra](https://github.com/spf13/cobra) - Commander for modern Go CLI interactions. 跳转 {% post_link cobra-quick-start 'cobra 快速开始' %} 
 
 ## 日志
 
-- [logrus](https://github.com/Sirupsen/logrus) - Structured logger for Go.跳转 {% post_link  logrus-quick-start ' logrus 快速开始' %}
-- [zap](https://github.com/uber-go/zap) - Fast, structured, leveled logging in Go.
+- [logrus](https://github.com/Sirupsen/logrus) - Structured logger for Go.跳转 {% post_link logrus-quick-start 'logrus 快速开始' %}
+- [zap](https://github.com/uber-go/zap) - Fast, structured, leveled logging in Go.跳转 {% post_link zap '高性能日志库 zap' %}
 
 ## 分布式系统
 
@@ -26,4 +26,4 @@ description: 参考 https://github.com/avelino/awesome-go 汇总自己学习的 
 
 ## Goroutines
 
-- [ants](https://github.com/panjf2000/ants) - A high-performance and low-cost goroutine pool in Go.
+- [ants](https://github.com/panjf2000/ants) - A high-performance and low-cost goroutine pool in Go. 跳转 {% post_link  ants-quick-start ' ants 快速开始' %}
