@@ -50,3 +50,4 @@ notifications:
     - loserkid@163.com
   on_success: never # default: change
   on_failure: always
+
