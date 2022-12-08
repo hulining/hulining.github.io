@@ -29,11 +29,11 @@
 <meta property="og:description" content="本文章主要包含 ELK 或 EFK 相关技术的基本介绍,各个组件详细介绍见其它文章">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://hulining.github.io/.io//the-simplest-architecture.png">
-<meta property="og:image" content="https://hulining.github.io/.io//multi-logstash.png">
-<meta property="og:image" content="https://hulining.github.io/.io//beat-for-data-collection.png">
-<meta property="og:image" content="https://hulining.github.io/.io//introduce-message-queue.png">
+<meta property="og:image" content="https://hulining.github.io/images/multi-logstash.png">
+<meta property="og:image" content="https://hulining.github.io/images/beat-for-data-collection.png">
+<meta property="og:image" content="https://hulining.github.io/images/introduce-message-queue.png">
 <meta property="article:published_time" content="2020-05-22T00:00:00.000Z">
-<meta property="article:modified_time" content="2022-12-08T10:37:09.363Z">
+<meta property="article:modified_time" content="2022-12-08T12:24:48.185Z">
 <meta property="article:author" content="纸盒人">
 <meta property="article:tag" content="ELK">
 <meta property="article:tag" content="日志处理">
@@ -274,13 +274,13 @@
 <h2 id="常见架构"><a href="#常见架构" class="headerlink" title="常见架构"></a>常见架构</h2><h3 id="最简单架构"><a href="#最简单架构" class="headerlink" title="最简单架构"></a>最简单架构</h3><p>Logstash 通过输入插件从多种数据源获取数据,经过过滤插件对数据进行筛选,格式化,然后通过输出插件输出到 Elasticsearch 中,通过 Kibana 展示.</p>
 <p><img src="/.io//the-simplest-architecture.png" alt="最简单架构"></p>
 <p>这种架构十分简单,使用场景也有限.初学者可以通过此架构了解 ELK 如何工作</p>
-<h3 id="多个-LogStash-用于数据收集"><a href="#多个-LogStash-用于数据收集" class="headerlink" title="多个 LogStash 用于数据收集"></a>多个 LogStash 用于数据收集</h3><p><img src="/.io//multi-logstash.png" alt="多个 LogStash 用于数据收集"></p>
+<h3 id="多个-LogStash-用于数据收集"><a href="#多个-LogStash-用于数据收集" class="headerlink" title="多个 LogStash 用于数据收集"></a>多个 LogStash 用于数据收集</h3><p><img src="/images/multi-logstash.png" alt="多个 LogStash 用于数据收集"></p>
 <p>这种架构需要在各个服务器上部署 Logstash,而 Logstash 比较重量级,服务器性能会有所下降,甚至可能导致应用无法正常工作</p>
 <h3 id="Beats-作为日志收集器"><a href="#Beats-作为日志收集器" class="headerlink" title="Beats 作为日志收集器"></a>Beats 作为日志收集器</h3><p>Beats 将搜集到的数据发送到 Logstash,经 Logstash 解析,过滤后，将其发送到 Elasticsearch 存储,并由 Kibana 呈现给用户.</p>
-<p><img src="/.io//beat-for-data-collection.png" alt="Beats 作为日志收集器"></p>
+<p><img src="/images/beat-for-data-collection.png" alt="Beats 作为日志收集器"></p>
 <p>这种方式解决了 Logstash 在各个服务器上占用系统资源过高的情况,相比于 Logstash,Beats 更加轻量,系统资源占用也比较低.且支持 SSL 加密传输,保证通信安全</p>
 <h3 id="引入消息队列机制"><a href="#引入消息队列机制" class="headerlink" title="引入消息队列机制"></a>引入消息队列机制</h3><p>无论是 Beat 还是 Logstash 均支持消息队列的输入输出,目前支持 Kafka,Redis,RabbitMQ 等常见消息队列.可以由 Beats 收集数据后,通过消息队列输出插件将数据写入到消息队列中,然后 Logstash 通过消息队列输入插件从消息队列中读取数据进行处理后传入到 Elasticsearch 存储,并由 Kibana 呈现给用户.</p>
-<p><img src="/.io//introduce-message-queue.png" alt="引入消息队列机制"></p>
+<p><img src="/images/introduce-message-queue.png" alt="引入消息队列机制"></p>
 <p>当数据量较大时,可在合适的位置添加消息队列,减少 Logstash 的负荷.引入消息队列,可以降低由于数据量过大而导致某些组件的性能瓶颈,降低了数据丢失的可能性.同时,Elasticsearch 可以做成集群模式或增加节点数量,以便增加其性能.</p>
 <h2 id="部署-Elasticsearch"><a href="#部署-Elasticsearch" class="headerlink" title="部署 Elasticsearch"></a>部署 Elasticsearch</h2><h3 id="下载并解压安装包"><a href="#下载并解压安装包" class="headerlink" title="下载并解压安装包"></a>下载并解压安装包</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.7.0-linux-x86_64.tar.gz</span><br><span class="line">tar -xzf elasticsearch-7.7.0-linux-x86_64.tar.gz</span><br><span class="line"><span class="built_in">cd</span> elasticsearch-7.7.0/</span><br></pre></td></tr></table></figure>
 
