@@ -24,9 +24,12 @@ jobs:
       - name: Install Dependencies
         run: npm install
       - name: Build
-        run: npm run build && pwd && ls && tree
+        run: npm run build
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public
+          full_commit_message: ${{ github.event.head_commit.message }}
+          enable_jekyll: true
+
