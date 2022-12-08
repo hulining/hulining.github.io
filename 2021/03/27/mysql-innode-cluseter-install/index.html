@@ -28,14 +28,14 @@
 <meta property="og:site_name" content="纸盒人">
 <meta property="og:description" content="本文章主要介绍 MySQL InnoDB Cluster 集群安装,并使用 MySQL Router 对集群配置读写分离">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://hulining.github.io/.io//MySQL-InnoDB-Cluster.png">
-<meta property="og:image" content="https://hulining.github.io/.io//MySQL-Router.png">
+<meta property="og:image" content="https://hulining.github.io/images/MySQL-InnoDB-Cluster.png">
+<meta property="og:image" content="https://hulining.github.io/images/MySQL-Router.png">
 <meta property="article:published_time" content="2021-03-27T08:34:49.000Z">
-<meta property="article:modified_time" content="2022-12-08T12:24:48.205Z">
+<meta property="article:modified_time" content="2022-12-08T12:48:29.633Z">
 <meta property="article:author" content="纸盒人">
 <meta property="article:tag" content="MySQL">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://hulining.github.io/.io//MySQL-InnoDB-Cluster.png">
+<meta name="twitter:image" content="https://hulining.github.io/images/MySQL-InnoDB-Cluster.png">
 
 <link rel="canonical" href="https://hulining.github.io/2021/03/27/mysql-innode-cluseter-install/">
 
@@ -262,7 +262,7 @@
         <p>MySQL InnoDB Cluster 为MySQL 提供了完整的高可用性解决方案.通过使用 MySQL Shell 附带的 AdminAPI,您可以轻松地配置和管理一组至少三个 MySQL 服务器实例,以充当 InnoDB 集群.</p>
 <p>每个 MySQL 服务器实例都运行MySQL Group Replication,它提供了具有内置故障转移功能的 InnoDB Clusters 中复制数据的机制,消除了直接在 InnoD B群集中使用组复制的需要.</p>
 <p>整个集群环境如下:</p>
-<p><img src="/.io//MySQL-InnoDB-Cluster.png" alt="MySQL InnoDB Cluster 概述"></p>
+<p><img src="/images/MySQL-InnoDB-Cluster.png" alt="MySQL InnoDB Cluster 概述"></p>
 <h2 id="准备环境"><a href="#准备环境" class="headerlink" title="准备环境"></a>准备环境</h2><table>
 <thead>
 <tr>
@@ -376,7 +376,7 @@
 </li>
 </ul>
 <p>您可以在网络上运行多个 MySQL Router 实例，而无需将MySQL Router隔离到单个计算机上</p>
-<p><img src="/.io//MySQL-Router.png" alt="MySQL-Router"></p>
+<p><img src="/images/MySQL-Router.png" alt="MySQL-Router"></p>
 <h3 id="解压安装"><a href="#解压安装" class="headerlink" title="解压安装"></a>解压安装</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">tar -xzf mysql-router-8.0.21-el7-x86_64.tar.gz -C /usr/<span class="built_in">local</span>/</span><br><span class="line"><span class="built_in">cd</span> /usr/<span class="built_in">local</span>/</span><br><span class="line">ln -s mysql-router-8.0.21-el7-x86_64 mysql-router</span><br><span class="line">mkdir mysql-router/data</span><br><span class="line"></span><br><span class="line">chown -R mysql.mysql mysql-router</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">'export PATH=/usr/local/mysql-router/bin:$PATH'</span> &gt;&gt; /etc/profile.d/mysql-router.sh</span><br><span class="line"><span class="built_in">source</span>  /etc/profile.d/mysql-router.sh</span><br></pre></td></tr></table></figure>
 
 <h3 id="bootstrap-引导并启动"><a href="#bootstrap-引导并启动" class="headerlink" title="bootstrap 引导并启动"></a>bootstrap 引导并启动</h3><p>bootstrap 引导,创建一个独立的 MySQL Router 实例</p>

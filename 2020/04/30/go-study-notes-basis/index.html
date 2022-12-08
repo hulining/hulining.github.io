@@ -28,13 +28,13 @@
 <meta property="og:site_name" content="纸盒人">
 <meta property="og:description" content="记录在学习 Go 过程中容易出错, 容易忘记的知识点, 主要包含 Go 中 常量与变量的区别, iota 的使用方式, 引用类型及自定义类型等.">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://hulining.github.io/.io//difference_between_valueType_and_referenceType.jpg">
+<meta property="og:image" content="https://hulining.github.io/images/difference_between_valueType_and_referenceType.jpg">
 <meta property="article:published_time" content="2020-04-30T00:00:00.000Z">
-<meta property="article:modified_time" content="2022-12-08T12:24:48.189Z">
+<meta property="article:modified_time" content="2022-12-08T12:48:29.613Z">
 <meta property="article:author" content="纸盒人">
 <meta property="article:tag" content="go">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://hulining.github.io/.io//difference_between_valueType_and_referenceType.jpg">
+<meta name="twitter:image" content="https://hulining.github.io/images/difference_between_valueType_and_referenceType.jpg">
 
 <link rel="canonical" href="https://hulining.github.io/2020/04/30/go-study-notes-basis/">
 
@@ -428,7 +428,7 @@
 <p>引用类型使用 <code>make()</code> 函数创建, 以确保完成内存分配和相关属性初始化.</p>
 <p>引用类型之所以可以引用, 是因为我们创建引用类型的变量其实是一个包含指向底层数据结构指针的变量. 当我们在函数中传递引用类型时，其实传递的是这个变量的副本, 它所指向的底层结构并没有被复制传递, 函数中对引用类型所做的所有操作可以理解为操作该对象的内存地址, 都会作用到其底层数据结构上, 这也是引用类型传递高效的原因</p>
 <p>本质上，我们可以理解函数传递参数都是值拷贝,只不过引用类型传递的是一个指向底层数据的指针, 所以我们在函数中操作的时候, 实际操作的是共享的底层数据值, 进而影响到所有引用到这个共享底层数据的变量</p>
-<p><img src="/.io//difference_between_valueType_and_referenceType.jpg" alt="值类型与引用类型的区别"></p>
+<p><img src="/images/difference_between_valueType_and_referenceType.jpg" alt="值类型与引用类型的区别"></p>
 <p>同理, 在进行拷贝操作时, 值类型和引用类型会将变量的值进行拷贝, 值类型中变量的值是真实的数据, 因此可以理解为深拷贝. 引用类型中变量的值是真实存储数据的内存地址, 拷贝后变量的值也是该内存地址, 二者仍然共享同一底层数据, 因此可以理解为浅拷贝.</p>
 <h2 id="自定义类型"><a href="#自定义类型" class="headerlink" title="自定义类型"></a>自定义类型</h2><p>使用 <code>type</code> 关键字自定义类型, 包括现有基础类型创建, 结构体, 函数类型等.</p>
 <p>即便自定义类型使用了基础类型, 如 <code>type integer int</code>, 也只表明它们有相同的底层数据结构, 两者之间不存在任何关系, 属于完全不同的两种数据类型.<br>除操作符外, 自定义类型不会继承基础类型的其它信息(包括方法). 不能视作别名, 不能隐式转换, 不能直接用于比较表达式.</p>

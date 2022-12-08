@@ -28,13 +28,13 @@
 <meta property="og:site_name" content="纸盒人">
 <meta property="og:description" content="本文为 K8S 实战的第十个章节.主要了解 K8S 集群的认证,授权与准入控制相关策略.了解 RBAC 的使用.">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://hulining.github.io/.io//SSL-TLS-communication-in-kubernetes.png">
+<meta property="og:image" content="https://hulining.github.io/images/SSL-TLS-communication-in-kubernetes.png">
 <meta property="article:published_time" content="2021-03-19T10:00:00.000Z">
-<meta property="article:modified_time" content="2022-12-08T12:24:48.201Z">
+<meta property="article:modified_time" content="2022-12-08T12:48:29.629Z">
 <meta property="article:author" content="纸盒人">
 <meta property="article:tag" content="Kubernetes">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://hulining.github.io/.io//SSL-TLS-communication-in-kubernetes.png">
+<meta name="twitter:image" content="https://hulining.github.io/images/SSL-TLS-communication-in-kubernetes.png">
 
 <link rel="canonical" href="https://hulining.github.io/2021/03/19/kubernetes-in-action-10-authentication-authorization-and-access-control/">
 
@@ -350,7 +350,7 @@
 </ul>
 <h2 id="X-509-数字证书认证"><a href="#X-509-数字证书认证" class="headerlink" title="X.509 数字证书认证"></a>X.509 数字证书认证</h2><p>Kubernetes 支持的 HTTPS 客户端证书认证,基于 SSL/TLS 协议,安全性高,易于实现,成为主要认证方式之一.</p>
 <p>服务端与客户端相互认证的场景中,双方各自需要配备一套证书,并拥有信任的签证机构的证书列表.使用私有签证机构颁发的数字证书时,用户通常需要手动将私有签证机构的证书添加到信任的签证机构列表中.</p>
-<h3 id="Kubernetes-中的-SSL-TLS-认证"><a href="#Kubernetes-中的-SSL-TLS-认证" class="headerlink" title="Kubernetes 中的 SSL/TLS 认证"></a>Kubernetes 中的 SSL/TLS 认证</h3><p>构建安全基础通信环境的 Kubernetes 集群时,需要用到 TLS 及数字证书的通信场景有很多种.<br><img src="/.io//SSL-TLS-communication-in-kubernetes.png" alt="Kubernetes 的 SSL/TLS 通信"></p>
+<h3 id="Kubernetes-中的-SSL-TLS-认证"><a href="#Kubernetes-中的-SSL-TLS-认证" class="headerlink" title="Kubernetes 中的 SSL/TLS 认证"></a>Kubernetes 中的 SSL/TLS 认证</h3><p>构建安全基础通信环境的 Kubernetes 集群时,需要用到 TLS 及数字证书的通信场景有很多种.<br><img src="/images/SSL-TLS-communication-in-kubernetes.png" alt="Kubernetes 的 SSL/TLS 通信"></p>
 <p>etcd 集群内各节点间的通信,各节点与其客户端(主要是 API Server)之间的通信都应该以加密的方式进行,并需要进行身份验证</p>
 <ul>
 <li>etcd 集群内各节点通信: etcd 集群内各节点间的集群事务通信,默认监听于 TCP/2380,基于 SSL/TLS 通信时需要 peer 类型的数字证书,可实现节点间的身份认证及通信安全.</li>

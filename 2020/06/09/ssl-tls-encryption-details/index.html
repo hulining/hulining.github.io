@@ -28,15 +28,15 @@
 <meta property="og:site_name" content="纸盒人">
 <meta property="og:description" content="简述 HTTPS TLS&#x2F;SSL 加密机制">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://hulining.github.io/.io//ssl-tls-protocol-layers.gif">
-<meta property="og:image" content="https://hulining.github.io/.io//handshake-protocol-message.gif">
+<meta property="og:image" content="https://hulining.github.io/images/ssl-tls-protocol-layers.gif">
+<meta property="og:image" content="https://hulining.github.io/images/handshake-protocol-message.gif">
 <meta property="article:published_time" content="2020-06-09T00:00:00.000Z">
-<meta property="article:modified_time" content="2022-12-08T12:24:48.209Z">
+<meta property="article:modified_time" content="2022-12-08T12:48:29.637Z">
 <meta property="article:author" content="纸盒人">
 <meta property="article:tag" content="面试">
 <meta property="article:tag" content="HTTPS">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://hulining.github.io/.io//ssl-tls-protocol-layers.gif">
+<meta name="twitter:image" content="https://hulining.github.io/images/ssl-tls-protocol-layers.gif">
 
 <link rel="canonical" href="https://hulining.github.io/2020/06/09/ssl-tls-encryption-details/">
 
@@ -301,7 +301,7 @@
 <li>握手协议层,由三个子协议组成: 握手协议(Handshake Protocol),密钥交换协议(Change Cipher Spec Protocol)和告警协议(Alert Protocol).</li>
 <li>记录协议层(不做详细介绍)</li>
 </ul>
-<p><img src="/.io//ssl-tls-protocol-layers.gif" alt="SSL/TLS Protocol Layers"></p>
+<p><img src="/images/ssl-tls-protocol-layers.gif" alt="SSL/TLS Protocol Layers"></p>
 <h3 id="握手过程"><a href="#握手过程" class="headerlink" title="握手过程"></a>握手过程</h3><h4 id="子协议"><a href="#子协议" class="headerlink" title="子协议"></a>子协议</h4><p>握手协议层包含如下子协议</p>
 <ul>
 <li>握手协议</li>
@@ -329,7 +329,7 @@
 </blockquote>
 <p>在握手过程中,对数据使用的哈希算法也必须达成一致.哈希算法用于检查所传输数据的完整性.</p>
 <h2 id="SSL-TLS-握手过程详解"><a href="#SSL-TLS-握手过程详解" class="headerlink" title="SSL/TLS 握手过程详解"></a>SSL/TLS 握手过程详解</h2><p>握手协议是一系列已经排序的消息,用于协商数据传输会话中的参数信息.下图说明了握手协议中的消息序列.</p>
-<p><img src="/.io//handshake-protocol-message.gif" alt="Handshake Protocol Messages"></p>
+<p><img src="/images/handshake-protocol-message.gif" alt="Handshake Protocol Messages"></p>
 <h3 id="第一阶段-Initial-Client-Message-to-Server"><a href="#第一阶段-Initial-Client-Message-to-Server" class="headerlink" title="第一阶段: Initial Client Message to Server"></a>第一阶段: Initial Client Message to Server</h3><p>客户端向服务端发送请求包含如下信息:</p>
 <h4 id="Client-Hello-Client-Hello-消息"><a href="#Client-Hello-Client-Hello-消息" class="headerlink" title="Client Hello: Client Hello 消息"></a><code>Client Hello</code>: Client Hello 消息</h4><p>客户端通过向服务端发送 <code>Client Hello</code> 消息来启动会话.<code>Client Hello</code> 消息包括</p>
 <ul>

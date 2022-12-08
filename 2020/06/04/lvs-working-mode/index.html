@@ -28,18 +28,18 @@
 <meta property="og:site_name" content="纸盒人">
 <meta property="og:description" content="本文章主要介绍 LVS(Linux Virtual Server)的三种工作模式 - NAT,IP 隧道,直接路由(Direct Routing),并简述了三中工作模式的优缺点.后面介绍了 LVS 支持的负载均衡算法">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://hulining.github.io/.io//lvs-use-cases.jpg">
-<meta property="og:image" content="https://hulining.github.io/.io//lvs-NAT.jpg">
-<meta property="og:image" content="https://hulining.github.io/.io//lvs-TUN.jpg">
-<meta property="og:image" content="https://hulining.github.io/.io//lvs-DR.jpg">
+<meta property="og:image" content="https://hulining.github.io/images/lvs-use-cases.jpg">
+<meta property="og:image" content="https://hulining.github.io/images/lvs-NAT.jpg">
+<meta property="og:image" content="https://hulining.github.io/images/lvs-TUN.jpg">
+<meta property="og:image" content="https://hulining.github.io/images/lvs-DR.jpg">
 <meta property="article:published_time" content="2020-06-04T00:00:00.000Z">
-<meta property="article:modified_time" content="2022-12-08T12:24:48.205Z">
+<meta property="article:modified_time" content="2022-12-08T12:48:29.633Z">
 <meta property="article:author" content="纸盒人">
 <meta property="article:tag" content="Linux">
 <meta property="article:tag" content="面试">
 <meta property="article:tag" content="LVS">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://hulining.github.io/.io//lvs-use-cases.jpg">
+<meta name="twitter:image" content="https://hulining.github.io/images/lvs-use-cases.jpg">
 
 <link rel="canonical" href="https://hulining.github.io/2020/06/04/lvs-working-mode/">
 
@@ -264,7 +264,7 @@
 
       
         <h2 id="LVS-简介"><a href="#LVS-简介" class="headerlink" title="LVS 简介"></a>LVS 简介</h2><p>LVS(Linux Virtual Server) 是由章文嵩博士主导的开源负载均衡项目,在 2.6 的及以后内核版本中已将 LVS 集成于内核模块中.该项目在 Linux 内核中实现了基于 IP 的数据请求负载均衡调度方案,其应用场景如图 1 所示:</p>
-<p><img src="/.io//lvs-use-cases.jpg" alt="LVS 应用场景"></p>
+<p><img src="/images/lvs-use-cases.jpg" alt="LVS 应用场景"></p>
 <p>互联网用户从外部访问公司的外部负载均衡服务器,终端用户的 Web 请求会发送给 LVS 调度器,调度器根据自己预设的算法决定将该请求发送给后端的某台 Web 服务器,比如,轮询算法可以将外部的请求平均分发给后端的所有服务器,终端用户访问 LVS 调度器虽然会被转发到后端真实的服务器,但如果真实服务器连接的是相同的存储,提供的服务也是相同的服务,最终用户不管是访问哪台真实服务器,得到的服务内容都是一样的,整个集群对用户而言都是透明的.根据 LVS 工作模式的不同,真实服务器会选择不同的方式将用户需要的数据发送到终端用户.LVS 工作模式分为 NAT 模式,IP 隧道(TUN)模式,以及直接路由(DR)模式.</p>
 <p>Linux 操作系统提供了 <code>ipvsadm</code> 管理工具来管理 LVS 规则.其常用选项及参数有:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">-A, --add-service     添加一个新的虚拟服务</span><br><span class="line">-E, --edit-service    编辑虚拟服务</span><br><span class="line">-D, --delete-service  删除虚拟服务</span><br><span class="line">-C, --clear           清除所有的虚拟服务规则</span><br><span class="line">-R, --restore         恢复虚拟服务规则</span><br><span class="line">-a, --add-server      在虚拟服务中添加一个真实服务器</span><br><span class="line">-r, --real-server     指定 Real Server</span><br><span class="line">-e, --edit-server     编辑某个真实服务器</span><br><span class="line">-d, --delete-server   删除某个真实服务器</span><br><span class="line">-L, -l, --list        显示内核中的虚拟服务规则</span><br><span class="line">-n, --numeric         以数字形式显示IP端口</span><br><span class="line">-c, --connection      显示 ipvs 中目前存在的连接,也可以用于分析调度情况</span><br><span class="line">-Z, --zero            将转发消息的统计清零</span><br><span class="line">-p, --persistent      配置持久化时间</span><br><span class="line">--set tcp tcpfin udp  配置超时时间(tcp&#x2F;tcpfin&#x2F;udp)</span><br><span class="line">-t | -u               TCP&#x2F;UDP 协议的虚拟服务</span><br><span class="line">-g | -m | -i          设置 LVS 模式为: DR | NAT | TUN</span><br><span class="line">-w        配置真实服务器的权重</span><br><span class="line">-s        配置负载均衡算法，如:rr, wrr, lc 等</span><br><span class="line">--timeout 显示配置的tcp&#x2F;tcpfin&#x2F;udp超时时间</span><br><span class="line">--stats   显示历史转发消息统计（累加值）</span><br><span class="line">--rate    显示转发速率信息(瞬时值)</span><br></pre></td></tr></table></figure>
@@ -285,7 +285,7 @@
 <li>RS 处理完成后响应对负载均衡器返回响应数据</li>
 <li>负载均衡器通过地址转换,将 RS 的响应数据响应给客户端</li>
 </ol>
-<p><img src="/.io//lvs-NAT.jpg" alt="LVS NAT"></p>
+<p><img src="/images/lvs-NAT.jpg" alt="LVS NAT"></p>
 <blockquote>
 <p>注意: RIP 与 DIP 需要在同一网络,且 RIP 网关必须指向 DIP</p>
 </blockquote>
@@ -299,7 +299,7 @@
 <li>负载均衡器将在客户端请求报文的首部再封装一层 IP 报文,将源地址改为DIP,目标地址改为RIP,并通过 IP 隧道技术将报文发给 RS</li>
 <li>RS 收到后,先把数据包头解开,还原数据包,处理后,直接返回给客户端,不需要再经过负载均衡器</li>
 </ol>
-<p><img src="/.io//lvs-TUN.jpg" alt="LVS TUN"></p>
+<p><img src="/images/lvs-TUN.jpg" alt="LVS TUN"></p>
 <ul>
 <li>优点: 减少负载均衡器压力,负载均衡器不再是系统的瓶颈,能够处理更多的请求流量</li>
 <li>缺点: RS 节点需要合法 IP,且需要所有服务器支持 <code>IP Tunneling</code>(IP Encapsulation)协议,因此服务器可能只局限于部分 Linux 系统上</li>
@@ -310,7 +310,7 @@
 <li>负载均衡器将客户端请求报文的源 MAC 地址改为自己的 MAC 地址,目标 MAC 改为了 RS 的 MAC 地址,并将此包发送给 RS</li>
 <li>处理完请求报文后,由于 RS 与 负载均衡器有具有同一 VIP,会将响应报文直接发送给客户端</li>
 </ol>
-<p><img src="/.io//lvs-DR.jpg" alt="LVS DR"></p>
+<p><img src="/images/lvs-DR.jpg" alt="LVS DR"></p>
 <ul>
 <li>优点: 与隧道模式一样,负载均衡器也只是分发请求,应答包通过单独的路由方法返回给客户端.同时,不需要隧道结构,可以使用大多数服务器作为 RS</li>
 <li>缺点：要求 VIP 必须与物理网卡在一个物理段上,否则 ARP 不能寻到不同网段的 MAC 地址.也就是说所有 RS 节点和调度器 LB 只能在一个局域网里面</li>

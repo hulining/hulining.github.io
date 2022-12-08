@@ -28,17 +28,17 @@
 <meta property="og:site_name" content="纸盒人">
 <meta property="og:description" content="该文章主要介绍 goroutine 调度器过程及原理,可以对 goroutine 中 GMP 模型有一个简单的认识">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://hulining.github.io/.io//gmp-model.png">
-<meta property="og:image" content="https://hulining.github.io/.io//go-func-process.jpeg">
-<meta property="og:image" content="https://hulining.github.io/.io//life-cycle-of-scheduler.png">
+<meta property="og:image" content="https://hulining.github.io/images/gmp-model.png">
+<meta property="og:image" content="https://hulining.github.io/images/go-func-process.jpeg">
+<meta property="og:image" content="https://hulining.github.io/images/life-cycle-of-scheduler.png">
 <meta property="article:published_time" content="2021-03-09T00:00:00.000Z">
-<meta property="article:modified_time" content="2022-12-08T12:24:48.193Z">
+<meta property="article:modified_time" content="2022-12-08T12:48:29.617Z">
 <meta property="article:author" content="纸盒人">
 <meta property="article:tag" content="go">
 <meta property="article:tag" content="goroutine">
 <meta property="article:tag" content="GMP">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://hulining.github.io/.io//gmp-model.png">
+<meta name="twitter:image" content="https://hulining.github.io/images/gmp-model.png">
 
 <link rel="canonical" href="https://hulining.github.io/2021/03/09/goroutine-and-GMP-model/">
 
@@ -274,7 +274,7 @@
 <li>M: thread 线程</li>
 <li>P: Processor,包含了运行 goroutine 的资源.包含了可运行的 G 队列.如果线程想要运行 goroutine,则必须先获取 P.</li>
 </ul>
-<p><img src="/.io//gmp-model.png" alt="GMP 模型"></p>
+<p><img src="/images/gmp-model.png" alt="GMP 模型"></p>
 <p>GMP 模型中包含以下概念:</p>
 <ul>
 <li>全局队列(Global Queue):存放等待运行的 G.</li>
@@ -302,7 +302,7 @@
 <p>创建时机</p>
 </blockquote>
 <p>没有足够的 M 来关联 P 并运行其中的可运行的 G 时会创建 M.</p>
-<h2 id="go-func-调度流程"><a href="#go-func-调度流程" class="headerlink" title="go func() 调度流程"></a>go func() 调度流程</h2><p><img src="/.io//go-func-process.jpeg" alt="go func() 调度流程"></p>
+<h2 id="go-func-调度流程"><a href="#go-func-调度流程" class="headerlink" title="go func() 调度流程"></a>go func() 调度流程</h2><p><img src="/images/go-func-process.jpeg" alt="go func() 调度流程"></p>
 <p>如下是 go func() 的调度流程:</p>
 <ol>
 <li>首先通过 go func() 来创建一个 goroutine</li>
@@ -313,7 +313,7 @@
 <li>重复上述过程,直到 P 的本地队列与全局队列中 G 为空</li>
 </ol>
 <p>调度器的生命周期可表示如下:</p>
-<p><img src="/.io//life-cycle-of-scheduler.png" alt="调度器的生命周期"></p>
+<p><img src="/images/life-cycle-of-scheduler.png" alt="调度器的生命周期"></p>
 <hr>
 <p>参考</p>
 <ul>

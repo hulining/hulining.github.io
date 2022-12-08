@@ -28,14 +28,14 @@
 <meta property="og:site_name" content="纸盒人">
 <meta property="og:description" content="本文章为《云原生服务网格Istio：原理、实践、架构与源码解析》第 6 章读书笔记.">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://hulining.github.io/.io//istio_traffic_flow.png">
+<meta property="og:image" content="https://hulining.github.io/images/istio_traffic_flow.png">
 <meta property="article:published_time" content="2020-04-03T00:00:00.000Z">
-<meta property="article:modified_time" content="2022-12-08T12:24:48.201Z">
+<meta property="article:modified_time" content="2022-12-08T12:48:29.625Z">
 <meta property="article:author" content="纸盒人">
 <meta property="article:tag" content="istio">
 <meta property="article:tag" content="读书笔记">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://hulining.github.io/.io//istio_traffic_flow.png">
+<meta name="twitter:image" content="https://hulining.github.io/images/istio_traffic_flow.png">
 
 <link rel="canonical" href="https://hulining.github.io/2020/04/03/istio-sidecar/">
 
@@ -268,7 +268,7 @@
 
 <p>由以上配置可见, Sidecar Injector 只对标签匹配 <code>istio-injection：enabled</code> 的命名空间下的Pod资源对象的创建生效</p>
 <h2 id="Sidecar-流量拦截"><a href="#Sidecar-流量拦截" class="headerlink" title="Sidecar 流量拦截"></a>Sidecar 流量拦截</h2><p>Sidecar 流量拦截基于 iptables 规则(init 容器启动时设置规则),拦截应用容器 Inbound/Outbound 的流量</p>
-<p><img src="/.io//istio_traffic_flow.png" alt="istio 流量流向"></p>
+<p><img src="/images/istio_traffic_flow.png" alt="istio 流量流向"></p>
 <ol>
 <li>Inbound 流量在进入 Pod 的网络协议栈时首先被 iptables 规则拦截</li>
 <li>iptables 规则将数据包转发给 Envoy</li>
