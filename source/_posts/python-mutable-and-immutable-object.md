@@ -105,7 +105,7 @@ print('%s\t%s\t%s' % (id(mutable_object[1][1]), id(mutable_copy_object[1][1]), i
 - 浅拷贝可以理解为对象中不可变对象元素进行一次完整拷贝,并直接引用原来的可变对象元素.原始对象与浅拷贝对象不是同一个对象,只是值相同而已.修改浅深贝对象中的可变对象会对原始对象造成影响.
 - 深拷贝可以理解为对象中数据进行一次完整的拷贝,会重新分配内存地址.原始对象与深拷贝对象不是同一个对象,只是值相同而已.修改浅深贝对象不会对原始对象造成影响.
 
-![深拷贝与浅拷贝](python-mutable-and-immutable-object/copy-and-deep-copy.jpg)
+![深拷贝与浅拷贝](/images/copy-and-deep-copy.jpg)
 
 ```python
 import copy
@@ -117,7 +117,7 @@ b[-1].append(5)
 
 ```
 
-![深拷贝与浅拷贝的修改](python-mutable-and-immutable-object/copy-and-deep-copy-modify.jpg)
+![深拷贝与浅拷贝的修改](/images/copy-and-deep-copy-modify.jpg)
 
 可在此[网址](http://www.pythontutor.com/live.html#mode=edit)查看如上代码完整的过程.
 

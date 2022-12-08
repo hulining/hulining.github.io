@@ -198,7 +198,7 @@ func main() {
 }
 ```
 
-![实际类型与反射间的转换](go-study-notes-reflect/conversion_between_actual_type_and_reflection.jpg)
+![实际类型与反射间的转换](/images/conversion_between_actual_type_and_reflection.jpg)
 
 通过以上可以看得出, 实际类型对象将自身通过接口方式传入 `reflect.ValueOf(i interface{})` 方法, 返回 `reflect.Value` 对象. `reflect.Value` 对象通过调用自身 `Interface()` 方法, 返回接口类型, 该接口类型可通过类型断言转化为实际类型对象.
 

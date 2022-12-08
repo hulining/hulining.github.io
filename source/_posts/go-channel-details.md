@@ -324,7 +324,7 @@ type sudog struct {
 - 一个互斥锁,用于 channel 各个属性变动的同步
 - 一个用于判断 channel 是否关闭的标志位 closed
 
-![hchan 结构可视化](go-channel-details/hchan-structure-visualization.png)
+![hchan 结构可视化](/images/hchan-structure-visualization.png)
 
 ### channel 初始化
 

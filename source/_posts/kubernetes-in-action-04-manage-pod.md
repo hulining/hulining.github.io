@@ -119,7 +119,7 @@ Pod 对象从其创建开始至其终止退出的时间范围称为生命周期.
 - 容器存活性检测,就绪性检测
 - 容器终止前钩子
 
-![Pod 的生命周期](kubernetes-in-action-04-manage-pod/pod-lifecyle.png)
+![Pod 的生命周期](/images/pod-lifecyle.png)
 
 ### Pod 的相位
 

@@ -132,7 +132,7 @@ Redis 数据保存在内存中,当进程重新启动时,释放内存并重新分
 2. 父进程执行 fork 操作创建子进程(该过程父进程会阻塞),子进程创建 RDB 文件,并根据父进程内存生成临时快照文件,完成后对原有文件进行原子替换
 3. 子进程发送信号给父进程表示完成,父进程更新统计信息
 
-![redis-bgsave](interview-questions-redis/redis-bgsave.png)
+![redis-bgsave](/images/redis-bgsave.png)
 
 #### `bgsave` 触发方式
 
@@ -166,7 +166,7 @@ Redis 数据保存在内存中,当进程重新启动时,释放内存并重新分
 
 > 注意: fork 阻塞,AOF 追加阻塞(磁盘同步过程中,可能造成阻塞)
 
-![redis aof](interview-questions-redis/redis-aof.png)
+![redis aof](/images/redis-aof.png)
 
 #### AOF 重写触发方式
 
@@ -194,7 +194,7 @@ Redis 数据保存在内存中,当进程重新启动时,释放内存并重新分
 5. 同步数据集
 6. 命令持续复制
 
-![redis 主从复制](interview-questions-redis/redis-slaveof-master.png)
+![redis 主从复制](/images/redis-slaveof-master.png)
 
 ### 全量复制
 
@@ -205,7 +205,7 @@ Redis 数据保存在内存中,当进程重新启动时,释放内存并重新分
 5. 从节点接收主节点传送来的数据后清空自身数据,并加载 RDB 文件.加载完成后,主节点将缓冲区内数据发送给从节点,保证数据一致性.
 6. 以上步骤完成后,如果从节点开启 AOF 持久化功能,则立刻进行 `bgrewriteaof` 操作.
 
-![redis 全量复制](interview-questions-redis/redis-full-copy.png)
+![redis 全量复制](/images/redis-full-copy.png)
 
 > 耗时分析
 
@@ -221,7 +221,7 @@ Redis 数据保存在内存中,当进程重新启动时,释放内存并重新分
 2. 主节点判断 runId 与自身是否一致,如果一致,则根据参数 offset 在复制积压缓冲区查找,如果偏移量在缓冲区中,则发送 +CONTINUE 响应;若不一致或 offset 不在缓冲区中,则退化为全量复制
 3. 主节点根据偏移量把复制积压缓冲区内数据发送给从节点,保证主从复制进入正常状态
 
-![redis 增量复制](interview-questions-redis/redis-increment-copy.png)
+![redis 增量复制](/images/redis-increment-copy.png)
 
 ### 可能存在的问题
 

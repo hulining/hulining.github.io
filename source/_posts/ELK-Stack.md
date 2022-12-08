@@ -28,7 +28,7 @@ description: '本文章主要包含 ELK 或 EFK 相关技术的基本介绍,各�
 
 Logstash 通过输入插件从多种数据源获取数据,经过过滤插件对数据进行筛选,格式化,然后通过输出插件输出到 Elasticsearch 中,通过 Kibana 展示.
 
-![最简单架构](the-simplest-architecture.png)
+![最简单架构](/images/the-simplest-architecture.png)
 
 这种架构十分简单,使用场景也有限.初学者可以通过此架构了解 ELK 如何工作
 

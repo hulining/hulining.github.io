@@ -15,7 +15,7 @@ MySQL InnoDB Cluster 为MySQL 提供了完整的高可用性解决方案.通过�
 
 整个集群环境如下:
 
-![MySQL InnoDB Cluster 概述](mysql-innode-cluseter-install/MySQL-InnoDB-Cluster.png)
+![MySQL InnoDB Cluster 概述](/images/MySQL-InnoDB-Cluster.png)
 
 ## 准备环境
 
@@ -417,7 +417,7 @@ MySQL Router 是 InnoDB Cluster 的一部分.是轻量级的中间件,可在应�
 
 您可以在网络上运行多个 MySQL Router 实例，而无需将MySQL Router隔离到单个计算机上
 
-![MySQL-Router](mysql-innode-cluseter-install/MySQL-Router.png)
+![MySQL-Router](/images/MySQL-Router.png)
 
 ### 解压安装
 

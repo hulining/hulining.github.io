@@ -25,7 +25,7 @@ description: 简述 Python 中的垃圾回收机制.
 
 如果把变量想象为盒子,那么无法解释 Python 中的赋值,应该将变量视作"便利贴"(标注),这样如上示例就好解释了.
 
-![变量不是盒子](python-garbage-collection/variables-are-not-boxes.png)
+![变量不是盒子](/images/variables-are-not-boxes.png)
 
 再看如下示例
 

@@ -71,7 +71,7 @@ SSL/TLS 协议可分为两层.如下:
 - 握手协议层,由三个子协议组成: 握手协议(Handshake Protocol),密钥交换协议(Change Cipher Spec Protocol)和告警协议(Alert Protocol).
 - 记录协议层(不做详细介绍)
 
-![SSL/TLS Protocol Layers](ssl-tls-encryption-details/ssl-tls-protocol-layers.gif)
+![SSL/TLS Protocol Layers](/images/ssl-tls-protocol-layers.gif)
 
 ### 握手过程
 
@@ -111,7 +111,7 @@ SSL/TLS 客户端使用公钥对服务端进行认证,生成一个会话密钥.�
 
 握手协议是一系列已经排序的消息,用于协商数据传输会话中的参数信息.下图说明了握手协议中的消息序列.
 
-![Handshake Protocol Messages](ssl-tls-encryption-details/handshake-protocol-message.gif)
+![Handshake Protocol Messages](/images/handshake-protocol-message.gif)
 
 ### 第一阶段: Initial Client Message to Server
 
