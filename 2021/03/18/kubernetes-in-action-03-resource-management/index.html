@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Times New Roman:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"hulining.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="本文为 K8S 实战的第三个章节.主要了解 K8S 集群的核心对象,并使用 kubeadm 简单部署集群,了解 K8S 命令行管理工具 kubectl 的使用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="K8S 实战 - 03 资源管理">
+<meta property="og:url" content="https://hulining.github.io/2021/03/18/kubernetes-in-action-03-resource-management/index.html">
+<meta property="og:site_name" content="纸盒人">
+<meta property="og:description" content="本文为 K8S 实战的第三个章节.主要了解 K8S 集群的核心对象,并使用 kubeadm 简单部署集群,了解 K8S 命令行管理工具 kubectl 的使用">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-03-18T03:00:00.000Z">
+<meta property="article:modified_time" content="2022-12-08T10:34:08.744Z">
+<meta property="article:author" content="纸盒人">
+<meta property="article:tag" content="Kubernetes">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://hulining.github.io/2021/03/18/kubernetes-in-action-03-resource-management/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>K8S 实战 - 03 资源管理 | 纸盒人</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">纸盒人</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">纸小呆</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">45</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">16</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">98</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/hulining" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://hulining.github.io/2021/03/18/kubernetes-in-action-03-resource-management/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="纸盒人">
+      <meta itemprop="description" content="Keep it simple,Keep improving">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="纸盒人">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          K8S 实战 - 03 资源管理
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-03-18 03:00:00" itemprop="dateCreated datePublished" datetime="2021-03-18T03:00:00+00:00">2021-03-18</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kubernetes/" itemprop="url" rel="index"><span itemprop="name">Kubernetes</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+          <!--添加字数统计-->
+          
+            <span class="post-letters-count">
+              &nbsp; | &nbsp;
+              <span>948 字</span>
+              &nbsp; | &nbsp;
+              <span>3 min</span>
+             </span>
+           
+            <div class="post-description">本文为 K8S 实战的第三个章节.主要了解 K8S 集群的核心对象,并使用 kubeadm 简单部署集群,了解 K8S 命令行管理工具 kubectl 的使用</div>
+
+
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="资源对象与-API-群组"><a href="#资源对象与-API-群组" class="headerlink" title="资源对象与 API 群组"></a>资源对象与 API 群组</h2><p>Kubernetes 将一切事物都抽象为 API 资源,其遵循 REST 风格组织并管理这些资源及对象,同时支持通过标准的 HTTP 方法对资源进行增删改查等管理操作</p>
+<h3 id="资源对象"><a href="#资源对象" class="headerlink" title="资源对象"></a>资源对象</h3><p>依据资源的主要功能作为分类标准,Kubernetes 的 API 对象大体可分为</p>
+<ul>
+<li>工作负载(Workload)</li>
+<li>发现和负载均衡(Discovery LB)</li>
+<li>配置和存储(Config,Storage)</li>
+<li>集群(Cluster)</li>
+<li>元数据(Metadata)</li>
+</ul>
+<h4 id="工作负载型资源"><a href="#工作负载型资源" class="headerlink" title="工作负载型资源"></a>工作负载型资源</h4><p>Pod 是工作负载型资源中的基础资源,它负责运行容器,并向容器解决环境性的依赖.但 Pod 可能会因为资源超限或节点故障等原因而终止,这些 Pod 资源需要被重建,而这类工作通常需要 Pod 控制器来完成</p>
+<p>下面是各 Pod 控制器的说明</p>
+<ul>
+<li><code>ReplicationController</code>: 用于确保每个 Pod 副本在任意时刻均能满足目标数量.建议使用 <code>Deployment</code> 代替它</li>
+<li><code>ReplicaSet</code>: 新一代的 <code>ReplicationController</code>,<code>ReplicationController</code> 只支持等值选择,<code>ReplicaSet</code> 还支持基于集合的选择器</li>
+<li><code>Deployment</code>: 管理无状态的持久化应用,为 Pod 和 <code>ReplicaSet</code> 提供声明式更新,是构建在 <code>ReplicaSet</code> 上更为高级的控制器</li>
+<li><code>StatefulSet</code>: 管理有状态的持久化应用,其与 <code>Deployment</code> 的不同之处在于 <code>StatefulSet</code> 会为每个 Pod 创建一个独有的持久性标识符,并会确保各 Pod 间的顺序性</li>
+<li><code>DaemonSet</code>: 确保节点都运行了某 Pod 的一个副本,新增的节点一样会被添加此 Pod;节点移除时,Pod 会被回收.常用于运行集群存储守护进程,日志收集进程,监控进程等.</li>
+<li><code>Job</code>: 管理运行完成后即可终止的应用.如批处理作业任务.</li>
+<li><code>CronJob</code>: 定时作业任务,会创建多个 <code>Job</code> 任务</li>
+</ul>
+<h4 id="发现和负载均衡"><a href="#发现和负载均衡" class="headerlink" title="发现和负载均衡"></a>发现和负载均衡</h4><p>Kubernetes 使用 <code>Service</code> 资源和 <code>Endpoint</code> 资源为工作负载添加发现机制及负载均衡功能,使用 <code>Ingress</code> 通过七层代理实现请求流量负载均衡.</p>
+<h4 id="配置与存储"><a href="#配置与存储" class="headerlink" title="配置与存储"></a>配置与存储</h4><ul>
+<li><code>Volume</code>: 通过引入挂载外部存储卷的方式来满足内部存储数据持久化的需要,它支持众多类型的存储设备或存储系统.</li>
+<li><code>ConfigMap</code>: 能够以环境变量或存储卷的方式将配置文或配置文件接入到 Pod 资源的容器中,并且可被多个同类的 Pod 共享引用,从而实现”一次修改,多次生效”的功能</li>
+<li><code>Secret</code>: 与 <code>ConfigMap</code> 类似,对于敏感类数据</li>
+</ul>
+<h4 id="集群级资源"><a href="#集群级资源" class="headerlink" title="集群级资源"></a>集群级资源</h4><p>Pod,Deployment,Service,ConfigMap 等资源属于名称空间资源,而 Kubernetes 中还存在一些集群级别的资源,用于定义集群自身配置信息的对象,包含如下资源</p>
+<ul>
+<li><code>Namespace</code>: 资源对象名称的作用范围.</li>
+<li><code>Node</code>: Kubernetes 集群的工作节点,其标识符在当前集群中必须是唯一的</li>
+<li><code>Role</code>: 名称空间级别的由规则组成的权限集合</li>
+<li><code>ClusterRole</code>: Cluster 级别的由规则组成的权限集合</li>
+<li><code>RoleBinding</code>: 将 Role 中的权限绑定在一个或一组用户上,它隶属于且仅能作用于一个名称空间</li>
+<li><code>ClusterRoleBinding</code>: 将 ClusterRole 中的权限绑定在一个或一组用户上,它可作用于整个集群</li>
+</ul>
+<h3 id="资源-API-的组织形式"><a href="#资源-API-的组织形式" class="headerlink" title="资源 API 的组织形式"></a>资源 API 的组织形式</h3><p>Kubernetes 将 API 分割为多个逻辑组合,称为 API 群组.当前系统的 API Server 上的相关信息可通过 <code>kubectl api-versions</code> 命令获取.每个 API 群组表现为一个以 <code>/apis</code> 为根路径的 REST 路径</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;api&#x2F;v1&#x2F;namespaces&#x2F;&lt;namespace&gt;&#x2F;&lt;resource_types&gt;&#x2F;&lt;resource_name&gt;</span><br><span class="line">&#x2F;apis&#x2F;&lt;group&gt;&#x2F;&lt;version&gt;&#x2F;namespaces&#x2F;&lt;namespace&gt;&#x2F;&lt;resource_types&gt;&#x2F;&lt;resource_name&gt;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>Buy me a cup of coffee.</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    <!--打赏-->
+    赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="纸盒人 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="纸盒人 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>纸盒人
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://hulining.github.io/2021/03/18/kubernetes-in-action-03-resource-management/" title="K8S 实战 - 03 资源管理">https://hulining.github.io/2021/03/18/kubernetes-in-action-03-resource-management/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/Kubernetes/" rel="tag"><i class="fa fa-tag"></i> Kubernetes</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/03/18/kubernetes-in-action-02-quick-start/" rel="prev" title="K8S 实战 - 02 快速开始">
+      <i class="fa fa-chevron-left"></i> K8S 实战 - 02 快速开始
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/03/18/kubernetes-in-action-04-manage-pod/" rel="next" title="K8S 实战 - 04 Pod 管理">
+      K8S 实战 - 04 Pod 管理 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          <!--文章目录-->
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          <!--站点概览-->
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#资源对象与-API-群组"><span class="nav-number">1.</span> <span class="nav-text">资源对象与 API 群组</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#资源对象"><span class="nav-number">1.1.</span> <span class="nav-text">资源对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#资源-API-的组织形式"><span class="nav-number">1.2.</span> <span class="nav-text">资源 API 的组织形式</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="纸盒人"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">纸盒人</p>
+  <div class="site-description" itemprop="description">Keep it simple,Keep improving</div>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/hulining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;hulining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:loserkid@163.com" title="E-Mail → mailto:loserkid@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://music.163.com/#/user/home?id=71153860" title="网易云音乐 → https:&#x2F;&#x2F;music.163.com&#x2F;#&#x2F;user&#x2F;home?id&#x3D;71153860" rel="noopener" target="_blank"><i class="fa fa-fw fa-music"></i></a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">纸盒人</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+    <div id="pjax">
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'a61ca599f9a038ebe5b3',
+      clientSecret: 'bcc9edf1847c09ad9452180f0fa44d69a11a4c9f',
+      repo        : 'https://github.com/hulining/hulining.github.io.git',
+      owner       : 'hulining',
+      admin       : ['hulining'],
+      id          : '1b182e51085f8b3d5d7ac9029d28fcbd',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

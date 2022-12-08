@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Times New Roman:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"hulining.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="本文章主要包含 Go database&#x2F;sql 包及其 driver 子包的内置类型和方法的使用.database&#x2F;sql 包提供了有关 SQL 的数据库通用接口.driver包定义了 sql 包使用的数据库程序要实现的接口.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="go 学习笔记之 sql 包">
+<meta property="og:url" content="https://hulining.github.io/2020/05/10/go-study-notes-package-sql/index.html">
+<meta property="og:site_name" content="纸盒人">
+<meta property="og:description" content="本文章主要包含 Go database&#x2F;sql 包及其 driver 子包的内置类型和方法的使用.database&#x2F;sql 包提供了有关 SQL 的数据库通用接口.driver包定义了 sql 包使用的数据库程序要实现的接口.">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-05-10T00:00:00.000Z">
+<meta property="article:modified_time" content="2022-12-08T10:34:08.732Z">
+<meta property="article:author" content="纸盒人">
+<meta property="article:tag" content="go">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://hulining.github.io/2020/05/10/go-study-notes-package-sql/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>go 学习笔记之 sql 包 | 纸盒人</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">纸盒人</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">纸小呆</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">45</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">16</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">98</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/hulining" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://hulining.github.io/2020/05/10/go-study-notes-package-sql/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="纸盒人">
+      <meta itemprop="description" content="Keep it simple,Keep improving">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="纸盒人">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          go 学习笔记之 sql 包
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-05-10 00:00:00" itemprop="dateCreated datePublished" datetime="2020-05-10T00:00:00+00:00">2020-05-10</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+          <!--添加字数统计-->
+          
+            <span class="post-letters-count">
+              &nbsp; | &nbsp;
+              <span>1.8k 字</span>
+              &nbsp; | &nbsp;
+              <span>8 min</span>
+             </span>
+           
+            <div class="post-description">本文章主要包含 Go database/sql 包及其 driver 子包的内置类型和方法的使用.database/sql 包提供了有关 SQL 的数据库通用接口.driver包定义了 sql 包使用的数据库程序要实现的接口.</div>
+
+
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><code>database/sql/driver</code> 包定义了 <code>database/sql</code> 包使用的数据库程序要实现的接口<br><code>database/sql</code> 包提供了有关 SQL 的数据库通用接口. sql 包必须与数据库驱动程序一起使用.相关程序列表,参见 <a href="https://github.com/golang/go/wiki/SQLDrivers" target="_blank" rel="noopener">https://github.com/golang/go/wiki/SQLDrivers</a></p>
+<p>如连接 mysql 需要使用导入 mysql 的驱动程序包</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">"database/sql"</span></span><br><span class="line"><span class="keyword">import</span> _ <span class="string">"github.com/go-sql-driver/mysql"</span></span><br><span class="line"></span><br><span class="line">db, err := sql.Open(<span class="string">"mysql"</span>, <span class="string">"user:password@/dbname"</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="常用类型定义"><a href="#常用类型定义" class="headerlink" title="常用类型定义"></a>常用类型定义</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 列的类型</span></span><br><span class="line"><span class="keyword">type</span> ColumnType <span class="keyword">struct</span> &#123;</span><br><span class="line">    <span class="comment">// contains filtered or unexported fields</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 单个数据库连接.除非特别需要连续的单个数据库连接,否则最好 DB 对象</span></span><br><span class="line"><span class="keyword">type</span> Conn <span class="keyword">struct</span> &#123;</span><br><span class="line">    <span class="comment">// contains filtered or unexported fields</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 数据库对象,对于多个 goroutine 时并发安全的.会自动创建并释放连接</span></span><br><span class="line"><span class="keyword">type</span> DB <span class="keyword">struct</span> &#123;</span><br><span class="line">    <span class="comment">// contains filtered or unexported fields</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 数据库统计信息</span></span><br><span class="line"><span class="keyword">type</span> DBStats <span class="keyword">struct</span> &#123;</span><br><span class="line">    MaxOpenConnections <span class="keyword">int</span> <span class="comment">// 最大连接数</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 连接池状态</span></span><br><span class="line">    OpenConnections <span class="keyword">int</span> <span class="comment">// 使用和空闲的连接数</span></span><br><span class="line">    InUse           <span class="keyword">int</span> <span class="comment">// 正在使用的连接数</span></span><br><span class="line">    Idle            <span class="keyword">int</span> <span class="comment">// 空闲连接数</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 计数器</span></span><br><span class="line">    <span class="comment">//等待</span></span><br><span class="line">    WaitCount         <span class="keyword">int64</span>         <span class="comment">// 等待的连接总数</span></span><br><span class="line">    WaitDuration      time.Duration <span class="comment">// 等待新连接的总时间</span></span><br><span class="line">    MaxIdleClosed     <span class="keyword">int64</span>         <span class="comment">// 由于 SetMaxIdleConns 而关闭的连接总数</span></span><br><span class="line">    MaxLifetimeClosed <span class="keyword">int64</span>         <span class="comment">// 由于 SetConnMaxLifetime 而关闭的连接总数</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 结果信息接口</span></span><br><span class="line"><span class="keyword">type</span> Result <span class="keyword">interface</span> &#123;</span><br><span class="line">    <span class="comment">// 返回数据库为响应命令而生成的整数.通常用于插入新行的自增列</span></span><br><span class="line">    LastInsertId() (<span class="keyword">int64</span>, error)</span><br><span class="line">    <span class="comment">// 受更新,插入或删除影响的行数.</span></span><br><span class="line">    RowsAffected() (<span class="keyword">int64</span>, error)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// QueryRow 产生的单行对象</span></span><br><span class="line"><span class="keyword">type</span> Row <span class="keyword">struct</span> &#123;</span><br><span class="line">    <span class="comment">// contains filtered or unexported fields</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 查询的多行结果.它的光标从第一行开始,使用 `Next()` 逐行获取下一行的值</span></span><br><span class="line"><span class="keyword">type</span> Rows <span class="keyword">struct</span> &#123;</span><br><span class="line">    <span class="comment">// contains filtered or unexported fields</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 预处理的语句.可以被多个 goroutine 安全并发使用</span></span><br><span class="line"><span class="keyword">type</span> Stmt <span class="keyword">struct</span> &#123;</span><br><span class="line">    <span class="comment">// contains filtered or unexported fields</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 事务</span></span><br><span class="line"><span class="keyword">type</span> Tx <span class="keyword">struct</span> &#123;</span><br><span class="line">    <span class="comment">// contains filtered or unexported fields</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 事务选项,定义了事务的隔离级别</span></span><br><span class="line"><span class="keyword">type</span> TxOptions <span class="keyword">struct</span> &#123;</span><br><span class="line">    <span class="comment">// 事务的隔离级别</span></span><br><span class="line">    Isolation IsolationLevel</span><br><span class="line">    ReadOnly  <span class="keyword">bool</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="常量及变量"><a href="#常量及变量" class="headerlink" title="常量及变量"></a>常量及变量</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 隔离级别</span></span><br><span class="line"><span class="keyword">const</span> (</span><br><span class="line">    LevelDefault IsolationLevel = <span class="literal">iota</span></span><br><span class="line">    LevelReadUncommitted</span><br><span class="line">    LevelReadCommitted</span><br><span class="line">    LevelWriteCommitted</span><br><span class="line">    LevelRepeatableRead</span><br><span class="line">    LevelSnapshot</span><br><span class="line">    LevelSerializable</span><br><span class="line">    LevelLinearizable</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h2 id="常用函数"><a href="#常用函数" class="headerlink" title="常用函数"></a>常用函数</h2><h3 id="sql-包函数"><a href="#sql-包函数" class="headerlink" title="sql 包函数"></a><code>sql</code> 包函数</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 返回已注册的驱动列表</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Drivers</span><span class="params">()</span> []<span class="title">string</span></span></span><br><span class="line"><span class="comment">// 注册驱动</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Register</span><span class="params">(name <span class="keyword">string</span>, driver driver.Driver)</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 打开一个由其数据库驱动名称 driverName 和特定驱动程序的数据源名称 dataSourceName 指定的数据库</span></span><br><span class="line"><span class="comment">// 该函数可能只验证参数而不创建与数据库的连接.要验证数据源名称是否有效,调用 Ping 函数</span></span><br><span class="line"><span class="comment">// 返回的数据库可安全的供多个 goroutine 并发使用,并维护自己的空闲连接池.因此此函数只需要调用一次</span></span><br><span class="line"><span class="comment">// dataSourceName 一般形式为 `username:password@protocol(address)/dbname?param=value`</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Open</span><span class="params">(driverName, dataSourceName <span class="keyword">string</span>)</span> <span class="params">(*DB, error)</span></span></span><br><span class="line"><span class="comment">// 使用连接器打开数据库,从而避免字符串的数据源名称</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">OpenDB</span><span class="params">(c driver.Connector)</span> *<span class="title">DB</span></span></span><br></pre></td></tr></table></figure>
+
+<h3 id="ColumnType-结构体方法"><a href="#ColumnType-结构体方法" class="headerlink" title="ColumnType 结构体方法"></a><code>ColumnType</code> 结构体方法</h3><p><code>ColumnType</code> 定义了列的类型,它包含以下方法</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 返回数据库中对应的列的类型</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(ci *ColumnType)</span> <span class="title">DatabaseTypeName</span><span class="params">()</span> <span class="title">string</span></span></span><br><span class="line"><span class="comment">// 返回小数类型的小数精度和位数</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(ci *ColumnType)</span> <span class="title">DecimalSize</span><span class="params">()</span> <span class="params">(precision, scale <span class="keyword">int64</span>, ok <span class="keyword">bool</span>)</span></span></span><br><span class="line"><span class="comment">// 返回可变类型长度列类型(如 text 和 binary)的列类型长度</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(ci *ColumnType)</span> <span class="title">Length</span><span class="params">()</span> <span class="params">(length <span class="keyword">int64</span>, ok <span class="keyword">bool</span>)</span></span></span><br><span class="line"><span class="comment">// 返回列的名称或列的别名</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(ci *ColumnType)</span> <span class="title">Name</span><span class="params">()</span> <span class="title">string</span></span></span><br><span class="line"><span class="comment">// 该列是否可为空</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(ci *ColumnType)</span> <span class="title">Nullable</span><span class="params">()</span> <span class="params">(nullable, ok <span class="keyword">bool</span>)</span></span></span><br><span class="line"><span class="comment">// 返回适合使用 Rows.Scan 进行扫描的 Go 反射类型</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(ci *ColumnType)</span> <span class="title">ScanType</span><span class="params">()</span> <span class="title">reflect</span>.<span class="title">Type</span></span></span><br></pre></td></tr></table></figure>
+
+<h3 id="DB-结构体方法"><a href="#DB-结构体方法" class="headerlink" title="DB 结构体方法"></a><code>DB</code> 结构体方法</h3><p><code>DB</code> 定义了数据库的实例对象.</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 开始事务,默认的隔离级别取决与驱动程序</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span> <span class="title">Begin</span><span class="params">()</span> <span class="params">(*Tx, error)</span></span></span><br><span class="line"><span class="comment">// 开始事务,在事务提交或回滚之前,将使用上下文.如果上下文被取消,事务将回滚</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span> <span class="title">BeginTx</span><span class="params">(ctx context.Context, opts *TxOptions)</span> <span class="params">(*Tx, error)</span></span></span><br><span class="line"><span class="comment">// 关闭数据库连接,阻止启动新查询.很少用</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span> <span class="title">Close</span><span class="params">()</span> <span class="title">error</span></span></span><br><span class="line"><span class="comment">// 打开新连接或从连接池返回现有连接. Conn 将阻塞,直到返回连接池或取消 ctx.使用后必须调用 Conn.Close 将每个 Conn 返回到数据库连接池</span></span><br><span class="line"><span class="comment">// 在同一 Conn 上运行的查询将在同一数据库会话中运行.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span> <span class="title">Conn</span><span class="params">(ctx context.Context)</span> <span class="params">(*Conn, error)</span></span></span><br><span class="line"><span class="comment">// 底层驱动</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span> <span class="title">Driver</span><span class="params">()</span> <span class="title">driver</span>.<span class="title">Driver</span></span></span><br><span class="line"><span class="comment">// 执行 query 语句,但不返回任何行.args 参数用于查询中的占位符</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span> <span class="title">ExecContext</span><span class="params">(ctx context.Context, query <span class="keyword">string</span>, args ...<span class="keyword">interface</span>&#123;&#125;)</span> <span class="params">(Result, error)</span></span></span><br><span class="line"><span class="comment">// 验证与数据库的连接是否存在,必要时建立连接</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span> <span class="title">PingContext</span><span class="params">(ctx context.Context)</span> <span class="title">error</span></span></span><br><span class="line"><span class="comment">// 为后续查询或执行做好准备.Stmt 可以并发执行多个查询或执行,当不需要 Stmt 时,需要调用 Stmt.Close 显式关闭</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span> <span class="title">PrepareContext</span><span class="params">(ctx context.Context, query <span class="keyword">string</span>)</span> <span class="params">(*Stmt, error)</span></span></span><br><span class="line"><span class="comment">// 执行查询语句,返回多行</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span> <span class="title">QueryContext</span><span class="params">(ctx context.Context, query <span class="keyword">string</span>, args ...<span class="keyword">interface</span>&#123;&#125;)</span> <span class="params">(*Rows, error)</span></span></span><br><span class="line"><span class="comment">// 执行查询语句,返回单行</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span> <span class="title">QueryRowContext</span><span class="params">(ctx context.Context, query <span class="keyword">string</span>, args ...<span class="keyword">interface</span>&#123;&#125;)</span> *<span class="title">Row</span></span></span><br><span class="line"><span class="comment">// 设置可重用连接的最长时间</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span> <span class="title">SetConnMaxLifetime</span><span class="params">(d time.Duration)</span></span></span><br><span class="line"><span class="comment">// 设置空闲连接池中的最大连接数</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span> <span class="title">SetMaxIdleConns</span><span class="params">(n <span class="keyword">int</span>)</span></span></span><br><span class="line"><span class="comment">// 设置数据库打开的最大连接数</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span> <span class="title">SetMaxOpenConns</span><span class="params">(n <span class="keyword">int</span>)</span></span></span><br><span class="line"><span class="comment">// 返回数据库统计信息</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span> <span class="title">Stats</span><span class="params">()</span> <span class="title">DBStats</span></span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Rows-结构体方法"><a href="#Rows-结构体方法" class="headerlink" title="Rows 结构体方法"></a><code>Rows</code> 结构体方法</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 返回列的信息,如类型,长度,是否可为空.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(rs *Rows)</span> <span class="title">ColumnTypes</span><span class="params">()</span> <span class="params">([]*ColumnType, error)</span></span></span><br><span class="line"><span class="comment">// 返回列的名称</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(rs *Rows)</span> <span class="title">Columns</span><span class="params">()</span> <span class="params">([]<span class="keyword">string</span>, error)</span></span></span><br><span class="line"><span class="comment">// 准备下一行,以使用 Scan 方法获取.如果策成功,返回 ture.每次调用 Scan 时,都必须先调用该函数</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(rs *Rows)</span> <span class="title">Next</span><span class="params">()</span> <span class="title">bool</span></span></span><br><span class="line"><span class="comment">// 准备下一个要读取的结果集.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(rs *Rows)</span> <span class="title">NextResultSet</span><span class="params">()</span> <span class="title">bool</span></span></span><br><span class="line"><span class="comment">// 将当前行的列复制到 dest 指向的值中. dest 中值的数量必须与"行"中列数相同.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(rs *Rows)</span> <span class="title">Scan</span><span class="params">(dest ...<span class="keyword">interface</span>&#123;&#125;)</span> <span class="title">error</span></span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Stmt-结构体方法"><a href="#Stmt-结构体方法" class="headerlink" title="Stmt 结构体方法"></a><code>Stmt</code> 结构体方法</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 关闭</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *Stmt)</span> <span class="title">Close</span><span class="params">()</span> <span class="title">error</span></span></span><br><span class="line"><span class="comment">// 执行,并返回 Result 接口</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *Stmt)</span> <span class="title">Exec</span><span class="params">(args ...<span class="keyword">interface</span>&#123;&#125;)</span> <span class="params">(Result, error)</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *Stmt)</span> <span class="title">ExecContext</span><span class="params">(ctx context.Context, args ...<span class="keyword">interface</span>&#123;&#125;)</span> <span class="params">(Result, error)</span></span></span><br><span class="line"><span class="comment">// 查询,并返回查询到的行对象</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *Stmt)</span> <span class="title">Query</span><span class="params">(args ...<span class="keyword">interface</span>&#123;&#125;)</span> <span class="params">(*Rows, error)</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *Stmt)</span> <span class="title">QueryContext</span><span class="params">(ctx context.Context, args ...<span class="keyword">interface</span>&#123;&#125;)</span> <span class="params">(*Rows, error)</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *Stmt)</span> <span class="title">QueryRow</span><span class="params">(args ...<span class="keyword">interface</span>&#123;&#125;)</span> *<span class="title">Row</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *Stmt)</span> <span class="title">QueryRowContext</span><span class="params">(ctx context.Context, args ...<span class="keyword">interface</span>&#123;&#125;)</span> *<span class="title">Row</span></span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Tx-结构体方法"><a href="#Tx-结构体方法" class="headerlink" title="Tx 结构体方法"></a><code>Tx</code> 结构体方法</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 提交事务</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(tx *Tx)</span> <span class="title">Commit</span><span class="params">()</span> <span class="title">error</span></span></span><br><span class="line"><span class="comment">// 执行查询,并返回查询结果</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(tx *Tx)</span> <span class="title">Exec</span><span class="params">(query <span class="keyword">string</span>, args ...<span class="keyword">interface</span>&#123;&#125;)</span> <span class="params">(Result, error)</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(tx *Tx)</span> <span class="title">ExecContext</span><span class="params">(ctx context.Context, query <span class="keyword">string</span>, args ...<span class="keyword">interface</span>&#123;&#125;)</span> <span class="params">(Result, error)</span></span></span><br><span class="line"><span class="comment">// 事务中创建 Stmt</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(tx *Tx)</span> <span class="title">Prepare</span><span class="params">(query <span class="keyword">string</span>)</span> <span class="params">(*Stmt, error)</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(tx *Tx)</span> <span class="title">PrepareContext</span><span class="params">(ctx context.Context, query <span class="keyword">string</span>)</span> <span class="params">(*Stmt, error)</span></span></span><br><span class="line"><span class="comment">// 事务中查询</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(tx *Tx)</span> <span class="title">Query</span><span class="params">(query <span class="keyword">string</span>, args ...<span class="keyword">interface</span>&#123;&#125;)</span> <span class="params">(*Rows, error)</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(tx *Tx)</span> <span class="title">QueryContext</span><span class="params">(ctx context.Context, query <span class="keyword">string</span>, args ...<span class="keyword">interface</span>&#123;&#125;)</span> <span class="params">(*Rows, error)</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(tx *Tx)</span> <span class="title">QueryRow</span><span class="params">(query <span class="keyword">string</span>, args ...<span class="keyword">interface</span>&#123;&#125;)</span> *<span class="title">Row</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(tx *Tx)</span> <span class="title">QueryRowContext</span><span class="params">(ctx context.Context, query <span class="keyword">string</span>, args ...<span class="keyword">interface</span>&#123;&#125;)</span> *<span class="title">Row</span></span></span><br><span class="line"><span class="comment">// 回滚事务</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(tx *Tx)</span> <span class="title">Rollback</span><span class="params">()</span> <span class="title">error</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用已有的 Stmt 创建 Stmt</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(tx *Tx)</span> <span class="title">Stmt</span><span class="params">(stmt *Stmt)</span> *<span class="title">Stmt</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(tx *Tx)</span> <span class="title">StmtContext</span><span class="params">(ctx context.Context, stmt *Stmt)</span> *<span class="title">Stmt</span></span></span><br></pre></td></tr></table></figure>
+
+<h2 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"database/sql"</span></span><br><span class="line">    <span class="string">"fmt"</span></span><br><span class="line">    <span class="string">"github.com/go-sql-driver/mysql"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    cfg := mysql.Config&#123;</span><br><span class="line">        User:                 <span class="string">"username"</span>,</span><br><span class="line">        Passwd:               <span class="string">"password"</span>,</span><br><span class="line">        Net:                  <span class="string">"tcp"</span>,</span><br><span class="line">        Addr:                 <span class="string">"10.71.1.27:3306"</span>,</span><br><span class="line">        DBName:               <span class="string">"datastream-info"</span>,</span><br><span class="line">        AllowNativePasswords: <span class="literal">true</span>,</span><br><span class="line">    &#125;</span><br><span class="line">    dataSourceName := cfg.FormatDSN() <span class="comment">// 支持使用 mysql 包中的配置转换方法转换 dataSourceName,也可以使用如下方式直接定义</span></span><br><span class="line">    <span class="comment">// dataSourceName := "username:password@tcp(10.71.1.27:3306)/test"</span></span><br><span class="line">    db, err := sql.Open(<span class="string">"mysql"</span>, dataSourceName)</span><br><span class="line">    rows, err := db.Query(<span class="string">"select * from province_num"</span>)</span><br><span class="line">    <span class="keyword">var</span> (</span><br><span class="line">        id    <span class="keyword">int</span></span><br><span class="line">        name  <span class="keyword">string</span></span><br><span class="line">        value <span class="keyword">int</span></span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">for</span> rows.Next() &#123;</span><br><span class="line">        <span class="keyword">if</span> err = rows.Scan(&amp;id, &amp;name, &amp;value); err != <span class="literal">nil</span> &#123;</span><br><span class="line">            fmt.Println(err)</span><br><span class="line">        &#125;</span><br><span class="line">        fmt.Println(id, name, value)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>Buy me a cup of coffee.</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    <!--打赏-->
+    赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="纸盒人 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="纸盒人 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>纸盒人
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://hulining.github.io/2020/05/10/go-study-notes-package-sql/" title="go 学习笔记之 sql 包">https://hulining.github.io/2020/05/10/go-study-notes-package-sql/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/go/" rel="tag"><i class="fa fa-tag"></i> go</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/05/10/go-study-notes-package-strconv/" rel="prev" title="go 学习笔记之 strconv 包">
+      <i class="fa fa-chevron-left"></i> go 学习笔记之 strconv 包
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/05/10/go-study-notes-package-net/" rel="next" title="go 学习笔记之 net 包">
+      go 学习笔记之 net 包 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          <!--文章目录-->
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          <!--站点概览-->
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#常用类型定义"><span class="nav-number">1.</span> <span class="nav-text">常用类型定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常量及变量"><span class="nav-number">2.</span> <span class="nav-text">常量及变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常用函数"><span class="nav-number">3.</span> <span class="nav-text">常用函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#sql-包函数"><span class="nav-number">3.1.</span> <span class="nav-text">sql 包函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ColumnType-结构体方法"><span class="nav-number">3.2.</span> <span class="nav-text">ColumnType 结构体方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DB-结构体方法"><span class="nav-number">3.3.</span> <span class="nav-text">DB 结构体方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Rows-结构体方法"><span class="nav-number">3.4.</span> <span class="nav-text">Rows 结构体方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Stmt-结构体方法"><span class="nav-number">3.5.</span> <span class="nav-text">Stmt 结构体方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Tx-结构体方法"><span class="nav-number">3.6.</span> <span class="nav-text">Tx 结构体方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#示例"><span class="nav-number">4.</span> <span class="nav-text">示例</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="纸盒人"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">纸盒人</p>
+  <div class="site-description" itemprop="description">Keep it simple,Keep improving</div>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/hulining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;hulining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:loserkid@163.com" title="E-Mail → mailto:loserkid@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://music.163.com/#/user/home?id=71153860" title="网易云音乐 → https:&#x2F;&#x2F;music.163.com&#x2F;#&#x2F;user&#x2F;home?id&#x3D;71153860" rel="noopener" target="_blank"><i class="fa fa-fw fa-music"></i></a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">纸盒人</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+    <div id="pjax">
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'a61ca599f9a038ebe5b3',
+      clientSecret: 'bcc9edf1847c09ad9452180f0fa44d69a11a4c9f',
+      repo        : 'https://github.com/hulining/hulining.github.io.git',
+      owner       : 'hulining',
+      admin       : ['hulining'],
+      id          : 'e219f2dcb3af46be26a983124003272d',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

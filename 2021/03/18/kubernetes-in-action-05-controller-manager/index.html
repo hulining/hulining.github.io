@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Times New Roman:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"hulining.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="本文为 K8S 实战的第五个章节.主要了解 K8S 集群中 Pod 控制器的相关概念及使用方法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="K8S 实战 - 05 Pod 控制器">
+<meta property="og:url" content="https://hulining.github.io/2021/03/18/kubernetes-in-action-05-controller-manager/index.html">
+<meta property="og:site_name" content="纸盒人">
+<meta property="og:description" content="本文为 K8S 实战的第五个章节.主要了解 K8S 集群中 Pod 控制器的相关概念及使用方法">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-03-18T05:00:00.000Z">
+<meta property="article:modified_time" content="2022-12-08T10:34:08.744Z">
+<meta property="article:author" content="纸盒人">
+<meta property="article:tag" content="Kubernetes">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://hulining.github.io/2021/03/18/kubernetes-in-action-05-controller-manager/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>K8S 实战 - 05 Pod 控制器 | 纸盒人</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">纸盒人</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">纸小呆</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">45</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">16</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">98</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/hulining" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://hulining.github.io/2021/03/18/kubernetes-in-action-05-controller-manager/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="纸盒人">
+      <meta itemprop="description" content="Keep it simple,Keep improving">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="纸盒人">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          K8S 实战 - 05 Pod 控制器
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-03-18 05:00:00" itemprop="dateCreated datePublished" datetime="2021-03-18T05:00:00+00:00">2021-03-18</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kubernetes/" itemprop="url" rel="index"><span itemprop="name">Kubernetes</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+          <!--添加字数统计-->
+          
+            <span class="post-letters-count">
+              &nbsp; | &nbsp;
+              <span>1.6k 字</span>
+              &nbsp; | &nbsp;
+              <span>6 min</span>
+             </span>
+           
+            <div class="post-description">本文为 K8S 实战的第五个章节.主要了解 K8S 集群中 Pod 控制器的相关概念及使用方法</div>
+
+
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Pod 控制器由 master 的 kube-controller-manager 组件提供,常见的控制器有 <code>ReplicationController,ReplicaSet,Deployment,DaemonSet,StatefulSet,Job,CronJob</code> 等.它们分别以不同的方式管理 Pod 对象.</p>
+<p>Pod 控制器资源至少应该包含三个基本组成部分:</p>
+<ul>
+<li>标签选择器: 匹配并关联 Pod 资源对象,并据此完成受其管控的 Pod 资源计数</li>
+<li>期望的副本数: 期望在集群中运行着的 Pod 资源的对象数量</li>
+<li>Pod 模版: 用于新建 Pod 资源对象的 Pod 模版资源</li>
+</ul>
+<p>Pod 控制器类资源的 spec 字段通常需要内嵌 <code>replica</code>,<code>selector</code> 和 <code>template</code> 字段,其中 <code>template</code> 为 Pod 模版定义,Pod 模版的定义基本与 Pod 定义相同,包括 metadata 和 spec 及其内嵌的其它各个字段.</p>
+<h2 id="ReplicaSet-控制器"><a href="#ReplicaSet-控制器" class="headerlink" title="ReplicaSet 控制器"></a>ReplicaSet 控制器</h2><p>ReplicaSet(rs) 是 Pod 控制器的一种实现,用于确保由其管控的 Pod 对象副本在任意时刻都能满足期望的数量.</p>
+<p>ReplicaSet 控制器资源启动后会查找集群中匹配其标签选择器的 Pod 资源对象,当前活动对象的数量与期望的数量不吻合时,多则删除,少则通过 Pod 模版创建以补足</p>
+<p>想对于手动创建 Pod 和管理 Pod 资源来说,ReplicaSet 能够实现如下功能:</p>
+<ul>
+<li>确保 Pod 资源对象的数量精确反映期望值,多退少补</li>
+<li>确保 Pod 健康运行,如果节点故障会自动转移</li>
+<li>弹性伸缩,根据系统负载动态调整相关 Pod 资源对象的数量</li>
+</ul>
+<p>ReplicaSet 控制器的定义也由 <code>kind,apiVerion,metadata,spec</code> 字段组成.它的 spec 字段一般嵌套使用如下几个属性字段:</p>
+<ul>
+<li><code>replicas</code>: 期望的 Pod 对象副本数</li>
+<li><code>selector</code>: 当前控制器匹配 Pod 对象副本的标签选择器,支持 <code>matchLabels</code> 和 <code>matchExpressions</code> 两种匹配机制</li>
+<li><code>template</code>: Pod 资源模版</li>
+</ul>
+<p>一般来说定义如下:</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">ReplicaSet</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> </span><br><span class="line">  <span class="attr">namespace:</span> </span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    </span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="comment"># 副本数</span></span><br><span class="line">  <span class="attr">selector:</span> <span class="comment"># 标签选择器</span></span><br><span class="line">    <span class="attr">matchLabels:</span> <span class="comment"># 选择器</span></span><br><span class="line">      <span class="comment"># ... 标签</span></span><br><span class="line">    <span class="attr">matchExpressions:</span> </span><br><span class="line">      <span class="comment"># ... 表达式</span></span><br><span class="line">  </span><br><span class="line">  <span class="comment">##### pod 模版,内嵌 pod yaml 中 matadata 和 spec #####</span></span><br><span class="line">  <span class="attr">template:</span> <span class="comment"># 内嵌 pod yaml中的 metadata和spec</span></span><br><span class="line">    <span class="attr">metadata:</span> </span><br><span class="line">      <span class="attr">name:</span> </span><br><span class="line">      <span class="comment"># namespace:  # 一般与控制器在同一个 namespace 中</span></span><br><span class="line">      <span class="attr">labels:</span> <span class="comment"># 这里的labels至少要包含所有标签选择器中的标签</span></span><br><span class="line">        <span class="comment"># ... 标签</span></span><br><span class="line">    <span class="attr">spec:</span> </span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> </span><br><span class="line">        <span class="attr">image:</span> </span><br><span class="line">        <span class="attr">ports:</span> </span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> </span><br><span class="line">          <span class="attr">containerPort:</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Deployment-控制器"><a href="#Deployment-控制器" class="headerlink" title="Deployment 控制器"></a>Deployment 控制器</h2><p>Deployment 是 Kubernetes 控制器的又一种实现,它构建于 ReplicaSet 控制器之上,可以为 Pod 和 ReplicaSet 提供声明式更新.</p>
+<p>与 ReplicaSet 类似,Deployment 同样是为了保证 Pod 资源健康运行,同时添加了如下特性:</p>
+<ul>
+<li>事件和状态查看: 可以查看 Deployment 对象升级的详细进度和状态</li>
+<li>回滚: 升级完成后发现问题,使用回滚机制将应用返回到前一个或指定版本上</li>
+<li>版本记录: 对 Deployment 对象的每次操作都保存下来,以供后续可能执行的回滚操作使用</li>
+<li>暂停和启动: 对于每次升级,随时暂停和启动</li>
+<li>多种自动更新方案: 支持重建更新及滚动更新机制</li>
+</ul>
+<p>一般来说定义如下:</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> </span><br><span class="line">  <span class="attr">namespace:</span> </span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    </span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="comment"># 副本数</span></span><br><span class="line">  <span class="attr">selector:</span> <span class="comment"># 标签选择器</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">  </span><br><span class="line">  <span class="comment">##### 升级策略 #####</span></span><br><span class="line">  <span class="attr">strategy:</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">RollingUpdate</span> <span class="comment"># 更新类型,可选参数为 Recreate 和 RollingUpdate,默认滚动更新</span></span><br><span class="line">    <span class="attr">rollingUpdate:</span></span><br><span class="line">      <span class="attr">maxSurge:</span> <span class="number">1</span> <span class="comment"># 最多允许同时创建几个 Pod</span></span><br><span class="line">      <span class="attr">maxUnavailable:</span> <span class="number">0</span> <span class="comment"># 最多允许几个 Pod 同时不可用</span></span><br><span class="line">      </span><br><span class="line">  <span class="attr">resverionHistoryLimit:</span> <span class="comment"># 旧版本记录个数,默认为最大值,意味着全部记录</span></span><br><span class="line">  </span><br><span class="line">  <span class="attr">template:</span> <span class="comment"># Pod 的模版,详见 Pod yaml</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">name:</span> <span class="comment"># 这里是 pod 的名称前缀</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="comment"># ... 标签</span></span><br><span class="line">    <span class="attr">spec:</span>   </span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="comment"># 容器名称</span></span><br><span class="line">        <span class="attr">image:</span> </span><br><span class="line">        <span class="attr">ports:</span> </span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="comment"># 容器暴露出来的端口名称</span></span><br><span class="line">          <span class="attr">containerPort:</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="DaemonSet-控制器"><a href="#DaemonSet-控制器" class="headerlink" title="DaemonSet 控制器"></a>DaemonSet 控制器</h2><p>DaemonSet 是 Pod 控制器的又一种实现,用于集群中的全部节点(包括新加入的节点)同时运行一个指定的 Pod 资源副本,当从集群移除节点时, Pod 对象也将被自动回收.管理员也可以使用节点选择器和节点标签指定仅在部分节点上运行指定 Pod</p>
+<p>DaemonSet 有特定的应用场景,通常运行执行系统级操作任务的应用,如:</p>
+<ul>
+<li>运行集群存储的守护进程,如 glusterfs 或 ceph</li>
+<li>运行日志守护进程,如 fluentd 和 logstash</li>
+<li>运行监控系统的代理守护进程,如 Prometheus,Ganglia 等</li>
+</ul>
+<p>一般定义如下:</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">DaemonSet</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span></span><br><span class="line">  <span class="attr">namespace:</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    </span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">minReadSeconds:</span> <span class="number">0</span> <span class="comment"># 创建成功后最小准备时间</span></span><br><span class="line">  <span class="attr">selector:</span> <span class="comment"># 节点标签选择器</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">    </span><br><span class="line">  <span class="comment">##### 升级策略 #####</span></span><br><span class="line">  <span class="attr">reversionHistoryLimit:</span>  <span class="comment"># 旧版本记录个数,默认为最大值,意味着全部记录</span></span><br><span class="line">  <span class="attr">strategy:</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">RollingUpdate</span> <span class="comment"># 更新类型,可选参数为 Recreate 和 RollingUpdate,默认滚动更新</span></span><br><span class="line">    <span class="attr">rollingUpdate:</span></span><br><span class="line">      <span class="attr">maxSurge:</span> <span class="number">1</span> <span class="comment"># 最多允许多出几个</span></span><br><span class="line">      <span class="attr">maxUnavailable:</span> <span class="number">0</span> <span class="comment"># 最多允许少几个</span></span><br><span class="line">  </span><br><span class="line">  <span class="attr">template:</span> <span class="comment"># Pod 的模版,详见 Pod yaml</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">name:</span> <span class="comment"># 这里是 pod 的名称前缀</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="comment"># ... 标签</span></span><br><span class="line">    <span class="attr">spec:</span>   </span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="comment"># 容器名称</span></span><br><span class="line">        <span class="attr">image:</span> </span><br><span class="line">        <span class="attr">ports:</span> </span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="comment"># 容器暴露出来的端口名称</span></span><br><span class="line">          <span class="attr">containerPort:</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Job-控制器"><a href="#Job-控制器" class="headerlink" title="Job 控制器"></a>Job 控制器</h2><p>Job 控制器用于调配 Pod 对象的一次性任务,容器中的进程在正常运行结束后不会对其进行重启,而是将 Pod 对象置于 “Cpmpleted” 状态.</p>
+<p>Job 控制器常用于管理那些运行一段时间便可完成的任务,如计算或备份</p>
+<p>一般来说定义如下:</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVerion:</span> <span class="string">batch/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Job</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span></span><br><span class="line">  <span class="attr">namespace:</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">completions:</span> <span class="comment"># 定义 Job 完成期望的数量</span></span><br><span class="line">  <span class="attr">parallelism:</span> <span class="comment"># 定义 Job 的并行数量</span></span><br><span class="line">  </span><br><span class="line">  <span class="attr">template:</span> <span class="comment"># Pod 模版</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> </span><br><span class="line">        <span class="attr">image:</span></span><br><span class="line">        <span class="attr">command:</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="CronJob-控制器"><a href="#CronJob-控制器" class="headerlink" title="CronJob 控制器"></a>CronJob 控制器</h2><p>Crontab 控制器用于管理 Job 控制器资源的运行时间.CronJob 类似于 Linux 操作系统的周期性任务作业计划(crontab)的方式控制器运行的时间及重复运行的方式.</p>
+<p>CronJob 对象支持使用的时间格式类似于 Crontab,”?” 和 “*” 意义相同,表示任何可用有效值.</p>
+<p>一般定义如下:</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">batch/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">CronJob</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> </span><br><span class="line">  <span class="attr">namespace:</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">schedule:</span>  <span class="comment"># Cron 格式的作业调度运行时间点,必须字段</span></span><br><span class="line">  <span class="attr">jobTemplate:</span>  <span class="comment"># Job 控制器模版,生成 Job 对象,必须字段</span></span><br><span class="line">    <span class="comment"># ... Job ...</span></span><br><span class="line">  <span class="attr">concurrencyPolicy:</span>  <span class="comment"># 并发执行策略,可选值有 "Allow","Forbid","Replace"</span></span><br><span class="line">  <span class="attr">failedJobHistoryLimit:</span> <span class="number">1</span> <span class="comment"># 失败记录保留历史记录数,默认为1</span></span><br><span class="line">  <span class="attr">successfulJobHistoryLimit:</span> <span class="number">3</span> <span class="comment"># 成功记录保留历史记录数,默认为3</span></span><br><span class="line">  <span class="attr">startDeadlineSeconds:</span>  <span class="comment"># 记录启动的超时时长</span></span><br><span class="line">  <span class="attr">suspend:</span> <span class="literal">false</span> <span class="comment"># 是否挂起后续的执行任务,默认为 false</span></span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>Buy me a cup of coffee.</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    <!--打赏-->
+    赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="纸盒人 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="纸盒人 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>纸盒人
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://hulining.github.io/2021/03/18/kubernetes-in-action-05-controller-manager/" title="K8S 实战 - 05 Pod 控制器">https://hulining.github.io/2021/03/18/kubernetes-in-action-05-controller-manager/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/Kubernetes/" rel="tag"><i class="fa fa-tag"></i> Kubernetes</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/03/18/kubernetes-in-action-04-manage-pod/" rel="prev" title="K8S 实战 - 04 Pod 管理">
+      <i class="fa fa-chevron-left"></i> K8S 实战 - 04 Pod 管理
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/03/18/kubernetes-in-action-06-service-and-ingress/" rel="next" title="K8S 实战 - 06 Service 和 Ingress">
+      K8S 实战 - 06 Service 和 Ingress <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          <!--文章目录-->
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          <!--站点概览-->
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#ReplicaSet-控制器"><span class="nav-number">1.</span> <span class="nav-text">ReplicaSet 控制器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Deployment-控制器"><span class="nav-number">2.</span> <span class="nav-text">Deployment 控制器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DaemonSet-控制器"><span class="nav-number">3.</span> <span class="nav-text">DaemonSet 控制器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Job-控制器"><span class="nav-number">4.</span> <span class="nav-text">Job 控制器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CronJob-控制器"><span class="nav-number">5.</span> <span class="nav-text">CronJob 控制器</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="纸盒人"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">纸盒人</p>
+  <div class="site-description" itemprop="description">Keep it simple,Keep improving</div>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/hulining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;hulining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:loserkid@163.com" title="E-Mail → mailto:loserkid@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://music.163.com/#/user/home?id=71153860" title="网易云音乐 → https:&#x2F;&#x2F;music.163.com&#x2F;#&#x2F;user&#x2F;home?id&#x3D;71153860" rel="noopener" target="_blank"><i class="fa fa-fw fa-music"></i></a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">纸盒人</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+    <div id="pjax">
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'a61ca599f9a038ebe5b3',
+      clientSecret: 'bcc9edf1847c09ad9452180f0fa44d69a11a4c9f',
+      repo        : 'https://github.com/hulining/hulining.github.io.git',
+      owner       : 'hulining',
+      admin       : ['hulining'],
+      id          : 'ec7bcd4469d67ee66cb8dc4f7775cec6',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

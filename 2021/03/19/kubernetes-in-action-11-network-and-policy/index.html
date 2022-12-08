@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Times New Roman:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"hulining.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="本文为 K8S 实战的第十一个章节.主要了解 K8S 集群的网络模型及网络策略,了解相关网络插件的使用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="K8S 实战 - 11 网络模型与网络策略">
+<meta property="og:url" content="https://hulining.github.io/2021/03/19/kubernetes-in-action-11-network-and-policy/index.html">
+<meta property="og:site_name" content="纸盒人">
+<meta property="og:description" content="本文为 K8S 实战的第十一个章节.主要了解 K8S 集群的网络模型及网络策略,了解相关网络插件的使用">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-03-19T11:00:00.000Z">
+<meta property="article:modified_time" content="2022-12-08T10:34:08.744Z">
+<meta property="article:author" content="纸盒人">
+<meta property="article:tag" content="Kubernetes">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://hulining.github.io/2021/03/19/kubernetes-in-action-11-network-and-policy/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>K8S 实战 - 11 网络模型与网络策略 | 纸盒人</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">纸盒人</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">纸小呆</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">45</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">16</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">98</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/hulining" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://hulining.github.io/2021/03/19/kubernetes-in-action-11-network-and-policy/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="纸盒人">
+      <meta itemprop="description" content="Keep it simple,Keep improving">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="纸盒人">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          K8S 实战 - 11 网络模型与网络策略
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-03-19 11:00:00" itemprop="dateCreated datePublished" datetime="2021-03-19T11:00:00+00:00">2021-03-19</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kubernetes/" itemprop="url" rel="index"><span itemprop="name">Kubernetes</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+          <!--添加字数统计-->
+          
+            <span class="post-letters-count">
+              &nbsp; | &nbsp;
+              <span>2.2k 字</span>
+              &nbsp; | &nbsp;
+              <span>8 min</span>
+             </span>
+           
+            <div class="post-description">本文为 K8S 实战的第十一个章节.主要了解 K8S 集群的网络模型及网络策略,了解相关网络插件的使用</div>
+
+
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>在了解 Kubernetes 网络模型之前,我们先来看一下 Docker 的网络模型</p>
+<h2 id="Docker-容器网络模型"><a href="#Docker-容器网络模型" class="headerlink" title="Docker 容器网络模型"></a>Docker 容器网络模型</h2><p>Docker 网络模型的原始模型主要有三种:</p>
+<ul>
+<li><code>Bridge</code>: 桥接,借助于虚拟网桥设备为容器建立网络连接.是 Docker 默认的网络模型</li>
+<li><code>Host</code>: 主机,设定容器直接共享使用节点主机的网络名称空间</li>
+<li><code>Container</code>: 容器,多个容器共享同一个网络名称空间,彼此之间能够以本地通信的方式建立连接</li>
+<li><code>None</code>: 不使用网络</li>
+</ul>
+<p>因此,在创建 Docker 容器时,默认有四种网络可供选择使用,具体如下:</p>
+<ul>
+<li>Closed container(封闭式容器): 此类容器使用 “None” 网络,它们没有对外通信的网络接口,通常用于不需要网络的后端作业处理场景</li>
+<li>Bridge container(桥接式容器): 此类容器使用 “Bridge” 模型的网络,容器引擎会为每个容器创建一对(两个)虚拟以太网设备,一个配置为容器的网络接口,另一个在节点主机上接入指定的虚拟网桥设备(默认为 docker0)</li>
+<li>Open container(开放式容器): 此类容器使用 “Host” 模型的网络,共享使用 Docker 主机的网络及器接口</li>
+<li>Joined container(联盟式容器): 此类容器共享使用某个已存在的容器的网络名称空间,共享使用指定容器的网络及接口.</li>
+</ul>
+<p>Docker 进程首次启动时,它会在当前节点上创建一个名为 <code>docker0</code> 的桥设备,并默认配置其使用 <code>172.17.0.0/16</code> 的网络(可通过 <code>bridge</code> 进行配置),该网络是 Bridge 模型的一种实现,也是创建 Docker 容器时默认使用的网络模型.</p>
+<p>跨节点的容器间进行通信时,每个节点上的容器都将从 <code>172.17.0.0/16</code> 网络中获取 IP 地址,导致不同的 Docker 主机上的容器可能会使用相同的地址,因此它们无法直接通信.</p>
+<p>而解决此问题的通信方式是 NAT.所有发往 Docker 主机外部的流量都会在执行过程中进行源地址转换,接入 Docker 主机外部的流量,则需要通过目标地址转换或端口映射将其暴露于外部网络中.因此,多节点上的 Docker 容器间通信依赖 NAT 机制转发实现.</p>
+<h2 id="Kubernetes-网络模型"><a href="#Kubernetes-网络模型" class="headerlink" title="Kubernetes 网络模型"></a>Kubernetes 网络模型</h2><p>Kubernetes 网络模型主要可用于解决四类通信请求:</p>
+<ul>
+<li>同一 Pod 内容器间通信</li>
+</ul>
+<p>Pod 对象内各容器共享同一网络名称空间,彼此间可以通过 lo 接口完成交互</p>
+<ul>
+<li>Pod 间通信</li>
+</ul>
+<p>各 Pod 对象运行于同一个平面网络中,每个 Pod 对象拥有一个集群全局唯一的地址,并直接可以与其它 Pod 进行通信.此网络称为 Pod 网络.</p>
+<p>运行 Pod 的各节点也会通过桥接设备持有此平面网络的一个 IP 地址,因此 Node 到 Pod 间通信也可以在此网络上直接进行.</p>
+<ul>
+<li>Service 到 Pod 间通信</li>
+</ul>
+<p>Service 资源的专用网络也称为集群网络(Cluster Network),需要在启动 kube-apiserver 时通过 <code>--service-cluster-ip-range</code> 选项进行指定,如 <code>10.96.0.0/12</code>.每个 Service 对象在此网络有拥有一个称为 ClusterIP 的固定地址.</p>
+<p>Service 创建完成后,会触发各节点上的 kube-proxy,并在相应节点上创建 iptables 或 ipvs 规则,完成从 Service 的 ClusterIP 与 PodIP 之间的报文转发.</p>
+<ul>
+<li>集群外部与 Service 间通信</li>
+</ul>
+<p>Service 有多种类型,常用的有如下三种: ClusterIP(默认),NodePort,LoadBalancer</p>
+<p>ClusterIP 类型的 Service 只会得到虚拟的 ServiceIP 和 ServicePort,只能在 Kubernetes 集群内部被访问.</p>
+<p>NodePort 类型的 Service 在 ClusterIP 的基础上构建,它 会得到虚拟的 ServiceIP 和 ServicePort 用于 Kubernetes 集群内部通信,Kubernetes 还会在所有 Node 节点上为其分配端口,用于从集群外部通过 NodeIP:nodePort 访问.分配的端口的值可以通过<code>spec.ports[*].nodePort</code> 指定,或由 Kubernetes 自行分配,默认为30000-32767.</p>
+<p>LoadBalancer 类型的 Service 在 NodePort 的基础上构建,并为其开通负载均衡,一般需要云厂商设备的支持.</p>
+<h2 id="flannel-网络插件"><a href="#flannel-网络插件" class="headerlink" title="flannel 网络插件"></a>flannel 网络插件</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装 flannel, yaml 文件地址可通过 https://github.com/flannel-io/flannel 获得</span></span><br><span class="line">kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml</span><br></pre></td></tr></table></figure>
+
+<p>flannel 解决了多节点 Docker 主机中容器通信中时的两个问题</p>
+<ul>
+<li>各 Docker 主机在 docker0 桥上默认使用同一个子网,不同节点的容器可能会得到相同的地址,跨节点的容器间通信会面临地址冲突的问题</li>
+<li>各个节点上网络中缺乏路由信息,报文无法准确送达</li>
+</ul>
+<p>解决办法如下:</p>
+<ul>
+<li>预留使用一个网络,为每各个节点的 Docker 容器引擎分配一个子网(如 10.244.1.0/24 和 10.244.2.0/24),并将分配信息保存于 etcd 持久存储.</li>
+<li>支持 VxLAN, host-gw, UDP 网路模型,使用”后端”解决相关问题<ul>
+<li><code>VxLAN</code>: 使用 VxLAN 模块封装报文</li>
+<li><code>host-gw</code>: Host GateWay,在节点上创建到达目标容器的路由完成报文转发,这种方式要求各节点本身在一个二层网络中.</li>
+<li>UDP: 使用普通 UDP 报文封装完成隧道转发,性能较低</li>
+</ul>
+</li>
+</ul>
+<h3 id="flannel-配置参数"><a href="#flannel-配置参数" class="headerlink" title="flannel 配置参数"></a>flannel 配置参数</h3><p>默认情况下,flannel 的配置信息保存于 etcd 的键名 <code>/coreos.com/netwok/config</code> 之下,它的值是一个 JSON 格式的字典数据,它可以使用的键包含以下几个:</p>
+<ul>
+<li><code>Network</code>: flannel 在全局使用的 CIDR 格式的 IPv4 网络,字符串格式,必选字段</li>
+<li><code>SubnetLen</code>: 将 Network 属性指定的 IPv4 网络基于指定位的掩码切割为供节点使用的子网.当网络的掩码小于24时,默认为24</li>
+<li><code>SubnetMin/SubnetMax</code>: 可用作分配给节点使用的子网范围</li>
+<li><code>Backend</code>: flannel 要使用的后端类型,以及后端的相关配置.包含 type(类型,默认为 VxLAN)和 Port(端口)字段</li>
+</ul>
+<p>配置示例如下:</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"Network"</span>: <span class="string">"10.244.0.0/16"</span>,</span><br><span class="line">    <span class="attr">"SubnetLen"</span>: <span class="number">24</span>,</span><br><span class="line">    <span class="attr">"Backend"</span>: &#123;</span><br><span class="line">        <span class="attr">"Type"</span>: <span class="string">"VxLAN"</span>,</span><br><span class="line">        <span class="attr">"Port"</span>: <span class="number">8472</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="网络策略"><a href="#网络策略" class="headerlink" title="网络策略"></a>网络策略</h2><p>网络策略(Network Policy)用于控制分组的 Pod 资源之间如何进行通信,它为 Kubernetes 实现了更为精细的流量控制,实现租户隔离控制. Kuberntes 使用资源对象 <code>NetworkPolicy</code> 定义网络控制策略.</p>
+<p>Pod 网络流量包含 “流入(Ingress)” 和 “流出(Egress)” 两种方向,每种方向的控制包含 “允许” 和 “禁止” 两种.默认情况下,Pod 的流量可以自由来去,一旦有策略应用于 Pod,那么所有为经明确允许的流量都将被拒绝,</p>
+<p>网络策略需要使用 Cannal 或 Calico 提供,安装方式如下,详情请见<a href="https://docs.projectcalico.org/" target="_blank" rel="noopener">官方文档</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f https://docs.projectcalico.org/v3.10/manifests/canal.yaml</span><br></pre></td></tr></table></figure>
+
+<p>一般来说,网络策略定义如下:</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">NetworkPolicy</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> </span><br><span class="line">  <span class="attr">namesapce:</span> </span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">podSelector:</span>  <span class="comment"># pod 标签选择器,&#123;&#125;表示所有</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">key:</span> <span class="string">value</span></span><br><span class="line">  <span class="attr">policyTypes:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">Ingress</span> <span class="comment"># 表示入站流量管理策略启用</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">Egress</span>  <span class="comment"># 表示出站流量管理策略启用</span></span><br><span class="line">  <span class="attr">ingress/egress:</span> <span class="comment"># 定义入站/出站策略.如果不定义此字段,则表示禁止所有入站/出站流量;如果该字段值为&#123;&#125;,则表示允许所有入站/出站流量</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">from/to:</span>  <span class="comment"># 入站或出站流量的列表对象,可以根据如下方式进行限定</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">ipBlock:</span> <span class="comment"># 地址范围</span></span><br><span class="line">        <span class="attr">cidr:</span> <span class="number">10.244</span><span class="number">.1</span><span class="number">.0</span><span class="string">/24</span> <span class="comment"># 是一个 CIDR 地址,格式为:网段/掩码</span></span><br><span class="line">        <span class="attr">except:</span> <span class="number">10.244</span><span class="number">.1</span><span class="number">.2</span><span class="string">/32</span> <span class="comment"># 是一个 CIDR 地址,格式为:网段/掩码,表示除了这个</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">namespaceSeletor:</span> <span class="comment"># 名称空间选择器</span></span><br><span class="line">        <span class="attr">matchLabels:</span></span><br><span class="line">          <span class="attr">key:</span> <span class="string">value</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">podSelector:</span>  <span class="comment"># pod 选择器</span></span><br><span class="line">        <span class="attr">matchLabels:</span></span><br><span class="line">          <span class="attr">key:</span> <span class="string">value</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">        <span class="attr">protocol:</span> <span class="string">TCP/UDP</span></span><br></pre></td></tr></table></figure>
+
+<p>一般来说,我们会将同一名称空间下的 Pod 的入站流量全部禁止,只留下特定应用端口的入站流量,将除 kube-system 外的不同名称空间下的 Pod 进行隔离.故默认定义如下:</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="comment"># 禁止所有名称空间中 Pod 的入站出站流量</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">NetworkPolicy</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">deny-other-namespace</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">podSelector:</span> <span class="string">&#123;&#125;</span></span><br><span class="line">  <span class="attr">policyTypes:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">Ingress</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">Egress</span></span><br><span class="line"></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="comment"># 开放 kube-system 和自身名称空间中 Pod 出站入站流量</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">NetworkPolicy</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">allow-namespace-default</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">podSelector:</span> <span class="string">&#123;&#125;</span></span><br><span class="line">  <span class="attr">policyTypes:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">Ingress</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">Egress</span></span><br><span class="line">  <span class="attr">ingress:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">from:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">namespaceSelector:</span></span><br><span class="line">        <span class="attr">matchExpressions:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">key:name</span></span><br><span class="line">          <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">          <span class="attr">values:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="string">kube-system</span></span><br><span class="line">          <span class="bullet">-</span> <span class="string">default</span></span><br><span class="line">  <span class="attr">egress:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">to:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">namespaceSelector:</span></span><br><span class="line">        <span class="attr">matchExpressions:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">key:name</span></span><br><span class="line">          <span class="attr">operator:</span> <span class="string">In</span></span><br><span class="line">          <span class="attr">values:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="string">kube-system</span></span><br><span class="line">          <span class="bullet">-</span> <span class="string">default</span></span><br><span class="line"></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="comment"># 禁止所有 Pod 入站流量</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">NetworkPolicy</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">deny-all-ingress</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">podSelector:</span> <span class="string">&#123;&#125;</span></span><br><span class="line">  <span class="attr">policyTypes:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">Ingress</span></span><br><span class="line"></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="comment"># 定义允许 Pod 的入站流量,开放应用端口的入站流量</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">NetworkPolicy</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">allow-xxx-ingress</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">podSelector:</span> <span class="string">&#123;&#125;</span></span><br><span class="line">  <span class="attr">policyTypes:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">Ingress</span></span><br><span class="line">  <span class="attr">ingress:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">from:</span> <span class="string">&#123;&#125;</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">protocol :</span> <span class="string">TCP</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>Buy me a cup of coffee.</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    <!--打赏-->
+    赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="纸盒人 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="纸盒人 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>纸盒人
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://hulining.github.io/2021/03/19/kubernetes-in-action-11-network-and-policy/" title="K8S 实战 - 11 网络模型与网络策略">https://hulining.github.io/2021/03/19/kubernetes-in-action-11-network-and-policy/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/Kubernetes/" rel="tag"><i class="fa fa-tag"></i> Kubernetes</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/03/19/kubernetes-in-action-10-authentication-authorization-and-access-control/" rel="prev" title="K8S 实战 - 10 认证,授权与准入控制">
+      <i class="fa fa-chevron-left"></i> K8S 实战 - 10 认证,授权与准入控制
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/03/27/mysql-innode-cluseter-install/" rel="next" title="MySQL InnoDB Cluster 集群安装">
+      MySQL InnoDB Cluster 集群安装 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          <!--文章目录-->
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          <!--站点概览-->
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Docker-容器网络模型"><span class="nav-number">1.</span> <span class="nav-text">Docker 容器网络模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Kubernetes-网络模型"><span class="nav-number">2.</span> <span class="nav-text">Kubernetes 网络模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#flannel-网络插件"><span class="nav-number">3.</span> <span class="nav-text">flannel 网络插件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#flannel-配置参数"><span class="nav-number">3.1.</span> <span class="nav-text">flannel 配置参数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#网络策略"><span class="nav-number">4.</span> <span class="nav-text">网络策略</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="纸盒人"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">纸盒人</p>
+  <div class="site-description" itemprop="description">Keep it simple,Keep improving</div>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/hulining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;hulining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:loserkid@163.com" title="E-Mail → mailto:loserkid@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://music.163.com/#/user/home?id=71153860" title="网易云音乐 → https:&#x2F;&#x2F;music.163.com&#x2F;#&#x2F;user&#x2F;home?id&#x3D;71153860" rel="noopener" target="_blank"><i class="fa fa-fw fa-music"></i></a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">纸盒人</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+    <div id="pjax">
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'a61ca599f9a038ebe5b3',
+      clientSecret: 'bcc9edf1847c09ad9452180f0fa44d69a11a4c9f',
+      repo        : 'https://github.com/hulining/hulining.github.io.git',
+      owner       : 'hulining',
+      admin       : ['hulining'],
+      id          : 'a0481479f42e27f14ec7647baedb57ea',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>

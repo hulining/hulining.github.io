@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar.jpg">
+  <link rel="mask-icon" href="/images/avatar.jpg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic|Times New Roman:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"hulining.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="简述 HTTPS TLS&#x2F;SSL 加密机制">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HTTPS 加密机制">
+<meta property="og:url" content="https://hulining.github.io/2020/06/09/ssl-tls-encryption-details/index.html">
+<meta property="og:site_name" content="纸盒人">
+<meta property="og:description" content="简述 HTTPS TLS&#x2F;SSL 加密机制">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hulining.github.io/.io//ssl-tls-protocol-layers.gif">
+<meta property="og:image" content="https://hulining.github.io/.io//handshake-protocol-message.gif">
+<meta property="article:published_time" content="2020-06-09T00:00:00.000Z">
+<meta property="article:modified_time" content="2022-12-08T10:34:08.752Z">
+<meta property="article:author" content="纸盒人">
+<meta property="article:tag" content="面试">
+<meta property="article:tag" content="HTTPS">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hulining.github.io/.io//ssl-tls-protocol-layers.gif">
+
+<link rel="canonical" href="https://hulining.github.io/2020/06/09/ssl-tls-encryption-details/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>HTTPS 加密机制 | 纸盒人</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">纸盒人</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">纸小呆</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">45</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">16</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">98</span></a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/hulining" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://hulining.github.io/2020/06/09/ssl-tls-encryption-details/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="纸盒人">
+      <meta itemprop="description" content="Keep it simple,Keep improving">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="纸盒人">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          HTTPS 加密机制
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-06-09 00:00:00" itemprop="dateCreated datePublished" datetime="2020-06-09T00:00:00+00:00">2020-06-09</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+          <!--添加字数统计-->
+          
+            <span class="post-letters-count">
+              &nbsp; | &nbsp;
+              <span>3.3k 字</span>
+              &nbsp; | &nbsp;
+              <span>12 min</span>
+             </span>
+           
+            <div class="post-description">简述 HTTPS TLS/SSL 加密机制</div>
+
+
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="FAQ"><a href="#FAQ" class="headerlink" title="FAQ"></a>FAQ</h2><h3 id="为什么需要加密"><a href="#为什么需要加密" class="headerlink" title="为什么需要加密"></a>为什么需要加密</h3><p>HTTP 的内容是明文传输层的,明文数据会经过中间代理服务器,路由器,通信服务运行商等多个物理节点,信息在传输过程中很容易被劫持</p>
+<h3 id="什么是中间人攻击"><a href="#什么是中间人攻击" class="headerlink" title="什么是中间人攻击"></a>什么是中间人攻击</h3><p>由于 HTTP 是明文传输的,传输内容完全暴露在互联网上,代理服务器,路由器等中间人可以直接篡改传输信息不被双方察觉,这就是中间人攻击.</p>
+<h3 id="什么是对称加密"><a href="#什么是对称加密" class="headerlink" title="什么是对称加密"></a>什么是对称加密</h3><p>对称加密使用同一密钥对明文和密文进行加密和解密.</p>
+<p>对称加密最大的问题是这个密钥怎么让传输双方知晓,同时不被中间人劫持篡改.</p>
+<h3 id="什么是非对称加密"><a href="#什么是非对称加密" class="headerlink" title="什么是非对称加密"></a>什么是非对称加密</h3><p>非对称加密包含两把密钥,公钥和私钥.用公钥加密的内容必须用私钥才能解开,私钥加密的内容只有公钥能解开.</p>
+<p>采用非对称加密的客户端向服务端发起请求,服务端将公钥明文传输给客户端.客户端得到公钥后,使用公钥进行加密并传输到服务端,保证了单向传输的安全性.</p>
+<p>那么如何将非对称加密过程中服务端公钥传输给客户端,而不会被中间人劫持/篡改?</p>
+<blockquote>
+<ul>
+<li>数字证书</li>
+</ul>
+</blockquote>
+<p>网站在使用 HTTPS 之前,需要向 CA 机构申请颁发一份数字证书,数字证书里有证书持有者信息,公钥信息,服务端将证书传输给客户端,客户端从证书中取得公钥.</p>
+<p>那么如何防止证书在传输过程中被篡改呢?</p>
+<blockquote>
+<ul>
+<li>数字签名</li>
+</ul>
+</blockquote>
+<p>证书内容生成一份签名,比对证书内容和签名是否一致就能察觉是否被篡改.这种技术叫做数字签名</p>
+<p>数字签名的制作过程如下:</p>
+<ul>
+<li>CA 证书拥有非对称加密的私钥和公钥</li>
+<li>CA 对证书明文信息进行 hash(hash 后再加密可以提升性能.其它原因参见<a href="crypto.stackexchange.com/a/12780">这里</a>)</li>
+<li>对 hash 后的值用私钥加密,得到数字签名</li>
+</ul>
+<p>上述证书明文与数字签名共同组成了数字证书,客户端验证过程如下:</p>
+<ul>
+<li>CA 证书已经保存在客户端中,如浏览器或命令行指定证书</li>
+<li>客户端发起请求,服务端响应证书明文信息 T 和数字签名 S</li>
+<li>使用 CA 证书的公钥对数字签名 S 进行解密,得到 S’</li>
+<li>使用 CA 证书中说明的 hash 算法对明文进行 hash 得到 T’</li>
+<li>比较 S’ 是否与 T’ 相同,判断证书是否可信</li>
+</ul>
+<h3 id="HTTPS-必须在每次请求中都要先在-SSL-TLS-层进行握手传输密钥吗"><a href="#HTTPS-必须在每次请求中都要先在-SSL-TLS-层进行握手传输密钥吗" class="headerlink" title="HTTPS 必须在每次请求中都要先在 SSL/TLS 层进行握手传输密钥吗"></a>HTTPS 必须在每次请求中都要先在 SSL/TLS 层进行握手传输密钥吗</h3><p>服务器会为每个客户端软件维护一个 session ID,在 TSL 握手阶段传给浏览器,浏览器生成好密钥传给服务器后,服务器会把该密钥存到相应的 session ID 下,之后浏览器每次请求都会携带 session ID,服务器会根据 session ID 找到相应的密钥并进行解密加密操作,这样就不必要每次重新制作/传输密钥了.</p>
+<h2 id="SSL-TLS-加密总览"><a href="#SSL-TLS-加密总览" class="headerlink" title="SSL/TLS 加密总览"></a>SSL/TLS 加密总览</h2><p>SSL/TLS 安全层协议位于应用层和 TCP/IP 层之间,可以使得通信双方建立安全的通信通道,实现安全的数据传输.</p>
+<p>SSL/TLS 协议可分为两层.如下:</p>
+<ul>
+<li>握手协议层,由三个子协议组成: 握手协议(Handshake Protocol),密钥交换协议(Change Cipher Spec Protocol)和告警协议(Alert Protocol).</li>
+<li>记录协议层(不做详细介绍)</li>
+</ul>
+<p><img src="/.io//ssl-tls-protocol-layers.gif" alt="SSL/TLS Protocol Layers"></p>
+<h3 id="握手过程"><a href="#握手过程" class="headerlink" title="握手过程"></a>握手过程</h3><h4 id="子协议"><a href="#子协议" class="headerlink" title="子协议"></a>子协议</h4><p>握手协议层包含如下子协议</p>
+<ul>
+<li>握手协议</li>
+</ul>
+<p>此子协议用于协商客户端与服务端之间的会话信息,包括会话 ID,证书协商,要使用的密钥规范,压缩算法以及用于生成密钥的共享加密信息等</p>
+<ul>
+<li>密钥交换</li>
+</ul>
+<p>此子协议用于更改客户端和服务端用于加密的元数据,子协议包含一条用于告知 SSL/TLS 会话中的另一方希望更改为一组新的密钥的消息.根据握手子协议的交换信息来计算密钥.</p>
+<ul>
+<li>告警协议</li>
+</ul>
+<p>告警消息用于向另一方指示状态更改或错误信息.警报可以将正常情况和错误情况通知给另一方.高兴消息的完整列表可以在 RFC 2246 “TLS 协议版本 1.0 中找到.在关闭连接,接收到无效消息,无法解密消息或用户取消操作时,通常会发送告警信息.</p>
+<h4 id="功能"><a href="#功能" class="headerlink" title="功能"></a>功能</h4><blockquote>
+<p>身份认证</p>
+</blockquote>
+<p>握手协议使用 X.509 证书进行身份认证</p>
+<blockquote>
+<p>加密</p>
+</blockquote>
+<p>SSL/TLS 同时使用了对称加密与非对称加密.</p>
+<p>SSL/TLS 客户端使用公钥对服务端进行认证,生成一个会话密钥.服务端与客户端使用会话密钥加密/加密传输的数据.</p>
+<blockquote>
+<p>哈希算法</p>
+</blockquote>
+<p>在握手过程中,对数据使用的哈希算法也必须达成一致.哈希算法用于检查所传输数据的完整性.</p>
+<h2 id="SSL-TLS-握手过程详解"><a href="#SSL-TLS-握手过程详解" class="headerlink" title="SSL/TLS 握手过程详解"></a>SSL/TLS 握手过程详解</h2><p>握手协议是一系列已经排序的消息,用于协商数据传输会话中的参数信息.下图说明了握手协议中的消息序列.</p>
+<p><img src="/.io//handshake-protocol-message.gif" alt="Handshake Protocol Messages"></p>
+<h3 id="第一阶段-Initial-Client-Message-to-Server"><a href="#第一阶段-Initial-Client-Message-to-Server" class="headerlink" title="第一阶段: Initial Client Message to Server"></a>第一阶段: Initial Client Message to Server</h3><p>客户端向服务端发送请求包含如下信息:</p>
+<h4 id="Client-Hello-Client-Hello-消息"><a href="#Client-Hello-Client-Hello-消息" class="headerlink" title="Client Hello: Client Hello 消息"></a><code>Client Hello</code>: Client Hello 消息</h4><p>客户端通过向服务端发送 <code>Client Hello</code> 消息来启动会话.<code>Client Hello</code> 消息包括</p>
+<ul>
+<li><strong>Version Number</strong>: 客户端发送其支持的 SSL/TLS 安全通信协议的最高版本号.<ul>
+<li>2 表示 SSL 2.0</li>
+<li>3 表示 SSL 3.0</li>
+<li>3.1 表示 TLS</li>
+</ul>
+</li>
+<li><strong>Randomly Generated Data</strong>: <code>ClientRandom[32]</code>.一个随机值,由客户端的日期和时间 4 字节的数字和 28 字节随机数字组成.该随机值将与服务端随机值一起生成 master secret,用于从中分发加密密钥.</li>
+<li><strong>Session Identification</strong>: 会话标识(如果有).包含 Session ID 可以使客户端恢复上一次会话.恢复上一次会话很有用,因为创建新会话需要占用大量处理器资源.</li>
+<li><strong>Cipher Suite</strong>: 加密套件.客户端上支持的加密套件列表.如,<code>TLS_RSA_WITH_DES_CBC_SHA</code>.</li>
+<li><strong>Compression Algorithm</strong>: 压缩算法.请求的压缩算法,当前阶段为空.</li>
+</ul>
+<p><code>Client Hello</code> 消息示例如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ClientVersion 3,1</span><br><span class="line">ClientRandom[32]</span><br><span class="line">SessionID: None (new session)</span><br><span class="line">Suggested Cipher Suites:</span><br><span class="line">   TLS_RSA_WITH_3DES_EDE_CBC_SHA</span><br><span class="line">   TLS_RSA_WITH_DES_CBC_SHA</span><br><span class="line">Suggested Compression Algorithm: NONE</span><br></pre></td></tr></table></figure>
+
+<h3 id="第二阶段-Server-Response-to-Client"><a href="#第二阶段-Server-Response-to-Client" class="headerlink" title="第二阶段: Server Response to Client"></a>第二阶段: Server Response to Client</h3><p>服务端向客户端发送响应包含如下信息:</p>
+<h4 id="Server-Hello-Server-Hello-消息"><a href="#Server-Hello-Server-Hello-消息" class="headerlink" title="Server Hello: Server Hello 消息"></a><code>Server Hello</code>: Server Hello 消息</h4><p>服务端响应包含 <code>Server Hello</code> 消息,<code>Server Hello</code> 消息包括</p>
+<ul>
+<li><strong>Version Number</strong>: 服务端发送通信双方都支持的 SSL/TLS 安全通信协议的最高版本号.<ul>
+<li>2 表示 SSL 2.0</li>
+<li>3 表示 SSL 3.0</li>
+<li>3.1 表示 TLS</li>
+</ul>
+</li>
+<li><strong>Randomly Generated Data</strong>: <code>ServerRandom[32]</code>.由服务端的日期和时间 4 字节的数字和 28 字节随机数字组成.该随机值将与客户端随机值一起生成 master secret,用于从中分发加密密钥.</li>
+<li><strong>Session Identification</strong>: 会话标识(如果有).有如下三个类别<ul>
+<li>New session ID: 客户端未指定要恢复的会话,由服务端生成新的 ID.当客户端指要恢复会话,但服务端无法恢复会话时,也会生成一个新会话 ID</li>
+<li>Resumed Session ID: 客户端指定要恢复的会话,且服务端愿意恢复该会话</li>
+<li>Null: 创建一个新会话,但服务端不会在以后恢复它,因此不会返回任何 ID</li>
+</ul>
+</li>
+<li><strong>Cipher Suite</strong>: 加密套件.服务端与客户端均支持的最高加密套件.如果为空,则会话以 “handshake failure” 告警结束</li>
+<li><strong>Compression Algorithm</strong>: 压缩算法.指定压缩算法,当前阶段为空.</li>
+</ul>
+<p><code>Server Hello</code> 消息示例如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Version 3,1</span><br><span class="line">ServerRandom[32]</span><br><span class="line">SessionID: bd608869f0c629767ea7e3ebf7a63bdcffb0ef58b1b941e6b0c044acb6820a77</span><br><span class="line">Use Cipher Suite:</span><br><span class="line">TLS_RSA_WITH_3DES_EDE_CBC_SHA</span><br><span class="line">Compression Algorithm: NONE</span><br></pre></td></tr></table></figure>
+
+<h4 id="Server-Certificate-服务端证书"><a href="#Server-Certificate-服务端证书" class="headerlink" title="Server Certificate: 服务端证书"></a><code>Server Certificate</code>: 服务端证书</h4><p>服务端将其证书发送给客户端,服务端证书包含服务的公钥.客户端将使用此公钥对服务端进行身份验证,并加密 master secret.</p>
+<h4 id="Server-Key-Exchange-服务端密钥交换消息-可选"><a href="#Server-Key-Exchange-服务端密钥交换消息-可选" class="headerlink" title="Server Key Exchange: 服务端密钥交换消息(可选)"></a><code>Server Key Exchange</code>: 服务端密钥交换消息(可选)</h4><p>服务端创建一个临时密钥并将其发送给客户端.客户端使用此密钥在此后过程加密客户端密钥交换消息.</p>
+<p>仅当公钥算法未提供加密客户端密钥交换消息所需的密钥材料时(如,服务端证书不包含公钥时),才执行此步骤.</p>
+<h4 id="Client-Certificate-Request-客户端证书请求-可选"><a href="#Client-Certificate-Request-客户端证书请求-可选" class="headerlink" title="Client Certificate Request: 客户端证书请求(可选)"></a><code>Client Certificate Request</code>: 客户端证书请求(可选)</h4><p>服务端请求客户端身份认证.</p>
+<p>此步骤用于服务端需要确认客户端身份的场景,多用于敏感场景下的双向认证.如,银行客户端与服务端要求双向认证</p>
+<h4 id="Server-Hello-Done"><a href="#Server-Hello-Done" class="headerlink" title="Server Hello Done"></a><code>Server Hello Done</code></h4><p>此消息表明服务端响应已完成,等待客户端响应</p>
+<h3 id="第三阶段-Client-Response-to-Server"><a href="#第三阶段-Client-Response-to-Server" class="headerlink" title="第三阶段: Client Response to Server"></a>第三阶段: Client Response to Server</h3><p>客户端向服务端发送响应包含如下信息:</p>
+<h4 id="Client-Certificate-客户端证书-可选"><a href="#Client-Certificate-客户端证书-可选" class="headerlink" title="Client Certificate: 客户端证书(可选)"></a><code>Client Certificate</code>: 客户端证书(可选)</h4><p>客户端证书,如果服务端发送了客户端证书请求,则客户端将其证书发送到服务器以进行客户端身份验证.客户的证书包含客户端的公钥</p>
+<h4 id="Client-Key-Exchange-客户端密钥交换"><a href="#Client-Key-Exchange-客户端密钥交换" class="headerlink" title="Client Key Exchange: 客户端密钥交换"></a><code>Client Key Exchange</code>: 客户端密钥交换</h4><p>客户端使用 Hello 阶段的两个随机值计算 master secret 后,将发送客户端密钥交换消息.master secret 会先通过服务端证书的公钥加密,然后再传输到服务器.双方在本地计算 master secret,并从中获取会话密钥.</p>
+<h4 id="Certificate-Verify-证书认证消息-可选"><a href="#Certificate-Verify-证书认证消息-可选" class="headerlink" title="Certificate Verify: 证书认证消息(可选)"></a><code>Certificate Verify</code>: 证书认证消息(可选)</h4><p>客户端发送了客户端认证消息时,才发送此消息</p>
+<h4 id="Change-Cipher-Spec-加密套件修改消息"><a href="#Change-Cipher-Spec-加密套件修改消息" class="headerlink" title="Change Cipher Spec: 加密套件修改消息"></a><code>Change Cipher Spec</code>: 加密套件修改消息</h4><p>此消息通知服务器,将使用刚刚协商的密钥和算法对”Client Finished”消息之后的所有消息进行加密.</p>
+<h4 id="Client-Finished-客户端握手结束消息"><a href="#Client-Finished-客户端握手结束消息" class="headerlink" title="Client Finished: 客户端握手结束消息"></a><code>Client Finished</code>: 客户端握手结束消息</h4><p>此消息是前面发送的所有内容的 hash 值,供服务器校验.此消息表示客户端的握手阶段已经结束.</p>
+<h3 id="第四阶段-Server-Final-Response-to-Client"><a href="#第四阶段-Server-Final-Response-to-Client" class="headerlink" title="第四阶段: Server Final Response to Client"></a>第四阶段: Server Final Response to Client</h3><h4 id="Change-Cipher-Spec-Message-加密套件修改消息"><a href="#Change-Cipher-Spec-Message-加密套件修改消息" class="headerlink" title="Change Cipher Spec Message: 加密套件修改消息"></a><code>Change Cipher Spec Message</code>: 加密套件修改消息</h4><p>此消息通知客户端服务器将开始使用刚刚协商的密钥对消息进行加密</p>
+<h4 id="Server-Finished-Message-服务端握手结束消息"><a href="#Server-Finished-Message-服务端握手结束消息" class="headerlink" title="Server Finished Message: 服务端握手结束消息"></a><code>Server Finished Message</code>: 服务端握手结束消息</h4><p>此消息是前面发送的所有内容的 hash 值,供客户端校验.此消息表示服务端的握手阶段已经结束</p>
+<p>至此,整个握手阶段全部结束.接下来,客户端与服务器进入加密通信,完全是使用普通的 HTTP 协议,只不过用”会话密钥”加密内容.</p>
+<h2 id="事件驱动的-Alert-Messages"><a href="#事件驱动的-Alert-Messages" class="headerlink" title="事件驱动的 Alert Messages"></a>事件驱动的 Alert Messages</h2><p>告警子协议是握手协议的组件,该协议可以从任何一方发送事件驱动的告警消息.收到告警消息后,会话要么结束,要么让接收者选择是否接受会话.</p>
+<p>下表列出了告警消息及说明,已备后续查阅</p>
+<table>
+<thead>
+<tr>
+<th align="center">Alert Message</th>
+<th align="center">Fatal?</th>
+<th align="center">Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">unexpected_message</td>
+<td align="center">Yes</td>
+<td align="center">非法消息</td>
+</tr>
+<tr>
+<td align="center">bad_record_mac</td>
+<td align="center">Yes</td>
+<td align="center">错误的 MAC</td>
+</tr>
+<tr>
+<td align="center">decryption_failed</td>
+<td align="center">Yes</td>
+<td align="center">无法解密 TLSCiphertext TLS 密文</td>
+</tr>
+<tr>
+<td align="center">record_overflow</td>
+<td align="center">Yes</td>
+<td align="center">记录超过 2^14+1024 字节</td>
+</tr>
+<tr>
+<td align="center">handshake_failure</td>
+<td align="center">Yes</td>
+<td align="center">不可接受的加密套件</td>
+</tr>
+<tr>
+<td align="center">bad_certificate</td>
+<td align="center">Yes</td>
+<td align="center">证书出现问题</td>
+</tr>
+<tr>
+<td align="center">unsupported_certificate</td>
+<td align="center">No</td>
+<td align="center">不支持的证书</td>
+</tr>
+<tr>
+<td align="center">certificate_revoked</td>
+<td align="center">No</td>
+<td align="center">证书已被吊销</td>
+</tr>
+<tr>
+<td align="center">certificate_expired</td>
+<td align="center">No</td>
+<td align="center">证书已过期</td>
+</tr>
+<tr>
+<td align="center">certificate_unknown</td>
+<td align="center">No</td>
+<td align="center">证书不受信任</td>
+</tr>
+<tr>
+<td align="center">illegal_parameter</td>
+<td align="center">Yes</td>
+<td align="center">非法加密参数</td>
+</tr>
+<tr>
+<td align="center">unknown_ca</td>
+<td align="center">Yes</td>
+<td align="center">CA 不受信任</td>
+</tr>
+<tr>
+<td align="center">access_denied</td>
+<td align="center">Yes</td>
+<td align="center">发送方不同意协商</td>
+</tr>
+<tr>
+<td align="center">decode_error</td>
+<td align="center">Yes</td>
+<td align="center">无法解码消息</td>
+</tr>
+<tr>
+<td align="center">decrypt_error</td>
+<td align="center">Yes</td>
+<td align="center">握手加密操作失败</td>
+</tr>
+<tr>
+<td align="center">export_restriction</td>
+<td align="center">Yes</td>
+<td align="center">Not in compliance with export regulations</td>
+</tr>
+<tr>
+<td align="center">protocol_version</td>
+<td align="center">Yes</td>
+<td align="center">双方不都支持的协议版本</td>
+</tr>
+<tr>
+<td align="center">insufficient_security</td>
+<td align="center">Yes</td>
+<td align="center">没有达到安全要求</td>
+</tr>
+<tr>
+<td align="center">internal_error</td>
+<td align="center">Yes</td>
+<td align="center">与协议无关的错误</td>
+</tr>
+<tr>
+<td align="center">user_canceled</td>
+<td align="center">Yes</td>
+<td align="center">与协议无关的失败</td>
+</tr>
+<tr>
+<td align="center">no_renegotiation</td>
+<td align="center">No</td>
+<td align="center">协商请求被拒绝</td>
+</tr>
+</tbody></table>
+<h2 id="HTTPS-连接过程"><a href="#HTTPS-连接过程" class="headerlink" title="HTTPS 连接过程"></a>HTTPS 连接过程</h2><p>上面描述的 HTTPS 连接过程太繁琐了.下面简化一下,方便记忆:</p>
+<ol>
+<li>客户端通过发送 <code>Client Hello</code> 报文开始 SSL 通信.报文中包含客户端支持的 SSL 的版本和加密组件(Cipher Suite)列表</li>
+<li>服务端发送 <code>Server Hello</code> 报文作为响应.同样的,报文中包含 SSL 版本以及加密组件</li>
+<li>服务端发送 <code>Certificate</code> 报文,报文中包含公钥证书.并发送 <code>Server Hello Done</code> 报文通知客户端,最初阶段 SSL 握手协商结束</li>
+<li>客户端密钥交换,以 <code>Client Key Exchange</code> 报文作为回应.报文中包含通信加密时使用的一种被称为 <code>Pre-master secret</code> 的随机密码串.该报文已用步骤 3 中公钥进行加密</li>
+<li>客户端继续发送 <code>Change Cipher Spec</code> 报文.该报文会提示服务器,在此报文之后的通信会采用 <code>Pre-master secret</code> 密钥加密</li>
+<li>客户端发送 <code>Finished</code> 报文.该报文包含连接至今全部报文的整体校验值</li>
+<li>服务器同样发送 <code>Change Cipher Spec</code> 报文和 <code>Finished</code> 报文</li>
+<li>SSL 连接建立完成,后续发送 HTTP 请求</li>
+</ol>
+<hr>
+<p>参考:</p>
+<ul>
+<li><a href="https://zhuanlan.zhihu.com/p/43789231" target="_blank" rel="noopener">彻底搞懂HTTPS的加密机制</a></li>
+<li><a href="https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2003/cc781476(v=ws.10)" target="_blank" rel="noopener">Overview of SSL/TLS Encryption</a></li>
+<li><a href="https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2003/cc785811(v=ws.10)" target="_blank" rel="noopener">SSL/TLS in Detail</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div>Buy me a cup of coffee.</div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    <!--打赏-->
+    赏
+  </button>
+  <div id="qr" style="display: none;">
+      
+      <div style="display: inline-block;">
+        <img src="/images/wechatpay.jpg" alt="纸盒人 微信支付">
+        <p>微信支付</p>
+      </div>
+      
+      <div style="display: inline-block;">
+        <img src="/images/alipay.jpg" alt="纸盒人 支付宝">
+        <p>支付宝</p>
+      </div>
+
+  </div>
+</div>
+
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>纸盒人
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://hulining.github.io/2020/06/09/ssl-tls-encryption-details/" title="HTTPS 加密机制">https://hulining.github.io/2020/06/09/ssl-tls-encryption-details/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          
+          <div class="post-tags">
+              <a href="/tags/%E9%9D%A2%E8%AF%95/" rel="tag"><i class="fa fa-tag"></i> 面试</a>
+              <a href="/tags/HTTPS/" rel="tag"><i class="fa fa-tag"></i> HTTPS</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/06/08/diffenerce-between-init-and-new-method-in-python/" rel="prev" title="Python 中 __init__ 和 __new__ 的区别">
+      <i class="fa fa-chevron-left"></i> Python 中 __init__ 和 __new__ 的区别
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/06/09/python-garbage-collection/" rel="next" title="Python 垃圾回收">
+      Python 垃圾回收 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          <!--文章目录-->
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          <!--站点概览-->
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#FAQ"><span class="nav-number">1.</span> <span class="nav-text">FAQ</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么需要加密"><span class="nav-number">1.1.</span> <span class="nav-text">为什么需要加密</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是中间人攻击"><span class="nav-number">1.2.</span> <span class="nav-text">什么是中间人攻击</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是对称加密"><span class="nav-number">1.3.</span> <span class="nav-text">什么是对称加密</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是非对称加密"><span class="nav-number">1.4.</span> <span class="nav-text">什么是非对称加密</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTPS-必须在每次请求中都要先在-SSL-TLS-层进行握手传输密钥吗"><span class="nav-number">1.5.</span> <span class="nav-text">HTTPS 必须在每次请求中都要先在 SSL&#x2F;TLS 层进行握手传输密钥吗</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SSL-TLS-加密总览"><span class="nav-number">2.</span> <span class="nav-text">SSL&#x2F;TLS 加密总览</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#握手过程"><span class="nav-number">2.1.</span> <span class="nav-text">握手过程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SSL-TLS-握手过程详解"><span class="nav-number">3.</span> <span class="nav-text">SSL&#x2F;TLS 握手过程详解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#第一阶段-Initial-Client-Message-to-Server"><span class="nav-number">3.1.</span> <span class="nav-text">第一阶段: Initial Client Message to Server</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第二阶段-Server-Response-to-Client"><span class="nav-number">3.2.</span> <span class="nav-text">第二阶段: Server Response to Client</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第三阶段-Client-Response-to-Server"><span class="nav-number">3.3.</span> <span class="nav-text">第三阶段: Client Response to Server</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第四阶段-Server-Final-Response-to-Client"><span class="nav-number">3.4.</span> <span class="nav-text">第四阶段: Server Final Response to Client</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#事件驱动的-Alert-Messages"><span class="nav-number">4.</span> <span class="nav-text">事件驱动的 Alert Messages</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HTTPS-连接过程"><span class="nav-number">5.</span> <span class="nav-text">HTTPS 连接过程</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="纸盒人"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">纸盒人</p>
+  <div class="site-description" itemprop="description">Keep it simple,Keep improving</div>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/hulining" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;hulining" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:loserkid@163.com" title="E-Mail → mailto:loserkid@163.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://music.163.com/#/user/home?id=71153860" title="网易云音乐 → https:&#x2F;&#x2F;music.163.com&#x2F;#&#x2F;user&#x2F;home?id&#x3D;71153860" rel="noopener" target="_blank"><i class="fa fa-fw fa-music"></i></a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">纸盒人</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/pjax/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '#page-configurations',
+    '.content-wrap',
+    '.post-toc-wrap',
+    '.languages',
+    '#pjax'
+  ],
+  switches: {
+    '.post-toc-wrap': Pjax.switches.innerHTML
+  },
+  analytics: false,
+  cacheBust: false,
+  scrollTo : !CONFIG.bookmark.enable
+});
+
+window.addEventListener('pjax:success', () => {
+  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
+    var code = element.text || element.textContent || element.innerHTML || '';
+    var parent = element.parentNode;
+    parent.removeChild(element);
+    var script = document.createElement('script');
+    if (element.id) {
+      script.id = element.id;
+    }
+    if (element.className) {
+      script.className = element.className;
+    }
+    if (element.type) {
+      script.type = element.type;
+    }
+    if (element.src) {
+      script.src = element.src;
+      // Force synchronous loading of peripheral JS.
+      script.async = false;
+    }
+    if (element.dataset.pjax !== undefined) {
+      script.dataset.pjax = '';
+    }
+    if (code !== '') {
+      script.appendChild(document.createTextNode(code));
+    }
+    parent.appendChild(script);
+  });
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+
+
+  
+  <script data-pjax>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+<script data-pjax>
+if (document.querySelectorAll('pre.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js', () => {
+    mermaid.initialize({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    });
+  }, window.mermaid);
+}
+</script>
+
+
+    <div id="pjax">
+  
+
+  
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'a61ca599f9a038ebe5b3',
+      clientSecret: 'bcc9edf1847c09ad9452180f0fa44d69a11a4c9f',
+      repo        : 'https://github.com/hulining/hulining.github.io.git',
+      owner       : 'hulining',
+      admin       : ['hulining'],
+      id          : '194d033bcadd4fa695e356d45a548fc1',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+    </div>
+</body>
+</html>
