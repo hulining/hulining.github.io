@@ -105,7 +105,7 @@ theme: next
 deploy:
   type: git
   repo: https://github_token@github.com/hulining/hulining.github.io.git
-  branch: main
+  branch: gh-pages
   name: hulining
   email: loserkid@163.com
 
