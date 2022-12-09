@@ -6293,69 +6293,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Golang 项目结构</title>
-    <url>/2020/06/24/golang-standards-project-layout/</url>
-    <content><![CDATA[<p><a href="https://github.com/golang-standards/project-layout" target="_blank" rel="noopener">https://github.com/golang-standards/project-layout</a> 项目是常见的 Go 项目代码的布局方式.我们在阅读或开发 Go 项目时,可以遵循此项目中的布局方式进行组织代码.</p>
-<p>以下是 Go 项目中常见目录及其简单介绍.</p>
-<h2 id="Go-目录"><a href="#Go-目录" class="headerlink" title="Go 目录"></a>Go 目录</h2><ul>
-<li><code>/cmd</code>: 项目的主程序目录</li>
-</ul>
-<p>每个应用程序的目录名称应该与您的可执行文件名称一致.如 <code>/cmd/myapp</code>.</p>
-<p>不要在此目录中放置很多代码.如果您任务该代码可以被导入并在其它项目中使用,则应将其放在 <code>/pkg</code> 目录中.如果代码不可导入或不希望其他人使用它,则应将代码放在 <code>/internal</code> 目录中.</p>
-<p>此目录下通常有一个简单的 main 函数,并通过导入或调用 <code>/internal</code> 和 <code>/pkg</code> 目录中的代码,而没有其他的函数.</p>
-<p>如,<a href="https://github.com/prometheus/prometheus/tree/master/cmd" target="_blank" rel="noopener">prometheus/cmd</a></p>
-<ul>
-<li><p><code>/internal</code>: 私有应用程序和代码库.放在该包中的代码,表明只希望在此项目内部使用,其它项目不能使用.</p>
-</li>
-<li><p><code>/pkg</code>: 外部应用程序可以使用的库代码.该目录与 <code>internal</code> 对应,是公开的.如 <a href="https://github.com/prometheus/prometheus/tree/master/pkg" target="_blank" rel="noopener">prometheus/pkg</a>.</p>
-</li>
-</ul>
-<p>一般来说,放在该目录下的代码应该和具体业务无关,方便本项目或其他项目重用.当你决定将代码放入该包时,你应该对其负责,因为别人很可能使用它.</p>
-<ul>
-<li><code>/vendor</code>: 应用程序依赖项目录.</li>
-</ul>
-<p><code>go mod vendor</code> 命令将为您创建 <code>/vendor</code> 目录.注意,如果您使用的不是 Go 1.14 版本(1.14 版本默认开启),则可能需要在 <code>go build</code> 命令中添加 <code>-mod=vender</code> 标志.</p>
-<p>注意,从 1.13 开始,Go 还启用了模块代码功能(默认情况下使用 <a href="https://proxy.golang.org" target="_blank" rel="noopener"><code>https://proxy.golang.org</code></a> 作为其模块的代理服务器).如果是这样,那么您根本不需要 <code>vendor</code> 目录.</p>
-<h2 id="服务应用目录"><a href="#服务应用目录" class="headerlink" title="服务应用目录"></a>服务应用目录</h2><ul>
-<li><code>/api</code>: 主要保存 OpenAPI/Swagger 规范, JSON 格式文件和协议定义文件.如 <a href="https://github.com/kubernetes/kubernetes/tree/master/api" target="_blank" rel="noopener">kubernetes/api</a></li>
-</ul>
-<h2 id="Web-应用目录"><a href="#Web-应用目录" class="headerlink" title="Web 应用目录"></a>Web 应用目录</h2><ul>
-<li><code>/web</code>: Web 应用程序特定的组件,包含静态 Web 资源,服务端模版和 SPA.</li>
-</ul>
-<h2 id="常见应用目录"><a href="#常见应用目录" class="headerlink" title="常见应用目录"></a>常见应用目录</h2><ul>
-<li><code>/configs</code>: 配置文件模版或默认配置目录.</li>
-<li><code>/init</code>: 系统初始化(systemd, upstart,sysv)和进程管理/监控(runit, supervisord) 配置.</li>
-<li><code>/scripts</code>: 用于执行构建,安装,分析等操作的各种脚本.</li>
-</ul>
-<p>这些脚本可使根目录下的 Makefile 变得简单.如 <a href="https://github.com/hashicorp/terraform/blob/master/Makefile" target="_blank" rel="noopener">terraform/Makefile</a>, <a href="https://github.com/helm/helm/tree/master/scripts" target="_blank" rel="noopener">helm/scripts</a>.</p>
-<ul>
-<li><code>/build</code>: 打包构建与持续集成.</li>
-</ul>
-<p>将您的容器,操作系统软件包配置和脚本放在 <code>/build/package</code> 目录中.将您的持续集成(travis, circle, drone)配置和脚本放在 <code>/build/ci</code> 目录中.注意,有些 CI 工具对于其配置文件的位置非常挑剔.尝试将其放在 <code>/build/ci</code> 目录中,并将其链接到工具期望的位置(如果可能).</p>
-<ul>
-<li><code>/deployments</code>: Iaas, Paas 系统和容器编排配置和模版目录.注意,有些代码仓库中,该目录为 <code>/deploy</code>.</li>
-<li><code>/test</code>: 其它外部测试应用程序和测试数据目录.</li>
-</ul>
-<h2 id="其它目录"><a href="#其它目录" class="headerlink" title="其它目录"></a>其它目录</h2><ul>
-<li><code>/docs</code>: 用户帮助文档.</li>
-<li><code>/tools</code>: 此项目的工具.这些工具可以从 <code>/pkg</code> 和 <code>internal</code> 目录中导入代码</li>
-<li><code>/examples</code>: 应用程序或公共库的示例</li>
-<li><code>/third_party</code>: 第三方工具</li>
-<li><code>/assets</code>: 仓库的其它资源.如,图片, logo 等</li>
-<li><code>/website</code>: 项目的网站数据目录.</li>
-</ul>
-<h2 id="不应该包含的目录"><a href="#不应该包含的目录" class="headerlink" title="不应该包含的目录"></a>不应该包含的目录</h2><ul>
-<li><code>/src</code>: 不要将 Java 项目的代码结构组织习惯应用到 Go 中</li>
-</ul>
-]]></content>
-      <categories>
-        <category>go</category>
-      </categories>
-      <tags>
-        <tag>go</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>goroutine 与 GMP 模型介绍</title>
     <url>/2021/03/09/goroutine-and-GMP-model/</url>
     <content><![CDATA[<h2 id="goroutine"><a href="#goroutine" class="headerlink" title="goroutine"></a>goroutine</h2><p>Go 为了提供更容易使用的并发方法,使用了 goroutine 和 channel.goroutine 来自协程的概念,让一组可复用的函数运行在一组线程之上,即使有协程阻塞,该线程的其他协程也可以被 <code>runtime</code> 调度,转移到其他可运行的线程上.</p>
@@ -8302,6 +8239,69 @@
       </tags>
   </entry>
   <entry>
+    <title>Golang 项目结构</title>
+    <url>/2020/06/24/golang-standards-project-layout/</url>
+    <content><![CDATA[<p><a href="https://github.com/golang-standards/project-layout" target="_blank" rel="noopener">https://github.com/golang-standards/project-layout</a> 项目是常见的 Go 项目代码的布局方式.我们在阅读或开发 Go 项目时,可以遵循此项目中的布局方式进行组织代码.</p>
+<p>以下是 Go 项目中常见目录及其简单介绍.</p>
+<h2 id="Go-目录"><a href="#Go-目录" class="headerlink" title="Go 目录"></a>Go 目录</h2><ul>
+<li><code>/cmd</code>: 项目的主程序目录</li>
+</ul>
+<p>每个应用程序的目录名称应该与您的可执行文件名称一致.如 <code>/cmd/myapp</code>.</p>
+<p>不要在此目录中放置很多代码.如果您任务该代码可以被导入并在其它项目中使用,则应将其放在 <code>/pkg</code> 目录中.如果代码不可导入或不希望其他人使用它,则应将代码放在 <code>/internal</code> 目录中.</p>
+<p>此目录下通常有一个简单的 main 函数,并通过导入或调用 <code>/internal</code> 和 <code>/pkg</code> 目录中的代码,而没有其他的函数.</p>
+<p>如,<a href="https://github.com/prometheus/prometheus/tree/master/cmd" target="_blank" rel="noopener">prometheus/cmd</a></p>
+<ul>
+<li><p><code>/internal</code>: 私有应用程序和代码库.放在该包中的代码,表明只希望在此项目内部使用,其它项目不能使用.</p>
+</li>
+<li><p><code>/pkg</code>: 外部应用程序可以使用的库代码.该目录与 <code>internal</code> 对应,是公开的.如 <a href="https://github.com/prometheus/prometheus/tree/master/pkg" target="_blank" rel="noopener">prometheus/pkg</a>.</p>
+</li>
+</ul>
+<p>一般来说,放在该目录下的代码应该和具体业务无关,方便本项目或其他项目重用.当你决定将代码放入该包时,你应该对其负责,因为别人很可能使用它.</p>
+<ul>
+<li><code>/vendor</code>: 应用程序依赖项目录.</li>
+</ul>
+<p><code>go mod vendor</code> 命令将为您创建 <code>/vendor</code> 目录.注意,如果您使用的不是 Go 1.14 版本(1.14 版本默认开启),则可能需要在 <code>go build</code> 命令中添加 <code>-mod=vender</code> 标志.</p>
+<p>注意,从 1.13 开始,Go 还启用了模块代码功能(默认情况下使用 <a href="https://proxy.golang.org" target="_blank" rel="noopener"><code>https://proxy.golang.org</code></a> 作为其模块的代理服务器).如果是这样,那么您根本不需要 <code>vendor</code> 目录.</p>
+<h2 id="服务应用目录"><a href="#服务应用目录" class="headerlink" title="服务应用目录"></a>服务应用目录</h2><ul>
+<li><code>/api</code>: 主要保存 OpenAPI/Swagger 规范, JSON 格式文件和协议定义文件.如 <a href="https://github.com/kubernetes/kubernetes/tree/master/api" target="_blank" rel="noopener">kubernetes/api</a></li>
+</ul>
+<h2 id="Web-应用目录"><a href="#Web-应用目录" class="headerlink" title="Web 应用目录"></a>Web 应用目录</h2><ul>
+<li><code>/web</code>: Web 应用程序特定的组件,包含静态 Web 资源,服务端模版和 SPA.</li>
+</ul>
+<h2 id="常见应用目录"><a href="#常见应用目录" class="headerlink" title="常见应用目录"></a>常见应用目录</h2><ul>
+<li><code>/configs</code>: 配置文件模版或默认配置目录.</li>
+<li><code>/init</code>: 系统初始化(systemd, upstart,sysv)和进程管理/监控(runit, supervisord) 配置.</li>
+<li><code>/scripts</code>: 用于执行构建,安装,分析等操作的各种脚本.</li>
+</ul>
+<p>这些脚本可使根目录下的 Makefile 变得简单.如 <a href="https://github.com/hashicorp/terraform/blob/master/Makefile" target="_blank" rel="noopener">terraform/Makefile</a>, <a href="https://github.com/helm/helm/tree/master/scripts" target="_blank" rel="noopener">helm/scripts</a>.</p>
+<ul>
+<li><code>/build</code>: 打包构建与持续集成.</li>
+</ul>
+<p>将您的容器,操作系统软件包配置和脚本放在 <code>/build/package</code> 目录中.将您的持续集成(travis, circle, drone)配置和脚本放在 <code>/build/ci</code> 目录中.注意,有些 CI 工具对于其配置文件的位置非常挑剔.尝试将其放在 <code>/build/ci</code> 目录中,并将其链接到工具期望的位置(如果可能).</p>
+<ul>
+<li><code>/deployments</code>: Iaas, Paas 系统和容器编排配置和模版目录.注意,有些代码仓库中,该目录为 <code>/deploy</code>.</li>
+<li><code>/test</code>: 其它外部测试应用程序和测试数据目录.</li>
+</ul>
+<h2 id="其它目录"><a href="#其它目录" class="headerlink" title="其它目录"></a>其它目录</h2><ul>
+<li><code>/docs</code>: 用户帮助文档.</li>
+<li><code>/tools</code>: 此项目的工具.这些工具可以从 <code>/pkg</code> 和 <code>internal</code> 目录中导入代码</li>
+<li><code>/examples</code>: 应用程序或公共库的示例</li>
+<li><code>/third_party</code>: 第三方工具</li>
+<li><code>/assets</code>: 仓库的其它资源.如,图片, logo 等</li>
+<li><code>/website</code>: 项目的网站数据目录.</li>
+</ul>
+<h2 id="不应该包含的目录"><a href="#不应该包含的目录" class="headerlink" title="不应该包含的目录"></a>不应该包含的目录</h2><ul>
+<li><code>/src</code>: 不要将 Java 项目的代码结构组织习惯应用到 Go 中</li>
+</ul>
+]]></content>
+      <categories>
+        <category>go</category>
+      </categories>
+      <tags>
+        <tag>go</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>K8S 实战 - 06 Service 和 Ingress</title>
     <url>/2021/03/18/kubernetes-in-action-06-service-and-ingress/</url>
     <content><![CDATA[<p>Kubernetes 提供了两种内建的云端负载均衡机制用于发布公共应用,一种是工作于传输层的 Service 资源,另一种是工作与应用层的 Ingress 资源</p>
@@ -9450,6 +9450,95 @@
       </categories>
       <tags>
         <tag>MySQL</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Nginx 易错记录</title>
+    <url>/2022/12/09/nginx-error-prone-record/</url>
+    <content><![CDATA[<h2 id="upstream-keepalive-配置后不生效问题"><a href="#upstream-keepalive-配置后不生效问题" class="headerlink" title="upstream keepalive 配置后不生效问题"></a>upstream keepalive 配置后不生效问题</h2><h3 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h3><p>按照如下方式配置 keepalive 之后发现 nginx 与 upstream server 的长连接并没有开启.</p>
+<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="attr">upstream</span> <span class="string">test &#123;</span></span><br><span class="line">    <span class="attr">keepalive</span> <span class="string">16;</span></span><br><span class="line">    <span class="attr">ip_hash;</span></span><br><span class="line">    <span class="attr">server</span> <span class="string">1.1.1.1:80;</span></span><br><span class="line">    <span class="attr">server</span> <span class="string">2.2.2.2:80;</span></span><br><span class="line"><span class="attr">&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">server</span> <span class="string">&#123;</span></span><br><span class="line">    <span class="attr">proxy_set_header</span> <span class="string">Host $host;</span></span><br><span class="line">    <span class="attr">proxy_set_header</span> <span class="string">Connection "";</span></span><br><span class="line">    </span><br><span class="line">    <span class="attr">location</span> <span class="string">/ &#123;</span></span><br><span class="line">        <span class="attr">proxy_pass</span> <span class="string">http://test;</span></span><br><span class="line">        <span class="attr">proxy_http_version</span> <span class="string">1.1;</span></span><br><span class="line">        <span class="attr">proxy_set_header</span> <span class="string">Host $host;</span></span><br><span class="line">        <span class="attr">proxy_set_header</span> <span class="string">Connection "";</span></span><br><span class="line">    <span class="attr">&#125;</span></span><br><span class="line"><span class="attr">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h3><p>参考 <a href="http://nginx.org/en/docs/http/ngx_http_upstream_module.html#keepalive" target="_blank" rel="noopener">nginx 官方文档 - keepalive</a> <code>When using load balancing methods other than the default round-robin method, it is necessary to activate them before the keepalive directive.</code> 因为在 upstream 配置块里使用了 <code>ip_hash</code> 负载均衡算法，导致 <code>keepalive</code> 配置不生效.这也是 nginx 里少有的跟配置顺序相关的配置。</p>
+<h3 id="修正"><a href="#修正" class="headerlink" title="修正"></a>修正</h3><p>修正后配置如下</p>
+<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="attr">upstream</span> <span class="string">test &#123;</span></span><br><span class="line">    <span class="attr">ip_hash;</span></span><br><span class="line">    <span class="attr">server</span> <span class="string">1.1.1.1:80;</span></span><br><span class="line">    <span class="attr">server</span> <span class="string">2.2.2.2:80;</span></span><br><span class="line">    <span class="attr">keepalive</span> <span class="string">16;  # 将 keepalive 配置配置到最后面</span></span><br><span class="line"><span class="attr">&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">server</span> <span class="string">&#123;</span></span><br><span class="line">    <span class="attr">proxy_set_header</span> <span class="string">Host $host;</span></span><br><span class="line">    <span class="attr">proxy_set_header</span> <span class="string">Connection "";</span></span><br><span class="line">    </span><br><span class="line">    <span class="attr">location</span> <span class="string">/ &#123;</span></span><br><span class="line">        <span class="attr">proxy_pass</span> <span class="string">http://test;</span></span><br><span class="line">        <span class="attr">proxy_http_version</span> <span class="string">1.1;</span></span><br><span class="line">        <span class="attr">proxy_set_header</span> <span class="string">Host $host;</span></span><br><span class="line">        <span class="attr">proxy_set_header</span> <span class="string">Connection "";</span></span><br><span class="line">    <span class="attr">&#125;</span></span><br><span class="line"><span class="attr">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="https://www.nginx.com/blog/avoiding-top-10-nginx-configuration-mistakes/" target="_blank" rel="noopener">top 10 错误配置</a></li>
+<li><a href="http://nginx.org/en/docs/http/ngx_http_upstream_module.html#keepalive" target="_blank" rel="noopener">nginx 官方文档 - keepalive</a></li>
+</ul>
+<h2 id="nginx-惊群效应引发-cpu-使用率高"><a href="#nginx-惊群效应引发-cpu-使用率高" class="headerlink" title="nginx 惊群效应引发 cpu 使用率高"></a>nginx 惊群效应引发 cpu 使用率高</h2><h3 id="问题描述-1"><a href="#问题描述-1" class="headerlink" title="问题描述"></a>问题描述</h3><p>从 tengine-2.2.0 升级到 tengine-2.3.3 之后，发现升级之后 sys cpu 使用及平均负载会相较于之前高很多。同时,通过 <code>top</code> 可以看到 nginx worker 进程的 cpu 使用率也很高。</p>
+<figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="attribute">worker_processes</span>  <span class="number">16</span>;</span><br><span class="line"><span class="attribute">worker_cpu_affinity</span> auto;</span><br><span class="line"><span class="attribute">worker_rlimit_nofile</span> <span class="number">655360</span>;</span><br><span class="line"><span class="attribute">daemon</span> <span class="literal">on</span>;</span><br><span class="line"><span class="attribute">error_log</span>  var/logs/error.log;</span><br><span class="line"><span class="attribute">pid</span>        var/run/nginx.pid;</span><br><span class="line"><span class="section">events</span> &#123;</span><br><span class="line">   <span class="attribute">use</span> <span class="literal">epoll</span>;</span><br><span class="line">   <span class="attribute">worker_connections</span>  <span class="number">655360</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="section">http</span> &#123;</span><br><span class="line">    <span class="comment"># ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用 <code>strace -C -T -ttt -p ${nginx_pid}  -o /tmp/strac.log</code> 后可以观察到如下日志:</p>
+<figure class="highlight lsl"><table><tr><td class="code"><pre><span class="line"><span class="number">1670466059.603682</span> write(<span class="number">116</span>, <span class="string">"&#123;<span class="subst">\"</span>@timestamp<span class="subst">\"</span>: <span class="subst">\"</span>2022-12-08T10:20"</span>..., <span class="number">568</span>) = <span class="number">568</span> &lt;<span class="number">0.000014</span>&gt;</span><br><span class="line"><span class="number">1670466059.603716</span> sendto(<span class="number">43</span>, <span class="string">"&lt;190&gt;Dec  8 10:20:59 bx-slb-10-1"</span>..., <span class="number">616</span>, <span class="number">0</span>, NULL, <span class="number">0</span>) = <span class="number">616</span> &lt;<span class="number">0.000018</span>&gt;</span><br><span class="line"><span class="number">1670466059.603766</span> setsockopt(<span class="number">309</span>, SOL_TCP, TCP_NODELAY, [<span class="number">1</span>], <span class="number">4</span>) = <span class="number">0</span> &lt;<span class="number">0.000021</span>&gt;</span><br><span class="line"><span class="number">1670466059.603824</span> epoll_wait(<span class="number">131</span>, [&#123;EPOLLIN|EPOLLOUT|EPOLLRDHUP, &#123;u32=<span class="number">3918290177</span>, u64=<span class="number">140707046907137</span>&#125;&#125;], <span class="number">512</span>, <span class="number">42</span>) = <span class="number">1</span> &lt;<span class="number">0.000027</span>&gt;</span><br><span class="line"><span class="number">1670466059.603878</span> recvfrom(<span class="number">196</span>, <span class="string">""</span>, <span class="number">8192</span>, <span class="number">0</span>, NULL, NULL) = <span class="number">0</span> &lt;<span class="number">0.000011</span>&gt;</span><br><span class="line"><span class="number">1670466059.603913</span> close(<span class="number">196</span>)            = <span class="number">0</span> &lt;<span class="number">0.000024</span>&gt;</span><br><span class="line"><span class="number">1670466059.603955</span> epoll_wait(<span class="number">131</span>, [&#123;EPOLLIN, &#123;u32=<span class="number">3918234496</span>, u64=<span class="number">140707046851456</span>&#125;&#125;], <span class="number">512</span>, <span class="number">42</span>) = <span class="number">1</span> &lt;<span class="number">0.000152</span>&gt;</span><br><span class="line"><span class="number">1670466059.604138</span> accept4(<span class="number">12</span>, <span class="number">0x7ffdb837b1f0</span>, <span class="number">0x7ffdb837b26c</span>, SOCK_NONBLOCK) = <span class="number">-1</span> EAGAIN (Resource temporarily unavailable) &lt;<span class="number">0.000027</span>&gt;</span><br><span class="line"><span class="number">1670466059.604205</span> epoll_wait(<span class="number">131</span>, [&#123;EPOLLIN, &#123;u32=<span class="number">3918234496</span>, u64=<span class="number">140707046851456</span>&#125;&#125;], <span class="number">512</span>, <span class="number">41</span>) = <span class="number">1</span> &lt;<span class="number">0.000345</span>&gt;</span><br><span class="line"><span class="number">1670466059.604590</span> accept4(<span class="number">12</span>, <span class="number">0x7ffdb837b1f0</span>, <span class="number">0x7ffdb837b26c</span>, SOCK_NONBLOCK) = <span class="number">-1</span> EAGAIN (Resource temporarily unavailable) &lt;<span class="number">0.000021</span>&gt;</span><br><span class="line"><span class="number">1670466059.604640</span> epoll_wait(<span class="number">131</span>, [&#123;EPOLLIN, &#123;u32=<span class="number">3918234496</span>, u64=<span class="number">140707046851456</span>&#125;&#125;], <span class="number">512</span>, <span class="number">41</span>) = <span class="number">1</span> &lt;<span class="number">0.000092</span>&gt;</span><br><span class="line"><span class="number">1670466059.604768</span> accept4(<span class="number">12</span>, <span class="number">0x7ffdb837b1f0</span>, <span class="number">0x7ffdb837b26c</span>, SOCK_NONBLOCK) = <span class="number">-1</span> EAGAIN (Resource temporarily unavailable) &lt;<span class="number">0.000013</span>&gt;</span><br><span class="line"><span class="number">1670466059.604813</span> epoll_wait(<span class="number">131</span>, [&#123;EPOLLIN, &#123;u32=<span class="number">3918234496</span>, u64=<span class="number">140707046851456</span>&#125;&#125;], <span class="number">512</span>, <span class="number">41</span>) = <span class="number">1</span> &lt;<span class="number">0.000189</span>&gt;</span><br><span class="line"><span class="number">1670466059.605043</span> accept4(<span class="number">12</span>, <span class="number">0x7ffdb837b1f0</span>, <span class="number">0x7ffdb837b26c</span>, SOCK_NONBLOCK) = <span class="number">-1</span> EAGAIN (Resource temporarily unavailable) &lt;<span class="number">0.000026</span>&gt;</span><br><span class="line"><span class="number">1670466059.605114</span> epoll_wait(<span class="number">131</span>, [&#123;EPOLLIN|EPOLLOUT, &#123;u32=<span class="number">3918271617</span>, u64=<span class="number">140707046888577</span>&#125;&#125;], <span class="number">512</span>, <span class="number">40</span>) = <span class="number">1</span> &lt;<span class="number">0.000014</span>&gt;</span><br><span class="line"><span class="number">1670466059.605156</span> recvfrom(<span class="number">279</span>, <span class="string">"HTTP/1.1 200 OK\r<span class="subst">\n</span>Server: nginx\r<span class="subst">\n</span>"</span>..., <span class="number">16384</span>, <span class="number">0</span>, NULL, NULL) = <span class="number">377</span> &lt;<span class="number">0.000013</span>&gt;</span><br><span class="line"><span class="number">1670466059.605203</span> writev(<span class="number">306</span>, [&#123;<span class="string">"HTTP/1.1 200 OK\r<span class="subst">\n</span>Server: Tengine"</span>..., <span class="number">358</span>&#125;, &#123;<span class="string">"4d\r<span class="subst">\n</span>"</span>, <span class="number">4</span>&#125;, &#123;<span class="string">"&#123;<span class="subst">\"</span>retcode<span class="subst">\"</span>:20000000,<span class="subst">\"</span>msg<span class="subst">\"</span>:<span class="subst">\"</span><span class="subst">\"</span>,<span class="subst">\"</span>da"</span>..., <span class="number">77</span>&#125;, &#123;<span class="string">"\r<span class="subst">\n</span>"</span>, <span class="number">2</span>&#125;, &#123;<span class="string">"0\r<span class="subst">\n</span>\r<span class="subst">\n</span>"</span>, <span class="number">5</span>&#125;], <span class="number">5</span>) = <span class="number">446</span> &lt;<span class="number">0.000021</span>&gt;</span><br><span class="line"><span class="number">1670466059.605279</span> write(<span class="number">116</span>, <span class="string">"&#123;<span class="subst">\"</span>@timestamp<span class="subst">\"</span>: <span class="subst">\"</span>2022-12-08T10:20"</span>..., <span class="number">525</span>) = <span class="number">525</span> &lt;<span class="number">0.000016</span>&gt;</span><br><span class="line"><span class="number">1670466059.605316</span> sendto(<span class="number">43</span>, <span class="string">"&lt;190&gt;Dec  8 10:20:59 bx-slb-10-1"</span>..., <span class="number">573</span>, <span class="number">0</span>, NULL, <span class="number">0</span>) = <span class="number">573</span> &lt;<span class="number">0.000014</span>&gt;</span><br><span class="line"><span class="number">1670466059.605350</span> epoll_wait(<span class="number">131</span>, [&#123;EPOLLIN|EPOLLOUT|EPOLLRDHUP, &#123;u32=<span class="number">3918243081</span>, u64=<span class="number">140707046860041</span>&#125;&#125;], <span class="number">512</span>, <span class="number">40</span>) = <span class="number">1</span> &lt;<span class="number">0.000614</span>&gt;</span><br><span class="line"><span class="number">1670466059.605986</span> recvfrom(<span class="number">169</span>, <span class="string">""</span>, <span class="number">8192</span>, <span class="number">0</span>, NULL, NULL) = <span class="number">0</span> &lt;<span class="number">0.000012</span>&gt;</span><br><span class="line"><span class="number">1670466059.606015</span> close(<span class="number">169</span>)            = <span class="number">0</span> &lt;<span class="number">0.000024</span>&gt;</span><br><span class="line"><span class="number">1670466059.606056</span> epoll_wait(<span class="number">131</span>, [&#123;EPOLLIN, &#123;u32=<span class="number">3918234496</span>, u64=<span class="number">140707046851456</span>&#125;&#125;], <span class="number">512</span>, <span class="number">39</span>) = <span class="number">1</span> &lt;<span class="number">0.000453</span>&gt;</span><br><span class="line"><span class="number">1670466059.606544</span> accept4(<span class="number">12</span>, <span class="number">0x7ffdb837b1f0</span>, <span class="number">0x7ffdb837b26c</span>, SOCK_NONBLOCK) = <span class="number">-1</span> EAGAIN (Resource temporarily unavailable) &lt;<span class="number">0.000028</span>&gt;</span><br><span class="line"><span class="number">1670466059.606612</span> epoll_wait(<span class="number">131</span>, [&#123;EPOLLIN, &#123;u32=<span class="number">3918234496</span>, u64=<span class="number">140707046851456</span>&#125;&#125;], <span class="number">512</span>, <span class="number">39</span>) = <span class="number">1</span> &lt;<span class="number">0.000946</span>&gt;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到会有很多 <code>epoll_wait</code> 的 <code>accept4</code> 返回了 <code>Resource temporarily unavailable</code> 的字段。</p>
+<p>使用 <code>sar -w</code> 可以看到如下内容，上下文切换要高很多，这也是 worker 进程占用高的原因</p>
+<figure class="highlight angelscript"><table><tr><td class="code"><pre><span class="line"><span class="number">11</span>:<span class="number">00</span>:<span class="number">01</span> AM    proc/s   cswch/s</span><br><span class="line">Average:        <span class="number">21.96</span>  <span class="number">132824.27</span>`</span><br></pre></td></tr></table></figure>
+
+<h3 id="原因-1"><a href="#原因-1" class="headerlink" title="原因"></a>原因</h3><p>按照 <a href="http://nginx.org/en/docs/ngx_core_module.html#accept_mutex" target="_blank" rel="noopener">nginx 官方文档 - accept_mutex</a> 中描述，nginx-1.11.3 之后 <code>accept_mutex</code> 默认为关闭状态，当连接到来时，所有 worker 进程会尝试建立连接，就会导致所有 worker 进程都会被唤醒。开启这个参数后，相当于对连接加了一把锁，每个 worker 进程抢占这把锁,抢到锁的 worker 进程处理请求，没有抢到的继续处于 sleep 状态。避免由于新连接请求过来时所有 worker 都会被惊醒，造成 cpu 上下文切换。</p>
+<p>tengine 与 nginx版本对应如下:</p>
+<table>
+<thead>
+<tr>
+<th align="left">tengine</th>
+<th align="left">nginx</th>
+<th align="left">备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">2.2.0</td>
+<td align="left">1.8.1</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">2.2.1</td>
+<td align="left">1.8.1</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">2.2.3</td>
+<td align="left">1.8.1</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">2.3.0</td>
+<td align="left">1.15.9</td>
+<td align="left">废弃 <code>dso_tool</code> 工具以及 <code>dso</code> 配置指令,可以使用 <code>load_module</code> 指令动态加载.参考: <a href="http://tengine.taobao.org/document_cn/dso_cn.html" target="_blank" rel="noopener">tengine - dso</a></td>
+</tr>
+<tr>
+<td align="left">2.3.1</td>
+<td align="left">1.16.0</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">2.3.2</td>
+<td align="left">1.17.3</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">2.3.3</td>
+<td align="left">1.18.0</td>
+<td align="left"></td>
+</tr>
+</tbody></table>
+<h3 id="解决"><a href="#解决" class="headerlink" title="解决"></a>解决</h3><figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="section">event</span> &#123;</span><br><span class="line">    <span class="attribute">accept_mutex</span> <span class="literal">on</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h3><p>开启 <code>accept_mutex</code> 参数后，同一时刻只有一个 worker 进程处理新的连接请求。这就导致在高并发的场景下一定会有一些性能损耗。因此可以使用 <code>reuseport</code> 参数来开启多个 worker 进程监听同一个 socket 套接字。<a href="https://www.nginx.com/blog/socket-sharding-nginx-release-1-9-1/" target="_blank" rel="noopener">Socket Sharding in NGINX Release 1.9.1</a> 这里看起来开启 reuseport 性能会高不少。</p>
+<h3 id="参考-1"><a href="#参考-1" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="https://zhuanlan.zhihu.com/p/401910162" target="_blank" rel="noopener">Nginx惊群效应引起的系统高负载</a></li>
+<li><a href="https://ld246.com/article/1588731832846" target="_blank" rel="noopener">Nginx 是如何解决 epoll 惊群的</a></li>
+<li><a href="https://pureage.info/2015/12/22/thundering-herd.html" target="_blank" rel="noopener">accept 与 epoll 惊群</a></li>
+<li><a href="http://nginx.org/en/docs/ngx_core_module.html#accept_mutex" target="_blank" rel="noopener">nginx 官方文档 - accept_mutex</a></li>
+<li><a href="https://www.zhihu.com/question/51618274" target="_blank" rel="noopener">知乎 - reuseport</a></li>
+<li><a href="https://www.nginx.com/blog/socket-sharding-nginx-release-1-9-1/" target="_blank" rel="noopener">Socket Sharding in NGINX Release 1.9.1</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>Nginx</category>
+      </categories>
+      <tags>
+        <tag>Nginx</tag>
       </tags>
   </entry>
   <entry>
