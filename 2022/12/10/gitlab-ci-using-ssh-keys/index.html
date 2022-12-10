@@ -21,21 +21,21 @@
     var CONFIG = {"hostname":"hulining.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":true,"comments":{"style":"tabs","active":"gitalk","storage":true,"lazyload":true,"nav":null,"activeClass":"gitalk"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="汇总常见的 Bash 特性,以作备忘">
+  <meta name="description" content="本文章主要包含 GitLab CI 中使用 SSH keys 的方法">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Bash 特性">
-<meta property="og:url" content="https://hulining.github.io/2020/12/07/bash-features/index.html">
+<meta property="og:title" content="GitLab CI 使用 SSH keys">
+<meta property="og:url" content="https://hulining.github.io/2022/12/10/gitlab-ci-using-ssh-keys/index.html">
 <meta property="og:site_name" content="纸盒人">
-<meta property="og:description" content="汇总常见的 Bash 特性,以作备忘">
+<meta property="og:description" content="本文章主要包含 GitLab CI 中使用 SSH keys 的方法">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-12-07T00:00:00.000Z">
+<meta property="article:published_time" content="2022-12-10T11:43:19.000Z">
 <meta property="article:modified_time" content="2022-12-10T04:53:14.680Z">
 <meta property="article:author" content="纸盒人">
-<meta property="article:tag" content="Linux">
-<meta property="article:tag" content="Bash">
+<meta property="article:tag" content="GitLab">
+<meta property="article:tag" content="CI&#x2F;CD">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://hulining.github.io/2020/12/07/bash-features/">
+<link rel="canonical" href="https://hulining.github.io/2022/12/10/gitlab-ci-using-ssh-keys/">
 
 
 <script id="page-configurations">
@@ -48,7 +48,7 @@
   };
 </script>
 
-  <title>Bash 特性 | 纸盒人</title>
+  <title>GitLab CI 使用 SSH keys | 纸盒人</title>
   
 
 
@@ -191,7 +191,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://hulining.github.io/2020/12/07/bash-features/">
+    <link itemprop="mainEntityOfPage" href="https://hulining.github.io/2022/12/10/gitlab-ci-using-ssh-keys/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -204,7 +204,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Bash 特性
+          GitLab CI 使用 SSH keys
         </h1>
 
         <div class="post-meta">
@@ -214,7 +214,7 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-12-07 00:00:00" itemprop="dateCreated datePublished" datetime="2020-12-07T00:00:00+00:00">2020-12-07</time>
+              <time title="创建时间：2022-12-10 11:43:19" itemprop="dateCreated datePublished" datetime="2022-12-10T11:43:19+00:00">2022-12-10</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -222,7 +222,7 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+                  <a href="/categories/CI-CD/" itemprop="url" rel="index"><span itemprop="name">CI/CD</span></a>
                 </span>
             </span>
 
@@ -239,12 +239,12 @@
           
             <span class="post-letters-count">
               &nbsp; | &nbsp;
-              <span>897 字</span>
+              <span>820 字</span>
               &nbsp; | &nbsp;
               <span>3 min</span>
              </span>
            
-            <div class="post-description">汇总常见的 Bash 特性,以作备忘</div>
+            <div class="post-description">本文章主要包含 GitLab CI 中使用 SSH keys 的方法</div>
 
 
 
@@ -257,20 +257,29 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="Shell-语法"><a href="#Shell-语法" class="headerlink" title="Shell 语法"></a>Shell 语法</h2><h3 id="复合命令"><a href="#复合命令" class="headerlink" title="复合命令"></a>复合命令</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(list) <span class="comment"># 表示在子 shell 中运行命令</span></span><br><span class="line">&#123; list; &#125; <span class="comment"># 表示仅在本 shell 中运行命令.且命令必须以 `;` 结尾,命令与 `&#123;&#125;` 之间必须有空格</span></span><br><span class="line">((expression)) <span class="comment"># 多用于算术运算</span></span><br><span class="line">[[ expression ]] <span class="comment"># 多用于条件判断</span></span><br></pre></td></tr></table></figure>
+        <p>GitLab目前还没有在构建环境(GitLab Runner 运行的地方)中管理SSH密钥的内置支持。</p>
+<p>在以下场景中，您可能需要使用 SSH密钥:</p>
+<ul>
+<li>使用包管理器下载私有包。如 Bundler</li>
+<li>将应用程序部署到您自己的服务器上。如 Heroku</li>
+<li>从构建环境向远程服务器执行SSH命令</li>
+<li>将文件从构建环境 Rsync 到远程服务器</li>
+</ul>
+<p>目前使用最多的方法是通过扩展 <code>.gitlab-ci.yml</code> 将SSH密钥注入构建环境。它是一个适用于任何类型的 Runner (例如Docker或shell)的解决方案。</p>
+<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><ol>
+<li>使用 <code>ssh-keygen</code> 在本地创建新的 ssh 密钥对</li>
+<li>添加 private key 中的内容到 Gitlab 仓库的环境变量中，将公钥复制到您想要访问的服务器上(一般为 <code>~/.ssh/authorized_keys</code> 文件中 )，或者如果您正在访问私有的GitLab存储库，则将其添加为<a href="https://docs.gitlab.com/ee/user/project/deploy_keys/index.html" target="_blank" rel="noopener">部署密钥</a>。</li>
+<li>在 job 执行期间运行  <code>ssh-agent</code> 加载私钥</li>
+</ol>
+<p>可以在 <code>.gitlab-ci.yml</code> 中添加如下内容来运行 <code>ssh-agent</code> 加载私钥。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">before_script:</span></span><br><span class="line">  <span class="comment">## 确认 ssh-agent 已经安装了，如果使用的是 rpm 格式的包，可以使用 yum 包管理器</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">'command -v ssh-agent &gt;/dev/null || ( apt-get update -y &amp;&amp; apt-get install openssh-client -y )'</span></span><br><span class="line">  <span class="comment">#- 'command -v ssh-agent &gt;/dev/null || ( yum update -y &amp;&amp; yum install openssh-client -y )'</span></span><br><span class="line">  </span><br><span class="line">  <span class="comment">## 运行 ssh-agent (inside the build environment)</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">eval</span> <span class="string">$(ssh-agent</span> <span class="string">-s)</span></span><br><span class="line">  </span><br><span class="line">  <span class="comment">## 将保存在 SSH_PRIVATE_KEY 变量中的 SSH 密钥添加到 ssh-agent 中</span></span><br><span class="line">  <span class="comment">## 我们使用 tr 删除行结束符，使 ed25519 加密密钥没有额外的 base64 编码: https://gitlab.com/gitlab-examples/ssh-private-key/issues/1#note_48526556</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">echo</span> <span class="string">"$SSH_PRIVATE_KEY"</span> <span class="string">|</span> <span class="string">tr</span> <span class="string">-d</span> <span class="string">'\r'</span> <span class="string">|</span> <span class="string">ssh-add</span> <span class="bullet">-</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">## 创建 ~/.ssh 目录，并配置正确的权限</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">mkdir</span> <span class="string">-p</span> <span class="string">~/.ssh</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">chmod</span> <span class="number">700</span> <span class="string">~/.ssh</span></span><br><span class="line">  </span><br><span class="line">  <span class="comment">## 可选的 git 配置</span></span><br><span class="line">  <span class="comment"># - git config --global user.email "user@example.com"</span></span><br><span class="line">  <span class="comment"># - git config --global user.name "User name"</span></span><br><span class="line">  <span class="comment">## </span></span><br><span class="line">  <span class="comment">## 如果配置了 SSH_KNOWN_HOSTS，则可以取消对下面两行的注释。</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">echo</span> <span class="string">"$SSH_KNOWN_HOSTS"</span> <span class="string">&gt;&gt;</span> <span class="string">~/.ssh/known_hosts</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">chmod</span> <span class="number">644</span> <span class="string">~/.ssh/known_hosts</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">##</span></span><br><span class="line">  <span class="comment">## Alternatively, use ssh-keyscan to scan the keys of your private server.</span></span><br><span class="line">  <span class="comment">## Replace example.com with your private server's domain name. Repeat that</span></span><br><span class="line">  <span class="comment">## command if you have more than one server to connect to.</span></span><br><span class="line">  <span class="comment">##</span></span><br><span class="line">  <span class="comment"># - ssh-keyscan example.com &gt;&gt; ~/.ssh/known_hosts</span></span><br><span class="line">  <span class="comment"># - chmod 644 ~/.ssh/known_hosts</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">##</span></span><br><span class="line">  <span class="comment">## You can optionally disable host key checking. Be aware that by adding that</span></span><br><span class="line">  <span class="comment">## you are susceptible to man-in-the-middle attacks.</span></span><br><span class="line">  <span class="comment">## WARNING: Use this only with the Docker executor, if you use it with shell</span></span><br><span class="line">  <span class="comment">## you will overwrite your user's SSH config.</span></span><br><span class="line">  <span class="comment">##</span></span><br><span class="line">  <span class="comment"># - '[[ -f /.dockerenv ]] &amp;&amp; echo -e "Host *\n\tStrictHostKeyChecking no\n\n" &gt;&gt; ~/.ssh/config'</span></span><br></pre></td></tr></table></figure>
 
-<h2 id="Parameter"><a href="#Parameter" class="headerlink" title="Parameter"></a>Parameter</h2><h3 id="位置参数"><a href="#位置参数" class="headerlink" title="位置参数"></a>位置参数</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$* <span class="comment"># 参数列表</span></span><br><span class="line"><span class="variable">$@</span> <span class="comment"># 参数列表</span></span><br><span class="line"><span class="variable">$#</span> <span class="comment"># 参数个数</span></span><br><span class="line">$? <span class="comment"># 最后运行命令的结束代码</span></span><br><span class="line">$$ <span class="comment"># shell 本身的 processID. () 中运行的子 shell 返回值也为本 shell 的 processID</span></span><br><span class="line"><span class="variable">$0</span> <span class="comment"># shell 脚本或命令本身的文件名</span></span><br></pre></td></tr></table></figure>
+<p>在 ssh 登录时有时需要对远程主机添加信任。GitLab 提供了以下3种方式，可以补充在 <code>.gitlab-ci.yml</code> 中以保证 ci 流程正确执行</p>
+<figure class="highlight clean"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">before_script:</span><br><span class="line">  ## 方式<span class="number">1.</span> 如果配置了 SSH_KNOWN_HOSTS，则可以使用如下方式完善 known_hosts 文件</span><br><span class="line">  ## 其中 SSH_KNOWN_HOSTS 变量内容可 通过 `ssh-keyscan remote-server` 获得</span><br><span class="line">  - echo <span class="string">"$SSH_KNOWN_HOSTS"</span> &gt;&gt; ~/.ssh/known_hosts</span><br><span class="line">  - chmod <span class="number">644</span> ~/.ssh/known_hosts</span><br><span class="line">  </span><br><span class="line">  ## 方式<span class="number">2.</span> 直接执行 `ssh-keyscan remote-server` 将生成的密钥保存到 known_hosts 文件中</span><br><span class="line">  # - ssh-keyscan example1.com &gt;&gt; ~/.ssh/known_hosts</span><br><span class="line">  # - ssh-keyscan example2.com &gt;&gt; ~/.ssh/known_hosts</span><br><span class="line">  # - chmod <span class="number">644</span> ~/.ssh/known_hosts</span><br><span class="line">  </span><br><span class="line">  ## 方式<span class="number">3.</span> 可以直接禁用主机密钥的校验。要注意这种方式容易受到中间人攻击</span><br><span class="line">  ## 警告: 请只在 Docker executor 中使用这种方式，否则这种方式可能会修改本地的 ssh config</span><br><span class="line">  # - <span class="string">'[[ -f /.dockerenv ]] &amp;&amp; echo -e "Host *\n\tStrictHostKeyChecking no\n\n" &gt;&gt; ~/.ssh/config'</span></span><br></pre></td></tr></table></figure>
 
-<h2 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h2><h3 id="参数扩展"><a href="#参数扩展" class="headerlink" title="参数扩展"></a>参数扩展</h3><p><code>$</code> 符号用于参数扩展,命令替换或算术扩展.可以使用花括号(<code>{}</code>)将要扩展的参数名称或符号括起来,该括号是可选的,但要保证扩展的变量不受紧随其后字符的影响.</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$&#123;parameter&#125;</span> <span class="comment"># 原始格式,表示变量值.如果第一个字符是感叹号(!),则会引入变量间接访问.如 name=admin;admin=pass,则 $&#123;!name&#125; 的值为 pass</span></span><br><span class="line"><span class="variable">$&#123;parameter:-word&#125;</span> <span class="comment"># 如果 parameter 没有设置或为空,则使用默认值为 word.(parameter 值不变)</span></span><br><span class="line"><span class="variable">$&#123;parameter:=word&#125;</span> <span class="comment"># 如果 parameter 没有设置或为空,则将 parameter 的值设置为 word</span></span><br><span class="line"><span class="variable">$&#123;parameter:?word&#125;</span> <span class="comment"># 如果 parameter 没有设置或为空,则将 word 作为错误信息输出</span></span><br><span class="line"><span class="variable">$&#123;parameter:+word&#125;</span> <span class="comment"># 如果 parameter 不为空,则输出 word 的值.(parameter 值不变)</span></span><br><span class="line"><span class="variable">$&#123;parameter:offset&#125;</span> <span class="comment"># 子字符串, offset 从 0 开始</span></span><br><span class="line"><span class="variable">$&#123;parameter:offset:length&#125;</span> <span class="comment"># 子字符串, offset 从 0 开始,子字符串长度为 length</span></span><br><span class="line"><span class="variable">$&#123;#parameter&#125;</span> <span class="comment"># parameter 变量值的长度</span></span><br><span class="line"><span class="variable">$&#123;parameter/pattern/string&#125;</span> <span class="comment"># 使用 string 替换 parameter 中 pattern 的模式匹配</span></span><br><span class="line"></span><br><span class="line"><span class="variable">$&#123;parameter^pattern&#125;</span> <span class="comment"># ^ 表示将模式匹配的内容转换为大写.</span></span><br><span class="line"><span class="variable">$&#123;parameter^^pattern&#125;</span> <span class="comment"># $&#123;parameter^^&#125; 将所有内容转换为大写输出 </span></span><br><span class="line"><span class="variable">$&#123;parameter,pattern&#125;</span> <span class="comment"># ,表示将模式匹配的内容转换为小写</span></span><br><span class="line"><span class="variable">$&#123;parameter,,pattern&#125;</span> <span class="comment"># $&#123;parameter,,&#125; 将所有内容转换为小写输出</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="算术运算"><a href="#算术运算" class="headerlink" title="算术运算"></a>算术运算</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$((expression))</span><br><span class="line">sum=$[ <span class="variable">$&#123;v1&#125;</span> + <span class="variable">$&#123;v2&#125;</span> ]</span><br><span class="line">(( sum=<span class="variable">$&#123;v1&#125;</span> + <span class="variable">$&#123;v2&#125;</span> ))</span><br><span class="line"><span class="built_in">let</span> sum=<span class="variable">$&#123;v1&#125;</span>+<span class="variable">$&#123;v2&#125;</span>     <span class="comment"># 这里运算符两端必须没有空格</span></span><br><span class="line">`expr <span class="variable">$&#123;v1&#125;</span> + <span class="variable">$&#123;v2&#125;</span>`    <span class="comment"># 这里运算符号两端必须要有空格</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="条件判断语句"><a href="#条件判断语句" class="headerlink" title="条件判断语句"></a>条件判断语句</h2><p>Bash 中的条件判断语句使用 <code>[[ 复合命令 ]]</code>,<code>test</code> 和 <code>[ 内置命令 ]</code> 对文件属性,字符串进行判断或进行算术比较.</p>
-<h3 id="文件相关"><a href="#文件相关" class="headerlink" title="文件相关"></a>文件相关</h3><p>下面是常用的文件属性进行条件判断语句</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">-a file <span class="comment"># 文件存在,则返回 True</span></span><br><span class="line">-b file <span class="comment"># 文件存在且是块文件,则返回 True</span></span><br><span class="line">-c file <span class="comment"># 文件存在且是字符文件,则返回 True</span></span><br><span class="line">-d file <span class="comment"># 文件存在且是目录,则返回 True</span></span><br><span class="line">-e file <span class="comment"># 文件存在,则返回 True</span></span><br><span class="line">-f file <span class="comment"># 文件存在且是文本文件,则返回 True</span></span><br><span class="line">-h file <span class="comment"># 文件存在且是链接文件,则返回 True</span></span><br><span class="line">-p file <span class="comment"># 文件存在且是管道文件,则返回 True</span></span><br><span class="line">-r file <span class="comment"># 文件存在且可读,则返回 True</span></span><br><span class="line">-s file <span class="comment"># 文件存在且大小不为0,则返回 True</span></span><br><span class="line">-w file <span class="comment"># 文件存在且可写,则返回 True</span></span><br><span class="line">-x file <span class="comment"># 文件存在且可执行,则返回 True</span></span><br><span class="line">-L file <span class="comment"># 文件存在且是链接文件,则返回 True</span></span><br><span class="line">-S file <span class="comment"># 文件存在且是套接字文件,则返回 True</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="字符串与算术运算相关"><a href="#字符串与算术运算相关" class="headerlink" title="字符串与算术运算相关"></a>字符串与算术运算相关</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">-v varname <span class="comment"># 设置了 varname 变量,则返回 True</span></span><br><span class="line">-z string <span class="comment"># 字符串长度为 0,则返回 True</span></span><br><span class="line">-n string <span class="comment"># 字符串长度不为 0,则返回 True</span></span><br><span class="line">string1 == string2 <span class="comment"># 两个字符串相等,则返回 True</span></span><br><span class="line">string1 != string2</span><br><span class="line">string1 &lt; string2</span><br><span class="line">string1 &gt; string2</span><br><span class="line"></span><br><span class="line">arg1 OP arg2 <span class="comment"># OP 支持的方式为 -eq, -ne, -lt, -le, -gt, -ge</span></span><br></pre></td></tr></table></figure>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="https://docs.gitlab.com/ee/ci/ssh_keys/" target="_blank" rel="noopener">Using SSH keys with GitLab CI/CD</a></li>
+</ul>
 
     </div>
 
@@ -307,7 +316,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="https://hulining.github.io/2020/12/07/bash-features/" title="Bash 特性">https://hulining.github.io/2020/12/07/bash-features/</a>
+    <a href="https://hulining.github.io/2022/12/10/gitlab-ci-using-ssh-keys/" title="GitLab CI 使用 SSH keys">https://hulining.github.io/2022/12/10/gitlab-ci-using-ssh-keys/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC</a> 许可协议。转载请注明出处！
@@ -319,8 +328,8 @@
       <footer class="post-footer">
           
           <div class="post-tags">
-              <a href="/tags/Linux/" rel="tag"><i class="fa fa-tag"></i> Linux</a>
-              <a href="/tags/Bash/" rel="tag"><i class="fa fa-tag"></i> Bash</a>
+              <a href="/tags/GitLab/" rel="tag"><i class="fa fa-tag"></i> GitLab</a>
+              <a href="/tags/CI-CD/" rel="tag"><i class="fa fa-tag"></i> CI/CD</a>
           </div>
 
         
@@ -329,13 +338,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/07/06/go-http-package-process-request-analysis/" rel="prev" title="go http 包处理请求过程分析">
-      <i class="fa fa-chevron-left"></i> go http 包处理请求过程分析
+    <a href="/2022/12/09/nginx-error-prone-record/" rel="prev" title="Nginx 易错记录">
+      <i class="fa fa-chevron-left"></i> Nginx 易错记录
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2021/03/09/goroutine-and-GMP-model/" rel="next" title="goroutine 与 GMP 模型介绍">
-      goroutine 与 GMP 模型介绍 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -397,7 +403,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Shell-语法"><span class="nav-number">1.</span> <span class="nav-text">Shell 语法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#复合命令"><span class="nav-number">1.1.</span> <span class="nav-text">复合命令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Parameter"><span class="nav-number">2.</span> <span class="nav-text">Parameter</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#位置参数"><span class="nav-number">2.1.</span> <span class="nav-text">位置参数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#扩展"><span class="nav-number">3.</span> <span class="nav-text">扩展</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#参数扩展"><span class="nav-number">3.1.</span> <span class="nav-text">参数扩展</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#算术运算"><span class="nav-number">3.2.</span> <span class="nav-text">算术运算</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#条件判断语句"><span class="nav-number">4.</span> <span class="nav-text">条件判断语句</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#文件相关"><span class="nav-number">4.1.</span> <span class="nav-text">文件相关</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#字符串与算术运算相关"><span class="nav-number">4.2.</span> <span class="nav-text">字符串与算术运算相关</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#实现"><span class="nav-number">1.</span> <span class="nav-text">实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">2.</span> <span class="nav-text">参考</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -631,7 +637,7 @@ NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
       repo        : 'https://github.com/hulining/hulining.github.io.git',
       owner       : 'hulining',
       admin       : ['hulining'],
-      id          : '6594e696069388d742ba0bf9d4a248f8',
+      id          : 'e3f06789049b0ac44b98a05334899370',
         language: '',
       distractionFreeMode: true
     });

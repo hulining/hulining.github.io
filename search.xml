@@ -6085,6 +6085,41 @@
       </tags>
   </entry>
   <entry>
+    <title>GitLab CI 使用 SSH keys</title>
+    <url>/2022/12/10/gitlab-ci-using-ssh-keys/</url>
+    <content><![CDATA[<p>GitLab目前还没有在构建环境(GitLab Runner 运行的地方)中管理SSH密钥的内置支持。</p>
+<p>在以下场景中，您可能需要使用 SSH密钥:</p>
+<ul>
+<li>使用包管理器下载私有包。如 Bundler</li>
+<li>将应用程序部署到您自己的服务器上。如 Heroku</li>
+<li>从构建环境向远程服务器执行SSH命令</li>
+<li>将文件从构建环境 Rsync 到远程服务器</li>
+</ul>
+<p>目前使用最多的方法是通过扩展 <code>.gitlab-ci.yml</code> 将SSH密钥注入构建环境。它是一个适用于任何类型的 Runner (例如Docker或shell)的解决方案。</p>
+<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><ol>
+<li>使用 <code>ssh-keygen</code> 在本地创建新的 ssh 密钥对</li>
+<li>添加 private key 中的内容到 Gitlab 仓库的环境变量中，将公钥复制到您想要访问的服务器上(一般为 <code>~/.ssh/authorized_keys</code> 文件中 )，或者如果您正在访问私有的GitLab存储库，则将其添加为<a href="https://docs.gitlab.com/ee/user/project/deploy_keys/index.html" target="_blank" rel="noopener">部署密钥</a>。</li>
+<li>在 job 执行期间运行  <code>ssh-agent</code> 加载私钥</li>
+</ol>
+<p>可以在 <code>.gitlab-ci.yml</code> 中添加如下内容来运行 <code>ssh-agent</code> 加载私钥。</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">before_script:</span></span><br><span class="line">  <span class="comment">## 确认 ssh-agent 已经安装了，如果使用的是 rpm 格式的包，可以使用 yum 包管理器</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">'command -v ssh-agent &gt;/dev/null || ( apt-get update -y &amp;&amp; apt-get install openssh-client -y )'</span></span><br><span class="line">  <span class="comment">#- 'command -v ssh-agent &gt;/dev/null || ( yum update -y &amp;&amp; yum install openssh-client -y )'</span></span><br><span class="line">  </span><br><span class="line">  <span class="comment">## 运行 ssh-agent (inside the build environment)</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">eval</span> <span class="string">$(ssh-agent</span> <span class="string">-s)</span></span><br><span class="line">  </span><br><span class="line">  <span class="comment">## 将保存在 SSH_PRIVATE_KEY 变量中的 SSH 密钥添加到 ssh-agent 中</span></span><br><span class="line">  <span class="comment">## 我们使用 tr 删除行结束符，使 ed25519 加密密钥没有额外的 base64 编码: https://gitlab.com/gitlab-examples/ssh-private-key/issues/1#note_48526556</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">echo</span> <span class="string">"$SSH_PRIVATE_KEY"</span> <span class="string">|</span> <span class="string">tr</span> <span class="string">-d</span> <span class="string">'\r'</span> <span class="string">|</span> <span class="string">ssh-add</span> <span class="bullet">-</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">## 创建 ~/.ssh 目录，并配置正确的权限</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">mkdir</span> <span class="string">-p</span> <span class="string">~/.ssh</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">chmod</span> <span class="number">700</span> <span class="string">~/.ssh</span></span><br><span class="line">  </span><br><span class="line">  <span class="comment">## 可选的 git 配置</span></span><br><span class="line">  <span class="comment"># - git config --global user.email "user@example.com"</span></span><br><span class="line">  <span class="comment"># - git config --global user.name "User name"</span></span><br><span class="line">  <span class="comment">## </span></span><br><span class="line">  <span class="comment">## 如果配置了 SSH_KNOWN_HOSTS，则可以取消对下面两行的注释。</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">echo</span> <span class="string">"$SSH_KNOWN_HOSTS"</span> <span class="string">&gt;&gt;</span> <span class="string">~/.ssh/known_hosts</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">chmod</span> <span class="number">644</span> <span class="string">~/.ssh/known_hosts</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">##</span></span><br><span class="line">  <span class="comment">## Alternatively, use ssh-keyscan to scan the keys of your private server.</span></span><br><span class="line">  <span class="comment">## Replace example.com with your private server's domain name. Repeat that</span></span><br><span class="line">  <span class="comment">## command if you have more than one server to connect to.</span></span><br><span class="line">  <span class="comment">##</span></span><br><span class="line">  <span class="comment"># - ssh-keyscan example.com &gt;&gt; ~/.ssh/known_hosts</span></span><br><span class="line">  <span class="comment"># - chmod 644 ~/.ssh/known_hosts</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">##</span></span><br><span class="line">  <span class="comment">## You can optionally disable host key checking. Be aware that by adding that</span></span><br><span class="line">  <span class="comment">## you are susceptible to man-in-the-middle attacks.</span></span><br><span class="line">  <span class="comment">## WARNING: Use this only with the Docker executor, if you use it with shell</span></span><br><span class="line">  <span class="comment">## you will overwrite your user's SSH config.</span></span><br><span class="line">  <span class="comment">##</span></span><br><span class="line">  <span class="comment"># - '[[ -f /.dockerenv ]] &amp;&amp; echo -e "Host *\n\tStrictHostKeyChecking no\n\n" &gt;&gt; ~/.ssh/config'</span></span><br></pre></td></tr></table></figure>
+
+<p>在 ssh 登录时有时需要对远程主机添加信任。GitLab 提供了以下3种方式，可以补充在 <code>.gitlab-ci.yml</code> 中以保证 ci 流程正确执行</p>
+<figure class="highlight clean"><table><tr><td class="code"><pre><span class="line">before_script:</span><br><span class="line">  ## 方式<span class="number">1.</span> 如果配置了 SSH_KNOWN_HOSTS，则可以使用如下方式完善 known_hosts 文件</span><br><span class="line">  ## 其中 SSH_KNOWN_HOSTS 变量内容可 通过 `ssh-keyscan remote-server` 获得</span><br><span class="line">  - echo <span class="string">"$SSH_KNOWN_HOSTS"</span> &gt;&gt; ~/.ssh/known_hosts</span><br><span class="line">  - chmod <span class="number">644</span> ~/.ssh/known_hosts</span><br><span class="line">  </span><br><span class="line">  ## 方式<span class="number">2.</span> 直接执行 `ssh-keyscan remote-server` 将生成的密钥保存到 known_hosts 文件中</span><br><span class="line">  # - ssh-keyscan example1.com &gt;&gt; ~/.ssh/known_hosts</span><br><span class="line">  # - ssh-keyscan example2.com &gt;&gt; ~/.ssh/known_hosts</span><br><span class="line">  # - chmod <span class="number">644</span> ~/.ssh/known_hosts</span><br><span class="line">  </span><br><span class="line">  ## 方式<span class="number">3.</span> 可以直接禁用主机密钥的校验。要注意这种方式容易受到中间人攻击</span><br><span class="line">  ## 警告: 请只在 Docker executor 中使用这种方式，否则这种方式可能会修改本地的 ssh config</span><br><span class="line">  # - <span class="string">'[[ -f /.dockerenv ]] &amp;&amp; echo -e "Host *\n\tStrictHostKeyChecking no\n\n" &gt;&gt; ~/.ssh/config'</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="https://docs.gitlab.com/ee/ci/ssh_keys/" target="_blank" rel="noopener">Using SSH keys with GitLab CI/CD</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>CI/CD</category>
+      </categories>
+      <tags>
+        <tag>GitLab</tag>
+        <tag>CI/CD</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>go channel 详解</title>
     <url>/2021/03/11/go-channel-details/</url>
     <content><![CDATA[<h2 id="channel-介绍"><a href="#channel-介绍" class="headerlink" title="channel 介绍"></a>channel 介绍</h2><p>channel 通常与 goroutine 一起使用,是 goroutine 之间通信的一种方式</p>
@@ -6290,6 +6325,69 @@
         <tag>go</tag>
         <tag>源码阅读</tag>
         <tag>http</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Golang 项目结构</title>
+    <url>/2020/06/24/golang-standards-project-layout/</url>
+    <content><![CDATA[<p><a href="https://github.com/golang-standards/project-layout" target="_blank" rel="noopener">https://github.com/golang-standards/project-layout</a> 项目是常见的 Go 项目代码的布局方式.我们在阅读或开发 Go 项目时,可以遵循此项目中的布局方式进行组织代码.</p>
+<p>以下是 Go 项目中常见目录及其简单介绍.</p>
+<h2 id="Go-目录"><a href="#Go-目录" class="headerlink" title="Go 目录"></a>Go 目录</h2><ul>
+<li><code>/cmd</code>: 项目的主程序目录</li>
+</ul>
+<p>每个应用程序的目录名称应该与您的可执行文件名称一致.如 <code>/cmd/myapp</code>.</p>
+<p>不要在此目录中放置很多代码.如果您任务该代码可以被导入并在其它项目中使用,则应将其放在 <code>/pkg</code> 目录中.如果代码不可导入或不希望其他人使用它,则应将代码放在 <code>/internal</code> 目录中.</p>
+<p>此目录下通常有一个简单的 main 函数,并通过导入或调用 <code>/internal</code> 和 <code>/pkg</code> 目录中的代码,而没有其他的函数.</p>
+<p>如,<a href="https://github.com/prometheus/prometheus/tree/master/cmd" target="_blank" rel="noopener">prometheus/cmd</a></p>
+<ul>
+<li><p><code>/internal</code>: 私有应用程序和代码库.放在该包中的代码,表明只希望在此项目内部使用,其它项目不能使用.</p>
+</li>
+<li><p><code>/pkg</code>: 外部应用程序可以使用的库代码.该目录与 <code>internal</code> 对应,是公开的.如 <a href="https://github.com/prometheus/prometheus/tree/master/pkg" target="_blank" rel="noopener">prometheus/pkg</a>.</p>
+</li>
+</ul>
+<p>一般来说,放在该目录下的代码应该和具体业务无关,方便本项目或其他项目重用.当你决定将代码放入该包时,你应该对其负责,因为别人很可能使用它.</p>
+<ul>
+<li><code>/vendor</code>: 应用程序依赖项目录.</li>
+</ul>
+<p><code>go mod vendor</code> 命令将为您创建 <code>/vendor</code> 目录.注意,如果您使用的不是 Go 1.14 版本(1.14 版本默认开启),则可能需要在 <code>go build</code> 命令中添加 <code>-mod=vender</code> 标志.</p>
+<p>注意,从 1.13 开始,Go 还启用了模块代码功能(默认情况下使用 <a href="https://proxy.golang.org" target="_blank" rel="noopener"><code>https://proxy.golang.org</code></a> 作为其模块的代理服务器).如果是这样,那么您根本不需要 <code>vendor</code> 目录.</p>
+<h2 id="服务应用目录"><a href="#服务应用目录" class="headerlink" title="服务应用目录"></a>服务应用目录</h2><ul>
+<li><code>/api</code>: 主要保存 OpenAPI/Swagger 规范, JSON 格式文件和协议定义文件.如 <a href="https://github.com/kubernetes/kubernetes/tree/master/api" target="_blank" rel="noopener">kubernetes/api</a></li>
+</ul>
+<h2 id="Web-应用目录"><a href="#Web-应用目录" class="headerlink" title="Web 应用目录"></a>Web 应用目录</h2><ul>
+<li><code>/web</code>: Web 应用程序特定的组件,包含静态 Web 资源,服务端模版和 SPA.</li>
+</ul>
+<h2 id="常见应用目录"><a href="#常见应用目录" class="headerlink" title="常见应用目录"></a>常见应用目录</h2><ul>
+<li><code>/configs</code>: 配置文件模版或默认配置目录.</li>
+<li><code>/init</code>: 系统初始化(systemd, upstart,sysv)和进程管理/监控(runit, supervisord) 配置.</li>
+<li><code>/scripts</code>: 用于执行构建,安装,分析等操作的各种脚本.</li>
+</ul>
+<p>这些脚本可使根目录下的 Makefile 变得简单.如 <a href="https://github.com/hashicorp/terraform/blob/master/Makefile" target="_blank" rel="noopener">terraform/Makefile</a>, <a href="https://github.com/helm/helm/tree/master/scripts" target="_blank" rel="noopener">helm/scripts</a>.</p>
+<ul>
+<li><code>/build</code>: 打包构建与持续集成.</li>
+</ul>
+<p>将您的容器,操作系统软件包配置和脚本放在 <code>/build/package</code> 目录中.将您的持续集成(travis, circle, drone)配置和脚本放在 <code>/build/ci</code> 目录中.注意,有些 CI 工具对于其配置文件的位置非常挑剔.尝试将其放在 <code>/build/ci</code> 目录中,并将其链接到工具期望的位置(如果可能).</p>
+<ul>
+<li><code>/deployments</code>: Iaas, Paas 系统和容器编排配置和模版目录.注意,有些代码仓库中,该目录为 <code>/deploy</code>.</li>
+<li><code>/test</code>: 其它外部测试应用程序和测试数据目录.</li>
+</ul>
+<h2 id="其它目录"><a href="#其它目录" class="headerlink" title="其它目录"></a>其它目录</h2><ul>
+<li><code>/docs</code>: 用户帮助文档.</li>
+<li><code>/tools</code>: 此项目的工具.这些工具可以从 <code>/pkg</code> 和 <code>internal</code> 目录中导入代码</li>
+<li><code>/examples</code>: 应用程序或公共库的示例</li>
+<li><code>/third_party</code>: 第三方工具</li>
+<li><code>/assets</code>: 仓库的其它资源.如,图片, logo 等</li>
+<li><code>/website</code>: 项目的网站数据目录.</li>
+</ul>
+<h2 id="不应该包含的目录"><a href="#不应该包含的目录" class="headerlink" title="不应该包含的目录"></a>不应该包含的目录</h2><ul>
+<li><code>/src</code>: 不要将 Java 项目的代码结构组织习惯应用到 Go 中</li>
+</ul>
+]]></content>
+      <categories>
+        <category>go</category>
+      </categories>
+      <tags>
+        <tag>go</tag>
       </tags>
   </entry>
   <entry>
@@ -8236,69 +8334,6 @@
       </categories>
       <tags>
         <tag>Kubernetes</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Golang 项目结构</title>
-    <url>/2020/06/24/golang-standards-project-layout/</url>
-    <content><![CDATA[<p><a href="https://github.com/golang-standards/project-layout" target="_blank" rel="noopener">https://github.com/golang-standards/project-layout</a> 项目是常见的 Go 项目代码的布局方式.我们在阅读或开发 Go 项目时,可以遵循此项目中的布局方式进行组织代码.</p>
-<p>以下是 Go 项目中常见目录及其简单介绍.</p>
-<h2 id="Go-目录"><a href="#Go-目录" class="headerlink" title="Go 目录"></a>Go 目录</h2><ul>
-<li><code>/cmd</code>: 项目的主程序目录</li>
-</ul>
-<p>每个应用程序的目录名称应该与您的可执行文件名称一致.如 <code>/cmd/myapp</code>.</p>
-<p>不要在此目录中放置很多代码.如果您任务该代码可以被导入并在其它项目中使用,则应将其放在 <code>/pkg</code> 目录中.如果代码不可导入或不希望其他人使用它,则应将代码放在 <code>/internal</code> 目录中.</p>
-<p>此目录下通常有一个简单的 main 函数,并通过导入或调用 <code>/internal</code> 和 <code>/pkg</code> 目录中的代码,而没有其他的函数.</p>
-<p>如,<a href="https://github.com/prometheus/prometheus/tree/master/cmd" target="_blank" rel="noopener">prometheus/cmd</a></p>
-<ul>
-<li><p><code>/internal</code>: 私有应用程序和代码库.放在该包中的代码,表明只希望在此项目内部使用,其它项目不能使用.</p>
-</li>
-<li><p><code>/pkg</code>: 外部应用程序可以使用的库代码.该目录与 <code>internal</code> 对应,是公开的.如 <a href="https://github.com/prometheus/prometheus/tree/master/pkg" target="_blank" rel="noopener">prometheus/pkg</a>.</p>
-</li>
-</ul>
-<p>一般来说,放在该目录下的代码应该和具体业务无关,方便本项目或其他项目重用.当你决定将代码放入该包时,你应该对其负责,因为别人很可能使用它.</p>
-<ul>
-<li><code>/vendor</code>: 应用程序依赖项目录.</li>
-</ul>
-<p><code>go mod vendor</code> 命令将为您创建 <code>/vendor</code> 目录.注意,如果您使用的不是 Go 1.14 版本(1.14 版本默认开启),则可能需要在 <code>go build</code> 命令中添加 <code>-mod=vender</code> 标志.</p>
-<p>注意,从 1.13 开始,Go 还启用了模块代码功能(默认情况下使用 <a href="https://proxy.golang.org" target="_blank" rel="noopener"><code>https://proxy.golang.org</code></a> 作为其模块的代理服务器).如果是这样,那么您根本不需要 <code>vendor</code> 目录.</p>
-<h2 id="服务应用目录"><a href="#服务应用目录" class="headerlink" title="服务应用目录"></a>服务应用目录</h2><ul>
-<li><code>/api</code>: 主要保存 OpenAPI/Swagger 规范, JSON 格式文件和协议定义文件.如 <a href="https://github.com/kubernetes/kubernetes/tree/master/api" target="_blank" rel="noopener">kubernetes/api</a></li>
-</ul>
-<h2 id="Web-应用目录"><a href="#Web-应用目录" class="headerlink" title="Web 应用目录"></a>Web 应用目录</h2><ul>
-<li><code>/web</code>: Web 应用程序特定的组件,包含静态 Web 资源,服务端模版和 SPA.</li>
-</ul>
-<h2 id="常见应用目录"><a href="#常见应用目录" class="headerlink" title="常见应用目录"></a>常见应用目录</h2><ul>
-<li><code>/configs</code>: 配置文件模版或默认配置目录.</li>
-<li><code>/init</code>: 系统初始化(systemd, upstart,sysv)和进程管理/监控(runit, supervisord) 配置.</li>
-<li><code>/scripts</code>: 用于执行构建,安装,分析等操作的各种脚本.</li>
-</ul>
-<p>这些脚本可使根目录下的 Makefile 变得简单.如 <a href="https://github.com/hashicorp/terraform/blob/master/Makefile" target="_blank" rel="noopener">terraform/Makefile</a>, <a href="https://github.com/helm/helm/tree/master/scripts" target="_blank" rel="noopener">helm/scripts</a>.</p>
-<ul>
-<li><code>/build</code>: 打包构建与持续集成.</li>
-</ul>
-<p>将您的容器,操作系统软件包配置和脚本放在 <code>/build/package</code> 目录中.将您的持续集成(travis, circle, drone)配置和脚本放在 <code>/build/ci</code> 目录中.注意,有些 CI 工具对于其配置文件的位置非常挑剔.尝试将其放在 <code>/build/ci</code> 目录中,并将其链接到工具期望的位置(如果可能).</p>
-<ul>
-<li><code>/deployments</code>: Iaas, Paas 系统和容器编排配置和模版目录.注意,有些代码仓库中,该目录为 <code>/deploy</code>.</li>
-<li><code>/test</code>: 其它外部测试应用程序和测试数据目录.</li>
-</ul>
-<h2 id="其它目录"><a href="#其它目录" class="headerlink" title="其它目录"></a>其它目录</h2><ul>
-<li><code>/docs</code>: 用户帮助文档.</li>
-<li><code>/tools</code>: 此项目的工具.这些工具可以从 <code>/pkg</code> 和 <code>internal</code> 目录中导入代码</li>
-<li><code>/examples</code>: 应用程序或公共库的示例</li>
-<li><code>/third_party</code>: 第三方工具</li>
-<li><code>/assets</code>: 仓库的其它资源.如,图片, logo 等</li>
-<li><code>/website</code>: 项目的网站数据目录.</li>
-</ul>
-<h2 id="不应该包含的目录"><a href="#不应该包含的目录" class="headerlink" title="不应该包含的目录"></a>不应该包含的目录</h2><ul>
-<li><code>/src</code>: 不要将 Java 项目的代码结构组织习惯应用到 Go 中</li>
-</ul>
-]]></content>
-      <categories>
-        <category>go</category>
-      </categories>
-      <tags>
-        <tag>go</tag>
       </tags>
   </entry>
   <entry>
@@ -11096,6 +11131,112 @@
       </tags>
   </entry>
   <entry>
+    <title>Zookeeper 基础</title>
+    <url>/2020/03/26/zookeeper-basis/</url>
+    <content><![CDATA[<h2 id="安装及配置"><a href="#安装及配置" class="headerlink" title="安装及配置"></a>安装及配置</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cp <span class="variable">$ZK_HOME</span>/conf/&#123;zoo_sample.cfg,zoo.cfg&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># zookeeper配置文件简单解释</span></span><br><span class="line">tickTime=2000 <span class="comment"># 心跳基本时间单位,毫秒级</span></span><br><span class="line">initLimit=10 <span class="comment"># 初始化的超时时间,initLimit*tickTime</span></span><br><span class="line">syncLimit=5 <span class="comment"># Leader 与 Follower的超时时间,syncLimit*tickTime</span></span><br><span class="line">clientPort=2181 <span class="comment"># 端口</span></span><br><span class="line">dataDir=<span class="variable">$&#123;ZK_HOME&#125;</span>/data <span class="comment"># 数据目录</span></span><br><span class="line">ataLogDir=<span class="variable">$&#123;ZK_HOME&#125;</span>/logs <span class="comment"># 日志目录</span></span><br><span class="line"><span class="comment"># 集群配置</span></span><br><span class="line">server.1=zk_server_1:2888:3888</span><br><span class="line">server.2=zk_server_2:2888:3888</span><br><span class="line">server.3=zk_server_3:2888:3888</span><br><span class="line"></span><br><span class="line"><span class="comment"># 这里需要注意的是,在每一个zookeeper server节点的dataDir目录下有一个 myid 的文件,对应 server.1</span></span><br><span class="line"><span class="built_in">echo</span> 1 &gt; <span class="variable">$&#123;dataDir&#125;</span>/myid</span><br></pre></td></tr></table></figure>
+
+<h2 id="客户端操作"><a href="#客户端操作" class="headerlink" title="客户端操作"></a>客户端操作</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">connect host:port   <span class="comment"># 连接到指定服务</span></span><br><span class="line">get path [watch]    <span class="comment"># 获取指定节点信息(包括内容和状态), watch 表示是否对该参数进行监听</span></span><br><span class="line">ls path [watch]     <span class="comment"># 列出节点下的子节点</span></span><br><span class="line">ls2 path [watch]    <span class="comment"># 列出节点下的子节点,及该节点的信</span></span><br><span class="line"><span class="built_in">set</span> path data [version] <span class="comment"># 设置节点数据</span></span><br><span class="line">rmr path            <span class="comment"># 删除节点及其子节点数据</span></span><br><span class="line">create [-s] [-e] path data acl  <span class="comment"># 创建节点. -s 表示顺序节点,-e 表示临时节点</span></span><br><span class="line"><span class="built_in">stat</span> path [watch]   <span class="comment"># 获取节点的元数据信息</span></span><br><span class="line">listquota path      <span class="comment"># 显示节点配额</span></span><br><span class="line">setAcl path acl     <span class="comment"># 设置 ACL 访问控制</span></span><br><span class="line">getAcl path         <span class="comment"># 获取 ACL 访问控制</span></span><br><span class="line">delete path [version] <span class="comment"># 删除节点</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="znode-节点类型"><a href="#znode-节点类型" class="headerlink" title="znode 节点类型"></a>znode 节点类型</h2><p>每个 znode 都有不同的生命周期,而生命周期长短取决于 znode 的节点类型.Zoookeeper 提供了如下4种节点类型:</p>
+<table>
+<thead>
+<tr>
+<th align="left">节点类型</th>
+<th align="left">特性</th>
+<th align="left">创建方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">持久节点</td>
+<td align="left">会话关闭后,该节点仍然存在,可以创建子节点</td>
+<td align="left"><code>create &lt;path&gt; &lt;data&gt;</code></td>
+</tr>
+<tr>
+<td align="left">持久顺序节点</td>
+<td align="left">在持久节点特性的基础上.节点名后缀为自增数字</td>
+<td align="left"><code>create -s &lt;path&gt; &lt;data&gt;</code></td>
+</tr>
+<tr>
+<td align="left">临时节点</td>
+<td align="left">会话关闭后,该节点不存在,不可以创建子节点</td>
+<td align="left"><code>create -e &lt;path&gt; &lt;data&gt;</code></td>
+</tr>
+<tr>
+<td align="left">临时顺序节点</td>
+<td align="left">在临时节点特性的基础上,节点名后缀为自增数字</td>
+<td align="left"><code>create -s -e &lt;path&gt; &lt;data&gt;</code></td>
+</tr>
+</tbody></table>
+<h2 id="ACL-访问控制列表"><a href="#ACL-访问控制列表" class="headerlink" title="ACL 访问控制列表"></a>ACL 访问控制列表</h2><p>ZooKeeper 提供了一套完善的 ACL 权限控制机制保障数据安全性.其实 ACL 规则由<code>Scheme:id:permission</code>格式组成,其中,对于身份认证,提供了以下几种方式:</p>
+<table>
+<thead>
+<tr>
+<th align="left">身份认证方式</th>
+<th align="left">解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">world</td>
+<td align="left">默认方式,所有用户都可无条件访问,组合形式为: <code>world:anyone:[permissions]</code></td>
+</tr>
+<tr>
+<td align="left">digest</td>
+<td align="left">用户名:密码认证方式,最常用.组合形式为: <code>digest:username:BASE64(SHA1(password)):[permissions]</code></td>
+</tr>
+<tr>
+<td align="left">ip</td>
+<td align="left">对指定ip进行限制,组合形式为: <code>ip:127.0.0.1:[permissions]</code></td>
+</tr>
+<tr>
+<td align="left">auth</td>
+<td align="left">认证登录形式,需要用户获取权限后才可访问,组合形式为: <code>auth:user:password:[permissions]</code></td>
+</tr>
+</tbody></table>
+<p>对于 znode 的 <code>permissions</code> 权限,提供了以下 5 种操作权限:</p>
+<table>
+<thead>
+<tr>
+<th align="left">权限</th>
+<th align="left">简写</th>
+<th align="left">解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">CREATE</td>
+<td align="left">C</td>
+<td align="left">允许授权对象在当前节点下创建子节点</td>
+</tr>
+<tr>
+<td align="left">DELETE</td>
+<td align="left">D</td>
+<td align="left">允许授权对象在当前节点下删除子节点</td>
+</tr>
+<tr>
+<td align="left">WRITE</td>
+<td align="left">W</td>
+<td align="left">允许授权对象在当前节点进行更新操作</td>
+</tr>
+<tr>
+<td align="left">READ</td>
+<td align="left">R</td>
+<td align="left">允许授权对象在当前节点获取节点内容或获取子节点列表</td>
+</tr>
+<tr>
+<td align="left">ADMIN</td>
+<td align="left">A</td>
+<td align="left">允许授权对象对当前节点进行 ACL 相关的设置操作</td>
+</tr>
+</tbody></table>
+<h2 id="zookeeper-四字命令"><a href="#zookeeper-四字命令" class="headerlink" title="zookeeper 四字命令"></a>zookeeper 四字命令</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> conf | nc 192.168.0.68 2181 <span class="comment"># 查看状态信息</span></span><br><span class="line"><span class="built_in">echo</span> cons | nc 192.168.0.68 2181 <span class="comment"># 查看客户端连接信息</span></span><br><span class="line"><span class="built_in">echo</span> envi | nc 192.168.0.68 2181 <span class="comment"># 查看环境变量信息</span></span><br><span class="line"><span class="built_in">echo</span> mntr | nc 192.168.0.68 2181 <span class="comment"># 查看 zk 的健康信息</span></span><br><span class="line"><span class="built_in">echo</span> ruok | nc 192.168.0.68 2181 <span class="comment"># 查看 zk 是否启动</span></span><br><span class="line"><span class="built_in">echo</span> <span class="built_in">stat</span> | nc 192.168.0.68 2181 <span class="comment"># 查看状态信息</span></span><br><span class="line"><span class="built_in">echo</span> wchs | nc 192.168.0.68 2181 <span class="comment"># 查看 watch 信息</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Zookeeper</category>
+      </categories>
+      <tags>
+        <tag>Zookeeper</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>判断一个链表是否有环</title>
     <url>/2020/06/28/whether-linkedlist-has-ring/</url>
     <content><![CDATA[<h2 id="判断一个链表是否有环-如果有-则找到环的入口点"><a href="#判断一个链表是否有环-如果有-则找到环的入口点" class="headerlink" title="判断一个链表是否有环,如果有,则找到环的入口点"></a>判断一个链表是否有环,如果有,则找到环的入口点</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Node</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, value)</span>:</span></span><br><span class="line">        self.value = value</span><br><span class="line">        self.next = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__repr__</span><span class="params">(self)</span>:</span></span><br><span class="line">        retrun <span class="string">'%s'</span> % self.value</span><br><span class="line"></span><br><span class="line">node1 = Node(<span class="number">1</span>)</span><br><span class="line">node2 = Node(<span class="number">2</span>)</span><br><span class="line">node3 = Node(<span class="number">3</span>)</span><br><span class="line">node4 = Node(<span class="number">4</span>)</span><br><span class="line">node5 = Node(<span class="number">5</span>)</span><br><span class="line">node1.next = node2</span><br><span class="line">node2.next = node3</span><br><span class="line">node3.next = node4</span><br><span class="line">node4.next = node5</span><br><span class="line">node5.next = node2</span><br></pre></td></tr></table></figure>
@@ -11218,112 +11359,6 @@
       <tags>
         <tag>go</tag>
         <tag>3rd</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Zookeeper 基础</title>
-    <url>/2020/03/26/zookeeper-basis/</url>
-    <content><![CDATA[<h2 id="安装及配置"><a href="#安装及配置" class="headerlink" title="安装及配置"></a>安装及配置</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cp <span class="variable">$ZK_HOME</span>/conf/&#123;zoo_sample.cfg,zoo.cfg&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># zookeeper配置文件简单解释</span></span><br><span class="line">tickTime=2000 <span class="comment"># 心跳基本时间单位,毫秒级</span></span><br><span class="line">initLimit=10 <span class="comment"># 初始化的超时时间,initLimit*tickTime</span></span><br><span class="line">syncLimit=5 <span class="comment"># Leader 与 Follower的超时时间,syncLimit*tickTime</span></span><br><span class="line">clientPort=2181 <span class="comment"># 端口</span></span><br><span class="line">dataDir=<span class="variable">$&#123;ZK_HOME&#125;</span>/data <span class="comment"># 数据目录</span></span><br><span class="line">ataLogDir=<span class="variable">$&#123;ZK_HOME&#125;</span>/logs <span class="comment"># 日志目录</span></span><br><span class="line"><span class="comment"># 集群配置</span></span><br><span class="line">server.1=zk_server_1:2888:3888</span><br><span class="line">server.2=zk_server_2:2888:3888</span><br><span class="line">server.3=zk_server_3:2888:3888</span><br><span class="line"></span><br><span class="line"><span class="comment"># 这里需要注意的是,在每一个zookeeper server节点的dataDir目录下有一个 myid 的文件,对应 server.1</span></span><br><span class="line"><span class="built_in">echo</span> 1 &gt; <span class="variable">$&#123;dataDir&#125;</span>/myid</span><br></pre></td></tr></table></figure>
-
-<h2 id="客户端操作"><a href="#客户端操作" class="headerlink" title="客户端操作"></a>客户端操作</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">connect host:port   <span class="comment"># 连接到指定服务</span></span><br><span class="line">get path [watch]    <span class="comment"># 获取指定节点信息(包括内容和状态), watch 表示是否对该参数进行监听</span></span><br><span class="line">ls path [watch]     <span class="comment"># 列出节点下的子节点</span></span><br><span class="line">ls2 path [watch]    <span class="comment"># 列出节点下的子节点,及该节点的信</span></span><br><span class="line"><span class="built_in">set</span> path data [version] <span class="comment"># 设置节点数据</span></span><br><span class="line">rmr path            <span class="comment"># 删除节点及其子节点数据</span></span><br><span class="line">create [-s] [-e] path data acl  <span class="comment"># 创建节点. -s 表示顺序节点,-e 表示临时节点</span></span><br><span class="line"><span class="built_in">stat</span> path [watch]   <span class="comment"># 获取节点的元数据信息</span></span><br><span class="line">listquota path      <span class="comment"># 显示节点配额</span></span><br><span class="line">setAcl path acl     <span class="comment"># 设置 ACL 访问控制</span></span><br><span class="line">getAcl path         <span class="comment"># 获取 ACL 访问控制</span></span><br><span class="line">delete path [version] <span class="comment"># 删除节点</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="znode-节点类型"><a href="#znode-节点类型" class="headerlink" title="znode 节点类型"></a>znode 节点类型</h2><p>每个 znode 都有不同的生命周期,而生命周期长短取决于 znode 的节点类型.Zoookeeper 提供了如下4种节点类型:</p>
-<table>
-<thead>
-<tr>
-<th align="left">节点类型</th>
-<th align="left">特性</th>
-<th align="left">创建方式</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">持久节点</td>
-<td align="left">会话关闭后,该节点仍然存在,可以创建子节点</td>
-<td align="left"><code>create &lt;path&gt; &lt;data&gt;</code></td>
-</tr>
-<tr>
-<td align="left">持久顺序节点</td>
-<td align="left">在持久节点特性的基础上.节点名后缀为自增数字</td>
-<td align="left"><code>create -s &lt;path&gt; &lt;data&gt;</code></td>
-</tr>
-<tr>
-<td align="left">临时节点</td>
-<td align="left">会话关闭后,该节点不存在,不可以创建子节点</td>
-<td align="left"><code>create -e &lt;path&gt; &lt;data&gt;</code></td>
-</tr>
-<tr>
-<td align="left">临时顺序节点</td>
-<td align="left">在临时节点特性的基础上,节点名后缀为自增数字</td>
-<td align="left"><code>create -s -e &lt;path&gt; &lt;data&gt;</code></td>
-</tr>
-</tbody></table>
-<h2 id="ACL-访问控制列表"><a href="#ACL-访问控制列表" class="headerlink" title="ACL 访问控制列表"></a>ACL 访问控制列表</h2><p>ZooKeeper 提供了一套完善的 ACL 权限控制机制保障数据安全性.其实 ACL 规则由<code>Scheme:id:permission</code>格式组成,其中,对于身份认证,提供了以下几种方式:</p>
-<table>
-<thead>
-<tr>
-<th align="left">身份认证方式</th>
-<th align="left">解释</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">world</td>
-<td align="left">默认方式,所有用户都可无条件访问,组合形式为: <code>world:anyone:[permissions]</code></td>
-</tr>
-<tr>
-<td align="left">digest</td>
-<td align="left">用户名:密码认证方式,最常用.组合形式为: <code>digest:username:BASE64(SHA1(password)):[permissions]</code></td>
-</tr>
-<tr>
-<td align="left">ip</td>
-<td align="left">对指定ip进行限制,组合形式为: <code>ip:127.0.0.1:[permissions]</code></td>
-</tr>
-<tr>
-<td align="left">auth</td>
-<td align="left">认证登录形式,需要用户获取权限后才可访问,组合形式为: <code>auth:user:password:[permissions]</code></td>
-</tr>
-</tbody></table>
-<p>对于 znode 的 <code>permissions</code> 权限,提供了以下 5 种操作权限:</p>
-<table>
-<thead>
-<tr>
-<th align="left">权限</th>
-<th align="left">简写</th>
-<th align="left">解释</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">CREATE</td>
-<td align="left">C</td>
-<td align="left">允许授权对象在当前节点下创建子节点</td>
-</tr>
-<tr>
-<td align="left">DELETE</td>
-<td align="left">D</td>
-<td align="left">允许授权对象在当前节点下删除子节点</td>
-</tr>
-<tr>
-<td align="left">WRITE</td>
-<td align="left">W</td>
-<td align="left">允许授权对象在当前节点进行更新操作</td>
-</tr>
-<tr>
-<td align="left">READ</td>
-<td align="left">R</td>
-<td align="left">允许授权对象在当前节点获取节点内容或获取子节点列表</td>
-</tr>
-<tr>
-<td align="left">ADMIN</td>
-<td align="left">A</td>
-<td align="left">允许授权对象对当前节点进行 ACL 相关的设置操作</td>
-</tr>
-</tbody></table>
-<h2 id="zookeeper-四字命令"><a href="#zookeeper-四字命令" class="headerlink" title="zookeeper 四字命令"></a>zookeeper 四字命令</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> conf | nc 192.168.0.68 2181 <span class="comment"># 查看状态信息</span></span><br><span class="line"><span class="built_in">echo</span> cons | nc 192.168.0.68 2181 <span class="comment"># 查看客户端连接信息</span></span><br><span class="line"><span class="built_in">echo</span> envi | nc 192.168.0.68 2181 <span class="comment"># 查看环境变量信息</span></span><br><span class="line"><span class="built_in">echo</span> mntr | nc 192.168.0.68 2181 <span class="comment"># 查看 zk 的健康信息</span></span><br><span class="line"><span class="built_in">echo</span> ruok | nc 192.168.0.68 2181 <span class="comment"># 查看 zk 是否启动</span></span><br><span class="line"><span class="built_in">echo</span> <span class="built_in">stat</span> | nc 192.168.0.68 2181 <span class="comment"># 查看状态信息</span></span><br><span class="line"><span class="built_in">echo</span> wchs | nc 192.168.0.68 2181 <span class="comment"># 查看 watch 信息</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>Zookeeper</category>
-      </categories>
-      <tags>
-        <tag>Zookeeper</tag>
       </tags>
   </entry>
 </search>
