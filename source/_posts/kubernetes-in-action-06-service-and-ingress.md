@@ -112,8 +112,8 @@ MYAPP_SVC_PORT=tcp://10.107.208.93:80
 
 创建 Service 资源对象时,集群内的 DNS 服务会为它们自动创建资源记录用于名称解析和服务注册.Pod 可以直接使用标准的 DNS 名称来访问这些 Service 资源.每个 Service 对象相关的 DNS 记录包含如下两个.
 
-- `{SVCNAME}.{NAMESPACE}.{CLUSTER_DOMAIN}`
-- `{SVCNAME}.{NAMESPACE}.svc.{CLUSTER_DOMAIN}`
+- A记录: `{SVCNAME}.{NAMESPACE}.svc.{CLUSTER_DOMAIN}`
+- SRV 记录: `_{PORT_NAME}._{PORT_PROTOCOL}.svc.{SVCNAME}.{NAMESPACE}.{CLUSTER_DOMAIN}`
 
 而 Kubernetes 中 Pod 的 DNS 配置信息会自动注入到它的 `/etc/resolv.conf` 文件中.其文件内容如下:
 
