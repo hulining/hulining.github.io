@@ -29,7 +29,7 @@
 <meta property="og:description" content="本文为 K8S 实战的第六个章节.主要了解 K8S 集群中 Service 和 Ingress 的相关定义与用法">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-03-18T06:00:00.000Z">
-<meta property="article:modified_time" content="2022-12-10T04:53:14.684Z">
+<meta property="article:modified_time" content="2023-02-13T02:44:03.471Z">
 <meta property="article:author" content="纸盒人">
 <meta property="article:tag" content="Kubernetes">
 <meta name="twitter:card" content="summary">
@@ -299,8 +299,8 @@
 
 <h3 id="服务发现方式-DNS"><a href="#服务发现方式-DNS" class="headerlink" title="服务发现方式: DNS"></a>服务发现方式: DNS</h3><p>创建 Service 资源对象时,集群内的 DNS 服务会为它们自动创建资源记录用于名称解析和服务注册.Pod 可以直接使用标准的 DNS 名称来访问这些 Service 资源.每个 Service 对象相关的 DNS 记录包含如下两个.</p>
 <ul>
-<li><code>{SVCNAME}.{NAMESPACE}.{CLUSTER_DOMAIN}</code></li>
-<li><code>{SVCNAME}.{NAMESPACE}.svc.{CLUSTER_DOMAIN}</code></li>
+<li>A记录: <code>{SVCNAME}.{NAMESPACE}.svc.{CLUSTER_DOMAIN}</code></li>
+<li>SRV 记录: <code>_{PORT_NAME}._{PORT_PROTOCOL}.svc.{SVCNAME}.{NAMESPACE}.{CLUSTER_DOMAIN}</code></li>
 </ul>
 <p>而 Kubernetes 中 Pod 的 DNS 配置信息会自动注入到它的 <code>/etc/resolv.conf</code> 文件中.其文件内容如下:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nameserver 10.96.0.10</span><br><span class="line">search &#123;NAMESPACE&#125;.svc.&#123;CLUSTER_DOMAIN&#125; svc.&#123;CLUSTER_DOMAIN&#125; &#123;CLUSTER_DOMAIN&#125;</span><br></pre></td></tr></table></figure>
@@ -523,7 +523,7 @@
 <div class="copyright">
   
   &copy; 2020 – 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>

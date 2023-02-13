@@ -5333,6 +5333,31 @@
       </tags>
   </entry>
   <entry>
+    <title>awesome-go</title>
+    <url>/2021/10/29/awesome-go/</url>
+    <content><![CDATA[<h2 id="命令行工具"><a href="#命令行工具" class="headerlink" title="命令行工具"></a>命令行工具</h2><h3 id="Standard-CLI"><a href="#Standard-CLI" class="headerlink" title="Standard CLI"></a>Standard CLI</h3><ul>
+<li><a href="https://github.com/spf13/cobra" target="_blank" rel="noopener">cobra</a> - Commander for modern Go CLI interactions. 跳转 <a href="/2020/06/23/cobra-quick-start/" title="cobra 快速开始">cobra 快速开始</a> </li>
+</ul>
+<h2 id="日志"><a href="#日志" class="headerlink" title="日志"></a>日志</h2><ul>
+<li><a href="https://github.com/Sirupsen/logrus" target="_blank" rel="noopener">logrus</a> - Structured logger for Go.跳转 <a href="/2021/11/02/logrus-quick-start/" title="logrus 快速开始">logrus 快速开始</a></li>
+<li><a href="https://github.com/uber-go/zap" target="_blank" rel="noopener">zap</a> - Fast, structured, leveled logging in Go.跳转 <a href="/2021/11/17/zap/" title="高性能日志库 zap">高性能日志库 zap</a></li>
+</ul>
+<h2 id="分布式系统"><a href="#分布式系统" class="headerlink" title="分布式系统"></a>分布式系统</h2><ul>
+<li><a href="https://github.com/go-kit/kit" target="_blank" rel="noopener">go-kit</a> - Microservice toolkit with support for service discovery, load balancing, pluggable transports, request tracking, etc.</li>
+<li><a href="https://github.com/grpc/grpc-go" target="_blank" rel="noopener">grpc-go</a> The Go language implementation of gRPC. HTTP/2 based RPC.</li>
+</ul>
+<h2 id="Goroutines"><a href="#Goroutines" class="headerlink" title="Goroutines"></a>Goroutines</h2><ul>
+<li><a href="https://github.com/panjf2000/ants" target="_blank" rel="noopener">ants</a> - A high-performance and low-cost goroutine pool in Go. 跳转 <a href="/2021/11/11/ants-quick-start/" title="ants 快速开始">ants 快速开始</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>go</category>
+      </categories>
+      <tags>
+        <tag>go</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>ants 快速开始</title>
     <url>/2021/11/11/ants-quick-start/</url>
     <content><![CDATA[<p><a href="https://github.com/panjf2000/ants" target="_blank" rel="noopener"><code>ants</code></a> 实现了一个高性能的 <code>goroutine</code> 池,实现了对大规模 goroutine 的调度管理及复用.它允许使用者在开发并发程序的时候限制 goroutine 数量,复用资源,以便达到更高效执行任务的效果</p>
@@ -5375,57 +5400,6 @@
         <tag>go</tag>
         <tag>goroutine</tag>
         <tag>3rd</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>awesome-go</title>
-    <url>/2021/10/29/awesome-go/</url>
-    <content><![CDATA[<h2 id="命令行工具"><a href="#命令行工具" class="headerlink" title="命令行工具"></a>命令行工具</h2><h3 id="Standard-CLI"><a href="#Standard-CLI" class="headerlink" title="Standard CLI"></a>Standard CLI</h3><ul>
-<li><a href="https://github.com/spf13/cobra" target="_blank" rel="noopener">cobra</a> - Commander for modern Go CLI interactions. 跳转 <a href="/2020/06/23/cobra-quick-start/" title="cobra 快速开始">cobra 快速开始</a> </li>
-</ul>
-<h2 id="日志"><a href="#日志" class="headerlink" title="日志"></a>日志</h2><ul>
-<li><a href="https://github.com/Sirupsen/logrus" target="_blank" rel="noopener">logrus</a> - Structured logger for Go.跳转 <a href="/2021/11/02/logrus-quick-start/" title="logrus 快速开始">logrus 快速开始</a></li>
-<li><a href="https://github.com/uber-go/zap" target="_blank" rel="noopener">zap</a> - Fast, structured, leveled logging in Go.跳转 <a href="/2021/11/17/zap/" title="高性能日志库 zap">高性能日志库 zap</a></li>
-</ul>
-<h2 id="分布式系统"><a href="#分布式系统" class="headerlink" title="分布式系统"></a>分布式系统</h2><ul>
-<li><a href="https://github.com/go-kit/kit" target="_blank" rel="noopener">go-kit</a> - Microservice toolkit with support for service discovery, load balancing, pluggable transports, request tracking, etc.</li>
-<li><a href="https://github.com/grpc/grpc-go" target="_blank" rel="noopener">grpc-go</a> The Go language implementation of gRPC. HTTP/2 based RPC.</li>
-</ul>
-<h2 id="Goroutines"><a href="#Goroutines" class="headerlink" title="Goroutines"></a>Goroutines</h2><ul>
-<li><a href="https://github.com/panjf2000/ants" target="_blank" rel="noopener">ants</a> - A high-performance and low-cost goroutine pool in Go. 跳转 <a href="/2021/11/11/ants-quick-start/" title="ants 快速开始">ants 快速开始</a></li>
-</ul>
-]]></content>
-      <categories>
-        <category>go</category>
-      </categories>
-      <tags>
-        <tag>go</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Bash 特性</title>
-    <url>/2020/12/07/bash-features/</url>
-    <content><![CDATA[<h2 id="Shell-语法"><a href="#Shell-语法" class="headerlink" title="Shell 语法"></a>Shell 语法</h2><h3 id="复合命令"><a href="#复合命令" class="headerlink" title="复合命令"></a>复合命令</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">(list) <span class="comment"># 表示在子 shell 中运行命令</span></span><br><span class="line">&#123; list; &#125; <span class="comment"># 表示仅在本 shell 中运行命令.且命令必须以 `;` 结尾,命令与 `&#123;&#125;` 之间必须有空格</span></span><br><span class="line">((expression)) <span class="comment"># 多用于算术运算</span></span><br><span class="line">[[ expression ]] <span class="comment"># 多用于条件判断</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="Parameter"><a href="#Parameter" class="headerlink" title="Parameter"></a>Parameter</h2><h3 id="位置参数"><a href="#位置参数" class="headerlink" title="位置参数"></a>位置参数</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$* <span class="comment"># 参数列表</span></span><br><span class="line"><span class="variable">$@</span> <span class="comment"># 参数列表</span></span><br><span class="line"><span class="variable">$#</span> <span class="comment"># 参数个数</span></span><br><span class="line">$? <span class="comment"># 最后运行命令的结束代码</span></span><br><span class="line">$$ <span class="comment"># shell 本身的 processID. () 中运行的子 shell 返回值也为本 shell 的 processID</span></span><br><span class="line"><span class="variable">$0</span> <span class="comment"># shell 脚本或命令本身的文件名</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h2><h3 id="参数扩展"><a href="#参数扩展" class="headerlink" title="参数扩展"></a>参数扩展</h3><p><code>$</code> 符号用于参数扩展,命令替换或算术扩展.可以使用花括号(<code>{}</code>)将要扩展的参数名称或符号括起来,该括号是可选的,但要保证扩展的变量不受紧随其后字符的影响.</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="variable">$&#123;parameter&#125;</span> <span class="comment"># 原始格式,表示变量值.如果第一个字符是感叹号(!),则会引入变量间接访问.如 name=admin;admin=pass,则 $&#123;!name&#125; 的值为 pass</span></span><br><span class="line"><span class="variable">$&#123;parameter:-word&#125;</span> <span class="comment"># 如果 parameter 没有设置或为空,则使用默认值为 word.(parameter 值不变)</span></span><br><span class="line"><span class="variable">$&#123;parameter:=word&#125;</span> <span class="comment"># 如果 parameter 没有设置或为空,则将 parameter 的值设置为 word</span></span><br><span class="line"><span class="variable">$&#123;parameter:?word&#125;</span> <span class="comment"># 如果 parameter 没有设置或为空,则将 word 作为错误信息输出</span></span><br><span class="line"><span class="variable">$&#123;parameter:+word&#125;</span> <span class="comment"># 如果 parameter 不为空,则输出 word 的值.(parameter 值不变)</span></span><br><span class="line"><span class="variable">$&#123;parameter:offset&#125;</span> <span class="comment"># 子字符串, offset 从 0 开始</span></span><br><span class="line"><span class="variable">$&#123;parameter:offset:length&#125;</span> <span class="comment"># 子字符串, offset 从 0 开始,子字符串长度为 length</span></span><br><span class="line"><span class="variable">$&#123;#parameter&#125;</span> <span class="comment"># parameter 变量值的长度</span></span><br><span class="line"><span class="variable">$&#123;parameter/pattern/string&#125;</span> <span class="comment"># 使用 string 替换 parameter 中 pattern 的模式匹配</span></span><br><span class="line"></span><br><span class="line"><span class="variable">$&#123;parameter^pattern&#125;</span> <span class="comment"># ^ 表示将模式匹配的内容转换为大写.</span></span><br><span class="line"><span class="variable">$&#123;parameter^^pattern&#125;</span> <span class="comment"># $&#123;parameter^^&#125; 将所有内容转换为大写输出 </span></span><br><span class="line"><span class="variable">$&#123;parameter,pattern&#125;</span> <span class="comment"># ,表示将模式匹配的内容转换为小写</span></span><br><span class="line"><span class="variable">$&#123;parameter,,pattern&#125;</span> <span class="comment"># $&#123;parameter,,&#125; 将所有内容转换为小写输出</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="算术运算"><a href="#算术运算" class="headerlink" title="算术运算"></a>算术运算</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$((expression))</span><br><span class="line">sum=$[ <span class="variable">$&#123;v1&#125;</span> + <span class="variable">$&#123;v2&#125;</span> ]</span><br><span class="line">(( sum=<span class="variable">$&#123;v1&#125;</span> + <span class="variable">$&#123;v2&#125;</span> ))</span><br><span class="line"><span class="built_in">let</span> sum=<span class="variable">$&#123;v1&#125;</span>+<span class="variable">$&#123;v2&#125;</span>     <span class="comment"># 这里运算符两端必须没有空格</span></span><br><span class="line">`expr <span class="variable">$&#123;v1&#125;</span> + <span class="variable">$&#123;v2&#125;</span>`    <span class="comment"># 这里运算符号两端必须要有空格</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="条件判断语句"><a href="#条件判断语句" class="headerlink" title="条件判断语句"></a>条件判断语句</h2><p>Bash 中的条件判断语句使用 <code>[[ 复合命令 ]]</code>,<code>test</code> 和 <code>[ 内置命令 ]</code> 对文件属性,字符串进行判断或进行算术比较.</p>
-<h3 id="文件相关"><a href="#文件相关" class="headerlink" title="文件相关"></a>文件相关</h3><p>下面是常用的文件属性进行条件判断语句</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">-a file <span class="comment"># 文件存在,则返回 True</span></span><br><span class="line">-b file <span class="comment"># 文件存在且是块文件,则返回 True</span></span><br><span class="line">-c file <span class="comment"># 文件存在且是字符文件,则返回 True</span></span><br><span class="line">-d file <span class="comment"># 文件存在且是目录,则返回 True</span></span><br><span class="line">-e file <span class="comment"># 文件存在,则返回 True</span></span><br><span class="line">-f file <span class="comment"># 文件存在且是文本文件,则返回 True</span></span><br><span class="line">-h file <span class="comment"># 文件存在且是链接文件,则返回 True</span></span><br><span class="line">-p file <span class="comment"># 文件存在且是管道文件,则返回 True</span></span><br><span class="line">-r file <span class="comment"># 文件存在且可读,则返回 True</span></span><br><span class="line">-s file <span class="comment"># 文件存在且大小不为0,则返回 True</span></span><br><span class="line">-w file <span class="comment"># 文件存在且可写,则返回 True</span></span><br><span class="line">-x file <span class="comment"># 文件存在且可执行,则返回 True</span></span><br><span class="line">-L file <span class="comment"># 文件存在且是链接文件,则返回 True</span></span><br><span class="line">-S file <span class="comment"># 文件存在且是套接字文件,则返回 True</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="字符串与算术运算相关"><a href="#字符串与算术运算相关" class="headerlink" title="字符串与算术运算相关"></a>字符串与算术运算相关</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">-v varname <span class="comment"># 设置了 varname 变量,则返回 True</span></span><br><span class="line">-z string <span class="comment"># 字符串长度为 0,则返回 True</span></span><br><span class="line">-n string <span class="comment"># 字符串长度不为 0,则返回 True</span></span><br><span class="line">string1 == string2 <span class="comment"># 两个字符串相等,则返回 True</span></span><br><span class="line">string1 != string2</span><br><span class="line">string1 &lt; string2</span><br><span class="line">string1 &gt; string2</span><br><span class="line"></span><br><span class="line">arg1 OP arg2 <span class="comment"># OP 支持的方式为 -eq, -ne, -lt, -le, -gt, -ge</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>Bash</tag>
       </tags>
   </entry>
   <entry>
@@ -5587,6 +5561,32 @@
       </tags>
   </entry>
   <entry>
+    <title>Bash 特性</title>
+    <url>/2020/12/07/bash-features/</url>
+    <content><![CDATA[<h2 id="Shell-语法"><a href="#Shell-语法" class="headerlink" title="Shell 语法"></a>Shell 语法</h2><h3 id="复合命令"><a href="#复合命令" class="headerlink" title="复合命令"></a>复合命令</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">(list) <span class="comment"># 表示在子 shell 中运行命令</span></span><br><span class="line">&#123; list; &#125; <span class="comment"># 表示仅在本 shell 中运行命令.且命令必须以 `;` 结尾,命令与 `&#123;&#125;` 之间必须有空格</span></span><br><span class="line">((expression)) <span class="comment"># 多用于算术运算</span></span><br><span class="line">[[ expression ]] <span class="comment"># 多用于条件判断</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Parameter"><a href="#Parameter" class="headerlink" title="Parameter"></a>Parameter</h2><h3 id="位置参数"><a href="#位置参数" class="headerlink" title="位置参数"></a>位置参数</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$* <span class="comment"># 参数列表</span></span><br><span class="line"><span class="variable">$@</span> <span class="comment"># 参数列表</span></span><br><span class="line"><span class="variable">$#</span> <span class="comment"># 参数个数</span></span><br><span class="line">$? <span class="comment"># 最后运行命令的结束代码</span></span><br><span class="line">$$ <span class="comment"># shell 本身的 processID. () 中运行的子 shell 返回值也为本 shell 的 processID</span></span><br><span class="line"><span class="variable">$0</span> <span class="comment"># shell 脚本或命令本身的文件名</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h2><h3 id="参数扩展"><a href="#参数扩展" class="headerlink" title="参数扩展"></a>参数扩展</h3><p><code>$</code> 符号用于参数扩展,命令替换或算术扩展.可以使用花括号(<code>{}</code>)将要扩展的参数名称或符号括起来,该括号是可选的,但要保证扩展的变量不受紧随其后字符的影响.</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="variable">$&#123;parameter&#125;</span> <span class="comment"># 原始格式,表示变量值.如果第一个字符是感叹号(!),则会引入变量间接访问.如 name=admin;admin=pass,则 $&#123;!name&#125; 的值为 pass</span></span><br><span class="line"><span class="variable">$&#123;parameter:-word&#125;</span> <span class="comment"># 如果 parameter 没有设置或为空,则使用默认值为 word.(parameter 值不变)</span></span><br><span class="line"><span class="variable">$&#123;parameter:=word&#125;</span> <span class="comment"># 如果 parameter 没有设置或为空,则将 parameter 的值设置为 word</span></span><br><span class="line"><span class="variable">$&#123;parameter:?word&#125;</span> <span class="comment"># 如果 parameter 没有设置或为空,则将 word 作为错误信息输出</span></span><br><span class="line"><span class="variable">$&#123;parameter:+word&#125;</span> <span class="comment"># 如果 parameter 不为空,则输出 word 的值.(parameter 值不变)</span></span><br><span class="line"><span class="variable">$&#123;parameter:offset&#125;</span> <span class="comment"># 子字符串, offset 从 0 开始</span></span><br><span class="line"><span class="variable">$&#123;parameter:offset:length&#125;</span> <span class="comment"># 子字符串, offset 从 0 开始,子字符串长度为 length</span></span><br><span class="line"><span class="variable">$&#123;#parameter&#125;</span> <span class="comment"># parameter 变量值的长度</span></span><br><span class="line"><span class="variable">$&#123;parameter/pattern/string&#125;</span> <span class="comment"># 使用 string 替换 parameter 中 pattern 的模式匹配</span></span><br><span class="line"></span><br><span class="line"><span class="variable">$&#123;parameter^pattern&#125;</span> <span class="comment"># ^ 表示将模式匹配的内容转换为大写.</span></span><br><span class="line"><span class="variable">$&#123;parameter^^pattern&#125;</span> <span class="comment"># $&#123;parameter^^&#125; 将所有内容转换为大写输出 </span></span><br><span class="line"><span class="variable">$&#123;parameter,pattern&#125;</span> <span class="comment"># ,表示将模式匹配的内容转换为小写</span></span><br><span class="line"><span class="variable">$&#123;parameter,,pattern&#125;</span> <span class="comment"># $&#123;parameter,,&#125; 将所有内容转换为小写输出</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="算术运算"><a href="#算术运算" class="headerlink" title="算术运算"></a>算术运算</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$((expression))</span><br><span class="line">sum=$[ <span class="variable">$&#123;v1&#125;</span> + <span class="variable">$&#123;v2&#125;</span> ]</span><br><span class="line">(( sum=<span class="variable">$&#123;v1&#125;</span> + <span class="variable">$&#123;v2&#125;</span> ))</span><br><span class="line"><span class="built_in">let</span> sum=<span class="variable">$&#123;v1&#125;</span>+<span class="variable">$&#123;v2&#125;</span>     <span class="comment"># 这里运算符两端必须没有空格</span></span><br><span class="line">`expr <span class="variable">$&#123;v1&#125;</span> + <span class="variable">$&#123;v2&#125;</span>`    <span class="comment"># 这里运算符号两端必须要有空格</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="条件判断语句"><a href="#条件判断语句" class="headerlink" title="条件判断语句"></a>条件判断语句</h2><p>Bash 中的条件判断语句使用 <code>[[ 复合命令 ]]</code>,<code>test</code> 和 <code>[ 内置命令 ]</code> 对文件属性,字符串进行判断或进行算术比较.</p>
+<h3 id="文件相关"><a href="#文件相关" class="headerlink" title="文件相关"></a>文件相关</h3><p>下面是常用的文件属性进行条件判断语句</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">-a file <span class="comment"># 文件存在,则返回 True</span></span><br><span class="line">-b file <span class="comment"># 文件存在且是块文件,则返回 True</span></span><br><span class="line">-c file <span class="comment"># 文件存在且是字符文件,则返回 True</span></span><br><span class="line">-d file <span class="comment"># 文件存在且是目录,则返回 True</span></span><br><span class="line">-e file <span class="comment"># 文件存在,则返回 True</span></span><br><span class="line">-f file <span class="comment"># 文件存在且是文本文件,则返回 True</span></span><br><span class="line">-h file <span class="comment"># 文件存在且是链接文件,则返回 True</span></span><br><span class="line">-p file <span class="comment"># 文件存在且是管道文件,则返回 True</span></span><br><span class="line">-r file <span class="comment"># 文件存在且可读,则返回 True</span></span><br><span class="line">-s file <span class="comment"># 文件存在且大小不为0,则返回 True</span></span><br><span class="line">-w file <span class="comment"># 文件存在且可写,则返回 True</span></span><br><span class="line">-x file <span class="comment"># 文件存在且可执行,则返回 True</span></span><br><span class="line">-L file <span class="comment"># 文件存在且是链接文件,则返回 True</span></span><br><span class="line">-S file <span class="comment"># 文件存在且是套接字文件,则返回 True</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="字符串与算术运算相关"><a href="#字符串与算术运算相关" class="headerlink" title="字符串与算术运算相关"></a>字符串与算术运算相关</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">-v varname <span class="comment"># 设置了 varname 变量,则返回 True</span></span><br><span class="line">-z string <span class="comment"># 字符串长度为 0,则返回 True</span></span><br><span class="line">-n string <span class="comment"># 字符串长度不为 0,则返回 True</span></span><br><span class="line">string1 == string2 <span class="comment"># 两个字符串相等,则返回 True</span></span><br><span class="line">string1 != string2</span><br><span class="line">string1 &lt; string2</span><br><span class="line">string1 &gt; string2</span><br><span class="line"></span><br><span class="line">arg1 OP arg2 <span class="comment"># OP 支持的方式为 -eq, -ne, -lt, -le, -gt, -ge</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>Bash</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Python 中 __init__ 和 __new__ 的区别</title>
     <url>/2020/06/08/diffenerce-between-init-and-new-method-in-python/</url>
     <content><![CDATA[<ul>
@@ -5665,6 +5665,41 @@
       <tags>
         <tag>Python</tag>
         <tag>面试</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>GitLab CI 使用 SSH keys</title>
+    <url>/2022/12/10/gitlab-ci-using-ssh-keys/</url>
+    <content><![CDATA[<p>GitLab目前还没有在构建环境(GitLab Runner 运行的地方)中管理SSH密钥的内置支持。</p>
+<p>在以下场景中，您可能需要使用 SSH密钥:</p>
+<ul>
+<li>使用包管理器下载私有包。如 Bundler</li>
+<li>将应用程序部署到您自己的服务器上。如 Heroku</li>
+<li>从构建环境向远程服务器执行SSH命令</li>
+<li>将文件从构建环境 Rsync 到远程服务器</li>
+</ul>
+<p>目前使用最多的方法是通过扩展 <code>.gitlab-ci.yml</code> 将SSH密钥注入构建环境。它是一个适用于任何类型的 Runner (例如Docker或shell)的解决方案。</p>
+<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><ol>
+<li>使用 <code>ssh-keygen</code> 在本地创建新的 ssh 密钥对</li>
+<li>添加 private key 中的内容到 Gitlab 仓库的环境变量中，将公钥复制到您想要访问的服务器上(一般为 <code>~/.ssh/authorized_keys</code> 文件中 )，或者如果您正在访问私有的GitLab存储库，则将其添加为<a href="https://docs.gitlab.com/ee/user/project/deploy_keys/index.html" target="_blank" rel="noopener">部署密钥</a>。</li>
+<li>在 job 执行期间运行  <code>ssh-agent</code> 加载私钥</li>
+</ol>
+<p>可以在 <code>.gitlab-ci.yml</code> 中添加如下内容来运行 <code>ssh-agent</code> 加载私钥。</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">before_script:</span></span><br><span class="line">  <span class="comment">## 确认 ssh-agent 已经安装了，如果使用的是 rpm 格式的包，可以使用 yum 包管理器</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">'command -v ssh-agent &gt;/dev/null || ( apt-get update -y &amp;&amp; apt-get install openssh-client -y )'</span></span><br><span class="line">  <span class="comment">#- 'command -v ssh-agent &gt;/dev/null || ( yum update -y &amp;&amp; yum install openssh-client -y )'</span></span><br><span class="line">  </span><br><span class="line">  <span class="comment">## 运行 ssh-agent (inside the build environment)</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">eval</span> <span class="string">$(ssh-agent</span> <span class="string">-s)</span></span><br><span class="line">  </span><br><span class="line">  <span class="comment">## 将保存在 SSH_PRIVATE_KEY 变量中的 SSH 密钥添加到 ssh-agent 中</span></span><br><span class="line">  <span class="comment">## 我们使用 tr 删除行结束符，使 ed25519 加密密钥没有额外的 base64 编码: https://gitlab.com/gitlab-examples/ssh-private-key/issues/1#note_48526556</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">echo</span> <span class="string">"$SSH_PRIVATE_KEY"</span> <span class="string">|</span> <span class="string">tr</span> <span class="string">-d</span> <span class="string">'\r'</span> <span class="string">|</span> <span class="string">ssh-add</span> <span class="bullet">-</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">## 创建 ~/.ssh 目录，并配置正确的权限</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">mkdir</span> <span class="string">-p</span> <span class="string">~/.ssh</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">chmod</span> <span class="number">700</span> <span class="string">~/.ssh</span></span><br><span class="line">  </span><br><span class="line">  <span class="comment">## 可选的 git 配置</span></span><br><span class="line">  <span class="comment"># - git config --global user.email "user@example.com"</span></span><br><span class="line">  <span class="comment"># - git config --global user.name "User name"</span></span><br><span class="line">  <span class="comment">## </span></span><br><span class="line">  <span class="comment">## 如果配置了 SSH_KNOWN_HOSTS，则可以取消对下面两行的注释。</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">echo</span> <span class="string">"$SSH_KNOWN_HOSTS"</span> <span class="string">&gt;&gt;</span> <span class="string">~/.ssh/known_hosts</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">chmod</span> <span class="number">644</span> <span class="string">~/.ssh/known_hosts</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">##</span></span><br><span class="line">  <span class="comment">## Alternatively, use ssh-keyscan to scan the keys of your private server.</span></span><br><span class="line">  <span class="comment">## Replace example.com with your private server's domain name. Repeat that</span></span><br><span class="line">  <span class="comment">## command if you have more than one server to connect to.</span></span><br><span class="line">  <span class="comment">##</span></span><br><span class="line">  <span class="comment"># - ssh-keyscan example.com &gt;&gt; ~/.ssh/known_hosts</span></span><br><span class="line">  <span class="comment"># - chmod 644 ~/.ssh/known_hosts</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">##</span></span><br><span class="line">  <span class="comment">## You can optionally disable host key checking. Be aware that by adding that</span></span><br><span class="line">  <span class="comment">## you are susceptible to man-in-the-middle attacks.</span></span><br><span class="line">  <span class="comment">## WARNING: Use this only with the Docker executor, if you use it with shell</span></span><br><span class="line">  <span class="comment">## you will overwrite your user's SSH config.</span></span><br><span class="line">  <span class="comment">##</span></span><br><span class="line">  <span class="comment"># - '[[ -f /.dockerenv ]] &amp;&amp; echo -e "Host *\n\tStrictHostKeyChecking no\n\n" &gt;&gt; ~/.ssh/config'</span></span><br></pre></td></tr></table></figure>
+
+<p>在 ssh 登录时有时需要对远程主机添加信任。GitLab 提供了以下3种方式，可以补充在 <code>.gitlab-ci.yml</code> 中以保证 ci 流程正确执行</p>
+<figure class="highlight clean"><table><tr><td class="code"><pre><span class="line">before_script:</span><br><span class="line">  ## 方式<span class="number">1.</span> 如果配置了 SSH_KNOWN_HOSTS，则可以使用如下方式完善 known_hosts 文件</span><br><span class="line">  ## 其中 SSH_KNOWN_HOSTS 变量内容可 通过 `ssh-keyscan remote-server` 获得</span><br><span class="line">  - echo <span class="string">"$SSH_KNOWN_HOSTS"</span> &gt;&gt; ~/.ssh/known_hosts</span><br><span class="line">  - chmod <span class="number">644</span> ~/.ssh/known_hosts</span><br><span class="line">  </span><br><span class="line">  ## 方式<span class="number">2.</span> 直接执行 `ssh-keyscan remote-server` 将生成的密钥保存到 known_hosts 文件中</span><br><span class="line">  # - ssh-keyscan example1.com &gt;&gt; ~/.ssh/known_hosts</span><br><span class="line">  # - ssh-keyscan example2.com &gt;&gt; ~/.ssh/known_hosts</span><br><span class="line">  # - chmod <span class="number">644</span> ~/.ssh/known_hosts</span><br><span class="line">  </span><br><span class="line">  ## 方式<span class="number">3.</span> 可以直接禁用主机密钥的校验。要注意这种方式容易受到中间人攻击</span><br><span class="line">  ## 警告: 请只在 Docker executor 中使用这种方式，否则这种方式可能会修改本地的 ssh config</span><br><span class="line">  # - <span class="string">'[[ -f /.dockerenv ]] &amp;&amp; echo -e "Host *\n\tStrictHostKeyChecking no\n\n" &gt;&gt; ~/.ssh/config'</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="https://docs.gitlab.com/ee/ci/ssh_keys/" target="_blank" rel="noopener">Using SSH keys with GitLab CI/CD</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>CI/CD</category>
+      </categories>
+      <tags>
+        <tag>GitLab</tag>
+        <tag>CI/CD</tag>
       </tags>
   </entry>
   <entry>
@@ -6082,41 +6117,6 @@
         <tag>ELK</tag>
         <tag>日志处理</tag>
         <tag>Filebeat</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>GitLab CI 使用 SSH keys</title>
-    <url>/2022/12/10/gitlab-ci-using-ssh-keys/</url>
-    <content><![CDATA[<p>GitLab目前还没有在构建环境(GitLab Runner 运行的地方)中管理SSH密钥的内置支持。</p>
-<p>在以下场景中，您可能需要使用 SSH密钥:</p>
-<ul>
-<li>使用包管理器下载私有包。如 Bundler</li>
-<li>将应用程序部署到您自己的服务器上。如 Heroku</li>
-<li>从构建环境向远程服务器执行SSH命令</li>
-<li>将文件从构建环境 Rsync 到远程服务器</li>
-</ul>
-<p>目前使用最多的方法是通过扩展 <code>.gitlab-ci.yml</code> 将SSH密钥注入构建环境。它是一个适用于任何类型的 Runner (例如Docker或shell)的解决方案。</p>
-<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><ol>
-<li>使用 <code>ssh-keygen</code> 在本地创建新的 ssh 密钥对</li>
-<li>添加 private key 中的内容到 Gitlab 仓库的环境变量中，将公钥复制到您想要访问的服务器上(一般为 <code>~/.ssh/authorized_keys</code> 文件中 )，或者如果您正在访问私有的GitLab存储库，则将其添加为<a href="https://docs.gitlab.com/ee/user/project/deploy_keys/index.html" target="_blank" rel="noopener">部署密钥</a>。</li>
-<li>在 job 执行期间运行  <code>ssh-agent</code> 加载私钥</li>
-</ol>
-<p>可以在 <code>.gitlab-ci.yml</code> 中添加如下内容来运行 <code>ssh-agent</code> 加载私钥。</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">before_script:</span></span><br><span class="line">  <span class="comment">## 确认 ssh-agent 已经安装了，如果使用的是 rpm 格式的包，可以使用 yum 包管理器</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">'command -v ssh-agent &gt;/dev/null || ( apt-get update -y &amp;&amp; apt-get install openssh-client -y )'</span></span><br><span class="line">  <span class="comment">#- 'command -v ssh-agent &gt;/dev/null || ( yum update -y &amp;&amp; yum install openssh-client -y )'</span></span><br><span class="line">  </span><br><span class="line">  <span class="comment">## 运行 ssh-agent (inside the build environment)</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">eval</span> <span class="string">$(ssh-agent</span> <span class="string">-s)</span></span><br><span class="line">  </span><br><span class="line">  <span class="comment">## 将保存在 SSH_PRIVATE_KEY 变量中的 SSH 密钥添加到 ssh-agent 中</span></span><br><span class="line">  <span class="comment">## 我们使用 tr 删除行结束符，使 ed25519 加密密钥没有额外的 base64 编码: https://gitlab.com/gitlab-examples/ssh-private-key/issues/1#note_48526556</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">echo</span> <span class="string">"$SSH_PRIVATE_KEY"</span> <span class="string">|</span> <span class="string">tr</span> <span class="string">-d</span> <span class="string">'\r'</span> <span class="string">|</span> <span class="string">ssh-add</span> <span class="bullet">-</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">## 创建 ~/.ssh 目录，并配置正确的权限</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">mkdir</span> <span class="string">-p</span> <span class="string">~/.ssh</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">chmod</span> <span class="number">700</span> <span class="string">~/.ssh</span></span><br><span class="line">  </span><br><span class="line">  <span class="comment">## 可选的 git 配置</span></span><br><span class="line">  <span class="comment"># - git config --global user.email "user@example.com"</span></span><br><span class="line">  <span class="comment"># - git config --global user.name "User name"</span></span><br><span class="line">  <span class="comment">## </span></span><br><span class="line">  <span class="comment">## 如果配置了 SSH_KNOWN_HOSTS，则可以取消对下面两行的注释。</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">echo</span> <span class="string">"$SSH_KNOWN_HOSTS"</span> <span class="string">&gt;&gt;</span> <span class="string">~/.ssh/known_hosts</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">chmod</span> <span class="number">644</span> <span class="string">~/.ssh/known_hosts</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">##</span></span><br><span class="line">  <span class="comment">## Alternatively, use ssh-keyscan to scan the keys of your private server.</span></span><br><span class="line">  <span class="comment">## Replace example.com with your private server's domain name. Repeat that</span></span><br><span class="line">  <span class="comment">## command if you have more than one server to connect to.</span></span><br><span class="line">  <span class="comment">##</span></span><br><span class="line">  <span class="comment"># - ssh-keyscan example.com &gt;&gt; ~/.ssh/known_hosts</span></span><br><span class="line">  <span class="comment"># - chmod 644 ~/.ssh/known_hosts</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">##</span></span><br><span class="line">  <span class="comment">## You can optionally disable host key checking. Be aware that by adding that</span></span><br><span class="line">  <span class="comment">## you are susceptible to man-in-the-middle attacks.</span></span><br><span class="line">  <span class="comment">## WARNING: Use this only with the Docker executor, if you use it with shell</span></span><br><span class="line">  <span class="comment">## you will overwrite your user's SSH config.</span></span><br><span class="line">  <span class="comment">##</span></span><br><span class="line">  <span class="comment"># - '[[ -f /.dockerenv ]] &amp;&amp; echo -e "Host *\n\tStrictHostKeyChecking no\n\n" &gt;&gt; ~/.ssh/config'</span></span><br></pre></td></tr></table></figure>
-
-<p>在 ssh 登录时有时需要对远程主机添加信任。GitLab 提供了以下3种方式，可以补充在 <code>.gitlab-ci.yml</code> 中以保证 ci 流程正确执行</p>
-<figure class="highlight clean"><table><tr><td class="code"><pre><span class="line">before_script:</span><br><span class="line">  ## 方式<span class="number">1.</span> 如果配置了 SSH_KNOWN_HOSTS，则可以使用如下方式完善 known_hosts 文件</span><br><span class="line">  ## 其中 SSH_KNOWN_HOSTS 变量内容可 通过 `ssh-keyscan remote-server` 获得</span><br><span class="line">  - echo <span class="string">"$SSH_KNOWN_HOSTS"</span> &gt;&gt; ~/.ssh/known_hosts</span><br><span class="line">  - chmod <span class="number">644</span> ~/.ssh/known_hosts</span><br><span class="line">  </span><br><span class="line">  ## 方式<span class="number">2.</span> 直接执行 `ssh-keyscan remote-server` 将生成的密钥保存到 known_hosts 文件中</span><br><span class="line">  # - ssh-keyscan example1.com &gt;&gt; ~/.ssh/known_hosts</span><br><span class="line">  # - ssh-keyscan example2.com &gt;&gt; ~/.ssh/known_hosts</span><br><span class="line">  # - chmod <span class="number">644</span> ~/.ssh/known_hosts</span><br><span class="line">  </span><br><span class="line">  ## 方式<span class="number">3.</span> 可以直接禁用主机密钥的校验。要注意这种方式容易受到中间人攻击</span><br><span class="line">  ## 警告: 请只在 Docker executor 中使用这种方式，否则这种方式可能会修改本地的 ssh config</span><br><span class="line">  # - <span class="string">'[[ -f /.dockerenv ]] &amp;&amp; echo -e "Host *\n\tStrictHostKeyChecking no\n\n" &gt;&gt; ~/.ssh/config'</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
-<li><a href="https://docs.gitlab.com/ee/ci/ssh_keys/" target="_blank" rel="noopener">Using SSH keys with GitLab CI/CD</a></li>
-</ul>
-]]></content>
-      <categories>
-        <category>CI/CD</category>
-      </categories>
-      <tags>
-        <tag>GitLab</tag>
-        <tag>CI/CD</tag>
       </tags>
   </entry>
   <entry>
@@ -8382,8 +8382,8 @@
 
 <h3 id="服务发现方式-DNS"><a href="#服务发现方式-DNS" class="headerlink" title="服务发现方式: DNS"></a>服务发现方式: DNS</h3><p>创建 Service 资源对象时,集群内的 DNS 服务会为它们自动创建资源记录用于名称解析和服务注册.Pod 可以直接使用标准的 DNS 名称来访问这些 Service 资源.每个 Service 对象相关的 DNS 记录包含如下两个.</p>
 <ul>
-<li><code>{SVCNAME}.{NAMESPACE}.{CLUSTER_DOMAIN}</code></li>
-<li><code>{SVCNAME}.{NAMESPACE}.svc.{CLUSTER_DOMAIN}</code></li>
+<li>A记录: <code>{SVCNAME}.{NAMESPACE}.svc.{CLUSTER_DOMAIN}</code></li>
+<li>SRV 记录: <code>_{PORT_NAME}._{PORT_PROTOCOL}.svc.{SVCNAME}.{NAMESPACE}.{CLUSTER_DOMAIN}</code></li>
 </ul>
 <p>而 Kubernetes 中 Pod 的 DNS 配置信息会自动注入到它的 <code>/etc/resolv.conf</code> 文件中.其文件内容如下:</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">nameserver 10.96.0.10</span><br><span class="line">search &#123;NAMESPACE&#125;.svc.&#123;CLUSTER_DOMAIN&#125; svc.&#123;CLUSTER_DOMAIN&#125; &#123;CLUSTER_DOMAIN&#125;</span><br></pre></td></tr></table></figure>
@@ -10841,293 +10841,68 @@
       </tags>
   </entry>
   <entry>
-    <title>Linux 之 systemd 的工作原理及使用</title>
-    <url>/2020/06/11/systemd-details/</url>
-    <content><![CDATA[<h2 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h2><ul>
-<li>兼容 SysVinit 和 LSB init scripts</li>
-<li>以并行方式启动,启动速度更快<ul>
-<li>尽可能启动更少的进程</li>
-<li>尽可能将更多进程并行启动</li>
-</ul>
-</li>
-<li>提供按需启动能力,只有在某个服务被真正请求的时候才启动它</li>
-<li>采用 Linux的 Cgroup 特性跟踪和管理进程的生命周期.Systemd 只需要简单地遍历指定的 CGroup 即可正确地找到所有的相关进程</li>
-<li>实现事务性依赖关系管理.系统启动过程是由很多的独立工作共同组成的,这些工作之间可能存在依赖关系.Systemd 维护一个”事务一致性”的概念,保证所有相关的服务都可以正常启动而不会出现互相依赖,以至于死锁的情况.</li>
-<li>使用 systemd-journald 提供日志服务.有便于管理,零维护,高性能,统一化的特点</li>
-<li>向后兼容 SysV 的服务脚本</li>
-</ul>
-<h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><h3 id="unit"><a href="#unit" class="headerlink" title="unit"></a>unit</h3><p>系统初始化需要做的事情非常多,如启动后台服务以及做一些配置工作.这个过程中的每一步都被 Systemd 抽象为一个配置单元,即 <code>unit</code>.它主要包含如下几种类型</p>
-<table>
-<thead>
-<tr>
-<th align="left">名称</th>
-<th align="left">文件扩展名</th>
-<th align="left">用途</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>service unit</code></td>
-<td align="left"><code>.service</code></td>
-<td align="left">用于定义系统类服务</td>
-</tr>
-<tr>
-<td align="left"><code>target unit</code></td>
-<td align="left"><code>.target</code></td>
-<td align="left">用于实现模拟”运行级别”</td>
-</tr>
-<tr>
-<td align="left"><code>mount unit</code></td>
-<td align="left"><code>.mount</code></td>
-<td align="left">用于定义文件系统挂载点</td>
-</tr>
-<tr>
-<td align="left"><code>socket unit</code></td>
-<td align="left"><code>.socket</code></td>
-<td align="left">用于标识进程间通信的 socket 文件</td>
-</tr>
-<tr>
-<td align="left"><code>snapshot unit</code></td>
-<td align="left"><code>.snapshot</code></td>
-<td align="left">管理系统快照</td>
-</tr>
-<tr>
-<td align="left"><code>swap unit</code></td>
-<td align="left"><code>.swap</code></td>
-<td align="left">用于标识 swap 设备</td>
-</tr>
-<tr>
-<td align="left"><code>automount unit</code></td>
-<td align="left"><code>.automount</code></td>
-<td align="left">文件系统自动挂载设备</td>
-</tr>
-<tr>
-<td align="left"><code>path unit</code></td>
-<td align="left"><code>.path</code></td>
-<td align="left">用于定义文件系统中的一个文件或目录</td>
-</tr>
-<tr>
-<td align="left"><code>timer unit</code></td>
-<td align="left"><code>.timer</code></td>
-<td align="left">用来定时触发用户定义的操作</td>
-</tr>
-</tbody></table>
-<h3 id="Target和运行级别的对应关系"><a href="#Target和运行级别的对应关系" class="headerlink" title="Target和运行级别的对应关系"></a>Target和运行级别的对应关系</h3><table>
-<thead>
-<tr>
-<th align="left">sysvinit</th>
-<th align="left">systemd target</th>
-<th align="left">备注</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">0</td>
-<td align="left">poweroff.target</td>
-<td align="left">关闭系统</td>
-</tr>
-<tr>
-<td align="left">1</td>
-<td align="left">rescue.target</td>
-<td align="left">单用户模式</td>
-</tr>
-<tr>
-<td align="left">2</td>
-<td align="left">multi-user.target</td>
-<td align="left">多用户模式,无网络</td>
-</tr>
-<tr>
-<td align="left">3</td>
-<td align="left">multi-user.target</td>
-<td align="left">多用户模式</td>
-</tr>
-<tr>
-<td align="left">4</td>
-<td align="left">-</td>
-<td align="left">没有用到</td>
-</tr>
-<tr>
-<td align="left">5</td>
-<td align="left">graphical.target</td>
-<td align="left">多用户,图形化界面</td>
-</tr>
-<tr>
-<td align="left">6</td>
-<td align="left">reboot.target</td>
-<td align="left">重启</td>
-</tr>
-</tbody></table>
-<h2 id="service-unit-file"><a href="#service-unit-file" class="headerlink" title="service unit file"></a>service unit file</h2><p>文件通常由三部分组成</p>
-<h3 id="Unit"><a href="#Unit" class="headerlink" title="[Unit]"></a>[Unit]</h3><p><code>Unit</code> 配置块通常是配置文件的第一个配置块,用来定义 Unit 的元数据,以及配置与其他 Unit 的依赖关系.它的主要字段如下:</p>
-<ul>
-<li><code>Description</code>: 简短描述</li>
-<li><code>Documentation</code>: 文档地址</li>
-<li><code>Requires</code>: 当前 Unit 依赖的其他 Unit,如果它们没有运行,当前 Unit 会启动失败</li>
-<li><code>Wants</code>: 与当前 Unit 配合的其他 Unit,如果它们没有运行,当前 Unit 不会启动失败</li>
-<li><code>BindsTo</code>: 与 Requires 类似,它指定的 Unit 如果退出,会导致当前 Unit 停止运行</li>
-<li><code>Before</code>: 当前 Unit 必须在指定的 Unit 之前启动</li>
-<li><code>After</code>: 当前 Unit 必须在指定的 Unit 之后启动</li>
-<li><code>Conflicts</code>: 这里指定的 Unit 不能与当前 Unit 同时运行</li>
-<li><code>Condition...</code>: 当前 Unit 运行必须满足的条件，否则不会运行</li>
-<li><code>Assert...</code>:当前 Unit 运行必须满足的条件，否则会报启动失败</li>
-</ul>
-<h3 id="Service"><a href="#Service" class="headerlink" title="[Service]"></a>[Service]</h3><p><code>Service</code> 配置块用来定义 Service 的属性,只有 Service 类型的 Unit 才有这个配置块.它的主要字段如下:</p>
-<ul>
-<li><code>Type</code>: 定义启动时的进程行为.可选值为<ul>
-<li><code>simple</code>: 默认值,执行 ExecStart 指定的命令,启动主进程</li>
-<li><code>forking</code>: 以 fork 方式从父进程创建子进程,创建后父进程会立即退出</li>
-<li><code>oneshot</code>: 一次性进程,Systemd 会等当前服务退出,再继续往下执行</li>
-<li><code>dbus</code>: 当前服务通过 D-Bus 启动</li>
-<li><code>notify</code>: 当前服务启动完毕,会通知 Systemd,再继续往下执行</li>
-<li><code>idle</code>: 若有其他任务执行完毕,当前服务才会运行</li>
-</ul>
-</li>
-<li><code>Environment</code>: 指定环境变量</li>
-<li><code>ExecStart</code>: 启动当前服务的命令</li>
-<li><code>ExecStartPre</code>: 启动当前服务之前执行的命令</li>
-<li><code>Restart</code>: 定义何种情况 Systemd 会自动重启当前服务.可选值为 <code>always</code>,<code>on-success</code>,<code>on-failure</code>,<code>on-abnormal</code>,<code>on-abort</code>,<code>on-watchdog</code></li>
-<li><code>ExecReload</code>: 重新加载当前服务时执行的命令</li>
-<li><code>ExecStop</code>: 停止当前服务时执行的命令</li>
-<li><code>ExecStartPost</code>: 启动当前服务之后执行的命令</li>
-<li><code>ExecStopPost</code>: 停止当其服务之后执行的命令</li>
-<li><code>RestartSec</code>: 自动重启当前服务间隔的秒数</li>
-<li><code>TimeoutSec</code>: 定义 Systemd 停止当前服务之前等待的秒数</li>
-</ul>
-<h3 id="Install"><a href="#Install" class="headerlink" title="[Install]"></a>[Install]</h3><p><code>Install</code> 配置块通常在文件最后,用来定义如何启动,以及是否开机启动.它的主要字段如下</p>
-<ul>
-<li><code>WantedBy</code>: 它的值是一个或多个 <code>Target</code>,当前 Unit enable 时(服务开机启动时),会在 <code>/etc/systemd/system</code> 目录及指定 <code>${target}.wants</code> 子目录下创建软链接</li>
-<li><code>RequiredBy</code>: 它的值是一个或多个 <code>Target</code>,当前 Unit enable 时(服务开机启动时),会在 <code>/etc/systemd/system</code> 目录及指定 <code>${target}.required</code> 子目录下创建软链接<br><code>Alias</code>: 当前 Unit 可用于启动的别名<br><code>Also</code>: 当前 Unit enable 时(服务开机启动时),同时激活的其他 Unit</li>
-</ul>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>systemd</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Prometheus 远程存储 VictoriaMetrics</title>
-    <url>/2021/11/04/victoriametrics-quick-start/</url>
-    <content><![CDATA[<p><a href="https://github.com/VictoriaMetrics/VictoriaMetrics" target="_blank" rel="noopener">VictoriaMetrics</a> 是一个快速、经济高效且可扩展的监控解决方案和时间序列数据库,不仅可以作为 <a href="https://github.com/prometheus/prometheus" target="_blank" rel="noopener">Prometheus</a> 的远程存储,还可以使用其组件完全替换 Prometheus.它主要有以下特性:</p>
-<ul>
-<li>支持 <a href="https://docs.victoriametrics.com/Single-server-VictoriaMetrics.html#prometheus-querying-api-usage" target="_blank" rel="noopener">Prometheus querying API</a>,<a href="https://docs.victoriametrics.com/Single-server-VictoriaMetrics.html#graphite-api-usage" target="_blank" rel="noopener">Graphite API</a>. 可以在 Grafana 中直接使用</li>
-<li>实现了基于 PromQL 的查询语言 - <a href="https://docs.victoriametrics.com/MetricsQL.html" target="_blank" rel="noopener">MetricsQL</a>,提供了一些高级功能</li>
-<li>提供了全局视图,支持多个 Prometheus 实例或任何其他数据源同时向 VictoriaMetrics 写入数据,查询时数据可以保证唯一</li>
-<li>占用资源少,且高性能.</li>
-<li>支持多种方式获取 metrics. 如:<ul>
-<li><a href="https://docs.victoriametrics.com/Single-server-VictoriaMetrics.html#how-to-scrape-prometheus-exporters-such-as-node-exporter" target="_blank" rel="noopener">从 exporter 直接获取</a>.与prometheus 完全兼容.除 <a href="https://prometheus.io/docs/prometheus/latest/configuration/configuration/#static_config" target="_blank" rel="noopener">static_config</a> 外,还支持多种服务发现方式,如:<ul>
-<li><a href="https://prometheus.io/docs/prometheus/latest/configuration/configuration/#file_sd_config" target="_blank" rel="noopener">file_sd_config</a></li>
-<li><a href="https://prometheus.io/docs/prometheus/latest/configuration/configuration/#kubernetes_sd_config" target="_blank" rel="noopener">kubernetes_sd_config</a></li>
-<li><a href="https://prometheus.io/docs/prometheus/latest/configuration/configuration/#consul_sd_config" target="_blank" rel="noopener">consul_sd_config</a></li>
-</ul>
-</li>
-<li><a href="https://docs.victoriametrics.com/Single-server-VictoriaMetrics.html#prometheus-setup" target="_blank" rel="noopener">通过 Prometheus 远程写入</a></li>
-<li><a href="https://docs.victoriametrics.com/Single-server-VictoriaMetrics.html#how-to-import-data-in-json-line-format" target="_blank" rel="noopener">通过 Post 请求将指定 JSON 格式的数据直接写入</a></li>
-</ul>
-</li>
-<li>支持 <a href="https://docs.victoriametrics.com/Single-server-VictoriaMetrics.html#relabeling" target="_blank" rel="noopener">metrics relabel</a>.与 prometheus 完全兼容</li>
-<li>支持单机模式与集群模式</li>
-</ul>
-<h2 id="单机模式"><a href="#单机模式" class="headerlink" title="单机模式"></a>单机模式</h2><p>单机模式比较简单,直接下载<a href="https://github.com/VictoriaMetrics/VictoriaMetrics/releases" target="_blank" rel="noopener">二进制</a>或 <a href="https://hub.docker.com/r/victoriametrics/victoria-metrics/" target="_blank" rel="noopener">Docker 镜像</a> 并使用指定的命令行启动.</p>
-<p>单机模式可能用到的组件.</p>
-<figure class="highlight asciidoc"><table><tr><td class="code"><pre><span class="line"><span class="bullet">- </span>victoria-metrics: metrics 数据抓取或存储</span><br><span class="line"><span class="bullet">- </span>vmalert: 按照指定的规则将 metrics 数据聚合或向 alertmanager 发送告警</span><br><span class="line"><span class="bullet">- </span>vmauth: 启用用户认证功能</span><br></pre></td></tr></table></figure>
+    <title>高性能日志库 zap</title>
+    <url>/2021/11/17/zap/</url>
+    <content><![CDATA[<p><a href="https://github.com/uber-go/zap" target="_blank" rel="noopener"><code>zap</code></a> 是 uber 开源的高性能日志库,提供了快速的、结构化的、可分级的日志记录.</p>
+<p>目前常见的 log 库中,大多使用 <code>json.Marshal</code> 和 <code>fmt.Fprintf</code> 来记录大量 <code>interface{}</code>,这种基于反射的序列化和字符串格式化会占用大量 CPU 资源并进行许多小的内存的分配,这会使得日志记录变慢,从而影响整体应用程序.</p>
+<p>而 <code>zap</code> 采用了上述不同的方法.它包含一个无反射、零分配的 JSON 编码器,并提供了基础 <code>Logger</code> 力求尽可能避免序列化开销和内存分配.</p>
+<h2 id="快速开始"><a href="#快速开始" class="headerlink" title="快速开始"></a>快速开始</h2><p><code>zap</code> 库的使用与其他的日志库非常相似.先创建一个 <code>logger</code>,然后调用各个级别的方法记录日志(Debug/Info/Error/Warn).我们可以通过<a href="https://pkg.go.dev/go.uber.org/zap" target="_blank" rel="noopener">文档</a> 中提供的一些示例来快速了解该库的使用方式.</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">"time"</span></span><br><span class="line">  <span class="string">"go.uber.org/zap"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  sugar := zap.NewExample().Sugar()</span><br><span class="line">  <span class="keyword">defer</span> sugar.Sync()</span><br><span class="line">  sugar.Infow(<span class="string">"failed to fetch URL"</span>,</span><br><span class="line">    <span class="string">"url"</span>, <span class="string">"http://example.com"</span>,</span><br><span class="line">    <span class="string">"attempt"</span>, <span class="number">3</span>,</span><br><span class="line">    <span class="string">"backoff"</span>, time.Second,</span><br><span class="line">  )</span><br><span class="line">  sugar.Infof(<span class="string">"failed to fetch URL: %s"</span>, <span class="string">"http://example.com"</span>)</span><br><span class="line"></span><br><span class="line">  logger := zap.NewExample()</span><br><span class="line">  <span class="keyword">defer</span> logger.Sync()</span><br><span class="line">  logger.Info(<span class="string">"failed to fetch URL"</span>,</span><br><span class="line">    <span class="comment">// 需要使用 zap 内置的 Field 对象来强制定义字段的类型</span></span><br><span class="line">    zap.String(<span class="string">"url"</span>, <span class="string">"http://example.com"</span>),</span><br><span class="line">    zap.Int(<span class="string">"attempt"</span>, <span class="number">3</span>),</span><br><span class="line">    zap.Duration(<span class="string">"backoff"</span>, time.Second),</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>以二进制为例,可以通过</p>
-<ul>
-<li><code>-storageDataPath</code> 参数指定数据存储的目录.默认为 <code>victoria-metrics-data</code></li>
-<li><code>-retentionPeriod</code> 参数指定数据保存的时长.默认为 <code>1 month</code></li>
-<li><code>-httpListenAddr</code> 参数指定监听的 HTTP 套接字.默认为 <code>:8428</code></li>
-<li><code>-loggerTimezon</code> 参数指定日志的时区,默认为 <code>UTC</code>.建议设置为 <code>Asia/Shanghai</code></li>
-<li><code>-maxInsertRequestSize</code> 参数限制 Prometheus remote_write API 的请求大小. 默认为 <code>33554432 byte</code>.支持可选的单位为 <code>KB, MB, GB, KiB, MiB, GiB</code></li>
-<li><code>-promscrape.config</code> 参数指定 Prometheus 配置文件路径.该配置文件只需要包含 <code>scrape_configs</code> 部分配置即可.(经测试  VictoriaMetrics 支持 <code>scrape_configs</code> 中的 <code>relabel_configs</code> 和 <code>metric_relabel_configs</code> )</li>
-<li><code>-promscrape.config.strictParse</code> 参数设置是否会严格校验 <code>-promscrape.config</code> 指定的配置文件.默认情况下,不支持的字段会跳过,兼容 Prometheus 的配置文件</li>
-<li><code>-promscrape.configCheckInterval</code> 参数设置检查 Prometheus 配置文件是否变更的时间间隔.若变更,则重新加载.默认关闭</li>
-<li><code>-relabelConfig</code> 参数指定 relabel 的规则.</li>
-<li><code>-relabelDebug</code> 参数指定日志中是否指定 relabel 前后的 metrics.多用于调试.</li>
-<li><code>-selfScrapeInstance</code> 参数设置抓取自身 metrics 时,<code>instance</code> 标签的值.默认 <code>self</code></li>
-<li><code>-selfScrapeInterval</code> 参数设置抓取自身 metrics 的时间间隔</li>
-<li><code>-selfScrapeJob</code> 参数设置设置抓取自身 metrics 时,<code>instance</code> 标签的值.默认 <code>victoria-metrics</code></li>
+<p>如上示例中,使用 <code>zap</code> 包提供的 <code>NewExample()</code> 方法创建 <code>Logger</code> 对象,并打印日志.相比于 <code>sugar</code>,<code>logger</code> 对象更快,分配的资源也少的多,但是它只支持强类型,结构化的日志记录.</p>
+<p>另外,<code>zap</code> 提供了几个快速创建 <code>logger</code> 的方法: <code>zap.NewExample()</code>,<code>zap.NewDevelopment()</code>,<code>zap.NewProduction()</code> 以及高度定制化的 <code>zap.New()</code>.在使用前 3 个 logger 时, zap 会使用一些预定义的配置.详情可通过 <a href="https://github.com/uber-go/zap/blob/v1.19.1/logger.go#L98-L125" target="_blank" rel="noopener">Github</a> 查看.</p>
+<h3 id="option"><a href="#option" class="headerlink" title="option"></a>option</h3><p>在通过以上方法创建 <code>logger</code> 对象时,zap 支持传入一些 <code>Option</code> 对象来调整 logger 对象的内部属性,从而定制 Logger 对象的行为.<code>zap</code> 库提供了丰富的构建 <code>Option</code> 对象的方法供我们选择.常用的如</p>
+<h4 id="打印日志的行号"><a href="#打印日志的行号" class="headerlink" title="打印日志的行号"></a>打印日志的行号</h4><p>可以通过添加 <code>zap.AddCaller()</code> 返回的 <code>Options</code> 对象对日志添加行号.该 <code>Options</code> 不适用于 <code>zap.NewExample()</code> 返回的 <code>logger</code> 对象(因为该对象的 <code>Config</code> 没有 <code>CallerKey</code> 属性)</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  logger, _ := zap.NewProduction(zap.AddCaller())</span><br><span class="line">  <span class="keyword">defer</span> logger.Sync()</span><br><span class="line"></span><br><span class="line">  logger.Info(<span class="string">"hello world"</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 输出</span></span><br><span class="line"><span class="comment">// &#123;"level":"info","ts":1637302341.770313,"caller":"zap/main.go:11","msg":"hello world"&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>再看下面,我们对日志进行了一些封装.</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">log</span><span class="params">(logger *zap.Logger, msg <span class="keyword">string</span>)</span> <span class="params">()</span></span> &#123;</span><br><span class="line">  logger.Info(msg)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  logger, _ := zap.NewProduction(zap.AddCaller())</span><br><span class="line">  <span class="keyword">defer</span> logger.Sync()</span><br><span class="line">  log(logger, <span class="string">"hello world"</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 输出</span></span><br><span class="line"><span class="comment">// &#123;"level":"info","ts":1637302670.685756,"caller":"zap/main.go:8","msg":"hello world"&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>此时再看输出的行号就不准确了,因此需要跳过一些调用.<code>zap</code> 包提供了 <code>AddCallerSkip(skip int)</code> 函数跳过一些调用.如下:</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">log</span><span class="params">(logger *zap.Logger, msg <span class="keyword">string</span>)</span> <span class="params">()</span></span> &#123;</span><br><span class="line">  logger.Info(msg)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  logger, _ := zap.NewProduction(zap.AddCaller(),zap.AddCallerSkip(<span class="number">1</span>))</span><br><span class="line">  <span class="keyword">defer</span> logger.Sync()</span><br><span class="line">  log(logger, <span class="string">"hello world"</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 输出</span></span><br><span class="line"><span class="comment">// &#123;"level":"info","ts":1637302912.6387358,"caller":"zap/main.go:14","msg":"hello world"&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>此时再看输出日志的调用就准确了.</p>
+<h4 id="添加调用栈"><a href="#添加调用栈" class="headerlink" title="添加调用栈"></a>添加调用栈</h4><p>有时在出现错误时,我们希望输出代码的调用栈信息.<code>zap</code> 包提供了 <code>AddStackTrace(lvl zapcore.LevelEnabler)</code> 实现这个功能.如下:</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">log</span><span class="params">(logger *zap.Logger, msg <span class="keyword">string</span>)</span> <span class="params">()</span></span> &#123;</span><br><span class="line">  logger.Error(msg)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  logger, _ := zap.NewProduction(zap.AddCallerSkip(<span class="number">1</span>), zap.AddStacktrace(zapcore.ErrorLevel))</span><br><span class="line">  <span class="keyword">defer</span> logger.Sync()</span><br><span class="line">  log(logger, <span class="string">"hello world"</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 输出了调用栈信息</span></span><br><span class="line"><span class="comment">// &#123;"level":"error","ts":1637303198.4552681,"caller":"zap/main.go:15","msg":"hello world","stacktrace":"main.main\n\t//code/go/src/go-notes/zap/main.go:15\nruntime.main\n\t/usr/local/go/src/runtime/proc.go:255"&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Filed"><a href="#Filed" class="headerlink" title="Filed"></a>Filed</h3><p><code>logger</code> 对象在记录日志时,需要将 zap 提供的格式化的 <code>Filed</code> 对象来强制定义字段的类型,避免了 <code>interface{}</code> 反射所造成的性能损失.<code>zap</code> 包中提供了很多构造各种类型 <code>Filed</code> 对象的方法.如 <code>Bool</code>,<code>String</code> 等.zap 还支持形如 <code>Boolp</code>,<code>Bools</code> 的方法,用于传入该对象的指针与切片对象.如下</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Bool</span><span class="params">(key <span class="keyword">string</span>, val <span class="keyword">bool</span>)</span> <span class="title">Field</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Boolp</span><span class="params">(key <span class="keyword">string</span>, val *<span class="keyword">bool</span>)</span> <span class="title">Field</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Bools</span><span class="params">(key <span class="keyword">string</span>, bs []<span class="keyword">bool</span>)</span> <span class="title">Field</span></span></span><br></pre></td></tr></table></figure>
+
+<h2 id="定制-Logger"><a href="#定制-Logger" class="headerlink" title="定制 Logger"></a>定制 Logger</h2><p>我们可以通过调用 <code>NexExample()/NewDevelopment()/NewProduction()</code> 方法创建 <code>zap</code> 内置的默认的 <code>Logger</code> 对象.我们也可以通过自定义 <code>Config</code> 对象,并通过其 <code>Build</code> 方法构建自定义的 <code>Logger</code> 对象.其中,<code>Config</code> 结构体定义如下:</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> Config <span class="keyword">struct</span> &#123;</span><br><span class="line">  <span class="comment">// 日志级别</span></span><br><span class="line">  Level AtomicLevel <span class="string">`json:"level" yaml:"level"`</span></span><br><span class="line">  <span class="comment">// 是否是开发环境</span></span><br><span class="line">  Development <span class="keyword">bool</span> <span class="string">`json:"development" yaml:"development"`</span></span><br><span class="line">  <span class="comment">// 是否禁用 caller 记录</span></span><br><span class="line">  DisableCaller <span class="keyword">bool</span> <span class="string">`json:"disableCaller" yaml:"disableCaller"`</span></span><br><span class="line">  <span class="comment">// 是否禁用调用栈</span></span><br><span class="line">  DisableStacktrace <span class="keyword">bool</span> <span class="string">`json:"disableStacktrace" yaml:"disableStacktrace"`</span></span><br><span class="line">  <span class="comment">// 日志输出格式</span></span><br><span class="line">  Encoding <span class="keyword">string</span> <span class="string">`json:"encoding" yaml:"encoding"`</span></span><br><span class="line">  <span class="comment">// 编码配置</span></span><br><span class="line">  EncoderConfig zapcore.EncoderConfig <span class="string">`json:"encoderConfig" yaml:"encoderConfig"`</span></span><br><span class="line">  <span class="comment">// 日志输出位置,可以定义多个,多用于文件路径和 stdout</span></span><br><span class="line">  OutputPaths []<span class="keyword">string</span> <span class="string">`json:"outputPaths" yaml:"outputPaths"`</span></span><br><span class="line">  <span class="comment">// 错误输出位置</span></span><br><span class="line">  ErrorOutputPaths []<span class="keyword">string</span> <span class="string">`json:"errorOutputPaths" yaml:"errorOutputPaths"`</span></span><br><span class="line">  <span class="comment">// 初始化字段,每条日志中都会包含这个字段</span></span><br><span class="line">  InitialFields <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">interface</span>&#123;&#125; <span class="string">`json:"initialFields" yaml:"initialFields"`</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可通过定义 <code>Config</code> 后进行构建 <code>Logger</code> 对象</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  rawJSON := []<span class="keyword">byte</span>(<span class="string">`&#123;</span></span><br><span class="line"><span class="string">    "level":"debug",</span></span><br><span class="line"><span class="string">    "encoding":"json",</span></span><br><span class="line"><span class="string">    "outputPaths": ["stdout", "server.log"],</span></span><br><span class="line"><span class="string">    "errorOutputPaths": ["stderr"],</span></span><br><span class="line"><span class="string">    "initialFields":&#123;"name":"dj"&#125;,</span></span><br><span class="line"><span class="string">    "encoderConfig": &#123;</span></span><br><span class="line"><span class="string">      "messageKey": "message",</span></span><br><span class="line"><span class="string">      "levelKey": "level",</span></span><br><span class="line"><span class="string">      "levelEncoder": "lowercase"</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;`</span>)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> cfg zap.Config</span><br><span class="line">  <span class="keyword">if</span> err := json.Unmarshal(rawJSON, &amp;cfg); err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="built_in">panic</span>(err)</span><br><span class="line">  &#125;</span><br><span class="line">  logger, err := cfg.Build()</span><br><span class="line">  <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="built_in">panic</span>(err)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">defer</span> logger.Sync()</span><br><span class="line"></span><br><span class="line">  logger.Info(<span class="string">"server start work successfully!"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到标准输出 std 和 server.log 的日志</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#123;&quot;level&quot;:&quot;info&quot;,&quot;message&quot;:&quot;server start work successfully!&quot;,&quot;name&quot;:&quot;dj&quot;&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="搭配标准日志库"><a href="#搭配标准日志库" class="headerlink" title="搭配标准日志库"></a>搭配标准日志库</h2><p>如果项目一开始使用的是标准日志库 <code>log</code>,后面想转为 <code>zap</code>.我们可以调用 <code>zap.NewStdLog(l *Logger) *log.Logger</code>返回一个标准的 <code>log.Logger</code>,内部实际上写入的还是我们之前创建的 <code>zap.Logger</code>.如下:</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  logger := zap.NewExample()</span><br><span class="line">  <span class="keyword">defer</span> logger.Sync()</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// NewStdLog 返回包装后的 *log.Logger 对象</span></span><br><span class="line">  std := zap.NewStdLog(logger)</span><br><span class="line">  std.Print(<span class="string">"standard logger wrapper"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="常用函数及方法"><a href="#常用函数及方法" class="headerlink" title="常用函数及方法"></a>常用函数及方法</h2><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 返回标准库 *log.Logger 对象,实现无缝替换</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewStdLog</span><span class="params">(l *Logger)</span> *<span class="title">log</span>.<span class="title">Logger</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建 info 级别的 AtomicLevel 对象</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewAtomicLevel</span><span class="params">()</span> <span class="title">AtomicLevel</span></span></span><br><span class="line"><span class="comment">// 可以使用上述 AtomicLevel 对象修改级别.包含 DebugLevel,InfoLevel,WarnLevel,ErrorLevel,DPanicLevel,PanicLevel,FatalLevel</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(lvl AtomicLevel)</span> <span class="title">SetLevel</span><span class="params">(l zapcore.Level)</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 自定义 Logger 对象</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">New</span><span class="params">(core zapcore.Core, options ...Option)</span> *<span class="title">Logger</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建 开发,示例,生产环境的 Logger 对象</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewDevelopment</span><span class="params">(options ...Option)</span> <span class="params">(*Logger, error)</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewExample</span><span class="params">(options ...Option)</span> *<span class="title">Logger</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewProduction</span><span class="params">(options ...Option)</span> <span class="params">(*Logger, error)</span></span></span><br><span class="line"><span class="comment">// logger 对象完成工作后,一般需要使用 defer logger.Sync() 同步</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(log *Logger)</span> <span class="title">Sync</span><span class="params">()</span> <span class="title">error</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 添加字段或添加一些 options</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(log *Logger)</span> <span class="title">With</span><span class="params">(fields ...Field)</span> *<span class="title">Logger</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(log *Logger)</span> <span class="title">WithOptions</span><span class="params">(opts ...Option)</span> *<span class="title">Logger</span></span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 由强类型的 Logger 对象转化为弱类型的 SugaredLogger 对象</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(log *Logger)</span> <span class="title">Sugar</span><span class="params">()</span> *<span class="title">SugaredLogger</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 不同级别的记录日志的方法</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(log *Logger)</span> <span class="title">Info</span><span class="params">(msg <span class="keyword">string</span>, fields ...Field)</span></span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建 option 对象</span></span><br><span class="line"><span class="comment">// 添加调用行,调用栈</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">AddCaller</span><span class="params">()</span> <span class="title">Option</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">WithCaller</span><span class="params">(enabled <span class="keyword">bool</span>)</span> <span class="title">Option</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">AddCallerSkip</span><span class="params">(skip <span class="keyword">int</span>)</span> <span class="title">Option</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">AddStacktrace</span><span class="params">(lvl zapcore.LevelEnabler)</span> <span class="title">Option</span></span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建 Field 对象</span></span><br><span class="line"><span class="comment">// 3种构建指定类型的 Field 字段,可以传入到日志记录中,实现快速记录</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Bool</span><span class="params">(key <span class="keyword">string</span>, val <span class="keyword">bool</span>)</span> <span class="title">Field</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Boolp</span><span class="params">(key <span class="keyword">string</span>, val *<span class="keyword">bool</span>)</span> <span class="title">Field</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Bools</span><span class="params">(key <span class="keyword">string</span>, bs []<span class="keyword">bool</span>)</span> <span class="title">Field</span></span></span><br></pre></td></tr></table></figure>
+
+<h2 id="zap-高性能的秘诀"><a href="#zap-高性能的秘诀" class="headerlink" title="zap 高性能的秘诀"></a>zap 高性能的秘诀</h2><ul>
+<li>避免 GC: 对象复用</li>
+<li>内建的 Encoder: 避免反射</li>
+<li>使用写时复制机制,避免竞态</li>
 </ul>
-<p>从参数看来,单机模式下的 <code>VictoriaMetrics</code> 可以</p>
-<ol>
-<li>作为  Prometheus 的远程存储</li>
-</ol>
-<p>启动 VictoriaMetrics 脚本如下:</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># start_VictoriaMetrics.sh</span></span><br><span class="line"><span class="built_in">cd</span> <span class="variable">$&#123;victoria-metrics-home&#125;</span></span><br><span class="line">./victoria-metrics \</span><br><span class="line">  -storageDataPath &lt;storageDataPath&gt; \</span><br><span class="line">  -retentionPeriod &lt;dataKeepTime&gt; \</span><br><span class="line">  -maxInsertRequestSize &lt;req_size&gt; \</span><br><span class="line">  -httpListenAddr &lt;IP:port&gt; \</span><br><span class="line">  -loggerTimezon Asia/Shanghai &amp;&gt; victoria-metrics.log &amp;</span><br></pre></td></tr></table></figure>
-
-<p>Prometheus 远程写入相关配置如下:</p>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># prometheus.yml</span></span><br><span class="line"><span class="comment"># ...</span></span><br><span class="line"><span class="attr">remote_write:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">url:</span> <span class="string">http://&lt;victoriametrics-addr&gt;:8428/api/v1/write</span></span><br></pre></td></tr></table></figure>
-
-<ol start="2">
-<li>指定 <code>promscrape.config</code> 直接抓取并存储 metrics.</li>
-</ol>
-<p>这种方式启动与作为远程存储启动方式基本与存储方式大同小异,只需要指定对应配置文件即可.在直接抓取 metrics 过程中,VictoriaMetrics 需要一些其他的组件去实现 Prometheus 中的功能.比如</p>
-<ul>
-<li>Prometheus 中规则(包括 metrics 聚合规则与告警规则) 需要 <code>vmalert</code> 组件来实现.且 <code>vmalert</code> 只是发送告警到 <code>Alertmanager</code>.<code>vmalert</code> 支持的规则与 Prometheus 的规则一致.有关 <code>vmalert</code> 的使用,参见<a href="https://docs.victoriametrics.com/vmalert.html" target="_blank" rel="noopener">官方文档</a></li>
-<li>Prometheus 中认证相配置 需要 <code>vmauth</code> 组件来实现,参见<a href="https://docs.victoriametrics.com/vmauth.html" target="_blank" rel="noopener">官方文档</a></li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> <span class="variable">$&#123;victoria-metrics-home&#125;</span></span><br><span class="line"></span><br><span class="line">./victoria-metrics \</span><br><span class="line">  -storageDataPath &lt;storageDataPath&gt; \</span><br><span class="line">  -retentionPeriod &lt;dataKeepTime&gt; \</span><br><span class="line">  -maxInsertRequestSize &lt;req_size&gt; \</span><br><span class="line">  -httpListenAddr &lt;metrics_IP:port&gt; \</span><br><span class="line">  -promscrape.config &lt;prometheus.yml&gt; \</span><br><span class="line">  -promscrape.configCheckInterval 1m \</span><br><span class="line">  -loggerTimezon Asia/Shanghai &amp;&gt; victoria-metrics.log &amp;</span><br><span class="line"></span><br><span class="line">./vmalert \</span><br><span class="line">  -httpListenAddr <span class="string">":8880"</span> \</span><br><span class="line">  -rule &lt;record_rule_file or alert_rule_file&gt; \</span><br><span class="line">  -datasource.url &lt;metrics_IP:port&gt; \</span><br><span class="line">  -notifier.url &lt;AlertManager URL&gt; \ <span class="comment"># AlertManager URL</span></span><br><span class="line">  -remoteWrite.url &lt;metrics_IP:port&gt; \ <span class="comment"># 聚合后的 metrics 写入的位置,一般为 victoria-metrics 的端口</span></span><br><span class="line">  -remoteRead.url &lt;metrics_IP:port&gt; \</span><br><span class="line">  -external.label &lt;key=value&gt; <span class="comment"># 为聚合后的 metrics 添加标签</span></span><br><span class="line"></span><br><span class="line">./vmauth \</span><br><span class="line">  -httpListenAddr <span class="string">":8427"</span> \</span><br><span class="line">  -auth.config &lt;auth_config&gt;</span><br></pre></td></tr></table></figure>
-
-<p>为了加强数据的安全性,可以将 victoria-metrics 存储监听在 localhost.启用 auth. 配置一些自定义用户信息. <code>vmauth</code> 配置文件示例如下. Grafana 可使用该用户获取数据.</p>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">users:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">username:</span> <span class="string">"local-single-node"</span></span><br><span class="line">  <span class="attr">password:</span> <span class="string">"***"</span></span><br><span class="line">  <span class="attr">url_prefix:</span> <span class="string">"http://localhost:8428"</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="集群模式"><a href="#集群模式" class="headerlink" title="集群模式"></a>集群模式</h2><p>VictoriaMetrics 集群模式相对来说比较复杂.主要由 <code>vmstorage</code> ,<code>vminsert</code>,<code>vmselect</code> 三部分组成, 这三个组件每个组件都可以单独进行扩展.其中:</p>
-<ul>
-<li>vmstorage 负责提供数据存储服务</li>
-<li>vminsert 是数据存储 vmstorage 的代理,使用一致性 hash 算法进行写入分片</li>
-<li>vmselect 负责数据查询,根据输入的查询条件从 vmstorage 中查询数据</li>
-</ul>
-<p>vmstorage 采用 shared-nothing 架构,优点是 vmstorage 的节点相互之间无感知,相互之间无需通信,不共享任何数据,增加了集群的可用性,简化了集群的扩展的难度与运维工作.</p>
-<h3 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h3><p>VictoriaMetrics 集群模式支持</p>
-<ol>
-<li><a href="https://docs.victoriametrics.com/Cluster-VictoriaMetrics.html#cluster-resizing-and-scalability" target="_blank" rel="noopener">性能和容量水平扩展</a></li>
-</ol>
-<ul>
-<li><code>vminsert</code> 和 <code>vmselect</code> 是无状态的.可以随时添加/删除.添加更多的 <code>vminsert</code> 和 <code>vmselect</code> 节点可以扩展数据写入与查询的效率</li>
-<li><code>vmstorage</code> 节点保存抓取的数据,因此无法在不丢失数据的情况下删除它们.添加更多 <code>vmstorage</code> 节点可扩展集群容量.添加 <code>vmstorage</code> 的步骤如下:</li>
-</ul>
-<figure class="highlight haxe"><table><tr><td class="code"><pre><span class="line"><span class="number">1.</span> 使用与集群中现有节点相同的 -retentionPeriod 启动新的 vmstorage 节点</span><br><span class="line"><span class="number">2.</span> 使用包含 &lt;<span class="keyword">new</span><span class="type">_vmstorage_host</span>&gt; 的新 -storageNode 参数逐渐重新启动所有 vmselect 节点</span><br><span class="line"><span class="number">3.</span> 使用包含 &lt;<span class="keyword">new</span><span class="type">_vmstorage_host</span>&gt; 的新 -storageNode 参数逐渐重新启动所有 vminsert 节点</span><br></pre></td></tr></table></figure>
-
-<ol start="2">
-<li><a href="https://docs.victoriametrics.com/Cluster-VictoriaMetrics.html#multitenancy" target="_blank" rel="noopener">支持时间序列数据的多个名称空间(租户)</a>.多个租户之间相互隔离</li>
-</ol>
-<p>VictoriaMetrics 集群支持多个独立的租户.租户由 <code>accountID</code> 或 <code>accountID:projectID</code> 标识,他们放在 url 中.如 <code>http://&lt;vminsert&gt;:8480/insert/&lt;accountID&gt;/&lt;suffix&gt;</code>,<code>http://&lt;vmselect&gt;:8481/select/&lt;accountID&gt;/prometheus/&lt;suffix&gt;</code> 等.</p>
-<ul>
-<li>每个 accountID 和 projectID 由范围 [0 .. 2^32) 中的任意 32 位整数标识.如果不指定,则默自动分配为 0.</li>
-<li>当第一个数据点写入给定租户时,会自动创建租户</li>
-<li>所有租户的数据均匀分布在可用的 vmstorage 节点中.这保证了当不同租户具有不同的数据量和不同的查询负载时,vmstorage 节点之间的负载均匀</li>
-<li>数据库性能依赖于租户的数量,主要取决于所有租户中活动的时间序列的总数.</li>
-<li>VictoriaMetrics 不支持在单个请求中查询多个租户</li>
-</ul>
-<ol start="3">
-<li><a href="https://docs.victoriametrics.com/Cluster-VictoriaMetrics.html#replication-and-data-safety" target="_blank" rel="noopener">支持数据副本</a></li>
-</ol>
-<p>默认情况下,VictoriaMetrics 将副本写入到 <code>-storageDataPath</code> 指向的底层存储.</p>
-<p>可以通过 <code>vminsert</code> 指定 <code>-replicationFactor=N</code> 标志位来启用数据副本.这保证在最多 <code>N-1</code> 个 vmstorage 节点不可用时,所有数据扔可用于查询.集群必须至少包含 <code>2*N-1</code> 个 vmstorage 节点.</p>
-<p>启用复制后,<code>vmselect</code> 必须指定 <code>-dedup.minScrapeInterval=1ms</code> 命令行标志.</p>
-<h3 id="快速部署"><a href="#快速部署" class="headerlink" title="快速部署"></a>快速部署</h3><p>使用 3 个节点部署相关服务.节点 IP 分别为 IP1, IP2, IP3</p>
-<p>在每个节点上运行如下脚本来启动 <code>vmstroage</code>,<code>vminsert</code>,<code>vmselect</code></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line">victoria_home=<span class="string">"/data1/victoria-metrics"</span></span><br><span class="line">bin=<span class="variable">$&#123;victoria_home&#125;</span>/bin</span><br><span class="line">conf=<span class="variable">$&#123;victoria_home&#125;</span>/conf</span><br><span class="line">data=<span class="variable">$&#123;victoria_home&#125;</span>/data</span><br><span class="line"><span class="built_in">log</span>=<span class="variable">$&#123;victoria_home&#125;</span>/<span class="built_in">log</span></span><br><span class="line"></span><br><span class="line">LOG_LEVEL=INFO</span><br><span class="line">TIMEZONE=<span class="string">"Asia/Shanghai"</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> <span class="variable">$&#123;victoria_home&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="variable">$&#123;bin&#125;</span>/vmstorage-prod \</span><br><span class="line">  -httpListenAddr <span class="string">"nodeIP:8482"</span> \</span><br><span class="line">  -storageDataPath <span class="variable">$&#123;data&#125;</span> \</span><br><span class="line">  -retentionPeriod 30d \</span><br><span class="line">  -vminsertAddr <span class="string">"nodeIP:8400"</span> \ 	<span class="comment"># insert 端口,由 vminsert 连接</span></span><br><span class="line">  -vmselectAddr <span class="string">"nodeIP:8401"</span> \   <span class="comment"># select 端口,由 vmselect 连接</span></span><br><span class="line">  -loggerTimezone <span class="variable">$&#123;TIMEZONE&#125;</span> \</span><br><span class="line">  -loggerLevel <span class="variable">$&#123;LOG_LEVEL&#125;</span> &amp;&gt; <span class="variable">$&#123;log&#125;</span>/storage.log &amp;</span><br><span class="line"></span><br><span class="line"><span class="variable">$&#123;bin&#125;</span>/vminsert-prod \</span><br><span class="line">  -httpListenAddr <span class="string">"nodeIP:8480"</span> \</span><br><span class="line">  -storageNode IP1:8400,IP2:8400,IP3:8400 \</span><br><span class="line">  -loggerTimezone <span class="variable">$&#123;TIMEZONE&#125;</span> \</span><br><span class="line">  -loggerLevel <span class="variable">$&#123;LOG_LEVEL&#125;</span> &amp;&gt; <span class="variable">$&#123;log&#125;</span>/insert.log &amp;</span><br><span class="line"></span><br><span class="line"><span class="variable">$&#123;bin&#125;</span>/vmselect-prod \</span><br><span class="line">  -httpListenAddr <span class="string">"nodeIP:8481"</span> \</span><br><span class="line">  -selectNode IP1:8481,IP2:8481,IP3:8481 \</span><br><span class="line">  -storageNode IP1:8401,IP2:8401,IP3:8401 \</span><br><span class="line">  -loggerTimezone <span class="variable">$&#123;TIMEZONE&#125;</span> \</span><br><span class="line">  -loggerLevel <span class="variable">$&#123;LOG_LEVEL&#125;</span> &amp;&gt; <span class="variable">$&#123;log&#125;</span>/select.log &amp;</span><br></pre></td></tr></table></figure>
-
-<p>启动后,可以分别配置 Prometheus 和 Grafana 对 metrics 数据写入读取.详见<a href="https://docs.victoriametrics.com/Cluster-VictoriaMetrics.html#url-format" target="_blank" rel="noopener">官方文档</a></p>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># prometheus.yml</span></span><br><span class="line"><span class="attr">remote_write:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">url:</span> <span class="string">"http://&lt;vminsert&gt;:8480/insert/&lt;accountID&gt;/&lt;suffix&gt;"</span></span><br><span class="line">  	<span class="comment"># accountID 默认为 0</span></span><br><span class="line">  	<span class="comment"># suffix 可以为 `prometheus` 或 `prometheus/api/v1/write`</span></span><br><span class="line">    <span class="attr">write_relabel_configs:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">source_labels:</span> <span class="string">[__name__]</span></span><br><span class="line">        <span class="attr">regex:</span> <span class="string">'go_.*'</span></span><br><span class="line">        <span class="attr">action:</span> <span class="string">drop</span></span><br></pre></td></tr></table></figure>
-
-<p>Grafana 数据源地址可配置为 <code>http://&lt;vmselect&gt;:8481/select/&lt;accountID&gt;/prometheus</code>.此时 <code>accountID</code> 必须与 <code>prometheus.yml</code> 中配置的 <code>accountID</code> 一致.</p>
-<p>最后可使用 <code>vmauth</code> 对数据读取时进行验证,保证数据安全性.</p>
+<p>具体可参见 <a href="https://mp.weixin.qq.com/s/i0bMh_gLLrdnhAEWlF-xDw" target="_blank" rel="noopener">深度 | 从Go高性能日志库zap看如何实现高性能Go组件</a></p>
 <hr>
 <p>参考:</p>
 <ul>
-<li><a href="https://docs.victoriametrics.com/" target="_blank" rel="noopener">VictoriaMetrics 官方文档</a></li>
-<li><a href="https://github.com/VictoriaMetrics/VictoriaMetrics" target="_blank" rel="noopener">VictoriaMetrics/VictoriaMetrics(github.com)</a></li>
-<li><a href="https://zhuanlan.zhihu.com/p/368912946" target="_blank" rel="noopener">浅析下开源时序数据库VictoriaMetrics的存储机制 - 知乎 (zhihu.com)</a></li>
+<li><a href="https://github.com/uber-go/zap" target="_blank" rel="noopener">uber-go/zap (github.com)</a></li>
+<li><a href="https://pkg.go.dev/go.uber.org/zap" target="_blank" rel="noopener">zap - pkg.go.dev</a></li>
+<li><a href="https://segmentfault.com/a/1190000022461706" target="_blank" rel="noopener">Go 每日一库之 zap</a></li>
+<li><a href="https://mp.weixin.qq.com/s/i0bMh_gLLrdnhAEWlF-xDw" target="_blank" rel="noopener">深度 | 从Go高性能日志库zap看如何实现高性能Go组件</a></li>
 </ul>
 ]]></content>
       <categories>
-        <category>Prometheus</category>
+        <category>go</category>
       </categories>
       <tags>
-        <tag>Prometheus</tag>
-        <tag>VictoriaMetrics</tag>
+        <tag>go</tag>
+        <tag>3rd</tag>
       </tags>
   </entry>
   <entry>
@@ -11297,68 +11072,293 @@
       </tags>
   </entry>
   <entry>
-    <title>高性能日志库 zap</title>
-    <url>/2021/11/17/zap/</url>
-    <content><![CDATA[<p><a href="https://github.com/uber-go/zap" target="_blank" rel="noopener"><code>zap</code></a> 是 uber 开源的高性能日志库,提供了快速的、结构化的、可分级的日志记录.</p>
-<p>目前常见的 log 库中,大多使用 <code>json.Marshal</code> 和 <code>fmt.Fprintf</code> 来记录大量 <code>interface{}</code>,这种基于反射的序列化和字符串格式化会占用大量 CPU 资源并进行许多小的内存的分配,这会使得日志记录变慢,从而影响整体应用程序.</p>
-<p>而 <code>zap</code> 采用了上述不同的方法.它包含一个无反射、零分配的 JSON 编码器,并提供了基础 <code>Logger</code> 力求尽可能避免序列化开销和内存分配.</p>
-<h2 id="快速开始"><a href="#快速开始" class="headerlink" title="快速开始"></a>快速开始</h2><p><code>zap</code> 库的使用与其他的日志库非常相似.先创建一个 <code>logger</code>,然后调用各个级别的方法记录日志(Debug/Info/Error/Warn).我们可以通过<a href="https://pkg.go.dev/go.uber.org/zap" target="_blank" rel="noopener">文档</a> 中提供的一些示例来快速了解该库的使用方式.</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">"time"</span></span><br><span class="line">  <span class="string">"go.uber.org/zap"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  sugar := zap.NewExample().Sugar()</span><br><span class="line">  <span class="keyword">defer</span> sugar.Sync()</span><br><span class="line">  sugar.Infow(<span class="string">"failed to fetch URL"</span>,</span><br><span class="line">    <span class="string">"url"</span>, <span class="string">"http://example.com"</span>,</span><br><span class="line">    <span class="string">"attempt"</span>, <span class="number">3</span>,</span><br><span class="line">    <span class="string">"backoff"</span>, time.Second,</span><br><span class="line">  )</span><br><span class="line">  sugar.Infof(<span class="string">"failed to fetch URL: %s"</span>, <span class="string">"http://example.com"</span>)</span><br><span class="line"></span><br><span class="line">  logger := zap.NewExample()</span><br><span class="line">  <span class="keyword">defer</span> logger.Sync()</span><br><span class="line">  logger.Info(<span class="string">"failed to fetch URL"</span>,</span><br><span class="line">    <span class="comment">// 需要使用 zap 内置的 Field 对象来强制定义字段的类型</span></span><br><span class="line">    zap.String(<span class="string">"url"</span>, <span class="string">"http://example.com"</span>),</span><br><span class="line">    zap.Int(<span class="string">"attempt"</span>, <span class="number">3</span>),</span><br><span class="line">    zap.Duration(<span class="string">"backoff"</span>, time.Second),</span><br><span class="line">  )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>如上示例中,使用 <code>zap</code> 包提供的 <code>NewExample()</code> 方法创建 <code>Logger</code> 对象,并打印日志.相比于 <code>sugar</code>,<code>logger</code> 对象更快,分配的资源也少的多,但是它只支持强类型,结构化的日志记录.</p>
-<p>另外,<code>zap</code> 提供了几个快速创建 <code>logger</code> 的方法: <code>zap.NewExample()</code>,<code>zap.NewDevelopment()</code>,<code>zap.NewProduction()</code> 以及高度定制化的 <code>zap.New()</code>.在使用前 3 个 logger 时, zap 会使用一些预定义的配置.详情可通过 <a href="https://github.com/uber-go/zap/blob/v1.19.1/logger.go#L98-L125" target="_blank" rel="noopener">Github</a> 查看.</p>
-<h3 id="option"><a href="#option" class="headerlink" title="option"></a>option</h3><p>在通过以上方法创建 <code>logger</code> 对象时,zap 支持传入一些 <code>Option</code> 对象来调整 logger 对象的内部属性,从而定制 Logger 对象的行为.<code>zap</code> 库提供了丰富的构建 <code>Option</code> 对象的方法供我们选择.常用的如</p>
-<h4 id="打印日志的行号"><a href="#打印日志的行号" class="headerlink" title="打印日志的行号"></a>打印日志的行号</h4><p>可以通过添加 <code>zap.AddCaller()</code> 返回的 <code>Options</code> 对象对日志添加行号.该 <code>Options</code> 不适用于 <code>zap.NewExample()</code> 返回的 <code>logger</code> 对象(因为该对象的 <code>Config</code> 没有 <code>CallerKey</code> 属性)</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  logger, _ := zap.NewProduction(zap.AddCaller())</span><br><span class="line">  <span class="keyword">defer</span> logger.Sync()</span><br><span class="line"></span><br><span class="line">  logger.Info(<span class="string">"hello world"</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 输出</span></span><br><span class="line"><span class="comment">// &#123;"level":"info","ts":1637302341.770313,"caller":"zap/main.go:11","msg":"hello world"&#125;</span></span><br></pre></td></tr></table></figure>
-
-<p>再看下面,我们对日志进行了一些封装.</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">log</span><span class="params">(logger *zap.Logger, msg <span class="keyword">string</span>)</span> <span class="params">()</span></span> &#123;</span><br><span class="line">  logger.Info(msg)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  logger, _ := zap.NewProduction(zap.AddCaller())</span><br><span class="line">  <span class="keyword">defer</span> logger.Sync()</span><br><span class="line">  log(logger, <span class="string">"hello world"</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 输出</span></span><br><span class="line"><span class="comment">// &#123;"level":"info","ts":1637302670.685756,"caller":"zap/main.go:8","msg":"hello world"&#125;</span></span><br></pre></td></tr></table></figure>
-
-<p>此时再看输出的行号就不准确了,因此需要跳过一些调用.<code>zap</code> 包提供了 <code>AddCallerSkip(skip int)</code> 函数跳过一些调用.如下:</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">log</span><span class="params">(logger *zap.Logger, msg <span class="keyword">string</span>)</span> <span class="params">()</span></span> &#123;</span><br><span class="line">  logger.Info(msg)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  logger, _ := zap.NewProduction(zap.AddCaller(),zap.AddCallerSkip(<span class="number">1</span>))</span><br><span class="line">  <span class="keyword">defer</span> logger.Sync()</span><br><span class="line">  log(logger, <span class="string">"hello world"</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 输出</span></span><br><span class="line"><span class="comment">// &#123;"level":"info","ts":1637302912.6387358,"caller":"zap/main.go:14","msg":"hello world"&#125;</span></span><br></pre></td></tr></table></figure>
-
-<p>此时再看输出日志的调用就准确了.</p>
-<h4 id="添加调用栈"><a href="#添加调用栈" class="headerlink" title="添加调用栈"></a>添加调用栈</h4><p>有时在出现错误时,我们希望输出代码的调用栈信息.<code>zap</code> 包提供了 <code>AddStackTrace(lvl zapcore.LevelEnabler)</code> 实现这个功能.如下:</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">log</span><span class="params">(logger *zap.Logger, msg <span class="keyword">string</span>)</span> <span class="params">()</span></span> &#123;</span><br><span class="line">  logger.Error(msg)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  logger, _ := zap.NewProduction(zap.AddCallerSkip(<span class="number">1</span>), zap.AddStacktrace(zapcore.ErrorLevel))</span><br><span class="line">  <span class="keyword">defer</span> logger.Sync()</span><br><span class="line">  log(logger, <span class="string">"hello world"</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 输出了调用栈信息</span></span><br><span class="line"><span class="comment">// &#123;"level":"error","ts":1637303198.4552681,"caller":"zap/main.go:15","msg":"hello world","stacktrace":"main.main\n\t//code/go/src/go-notes/zap/main.go:15\nruntime.main\n\t/usr/local/go/src/runtime/proc.go:255"&#125;</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="Filed"><a href="#Filed" class="headerlink" title="Filed"></a>Filed</h3><p><code>logger</code> 对象在记录日志时,需要将 zap 提供的格式化的 <code>Filed</code> 对象来强制定义字段的类型,避免了 <code>interface{}</code> 反射所造成的性能损失.<code>zap</code> 包中提供了很多构造各种类型 <code>Filed</code> 对象的方法.如 <code>Bool</code>,<code>String</code> 等.zap 还支持形如 <code>Boolp</code>,<code>Bools</code> 的方法,用于传入该对象的指针与切片对象.如下</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Bool</span><span class="params">(key <span class="keyword">string</span>, val <span class="keyword">bool</span>)</span> <span class="title">Field</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Boolp</span><span class="params">(key <span class="keyword">string</span>, val *<span class="keyword">bool</span>)</span> <span class="title">Field</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Bools</span><span class="params">(key <span class="keyword">string</span>, bs []<span class="keyword">bool</span>)</span> <span class="title">Field</span></span></span><br></pre></td></tr></table></figure>
-
-<h2 id="定制-Logger"><a href="#定制-Logger" class="headerlink" title="定制 Logger"></a>定制 Logger</h2><p>我们可以通过调用 <code>NexExample()/NewDevelopment()/NewProduction()</code> 方法创建 <code>zap</code> 内置的默认的 <code>Logger</code> 对象.我们也可以通过自定义 <code>Config</code> 对象,并通过其 <code>Build</code> 方法构建自定义的 <code>Logger</code> 对象.其中,<code>Config</code> 结构体定义如下:</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> Config <span class="keyword">struct</span> &#123;</span><br><span class="line">  <span class="comment">// 日志级别</span></span><br><span class="line">  Level AtomicLevel <span class="string">`json:"level" yaml:"level"`</span></span><br><span class="line">  <span class="comment">// 是否是开发环境</span></span><br><span class="line">  Development <span class="keyword">bool</span> <span class="string">`json:"development" yaml:"development"`</span></span><br><span class="line">  <span class="comment">// 是否禁用 caller 记录</span></span><br><span class="line">  DisableCaller <span class="keyword">bool</span> <span class="string">`json:"disableCaller" yaml:"disableCaller"`</span></span><br><span class="line">  <span class="comment">// 是否禁用调用栈</span></span><br><span class="line">  DisableStacktrace <span class="keyword">bool</span> <span class="string">`json:"disableStacktrace" yaml:"disableStacktrace"`</span></span><br><span class="line">  <span class="comment">// 日志输出格式</span></span><br><span class="line">  Encoding <span class="keyword">string</span> <span class="string">`json:"encoding" yaml:"encoding"`</span></span><br><span class="line">  <span class="comment">// 编码配置</span></span><br><span class="line">  EncoderConfig zapcore.EncoderConfig <span class="string">`json:"encoderConfig" yaml:"encoderConfig"`</span></span><br><span class="line">  <span class="comment">// 日志输出位置,可以定义多个,多用于文件路径和 stdout</span></span><br><span class="line">  OutputPaths []<span class="keyword">string</span> <span class="string">`json:"outputPaths" yaml:"outputPaths"`</span></span><br><span class="line">  <span class="comment">// 错误输出位置</span></span><br><span class="line">  ErrorOutputPaths []<span class="keyword">string</span> <span class="string">`json:"errorOutputPaths" yaml:"errorOutputPaths"`</span></span><br><span class="line">  <span class="comment">// 初始化字段,每条日志中都会包含这个字段</span></span><br><span class="line">  InitialFields <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">interface</span>&#123;&#125; <span class="string">`json:"initialFields" yaml:"initialFields"`</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>可通过定义 <code>Config</code> 后进行构建 <code>Logger</code> 对象</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  rawJSON := []<span class="keyword">byte</span>(<span class="string">`&#123;</span></span><br><span class="line"><span class="string">    "level":"debug",</span></span><br><span class="line"><span class="string">    "encoding":"json",</span></span><br><span class="line"><span class="string">    "outputPaths": ["stdout", "server.log"],</span></span><br><span class="line"><span class="string">    "errorOutputPaths": ["stderr"],</span></span><br><span class="line"><span class="string">    "initialFields":&#123;"name":"dj"&#125;,</span></span><br><span class="line"><span class="string">    "encoderConfig": &#123;</span></span><br><span class="line"><span class="string">      "messageKey": "message",</span></span><br><span class="line"><span class="string">      "levelKey": "level",</span></span><br><span class="line"><span class="string">      "levelEncoder": "lowercase"</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;`</span>)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> cfg zap.Config</span><br><span class="line">  <span class="keyword">if</span> err := json.Unmarshal(rawJSON, &amp;cfg); err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="built_in">panic</span>(err)</span><br><span class="line">  &#125;</span><br><span class="line">  logger, err := cfg.Build()</span><br><span class="line">  <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="built_in">panic</span>(err)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">defer</span> logger.Sync()</span><br><span class="line"></span><br><span class="line">  logger.Info(<span class="string">"server start work successfully!"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>可以看到标准输出 std 和 server.log 的日志</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#123;&quot;level&quot;:&quot;info&quot;,&quot;message&quot;:&quot;server start work successfully!&quot;,&quot;name&quot;:&quot;dj&quot;&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="搭配标准日志库"><a href="#搭配标准日志库" class="headerlink" title="搭配标准日志库"></a>搭配标准日志库</h2><p>如果项目一开始使用的是标准日志库 <code>log</code>,后面想转为 <code>zap</code>.我们可以调用 <code>zap.NewStdLog(l *Logger) *log.Logger</code>返回一个标准的 <code>log.Logger</code>,内部实际上写入的还是我们之前创建的 <code>zap.Logger</code>.如下:</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  logger := zap.NewExample()</span><br><span class="line">  <span class="keyword">defer</span> logger.Sync()</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// NewStdLog 返回包装后的 *log.Logger 对象</span></span><br><span class="line">  std := zap.NewStdLog(logger)</span><br><span class="line">  std.Print(<span class="string">"standard logger wrapper"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="常用函数及方法"><a href="#常用函数及方法" class="headerlink" title="常用函数及方法"></a>常用函数及方法</h2><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 返回标准库 *log.Logger 对象,实现无缝替换</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewStdLog</span><span class="params">(l *Logger)</span> *<span class="title">log</span>.<span class="title">Logger</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建 info 级别的 AtomicLevel 对象</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewAtomicLevel</span><span class="params">()</span> <span class="title">AtomicLevel</span></span></span><br><span class="line"><span class="comment">// 可以使用上述 AtomicLevel 对象修改级别.包含 DebugLevel,InfoLevel,WarnLevel,ErrorLevel,DPanicLevel,PanicLevel,FatalLevel</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(lvl AtomicLevel)</span> <span class="title">SetLevel</span><span class="params">(l zapcore.Level)</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 自定义 Logger 对象</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">New</span><span class="params">(core zapcore.Core, options ...Option)</span> *<span class="title">Logger</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建 开发,示例,生产环境的 Logger 对象</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewDevelopment</span><span class="params">(options ...Option)</span> <span class="params">(*Logger, error)</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewExample</span><span class="params">(options ...Option)</span> *<span class="title">Logger</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewProduction</span><span class="params">(options ...Option)</span> <span class="params">(*Logger, error)</span></span></span><br><span class="line"><span class="comment">// logger 对象完成工作后,一般需要使用 defer logger.Sync() 同步</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(log *Logger)</span> <span class="title">Sync</span><span class="params">()</span> <span class="title">error</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 添加字段或添加一些 options</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(log *Logger)</span> <span class="title">With</span><span class="params">(fields ...Field)</span> *<span class="title">Logger</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(log *Logger)</span> <span class="title">WithOptions</span><span class="params">(opts ...Option)</span> *<span class="title">Logger</span></span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 由强类型的 Logger 对象转化为弱类型的 SugaredLogger 对象</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(log *Logger)</span> <span class="title">Sugar</span><span class="params">()</span> *<span class="title">SugaredLogger</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 不同级别的记录日志的方法</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(log *Logger)</span> <span class="title">Info</span><span class="params">(msg <span class="keyword">string</span>, fields ...Field)</span></span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建 option 对象</span></span><br><span class="line"><span class="comment">// 添加调用行,调用栈</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">AddCaller</span><span class="params">()</span> <span class="title">Option</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">WithCaller</span><span class="params">(enabled <span class="keyword">bool</span>)</span> <span class="title">Option</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">AddCallerSkip</span><span class="params">(skip <span class="keyword">int</span>)</span> <span class="title">Option</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">AddStacktrace</span><span class="params">(lvl zapcore.LevelEnabler)</span> <span class="title">Option</span></span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建 Field 对象</span></span><br><span class="line"><span class="comment">// 3种构建指定类型的 Field 字段,可以传入到日志记录中,实现快速记录</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Bool</span><span class="params">(key <span class="keyword">string</span>, val <span class="keyword">bool</span>)</span> <span class="title">Field</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Boolp</span><span class="params">(key <span class="keyword">string</span>, val *<span class="keyword">bool</span>)</span> <span class="title">Field</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Bools</span><span class="params">(key <span class="keyword">string</span>, bs []<span class="keyword">bool</span>)</span> <span class="title">Field</span></span></span><br></pre></td></tr></table></figure>
-
-<h2 id="zap-高性能的秘诀"><a href="#zap-高性能的秘诀" class="headerlink" title="zap 高性能的秘诀"></a>zap 高性能的秘诀</h2><ul>
-<li>避免 GC: 对象复用</li>
-<li>内建的 Encoder: 避免反射</li>
-<li>使用写时复制机制,避免竞态</li>
+    <title>Prometheus 远程存储 VictoriaMetrics</title>
+    <url>/2021/11/04/victoriametrics-quick-start/</url>
+    <content><![CDATA[<p><a href="https://github.com/VictoriaMetrics/VictoriaMetrics" target="_blank" rel="noopener">VictoriaMetrics</a> 是一个快速、经济高效且可扩展的监控解决方案和时间序列数据库,不仅可以作为 <a href="https://github.com/prometheus/prometheus" target="_blank" rel="noopener">Prometheus</a> 的远程存储,还可以使用其组件完全替换 Prometheus.它主要有以下特性:</p>
+<ul>
+<li>支持 <a href="https://docs.victoriametrics.com/Single-server-VictoriaMetrics.html#prometheus-querying-api-usage" target="_blank" rel="noopener">Prometheus querying API</a>,<a href="https://docs.victoriametrics.com/Single-server-VictoriaMetrics.html#graphite-api-usage" target="_blank" rel="noopener">Graphite API</a>. 可以在 Grafana 中直接使用</li>
+<li>实现了基于 PromQL 的查询语言 - <a href="https://docs.victoriametrics.com/MetricsQL.html" target="_blank" rel="noopener">MetricsQL</a>,提供了一些高级功能</li>
+<li>提供了全局视图,支持多个 Prometheus 实例或任何其他数据源同时向 VictoriaMetrics 写入数据,查询时数据可以保证唯一</li>
+<li>占用资源少,且高性能.</li>
+<li>支持多种方式获取 metrics. 如:<ul>
+<li><a href="https://docs.victoriametrics.com/Single-server-VictoriaMetrics.html#how-to-scrape-prometheus-exporters-such-as-node-exporter" target="_blank" rel="noopener">从 exporter 直接获取</a>.与prometheus 完全兼容.除 <a href="https://prometheus.io/docs/prometheus/latest/configuration/configuration/#static_config" target="_blank" rel="noopener">static_config</a> 外,还支持多种服务发现方式,如:<ul>
+<li><a href="https://prometheus.io/docs/prometheus/latest/configuration/configuration/#file_sd_config" target="_blank" rel="noopener">file_sd_config</a></li>
+<li><a href="https://prometheus.io/docs/prometheus/latest/configuration/configuration/#kubernetes_sd_config" target="_blank" rel="noopener">kubernetes_sd_config</a></li>
+<li><a href="https://prometheus.io/docs/prometheus/latest/configuration/configuration/#consul_sd_config" target="_blank" rel="noopener">consul_sd_config</a></li>
 </ul>
-<p>具体可参见 <a href="https://mp.weixin.qq.com/s/i0bMh_gLLrdnhAEWlF-xDw" target="_blank" rel="noopener">深度 | 从Go高性能日志库zap看如何实现高性能Go组件</a></p>
+</li>
+<li><a href="https://docs.victoriametrics.com/Single-server-VictoriaMetrics.html#prometheus-setup" target="_blank" rel="noopener">通过 Prometheus 远程写入</a></li>
+<li><a href="https://docs.victoriametrics.com/Single-server-VictoriaMetrics.html#how-to-import-data-in-json-line-format" target="_blank" rel="noopener">通过 Post 请求将指定 JSON 格式的数据直接写入</a></li>
+</ul>
+</li>
+<li>支持 <a href="https://docs.victoriametrics.com/Single-server-VictoriaMetrics.html#relabeling" target="_blank" rel="noopener">metrics relabel</a>.与 prometheus 完全兼容</li>
+<li>支持单机模式与集群模式</li>
+</ul>
+<h2 id="单机模式"><a href="#单机模式" class="headerlink" title="单机模式"></a>单机模式</h2><p>单机模式比较简单,直接下载<a href="https://github.com/VictoriaMetrics/VictoriaMetrics/releases" target="_blank" rel="noopener">二进制</a>或 <a href="https://hub.docker.com/r/victoriametrics/victoria-metrics/" target="_blank" rel="noopener">Docker 镜像</a> 并使用指定的命令行启动.</p>
+<p>单机模式可能用到的组件.</p>
+<figure class="highlight asciidoc"><table><tr><td class="code"><pre><span class="line"><span class="bullet">- </span>victoria-metrics: metrics 数据抓取或存储</span><br><span class="line"><span class="bullet">- </span>vmalert: 按照指定的规则将 metrics 数据聚合或向 alertmanager 发送告警</span><br><span class="line"><span class="bullet">- </span>vmauth: 启用用户认证功能</span><br></pre></td></tr></table></figure>
+
+<p>以二进制为例,可以通过</p>
+<ul>
+<li><code>-storageDataPath</code> 参数指定数据存储的目录.默认为 <code>victoria-metrics-data</code></li>
+<li><code>-retentionPeriod</code> 参数指定数据保存的时长.默认为 <code>1 month</code></li>
+<li><code>-httpListenAddr</code> 参数指定监听的 HTTP 套接字.默认为 <code>:8428</code></li>
+<li><code>-loggerTimezon</code> 参数指定日志的时区,默认为 <code>UTC</code>.建议设置为 <code>Asia/Shanghai</code></li>
+<li><code>-maxInsertRequestSize</code> 参数限制 Prometheus remote_write API 的请求大小. 默认为 <code>33554432 byte</code>.支持可选的单位为 <code>KB, MB, GB, KiB, MiB, GiB</code></li>
+<li><code>-promscrape.config</code> 参数指定 Prometheus 配置文件路径.该配置文件只需要包含 <code>scrape_configs</code> 部分配置即可.(经测试  VictoriaMetrics 支持 <code>scrape_configs</code> 中的 <code>relabel_configs</code> 和 <code>metric_relabel_configs</code> )</li>
+<li><code>-promscrape.config.strictParse</code> 参数设置是否会严格校验 <code>-promscrape.config</code> 指定的配置文件.默认情况下,不支持的字段会跳过,兼容 Prometheus 的配置文件</li>
+<li><code>-promscrape.configCheckInterval</code> 参数设置检查 Prometheus 配置文件是否变更的时间间隔.若变更,则重新加载.默认关闭</li>
+<li><code>-relabelConfig</code> 参数指定 relabel 的规则.</li>
+<li><code>-relabelDebug</code> 参数指定日志中是否指定 relabel 前后的 metrics.多用于调试.</li>
+<li><code>-selfScrapeInstance</code> 参数设置抓取自身 metrics 时,<code>instance</code> 标签的值.默认 <code>self</code></li>
+<li><code>-selfScrapeInterval</code> 参数设置抓取自身 metrics 的时间间隔</li>
+<li><code>-selfScrapeJob</code> 参数设置设置抓取自身 metrics 时,<code>instance</code> 标签的值.默认 <code>victoria-metrics</code></li>
+</ul>
+<p>从参数看来,单机模式下的 <code>VictoriaMetrics</code> 可以</p>
+<ol>
+<li>作为  Prometheus 的远程存储</li>
+</ol>
+<p>启动 VictoriaMetrics 脚本如下:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># start_VictoriaMetrics.sh</span></span><br><span class="line"><span class="built_in">cd</span> <span class="variable">$&#123;victoria-metrics-home&#125;</span></span><br><span class="line">./victoria-metrics \</span><br><span class="line">  -storageDataPath &lt;storageDataPath&gt; \</span><br><span class="line">  -retentionPeriod &lt;dataKeepTime&gt; \</span><br><span class="line">  -maxInsertRequestSize &lt;req_size&gt; \</span><br><span class="line">  -httpListenAddr &lt;IP:port&gt; \</span><br><span class="line">  -loggerTimezon Asia/Shanghai &amp;&gt; victoria-metrics.log &amp;</span><br></pre></td></tr></table></figure>
+
+<p>Prometheus 远程写入相关配置如下:</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># prometheus.yml</span></span><br><span class="line"><span class="comment"># ...</span></span><br><span class="line"><span class="attr">remote_write:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">url:</span> <span class="string">http://&lt;victoriametrics-addr&gt;:8428/api/v1/write</span></span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>指定 <code>promscrape.config</code> 直接抓取并存储 metrics.</li>
+</ol>
+<p>这种方式启动与作为远程存储启动方式基本与存储方式大同小异,只需要指定对应配置文件即可.在直接抓取 metrics 过程中,VictoriaMetrics 需要一些其他的组件去实现 Prometheus 中的功能.比如</p>
+<ul>
+<li>Prometheus 中规则(包括 metrics 聚合规则与告警规则) 需要 <code>vmalert</code> 组件来实现.且 <code>vmalert</code> 只是发送告警到 <code>Alertmanager</code>.<code>vmalert</code> 支持的规则与 Prometheus 的规则一致.有关 <code>vmalert</code> 的使用,参见<a href="https://docs.victoriametrics.com/vmalert.html" target="_blank" rel="noopener">官方文档</a></li>
+<li>Prometheus 中认证相配置 需要 <code>vmauth</code> 组件来实现,参见<a href="https://docs.victoriametrics.com/vmauth.html" target="_blank" rel="noopener">官方文档</a></li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> <span class="variable">$&#123;victoria-metrics-home&#125;</span></span><br><span class="line"></span><br><span class="line">./victoria-metrics \</span><br><span class="line">  -storageDataPath &lt;storageDataPath&gt; \</span><br><span class="line">  -retentionPeriod &lt;dataKeepTime&gt; \</span><br><span class="line">  -maxInsertRequestSize &lt;req_size&gt; \</span><br><span class="line">  -httpListenAddr &lt;metrics_IP:port&gt; \</span><br><span class="line">  -promscrape.config &lt;prometheus.yml&gt; \</span><br><span class="line">  -promscrape.configCheckInterval 1m \</span><br><span class="line">  -loggerTimezon Asia/Shanghai &amp;&gt; victoria-metrics.log &amp;</span><br><span class="line"></span><br><span class="line">./vmalert \</span><br><span class="line">  -httpListenAddr <span class="string">":8880"</span> \</span><br><span class="line">  -rule &lt;record_rule_file or alert_rule_file&gt; \</span><br><span class="line">  -datasource.url &lt;metrics_IP:port&gt; \</span><br><span class="line">  -notifier.url &lt;AlertManager URL&gt; \ <span class="comment"># AlertManager URL</span></span><br><span class="line">  -remoteWrite.url &lt;metrics_IP:port&gt; \ <span class="comment"># 聚合后的 metrics 写入的位置,一般为 victoria-metrics 的端口</span></span><br><span class="line">  -remoteRead.url &lt;metrics_IP:port&gt; \</span><br><span class="line">  -external.label &lt;key=value&gt; <span class="comment"># 为聚合后的 metrics 添加标签</span></span><br><span class="line"></span><br><span class="line">./vmauth \</span><br><span class="line">  -httpListenAddr <span class="string">":8427"</span> \</span><br><span class="line">  -auth.config &lt;auth_config&gt;</span><br></pre></td></tr></table></figure>
+
+<p>为了加强数据的安全性,可以将 victoria-metrics 存储监听在 localhost.启用 auth. 配置一些自定义用户信息. <code>vmauth</code> 配置文件示例如下. Grafana 可使用该用户获取数据.</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">users:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">username:</span> <span class="string">"local-single-node"</span></span><br><span class="line">  <span class="attr">password:</span> <span class="string">"***"</span></span><br><span class="line">  <span class="attr">url_prefix:</span> <span class="string">"http://localhost:8428"</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="集群模式"><a href="#集群模式" class="headerlink" title="集群模式"></a>集群模式</h2><p>VictoriaMetrics 集群模式相对来说比较复杂.主要由 <code>vmstorage</code> ,<code>vminsert</code>,<code>vmselect</code> 三部分组成, 这三个组件每个组件都可以单独进行扩展.其中:</p>
+<ul>
+<li>vmstorage 负责提供数据存储服务</li>
+<li>vminsert 是数据存储 vmstorage 的代理,使用一致性 hash 算法进行写入分片</li>
+<li>vmselect 负责数据查询,根据输入的查询条件从 vmstorage 中查询数据</li>
+</ul>
+<p>vmstorage 采用 shared-nothing 架构,优点是 vmstorage 的节点相互之间无感知,相互之间无需通信,不共享任何数据,增加了集群的可用性,简化了集群的扩展的难度与运维工作.</p>
+<h3 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h3><p>VictoriaMetrics 集群模式支持</p>
+<ol>
+<li><a href="https://docs.victoriametrics.com/Cluster-VictoriaMetrics.html#cluster-resizing-and-scalability" target="_blank" rel="noopener">性能和容量水平扩展</a></li>
+</ol>
+<ul>
+<li><code>vminsert</code> 和 <code>vmselect</code> 是无状态的.可以随时添加/删除.添加更多的 <code>vminsert</code> 和 <code>vmselect</code> 节点可以扩展数据写入与查询的效率</li>
+<li><code>vmstorage</code> 节点保存抓取的数据,因此无法在不丢失数据的情况下删除它们.添加更多 <code>vmstorage</code> 节点可扩展集群容量.添加 <code>vmstorage</code> 的步骤如下:</li>
+</ul>
+<figure class="highlight haxe"><table><tr><td class="code"><pre><span class="line"><span class="number">1.</span> 使用与集群中现有节点相同的 -retentionPeriod 启动新的 vmstorage 节点</span><br><span class="line"><span class="number">2.</span> 使用包含 &lt;<span class="keyword">new</span><span class="type">_vmstorage_host</span>&gt; 的新 -storageNode 参数逐渐重新启动所有 vmselect 节点</span><br><span class="line"><span class="number">3.</span> 使用包含 &lt;<span class="keyword">new</span><span class="type">_vmstorage_host</span>&gt; 的新 -storageNode 参数逐渐重新启动所有 vminsert 节点</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><a href="https://docs.victoriametrics.com/Cluster-VictoriaMetrics.html#multitenancy" target="_blank" rel="noopener">支持时间序列数据的多个名称空间(租户)</a>.多个租户之间相互隔离</li>
+</ol>
+<p>VictoriaMetrics 集群支持多个独立的租户.租户由 <code>accountID</code> 或 <code>accountID:projectID</code> 标识,他们放在 url 中.如 <code>http://&lt;vminsert&gt;:8480/insert/&lt;accountID&gt;/&lt;suffix&gt;</code>,<code>http://&lt;vmselect&gt;:8481/select/&lt;accountID&gt;/prometheus/&lt;suffix&gt;</code> 等.</p>
+<ul>
+<li>每个 accountID 和 projectID 由范围 [0 .. 2^32) 中的任意 32 位整数标识.如果不指定,则默自动分配为 0.</li>
+<li>当第一个数据点写入给定租户时,会自动创建租户</li>
+<li>所有租户的数据均匀分布在可用的 vmstorage 节点中.这保证了当不同租户具有不同的数据量和不同的查询负载时,vmstorage 节点之间的负载均匀</li>
+<li>数据库性能依赖于租户的数量,主要取决于所有租户中活动的时间序列的总数.</li>
+<li>VictoriaMetrics 不支持在单个请求中查询多个租户</li>
+</ul>
+<ol start="3">
+<li><a href="https://docs.victoriametrics.com/Cluster-VictoriaMetrics.html#replication-and-data-safety" target="_blank" rel="noopener">支持数据副本</a></li>
+</ol>
+<p>默认情况下,VictoriaMetrics 将副本写入到 <code>-storageDataPath</code> 指向的底层存储.</p>
+<p>可以通过 <code>vminsert</code> 指定 <code>-replicationFactor=N</code> 标志位来启用数据副本.这保证在最多 <code>N-1</code> 个 vmstorage 节点不可用时,所有数据扔可用于查询.集群必须至少包含 <code>2*N-1</code> 个 vmstorage 节点.</p>
+<p>启用复制后,<code>vmselect</code> 必须指定 <code>-dedup.minScrapeInterval=1ms</code> 命令行标志.</p>
+<h3 id="快速部署"><a href="#快速部署" class="headerlink" title="快速部署"></a>快速部署</h3><p>使用 3 个节点部署相关服务.节点 IP 分别为 IP1, IP2, IP3</p>
+<p>在每个节点上运行如下脚本来启动 <code>vmstroage</code>,<code>vminsert</code>,<code>vmselect</code></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line">victoria_home=<span class="string">"/data1/victoria-metrics"</span></span><br><span class="line">bin=<span class="variable">$&#123;victoria_home&#125;</span>/bin</span><br><span class="line">conf=<span class="variable">$&#123;victoria_home&#125;</span>/conf</span><br><span class="line">data=<span class="variable">$&#123;victoria_home&#125;</span>/data</span><br><span class="line"><span class="built_in">log</span>=<span class="variable">$&#123;victoria_home&#125;</span>/<span class="built_in">log</span></span><br><span class="line"></span><br><span class="line">LOG_LEVEL=INFO</span><br><span class="line">TIMEZONE=<span class="string">"Asia/Shanghai"</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> <span class="variable">$&#123;victoria_home&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="variable">$&#123;bin&#125;</span>/vmstorage-prod \</span><br><span class="line">  -httpListenAddr <span class="string">"nodeIP:8482"</span> \</span><br><span class="line">  -storageDataPath <span class="variable">$&#123;data&#125;</span> \</span><br><span class="line">  -retentionPeriod 30d \</span><br><span class="line">  -vminsertAddr <span class="string">"nodeIP:8400"</span> \ 	<span class="comment"># insert 端口,由 vminsert 连接</span></span><br><span class="line">  -vmselectAddr <span class="string">"nodeIP:8401"</span> \   <span class="comment"># select 端口,由 vmselect 连接</span></span><br><span class="line">  -loggerTimezone <span class="variable">$&#123;TIMEZONE&#125;</span> \</span><br><span class="line">  -loggerLevel <span class="variable">$&#123;LOG_LEVEL&#125;</span> &amp;&gt; <span class="variable">$&#123;log&#125;</span>/storage.log &amp;</span><br><span class="line"></span><br><span class="line"><span class="variable">$&#123;bin&#125;</span>/vminsert-prod \</span><br><span class="line">  -httpListenAddr <span class="string">"nodeIP:8480"</span> \</span><br><span class="line">  -storageNode IP1:8400,IP2:8400,IP3:8400 \</span><br><span class="line">  -loggerTimezone <span class="variable">$&#123;TIMEZONE&#125;</span> \</span><br><span class="line">  -loggerLevel <span class="variable">$&#123;LOG_LEVEL&#125;</span> &amp;&gt; <span class="variable">$&#123;log&#125;</span>/insert.log &amp;</span><br><span class="line"></span><br><span class="line"><span class="variable">$&#123;bin&#125;</span>/vmselect-prod \</span><br><span class="line">  -httpListenAddr <span class="string">"nodeIP:8481"</span> \</span><br><span class="line">  -selectNode IP1:8481,IP2:8481,IP3:8481 \</span><br><span class="line">  -storageNode IP1:8401,IP2:8401,IP3:8401 \</span><br><span class="line">  -loggerTimezone <span class="variable">$&#123;TIMEZONE&#125;</span> \</span><br><span class="line">  -loggerLevel <span class="variable">$&#123;LOG_LEVEL&#125;</span> &amp;&gt; <span class="variable">$&#123;log&#125;</span>/select.log &amp;</span><br></pre></td></tr></table></figure>
+
+<p>启动后,可以分别配置 Prometheus 和 Grafana 对 metrics 数据写入读取.详见<a href="https://docs.victoriametrics.com/Cluster-VictoriaMetrics.html#url-format" target="_blank" rel="noopener">官方文档</a></p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># prometheus.yml</span></span><br><span class="line"><span class="attr">remote_write:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">url:</span> <span class="string">"http://&lt;vminsert&gt;:8480/insert/&lt;accountID&gt;/&lt;suffix&gt;"</span></span><br><span class="line">  	<span class="comment"># accountID 默认为 0</span></span><br><span class="line">  	<span class="comment"># suffix 可以为 `prometheus` 或 `prometheus/api/v1/write`</span></span><br><span class="line">    <span class="attr">write_relabel_configs:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">source_labels:</span> <span class="string">[__name__]</span></span><br><span class="line">        <span class="attr">regex:</span> <span class="string">'go_.*'</span></span><br><span class="line">        <span class="attr">action:</span> <span class="string">drop</span></span><br></pre></td></tr></table></figure>
+
+<p>Grafana 数据源地址可配置为 <code>http://&lt;vmselect&gt;:8481/select/&lt;accountID&gt;/prometheus</code>.此时 <code>accountID</code> 必须与 <code>prometheus.yml</code> 中配置的 <code>accountID</code> 一致.</p>
+<p>最后可使用 <code>vmauth</code> 对数据读取时进行验证,保证数据安全性.</p>
 <hr>
 <p>参考:</p>
 <ul>
-<li><a href="https://github.com/uber-go/zap" target="_blank" rel="noopener">uber-go/zap (github.com)</a></li>
-<li><a href="https://pkg.go.dev/go.uber.org/zap" target="_blank" rel="noopener">zap - pkg.go.dev</a></li>
-<li><a href="https://segmentfault.com/a/1190000022461706" target="_blank" rel="noopener">Go 每日一库之 zap</a></li>
-<li><a href="https://mp.weixin.qq.com/s/i0bMh_gLLrdnhAEWlF-xDw" target="_blank" rel="noopener">深度 | 从Go高性能日志库zap看如何实现高性能Go组件</a></li>
+<li><a href="https://docs.victoriametrics.com/" target="_blank" rel="noopener">VictoriaMetrics 官方文档</a></li>
+<li><a href="https://github.com/VictoriaMetrics/VictoriaMetrics" target="_blank" rel="noopener">VictoriaMetrics/VictoriaMetrics(github.com)</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/368912946" target="_blank" rel="noopener">浅析下开源时序数据库VictoriaMetrics的存储机制 - 知乎 (zhihu.com)</a></li>
 </ul>
 ]]></content>
       <categories>
-        <category>go</category>
+        <category>Prometheus</category>
       </categories>
       <tags>
-        <tag>go</tag>
-        <tag>3rd</tag>
+        <tag>Prometheus</tag>
+        <tag>VictoriaMetrics</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux 之 systemd 的工作原理及使用</title>
+    <url>/2020/06/11/systemd-details/</url>
+    <content><![CDATA[<h2 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h2><ul>
+<li>兼容 SysVinit 和 LSB init scripts</li>
+<li>以并行方式启动,启动速度更快<ul>
+<li>尽可能启动更少的进程</li>
+<li>尽可能将更多进程并行启动</li>
+</ul>
+</li>
+<li>提供按需启动能力,只有在某个服务被真正请求的时候才启动它</li>
+<li>采用 Linux的 Cgroup 特性跟踪和管理进程的生命周期.Systemd 只需要简单地遍历指定的 CGroup 即可正确地找到所有的相关进程</li>
+<li>实现事务性依赖关系管理.系统启动过程是由很多的独立工作共同组成的,这些工作之间可能存在依赖关系.Systemd 维护一个”事务一致性”的概念,保证所有相关的服务都可以正常启动而不会出现互相依赖,以至于死锁的情况.</li>
+<li>使用 systemd-journald 提供日志服务.有便于管理,零维护,高性能,统一化的特点</li>
+<li>向后兼容 SysV 的服务脚本</li>
+</ul>
+<h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><h3 id="unit"><a href="#unit" class="headerlink" title="unit"></a>unit</h3><p>系统初始化需要做的事情非常多,如启动后台服务以及做一些配置工作.这个过程中的每一步都被 Systemd 抽象为一个配置单元,即 <code>unit</code>.它主要包含如下几种类型</p>
+<table>
+<thead>
+<tr>
+<th align="left">名称</th>
+<th align="left">文件扩展名</th>
+<th align="left">用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>service unit</code></td>
+<td align="left"><code>.service</code></td>
+<td align="left">用于定义系统类服务</td>
+</tr>
+<tr>
+<td align="left"><code>target unit</code></td>
+<td align="left"><code>.target</code></td>
+<td align="left">用于实现模拟”运行级别”</td>
+</tr>
+<tr>
+<td align="left"><code>mount unit</code></td>
+<td align="left"><code>.mount</code></td>
+<td align="left">用于定义文件系统挂载点</td>
+</tr>
+<tr>
+<td align="left"><code>socket unit</code></td>
+<td align="left"><code>.socket</code></td>
+<td align="left">用于标识进程间通信的 socket 文件</td>
+</tr>
+<tr>
+<td align="left"><code>snapshot unit</code></td>
+<td align="left"><code>.snapshot</code></td>
+<td align="left">管理系统快照</td>
+</tr>
+<tr>
+<td align="left"><code>swap unit</code></td>
+<td align="left"><code>.swap</code></td>
+<td align="left">用于标识 swap 设备</td>
+</tr>
+<tr>
+<td align="left"><code>automount unit</code></td>
+<td align="left"><code>.automount</code></td>
+<td align="left">文件系统自动挂载设备</td>
+</tr>
+<tr>
+<td align="left"><code>path unit</code></td>
+<td align="left"><code>.path</code></td>
+<td align="left">用于定义文件系统中的一个文件或目录</td>
+</tr>
+<tr>
+<td align="left"><code>timer unit</code></td>
+<td align="left"><code>.timer</code></td>
+<td align="left">用来定时触发用户定义的操作</td>
+</tr>
+</tbody></table>
+<h3 id="Target和运行级别的对应关系"><a href="#Target和运行级别的对应关系" class="headerlink" title="Target和运行级别的对应关系"></a>Target和运行级别的对应关系</h3><table>
+<thead>
+<tr>
+<th align="left">sysvinit</th>
+<th align="left">systemd target</th>
+<th align="left">备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">0</td>
+<td align="left">poweroff.target</td>
+<td align="left">关闭系统</td>
+</tr>
+<tr>
+<td align="left">1</td>
+<td align="left">rescue.target</td>
+<td align="left">单用户模式</td>
+</tr>
+<tr>
+<td align="left">2</td>
+<td align="left">multi-user.target</td>
+<td align="left">多用户模式,无网络</td>
+</tr>
+<tr>
+<td align="left">3</td>
+<td align="left">multi-user.target</td>
+<td align="left">多用户模式</td>
+</tr>
+<tr>
+<td align="left">4</td>
+<td align="left">-</td>
+<td align="left">没有用到</td>
+</tr>
+<tr>
+<td align="left">5</td>
+<td align="left">graphical.target</td>
+<td align="left">多用户,图形化界面</td>
+</tr>
+<tr>
+<td align="left">6</td>
+<td align="left">reboot.target</td>
+<td align="left">重启</td>
+</tr>
+</tbody></table>
+<h2 id="service-unit-file"><a href="#service-unit-file" class="headerlink" title="service unit file"></a>service unit file</h2><p>文件通常由三部分组成</p>
+<h3 id="Unit"><a href="#Unit" class="headerlink" title="[Unit]"></a>[Unit]</h3><p><code>Unit</code> 配置块通常是配置文件的第一个配置块,用来定义 Unit 的元数据,以及配置与其他 Unit 的依赖关系.它的主要字段如下:</p>
+<ul>
+<li><code>Description</code>: 简短描述</li>
+<li><code>Documentation</code>: 文档地址</li>
+<li><code>Requires</code>: 当前 Unit 依赖的其他 Unit,如果它们没有运行,当前 Unit 会启动失败</li>
+<li><code>Wants</code>: 与当前 Unit 配合的其他 Unit,如果它们没有运行,当前 Unit 不会启动失败</li>
+<li><code>BindsTo</code>: 与 Requires 类似,它指定的 Unit 如果退出,会导致当前 Unit 停止运行</li>
+<li><code>Before</code>: 当前 Unit 必须在指定的 Unit 之前启动</li>
+<li><code>After</code>: 当前 Unit 必须在指定的 Unit 之后启动</li>
+<li><code>Conflicts</code>: 这里指定的 Unit 不能与当前 Unit 同时运行</li>
+<li><code>Condition...</code>: 当前 Unit 运行必须满足的条件，否则不会运行</li>
+<li><code>Assert...</code>:当前 Unit 运行必须满足的条件，否则会报启动失败</li>
+</ul>
+<h3 id="Service"><a href="#Service" class="headerlink" title="[Service]"></a>[Service]</h3><p><code>Service</code> 配置块用来定义 Service 的属性,只有 Service 类型的 Unit 才有这个配置块.它的主要字段如下:</p>
+<ul>
+<li><code>Type</code>: 定义启动时的进程行为.可选值为<ul>
+<li><code>simple</code>: 默认值,执行 ExecStart 指定的命令,启动主进程</li>
+<li><code>forking</code>: 以 fork 方式从父进程创建子进程,创建后父进程会立即退出</li>
+<li><code>oneshot</code>: 一次性进程,Systemd 会等当前服务退出,再继续往下执行</li>
+<li><code>dbus</code>: 当前服务通过 D-Bus 启动</li>
+<li><code>notify</code>: 当前服务启动完毕,会通知 Systemd,再继续往下执行</li>
+<li><code>idle</code>: 若有其他任务执行完毕,当前服务才会运行</li>
+</ul>
+</li>
+<li><code>Environment</code>: 指定环境变量</li>
+<li><code>ExecStart</code>: 启动当前服务的命令</li>
+<li><code>ExecStartPre</code>: 启动当前服务之前执行的命令</li>
+<li><code>Restart</code>: 定义何种情况 Systemd 会自动重启当前服务.可选值为 <code>always</code>,<code>on-success</code>,<code>on-failure</code>,<code>on-abnormal</code>,<code>on-abort</code>,<code>on-watchdog</code></li>
+<li><code>ExecReload</code>: 重新加载当前服务时执行的命令</li>
+<li><code>ExecStop</code>: 停止当前服务时执行的命令</li>
+<li><code>ExecStartPost</code>: 启动当前服务之后执行的命令</li>
+<li><code>ExecStopPost</code>: 停止当其服务之后执行的命令</li>
+<li><code>RestartSec</code>: 自动重启当前服务间隔的秒数</li>
+<li><code>TimeoutSec</code>: 定义 Systemd 停止当前服务之前等待的秒数</li>
+</ul>
+<h3 id="Install"><a href="#Install" class="headerlink" title="[Install]"></a>[Install]</h3><p><code>Install</code> 配置块通常在文件最后,用来定义如何启动,以及是否开机启动.它的主要字段如下</p>
+<ul>
+<li><code>WantedBy</code>: 它的值是一个或多个 <code>Target</code>,当前 Unit enable 时(服务开机启动时),会在 <code>/etc/systemd/system</code> 目录及指定 <code>${target}.wants</code> 子目录下创建软链接</li>
+<li><code>RequiredBy</code>: 它的值是一个或多个 <code>Target</code>,当前 Unit enable 时(服务开机启动时),会在 <code>/etc/systemd/system</code> 目录及指定 <code>${target}.required</code> 子目录下创建软链接<br><code>Alias</code>: 当前 Unit 可用于启动的别名<br><code>Also</code>: 当前 Unit enable 时(服务开机启动时),同时激活的其他 Unit</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>systemd</tag>
       </tags>
   </entry>
 </search>
