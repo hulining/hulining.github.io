@@ -5333,31 +5333,6 @@
       </tags>
   </entry>
   <entry>
-    <title>awesome-go</title>
-    <url>/2021/10/29/awesome-go/</url>
-    <content><![CDATA[<h2 id="命令行工具"><a href="#命令行工具" class="headerlink" title="命令行工具"></a>命令行工具</h2><h3 id="Standard-CLI"><a href="#Standard-CLI" class="headerlink" title="Standard CLI"></a>Standard CLI</h3><ul>
-<li><a href="https://github.com/spf13/cobra" target="_blank" rel="noopener">cobra</a> - Commander for modern Go CLI interactions. 跳转 <a href="/2020/06/23/cobra-quick-start/" title="cobra 快速开始">cobra 快速开始</a> </li>
-</ul>
-<h2 id="日志"><a href="#日志" class="headerlink" title="日志"></a>日志</h2><ul>
-<li><a href="https://github.com/Sirupsen/logrus" target="_blank" rel="noopener">logrus</a> - Structured logger for Go.跳转 <a href="/2021/11/02/logrus-quick-start/" title="logrus 快速开始">logrus 快速开始</a></li>
-<li><a href="https://github.com/uber-go/zap" target="_blank" rel="noopener">zap</a> - Fast, structured, leveled logging in Go.跳转 <a href="/2021/11/17/zap/" title="高性能日志库 zap">高性能日志库 zap</a></li>
-</ul>
-<h2 id="分布式系统"><a href="#分布式系统" class="headerlink" title="分布式系统"></a>分布式系统</h2><ul>
-<li><a href="https://github.com/go-kit/kit" target="_blank" rel="noopener">go-kit</a> - Microservice toolkit with support for service discovery, load balancing, pluggable transports, request tracking, etc.</li>
-<li><a href="https://github.com/grpc/grpc-go" target="_blank" rel="noopener">grpc-go</a> The Go language implementation of gRPC. HTTP/2 based RPC.</li>
-</ul>
-<h2 id="Goroutines"><a href="#Goroutines" class="headerlink" title="Goroutines"></a>Goroutines</h2><ul>
-<li><a href="https://github.com/panjf2000/ants" target="_blank" rel="noopener">ants</a> - A high-performance and low-cost goroutine pool in Go. 跳转 <a href="/2021/11/11/ants-quick-start/" title="ants 快速开始">ants 快速开始</a></li>
-</ul>
-]]></content>
-      <categories>
-        <category>go</category>
-      </categories>
-      <tags>
-        <tag>go</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>ants 快速开始</title>
     <url>/2021/11/11/ants-quick-start/</url>
     <content><![CDATA[<p><a href="https://github.com/panjf2000/ants" target="_blank" rel="noopener"><code>ants</code></a> 实现了一个高性能的 <code>goroutine</code> 池,实现了对大规模 goroutine 的调度管理及复用.它允许使用者在开发并发程序的时候限制 goroutine 数量,复用资源,以便达到更高效执行任务的效果</p>
@@ -5403,161 +5378,28 @@
       </tags>
   </entry>
   <entry>
-    <title>cobra-quick-start</title>
-    <url>/2020/06/23/cobra-quick-start/</url>
-    <content><![CDATA[<p><a href="https://github.com/spf13/cobra" target="_blank" rel="noopener"><code>Cobra</code></a> 是一个可以创建功能强大的现代 CLI 应用程序的库,又是一个可以用于生成应用程序和命令文件的程序.</p>
-<p>Cobra 被应用于很多项目中,如 <a href="http://kubernetes.io/" target="_blank" rel="noopener">Kubernetes</a>, <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>, 和 <a href="https://github.com/cli/cli" target="_blank" rel="noopener">Github CLI</a> 等.<a href="https://github.com/spf13/cobra/blob/master/projects_using_cobra.md" target="_blank" rel="noopener">此列表</a> 包含了使用 Cobra 项目的列表.</p>
-<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>Cobra 是一个库,它提供了简单易用的接口,用于创建功能强大的现代 CLI 接口,如 git &amp; go tool.</p>
-<p>Cobra 也是一个程序(工具),它可以生成基于 Cobra 的应用程序的代码结构以便于快速开发.</p>
-<p>Cobra 提供了以下功能:</p>
-<ul>
-<li>简单的子命令行模式: <code>app server</code>, <code>app fetch</code> 等</li>
-<li>完全兼容 POSIX 标志(长短版本均支持)</li>
-<li>嵌套子命令</li>
-<li>全局,局部和级联标志</li>
-<li>使用 <code>cobra init appname</code> 或 <code>cobra add cmdname</code> 轻松生成应用程序或命令</li>
-<li>智能建议(如, <code>app srver</code>… 您是指 <code>app server</code>)</li>
-<li>自动生成命令和标志的帮助</li>
-<li>自动帮助标志识别,如 <code>-h</code>, <code>--help</code> 等</li>
-<li>自动为您的应用生成 bash 自动完成</li>
-<li>自动为您的应用生成帮助手册</li>
-<li>支持命令别名</li>
-<li>灵活地自定义帮助,用法等.</li>
-<li>可选的与 viper 紧密集成,可用于 12-factor 应用.</li>
+    <title>awesome-go</title>
+    <url>/2021/10/29/awesome-go/</url>
+    <content><![CDATA[<h2 id="命令行工具"><a href="#命令行工具" class="headerlink" title="命令行工具"></a>命令行工具</h2><h3 id="Standard-CLI"><a href="#Standard-CLI" class="headerlink" title="Standard CLI"></a>Standard CLI</h3><ul>
+<li><a href="https://github.com/spf13/cobra" target="_blank" rel="noopener">cobra</a> - Commander for modern Go CLI interactions. 跳转 <a href="/2020/06/23/cobra-quick-start/" title="cobra 快速开始">cobra 快速开始</a> </li>
 </ul>
-<h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p>Cobra 建立在 commands(命令), arguments(参数), flags(标志) 之上.</p>
-<p><strong>Commands</strong> 表示要执行的操作, <strong>Args</strong> 和 <strong>Flags</strong> 是这些操作的修饰符.</p>
-<p>应用程序遵循的命令行模式应该是 <code>APPNAME COMMAND ARG --FLAG</code>.</p>
-<p>如下示例中, <code>server</code> 是一个命令,<code>port</code> 是一个标志, <code>1313</code> 是参数:</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hugo server --port=1313</span><br></pre></td></tr></table></figure>
-
-<h3 id="Commands-命令"><a href="#Commands-命令" class="headerlink" title="Commands 命令"></a>Commands 命令</h3><p>命令是应用程序的核心.应用程序支持的每个交互动作都将包含在命令中.命令可以有子命令,还可以执行操作.</p>
-<p>在如上示例中,<code>server</code> 是一个命令.</p>
-<p>有关命令的更多内容,请参见 <a href="https://godoc.org/github.com/spf13/cobra#Command" target="_blank" rel="noopener">cobra.Command</a>.</p>
-<h3 id="Flags-标志"><a href="#Flags-标志" class="headerlink" title="Flags 标志"></a>Flags 标志</h3><p>标志是一种改变命令行为的方法.Cobra 支持 POSIX 风格的标志以及 Go <a href="https://golang.org/pkg/flag/" target="_blank" rel="noopener">flag</a>.Cobra 命令可以定义子命令同样适用的标志和仅用于该命令的标志.</p>
-<p>在上面的示例中,<code>port</code> 是一个标志</p>
-<p>标志相关功能由 <a href="https://github.com/spf13/pflag" target="_blank" rel="noopener"><code>pflag</code></a> 库提供,该库是 flag 标准库的一个分支,它包含相同的接口,并添加了 POSIX 风格标志的兼容性.</p>
-<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>Cobra 的使用非常简单.首先,使用 <code>go get</code> 安装最新版的库.如下命令将安装 <code>cobra</code> 及其依赖项并生成可执行文件:</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#export GO111MODULE=on</span></span><br><span class="line"><span class="comment">#export GOPROXY=https://goproxy.cn</span></span><br><span class="line">go get -u github.com/spf13/cobra</span><br></pre></td></tr></table></figure>
-
-<p>然后,在你的应用中导入 Cobra</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">"github.com/spf13/cobra"</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="快速开始"><a href="#快速开始" class="headerlink" title="快速开始"></a>快速开始</h2><h3 id="使用-cobra-命令行工具生成代码"><a href="#使用-cobra-命令行工具生成代码" class="headerlink" title="使用 cobra 命令行工具生成代码"></a>使用 cobra 命令行工具生成代码</h3><p>安装 <code>cobra</code> 后会在 <code>$GOPATH/bin</code> 中生成 <code>cobra</code> 可执行文件,可以使用它来生成大体代码</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># cobra -h</span><br><span class="line"></span><br><span class="line">Usage:</span><br><span class="line">  cobra [command]</span><br><span class="line"></span><br><span class="line">Available Commands:</span><br><span class="line">  add         Add a command to a Cobra Application  # 添加子命令</span><br><span class="line">  help        Help about any command    # 帮助信息</span><br><span class="line">  init        Initialize a Cobra Application    # 初始化一个命令</span><br><span class="line"></span><br><span class="line">Flags:</span><br><span class="line">  -a, --author string    author name for copyright attribution (default &quot;YOUR NAME&quot;)    # 指定作者</span><br><span class="line">      --config string    config file (default is $HOME&#x2F;.cobra.yaml) # 指定配置文件</span><br><span class="line">  -h, --help             help for cobra</span><br><span class="line">  -l, --license string   name of license for the project    # 指定项目的 license,默认基于 Apache 2.0</span><br><span class="line">      --viper            use Viper for configuration (default true)</span><br></pre></td></tr></table></figure>
-
-<p>可以使用 <code>cobra init &lt;appName&gt;</code> 自动创建应用程序.如 <code>cobra init cli</code>. 基于 Cobra 的应用程序通常会遵循以下组织结构:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">▾ cli&#x2F;</span><br><span class="line">▾ cmd&#x2F;</span><br><span class="line">    root.go</span><br><span class="line">  main.go</span><br></pre></td></tr></table></figure>
-
-<p>在 Cobra 应用程序中,通常 <code>main.go</code> 文件非常简单,它只有一个目的: 初识化 Cobra.</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">"&#123;pathToYourApp&#125;/cmd"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  cmd.Execute()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>查看 <code>cmd/root.go</code> 可以发现由 <code>cobra</code> 自动生成的代码, 其中包含自动生成的帮助信息</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// rootCmd represents the base command when called without any subcommands</span></span><br><span class="line"><span class="keyword">var</span> rootCmd = &amp;cobra.Command&#123;</span><br><span class="line">    Use:   <span class="string">"cli"</span>,</span><br><span class="line">    Short: <span class="string">"A brief description of your application"</span>,</span><br><span class="line">    Long: <span class="string">`A longer description that spans multiple lines and likely contains</span></span><br><span class="line"><span class="string">examples and usage of using your application.`</span>,</span><br><span class="line">    <span class="comment">// Uncomment the following line if your bare application</span></span><br><span class="line">    <span class="comment">// has an action associated with it:</span></span><br><span class="line">    <span class="comment">// Run: func(cmd *cobra.Command, args []string) &#123; &#125;,</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Execute adds all child commands to the root command and sets flags appropriately.</span></span><br><span class="line"><span class="comment">// This is called by main.main(). It only needs to happen once to the rootCmd.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Execute</span><span class="params">()</span></span> &#123;</span><br><span class="line">    cobra.CheckErr(rootCmd.Execute())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>可通过 <code>cobra add &lt;subcommand&gt;</code> 添加子命令,如 <code>cobra add app</code>.</p>
-<p>cobra 会自动生成 app 子命令的相关代码.</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> appCmd = &amp;cobra.Command&#123;</span><br><span class="line">  Use:   <span class="string">"app"</span>,</span><br><span class="line">  Short: <span class="string">"A brief description of your command"</span>,</span><br><span class="line">  Long: <span class="string">`A longer description that spans multiple lines and likely contains examples</span></span><br><span class="line"><span class="string">and usage of using your command.`</span>,</span><br><span class="line">  Run: <span class="function"><span class="keyword">func</span><span class="params">(cmd *cobra.Command, args []<span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">    fmt.Println(<span class="string">"app called"</span>)</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 在 init() 中 rootCmd 添加了 appCmd 子命令. AddCommand 可以在父命令中添加子命令</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">  rootCmd.AddCommand(appCmd)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>下面,我们在 app 子命令下继续添加子命令 remove, 结构如下</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cli</span><br><span class="line">|----app</span><br><span class="line">      |----remove</span><br></pre></td></tr></table></figure>
-
-<p>而 <code>cobra add remove</code> 实际生成的代码将会是如下结构,因此需要手动修改 <code>remove.go</code> 里的代码</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cli</span><br><span class="line">|----app</span><br><span class="line">|----remove</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// remove.go</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">  rootCmd.AddCommand(removeCmd)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 需要修改为</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">  appCmd.AddCommand(removeCmd)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>此时,可以看到 remove 子命令在 app 命令下</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Usage:</span><br><span class="line">  cli app [flags]</span><br><span class="line">  cli app [command]</span><br><span class="line"></span><br><span class="line">Available Commands:</span><br><span class="line">  remove      A brief description of your command</span><br><span class="line"></span><br><span class="line">Flags:</span><br><span class="line">  -h, --help   help for app</span><br><span class="line"></span><br><span class="line">Global Flags:</span><br><span class="line">      --config string   config file (default is $HOME&#x2F;.cli.yaml)</span><br><span class="line"></span><br><span class="line">Use &quot;cli app [command] --help&quot; for more information about a command.</span><br></pre></td></tr></table></figure>
-
-<p>此时,文件目录结构如下:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">▾ cli&#x2F;</span><br><span class="line">▾ cmd&#x2F;</span><br><span class="line">    app.go</span><br><span class="line">    remove.go</span><br><span class="line">    root.go</span><br><span class="line">  main.go</span><br></pre></td></tr></table></figure>
-
-<p>为了规范化,命令及子命令的目录结构,将子命令放在同一包下,如:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">▾ cli&#x2F;</span><br><span class="line">▾ cmd&#x2F;</span><br><span class="line">    ▾ app1&#x2F;</span><br><span class="line">        app1.go</span><br><span class="line">        remove.go</span><br><span class="line">    ▾ app2&#x2F;</span><br><span class="line">        app2.go</span><br><span class="line">        remove.go</span><br><span class="line">    root.go</span><br><span class="line">  main.go</span><br></pre></td></tr></table></figure>
-
-<p>则需要进行如下操作</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1. 将 app 声明为其他包可访问的变量. var appCmd 变更为 var AppCmd</span><br><span class="line">2. 在 app.go 中的 init() 函数中使用 AppCmd.AddCommand() 函数添加 remove 子命令</span><br><span class="line">3. 在 root.go 中的 init() 函数中使用 rootCmd.AddCommand() 函数添加多个 app 子命令</span><br></pre></td></tr></table></figure>
-
-<h4 id="Command的常见字段"><a href="#Command的常见字段" class="headerlink" title="Command的常见字段"></a>Command的常见字段</h4><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> Command <span class="keyword">struct</span> &#123;</span><br><span class="line">    Use       <span class="keyword">string</span>   <span class="comment">// 单行的用法信息,可以理解为为命令名称</span></span><br><span class="line">    Aliases   []<span class="keyword">string</span> <span class="comment">// 命令别名</span></span><br><span class="line">    Short     <span class="keyword">string</span>   <span class="comment">// 短帮助信息</span></span><br><span class="line">    Long      <span class="keyword">string</span>   <span class="comment">// 长帮助信息</span></span><br><span class="line">    Example   <span class="keyword">string</span>   <span class="comment">// 命令的用法示例</span></span><br><span class="line">    ValidArgs []<span class="keyword">string</span> <span class="comment">// 命令行中传入非标志位参数的有效列表</span></span><br><span class="line">    <span class="comment">// ValidArgsFunction 用于判断命令行中传入非标志位参数是否有效</span></span><br><span class="line">    ValidArgsFunction      <span class="function"><span class="keyword">func</span><span class="params">(cmd *Command, args []<span class="keyword">string</span>, toComplete <span class="keyword">string</span>)</span> <span class="params">([]<span class="keyword">string</span>, ShellCompDirective)</span></span></span><br><span class="line">    Args                   PositionalArgs <span class="comment">// 限定命令行参数,见 Args 小节</span></span><br><span class="line">    BashCompletionFunction <span class="keyword">string</span>         <span class="comment">// 生成命令行补全命令的函数</span></span><br><span class="line">    Deprecated             <span class="keyword">string</span>         <span class="comment">// 过期命令执行时打印的内容</span></span><br><span class="line">    Version                <span class="keyword">string</span>         <span class="comment">// 定义命令版本内容,一般使用 cmd.SetVersionTemplate() 设置版本信息</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// *Run func(cmd *cobra.Command, args []string)</span></span><br><span class="line">    <span class="comment">// The *Run functions are executed in the following order:</span></span><br><span class="line">    <span class="comment">//   * PersistentPreRun()</span></span><br><span class="line">    <span class="comment">//   * PreRun()</span></span><br><span class="line">    <span class="comment">//   * Run()</span></span><br><span class="line">    <span class="comment">//   * PostRun()</span></span><br><span class="line">    <span class="comment">//   * PersistentPostRun()</span></span><br><span class="line">    <span class="comment">// All functions get the same args, the arguments after the command name.</span></span><br><span class="line"></span><br><span class="line">    TraverseChildren   <span class="keyword">bool</span> <span class="comment">// 是否继承父命令的标志位</span></span><br><span class="line">    Hidden             <span class="keyword">bool</span> <span class="comment">// 是否隐藏此命令</span></span><br><span class="line">    SilenceErrors      <span class="keyword">bool</span> <span class="comment">// 是否静默错误</span></span><br><span class="line">    SilenceUsage       <span class="keyword">bool</span> <span class="comment">// 是否在错误发生时静默用法信息,默认在发生错误时会打印用法信息</span></span><br><span class="line">    DisableSuggestions <span class="keyword">bool</span> <span class="comment">// 是否禁用命令建议</span></span><br><span class="line">    SuggestionsMinimumDistance  <span class="keyword">int</span> <span class="comment">// 最小 levenshtein 距离以显示建议</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="Command的常见方法"><a href="#Command的常见方法" class="headerlink" title="Command的常见方法"></a>Command的常见方法</h4><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Command)</span> <span class="title">AddCommand</span><span class="params">(cmds ...*Command)</span>  // 添加子命令</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Command)</span> <span class="title">Execute</span><span class="params">()</span> <span class="title">error</span> // 运行命令树,并解析标志位</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Command)</span> <span class="title">Flags</span><span class="params">()</span> *<span class="title">flag</span>.<span class="title">FlagSet</span> // 获取命令的标志位</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Command)</span> <span class="title">GenBashCompletion</span><span class="params">(w io.Writer)</span> <span class="title">error</span>  // 生成 <span class="title">bash</span> 自动完成文件</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 打印帮助,用法,版本等信息</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Command)</span> <span class="title">Help</span><span class="params">()</span> <span class="title">error</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Command)</span> <span class="title">HelpFunc</span><span class="params">()</span> <span class="title">func</span><span class="params">(*Command, []<span class="keyword">string</span>)</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Command)</span> <span class="title">HelpTemplate</span><span class="params">()</span> <span class="title">string</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Command)</span> <span class="title">Usage</span><span class="params">()</span> <span class="title">error</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Command)</span> <span class="title">UsageFunc</span><span class="params">()</span> <span class="params">(f <span class="keyword">func</span>(*Command)</span> <span class="title">error</span>)</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Command)</span> <span class="title">UsageTemplate</span><span class="params">()</span> <span class="title">string</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Command)</span> <span class="title">VersionTemplate</span><span class="params">()</span> <span class="title">string</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 设置帮助,用法,版本等信息</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Command)</span> <span class="title">SetHelpFunc</span><span class="params">(f <span class="keyword">func</span>(*Command, []<span class="keyword">string</span>)</span>)</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Command)</span> <span class="title">SetHelpTemplate</span><span class="params">(s <span class="keyword">string</span>)</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Command)</span> <span class="title">SetUsageFunc</span><span class="params">(f <span class="keyword">func</span>(*Command)</span> <span class="title">error</span>)</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Command)</span> <span class="title">SetUsageTemplate</span><span class="params">(s <span class="keyword">string</span>)</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Command)</span> <span class="title">SetVersionTemplate</span><span class="params">(s <span class="keyword">string</span>)</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 验证参数</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Command)</span> <span class="title">ValidateArgs</span><span class="params">(args []<span class="keyword">string</span>)</span> <span class="title">error</span></span></span><br></pre></td></tr></table></figure>
-
-<h3 id="使用-Flags"><a href="#使用-Flags" class="headerlink" title="使用 Flags"></a>使用 Flags</h3><p>Flags 提供修饰符用于控制命令操作的方式.标志有两种不同的指配方式.</p>
-<h4 id="全局标志位与局部标志位"><a href="#全局标志位与局部标志位" class="headerlink" title="全局标志位与局部标志位"></a>全局标志位与局部标志位</h4><p>一个标志是 <code>persistent</code>,意味着该标志可用于指配给它的命令及该命令下的每个子命令.即全局标志.对于全局标志,将标志指配为 <code>rootcmd</code> 根命令上的持久标志.</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">rootCmd.PersistentFlags().BoolVarP(&amp;Verbose, <span class="string">"verbose"</span>, <span class="string">"v"</span>, <span class="literal">false</span>, <span class="string">"verbose output"</span>)   <span class="comment">// 全局标志位</span></span><br><span class="line">localCmd.Flags().StringVarP(&amp;Source, <span class="string">"source"</span>, <span class="string">"s"</span>, <span class="string">""</span>, <span class="string">"Source directory to read from"</span>)   <span class="comment">// 仅限于该命令使用的</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="标志位参数获取"><a href="#标志位参数获取" class="headerlink" title="标志位参数获取"></a>标志位参数获取</h4><p>由于标志位是不同位置定义和使用的,因此我们需要在外部定义一个具有正确作用域的变量以分配要使用的标志位.</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> Verbose <span class="keyword">bool</span></span><br><span class="line"><span class="keyword">var</span> Source <span class="keyword">string</span></span><br><span class="line"></span><br><span class="line">localCmd.Flags().StringVarP(&amp;Source, <span class="string">"source"</span>, <span class="string">"s"</span>, <span class="string">""</span>, <span class="string">"Source directory to read from"</span>)</span><br></pre></td></tr></table></figure>
-
-<p>其中,添加选项参数都是在 <code>init()</code> 函数里使用 <code>cmd.Flags()</code> 或者 <code>cmd.PersistentFlags()</code> 的方法,且具有以下使用规律</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">type    typeP</span><br><span class="line">typeVar typeVarP</span><br></pre></td></tr></table></figure>
-
-<p>有如下区别:</p>
-<ul>
-<li><code>typeP</code>,<code>typeVarP</code> 相对于 <code>type</code>, <code>typeVar</code> 多了一个短选项,而没有 P 的只能使用类似于 <code>--long-iotion</code> 格式的长选项.</li>
-<li><code>typeVar</code>, <code>typeVarP</code> 支持传入一个变量地址,从而将标志位传入的值直接传入到该变量中.而不需要使用 <code>GetType(&quot;optionName&quot;)</code>.</li>
+<h2 id="日志"><a href="#日志" class="headerlink" title="日志"></a>日志</h2><ul>
+<li><a href="https://github.com/Sirupsen/logrus" target="_blank" rel="noopener">logrus</a> - Structured logger for Go.跳转 <a href="/2021/11/02/logrus-quick-start/" title="logrus 快速开始">logrus 快速开始</a></li>
+<li><a href="https://github.com/uber-go/zap" target="_blank" rel="noopener">zap</a> - Fast, structured, leveled logging in Go.跳转 <a href="/2021/11/17/zap/" title="高性能日志库 zap">高性能日志库 zap</a></li>
 </ul>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">String(name <span class="keyword">string</span>, value <span class="keyword">string</span>, usage <span class="keyword">string</span>)</span><br><span class="line">StringP(name, shorthand <span class="keyword">string</span>, value <span class="keyword">string</span>, usage <span class="keyword">string</span>)</span><br><span class="line">StringVar(p *<span class="keyword">string</span>, name <span class="keyword">string</span>, value <span class="keyword">string</span>, usage <span class="keyword">string</span>)</span><br><span class="line">StringVarP(p *<span class="keyword">string</span>, name, shorthand <span class="keyword">string</span>, value <span class="keyword">string</span>, usage <span class="keyword">string</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// name: 标志位名称</span></span><br><span class="line"><span class="comment">// value: 默认值</span></span><br><span class="line"><span class="comment">// usage: 帮助信息</span></span><br><span class="line"><span class="comment">// shorthand: 短标志位名称</span></span><br><span class="line"><span class="comment">// p: 标志位获取到的值传入该参数</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="标志位继承"><a href="#标志位继承" class="headerlink" title="标志位继承"></a>标志位继承</h4><p>默认情况下,Cobra 仅解析目标命令上的局部标志,而忽略父命令上的任何局部标志.通过启用 <code>Command.TraverseChildren</code>,Cobra 将在执行目标命令之前解析每个命令上的局部标志.</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">command := cobra.Command&#123;</span><br><span class="line">    Use: <span class="string">"print [OPTIONS] [COMMANDS]"</span>,</span><br><span class="line">    TraverseChildren: <span class="literal">true</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="标志与配置绑定"><a href="#标志与配置绑定" class="headerlink" title="标志与配置绑定"></a>标志与配置绑定</h4><p>您还可以通过 <a href="https://github.com/spf13/viper" target="_blank" rel="noopener"><code>viper</code></a> 绑定标志:</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> author <span class="keyword">string</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">    rootCmd.PersistentFlags().StringVar(&amp;author, <span class="string">"author"</span>, <span class="string">"YOUR NAME"</span>, <span class="string">"Author name for copyright attribution"</span>)</span><br><span class="line">    viper.BindPFlag(<span class="string">"author"</span>, rootCmd.PersistentFlags().Lookup(<span class="string">"author"</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>在如上示例中,持久标志 <code>author</code> 被 <code>viper</code> 绑定.注意,当用户没有指定 <code>--author</code> 标志时,<code>author</code> 变量不会被赋值.</p>
-<h4 id="必须的标志位"><a href="#必须的标志位" class="headerlink" title="必须的标志位"></a>必须的标志位</h4><p>标志默认是可选的.如果您希望命令在未设置标志时报错,请将其标记为 <code>required</code>:</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">rootCmd.Flags().StringVarP(&amp;Region, <span class="string">"region"</span>, <span class="string">"r"</span>, <span class="string">""</span>, <span class="string">"AWS region (required)"</span>)</span><br><span class="line">rootCmd.MarkFlagRequired(<span class="string">"region"</span>)</span><br></pre></td></tr></table></figure>
-
-<h3 id="Args-自定义参数"><a href="#Args-自定义参数" class="headerlink" title="Args 自定义参数"></a>Args 自定义参数</h3><p>可以使用 <code>Command</code> 的 <code>Args</code> 字段指定参数的校验规则.</p>
-<p>Cobra 内置了如下校验规则:</p>
-<ul>
-<li><code>NoArgs</code> - 如果有任何参数,该命令将报错</li>
-<li><code>ArbitraryArgs</code> - 该命令接受任何参数</li>
-<li><code>OnlyValidArgs</code> - 如果有任何参数不在 <code>Command</code> 的 <code>ValidArgs</code> 字段中,则该命令将报错</li>
-<li><code>MinimumNArgs(int)</code> - 至少需要 N 个参数,否则将报错</li>
-<li><code>MaximumNArgs(int)</code> - 最多传入 N 个参数,否则将报错</li>
-<li><code>ExactArgs(int)</code> - 传入参数个数为 N,否则将报错</li>
-<li><code>ExactValidArgs(int)</code> - 传入参数个数为 N,且每个参数都在 <code>Command</code> 的 <code>ValidArgs</code> 字段中,否则将报错</li>
-<li><code>RangeArgs(min, max)</code> - 参数的数量在 min 和 max 之间,否则将报错</li>
+<h2 id="分布式系统"><a href="#分布式系统" class="headerlink" title="分布式系统"></a>分布式系统</h2><ul>
+<li><a href="https://github.com/go-kit/kit" target="_blank" rel="noopener">go-kit</a> - Microservice toolkit with support for service discovery, load balancing, pluggable transports, request tracking, etc.</li>
+<li><a href="https://github.com/grpc/grpc-go" target="_blank" rel="noopener">grpc-go</a> The Go language implementation of gRPC. HTTP/2 based RPC.</li>
 </ul>
-<p>如下是自定义参数验证的示例:</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> cmd = &amp;cobra.Command&#123;</span><br><span class="line">  Short: <span class="string">"hello"</span>,</span><br><span class="line">  Args: <span class="function"><span class="keyword">func</span><span class="params">(cmd *cobra.Command, args []<span class="keyword">string</span>)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(args) &lt; <span class="number">1</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> errors.New(<span class="string">"requires a color argument"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> myapp.IsValidColor(args[<span class="number">0</span>]) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> fmt.Errorf(<span class="string">"invalid color specified: %s"</span>, args[<span class="number">0</span>])</span><br><span class="line">  &#125;,</span><br><span class="line">  Run: <span class="function"><span class="keyword">func</span><span class="params">(cmd *cobra.Command, args []<span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">    fmt.Println(<span class="string">"Hello, World!"</span>)</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="自定义帮助-用法-版本信息"><a href="#自定义帮助-用法-版本信息" class="headerlink" title="自定义帮助,用法,版本信息"></a>自定义帮助,用法,版本信息</h3><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 自定义帮助信息</span></span><br><span class="line">cmd.SetHelpCommand(cmd *Command)</span><br><span class="line">cmd.SetHelpFunc(f <span class="function"><span class="keyword">func</span><span class="params">(*Command, []<span class="keyword">string</span>)</span>)</span></span><br><span class="line">cmd.SetHelpTemplate(s <span class="keyword">string</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 自定义用法信息</span></span><br><span class="line">cmd.SetUsageFunc(f <span class="function"><span class="keyword">func</span><span class="params">(*Command)</span> <span class="title">error</span>)</span></span><br><span class="line">cmd.SetUsageTemplate(s <span class="keyword">string</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 自定义版本信息</span></span><br><span class="line">cmd.setVersionTemplate(s <span class="keyword">string</span>)</span><br></pre></td></tr></table></figure>
-
-<h3 id="PreRun-and-PostRun-Hooks"><a href="#PreRun-and-PostRun-Hooks" class="headerlink" title="PreRun and PostRun Hooks"></a>PreRun and PostRun Hooks</h3><p>可以在根命令的 <code>Run</code> 函数之前或之后运行函数.其中, <code>PersistentPreRun</code> 和 <code>PreRun</code> 函数将在 <code>Run</code> 函数之前执行.<code>PersistentPostRun</code> 和 <code>PostRun</code> 将在 <code>Run</code> 函数之后执行.</p>
-<p>如果子命令没有定义 <code>Persistent*Run</code> 函数,它们将继承父命令的.这些函数按照以下顺序运行:</p>
-<ul>
-<li><code>PersistentPreRun</code></li>
-<li><code>PreRun</code></li>
-<li><code>Run</code></li>
-<li><code>PostRun</code></li>
-<li><code>PersistentPostRun</code></li>
+<h2 id="Goroutines"><a href="#Goroutines" class="headerlink" title="Goroutines"></a>Goroutines</h2><ul>
+<li><a href="https://github.com/panjf2000/ants" target="_blank" rel="noopener">ants</a> - A high-performance and low-cost goroutine pool in Go. 跳转 <a href="/2021/11/11/ants-quick-start/" title="ants 快速开始">ants 快速开始</a></li>
 </ul>
-<p>下面是使用所有这些函数的两个命令的示例.子命令执行后,它将运行根命令的 <code>PersistentPreRun</code>,而不运行根命令的 <code>PersistentPostRun</code>:</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">"fmt"</span></span><br><span class="line"></span><br><span class="line">  <span class="string">"github.com/spf13/cobra"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> rootCmd = &amp;cobra.Command&#123;</span><br><span class="line">    Use:   <span class="string">"root [sub]"</span>,</span><br><span class="line">    Short: <span class="string">"My root command"</span>,</span><br><span class="line">    PersistentPreRun: <span class="function"><span class="keyword">func</span><span class="params">(cmd *cobra.Command, args []<span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">      fmt.Printf(<span class="string">"Inside rootCmd PersistentPreRun with args: %v\n"</span>, args)</span><br><span class="line">    &#125;,</span><br><span class="line">    PreRun: <span class="function"><span class="keyword">func</span><span class="params">(cmd *cobra.Command, args []<span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">      fmt.Printf(<span class="string">"Inside rootCmd PreRun with args: %v\n"</span>, args)</span><br><span class="line">    &#125;,</span><br><span class="line">    Run: <span class="function"><span class="keyword">func</span><span class="params">(cmd *cobra.Command, args []<span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">      fmt.Printf(<span class="string">"Inside rootCmd Run with args: %v\n"</span>, args)</span><br><span class="line">    &#125;,</span><br><span class="line">    PostRun: <span class="function"><span class="keyword">func</span><span class="params">(cmd *cobra.Command, args []<span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">      fmt.Printf(<span class="string">"Inside rootCmd PostRun with args: %v\n"</span>, args)</span><br><span class="line">    &#125;,</span><br><span class="line">    PersistentPostRun: <span class="function"><span class="keyword">func</span><span class="params">(cmd *cobra.Command, args []<span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">      fmt.Printf(<span class="string">"Inside rootCmd PersistentPostRun with args: %v\n"</span>, args)</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> subCmd = &amp;cobra.Command&#123;</span><br><span class="line">    Use:   <span class="string">"sub [no options!]"</span>,</span><br><span class="line">    Short: <span class="string">"My subcommand"</span>,</span><br><span class="line">    PreRun: <span class="function"><span class="keyword">func</span><span class="params">(cmd *cobra.Command, args []<span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">      fmt.Printf(<span class="string">"Inside subCmd PreRun with args: %v\n"</span>, args)</span><br><span class="line">    &#125;,</span><br><span class="line">    Run: <span class="function"><span class="keyword">func</span><span class="params">(cmd *cobra.Command, args []<span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">      fmt.Printf(<span class="string">"Inside subCmd Run with args: %v\n"</span>, args)</span><br><span class="line">    &#125;,</span><br><span class="line">    PostRun: <span class="function"><span class="keyword">func</span><span class="params">(cmd *cobra.Command, args []<span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">      fmt.Printf(<span class="string">"Inside subCmd PostRun with args: %v\n"</span>, args)</span><br><span class="line">    &#125;,</span><br><span class="line">    PersistentPostRun: <span class="function"><span class="keyword">func</span><span class="params">(cmd *cobra.Command, args []<span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">      fmt.Printf(<span class="string">"Inside subCmd PersistentPostRun with args: %v\n"</span>, args)</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  rootCmd.AddCommand(subCmd)</span><br><span class="line"></span><br><span class="line">  rootCmd.SetArgs([]<span class="keyword">string</span>&#123;<span class="string">""</span>&#125;)</span><br><span class="line">  rootCmd.Execute()</span><br><span class="line">  fmt.Println()</span><br><span class="line">  rootCmd.SetArgs([]<span class="keyword">string</span>&#123;<span class="string">"sub"</span>, <span class="string">"arg1"</span>, <span class="string">"arg2"</span>&#125;)</span><br><span class="line">  rootCmd.Execute()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>输出:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Inside rootCmd PersistentPreRun with args: []</span><br><span class="line">Inside rootCmd PreRun with args: []</span><br><span class="line">Inside rootCmd Run with args: []</span><br><span class="line">Inside rootCmd PostRun with args: []</span><br><span class="line">Inside rootCmd PersistentPostRun with args: []</span><br><span class="line"></span><br><span class="line">Inside rootCmd PersistentPreRun with args: [arg1 arg2]</span><br><span class="line">Inside subCmd PreRun with args: [arg1 arg2]</span><br><span class="line">Inside subCmd Run with args: [arg1 arg2]</span><br><span class="line">Inside subCmd PostRun with args: [arg1 arg2]</span><br><span class="line">Inside subCmd PersistentPostRun with args: [arg1 arg2]</span><br></pre></td></tr></table></figure>
-
-<h3 id="Suggestions-when-“unknown-command”-happens"><a href="#Suggestions-when-“unknown-command”-happens" class="headerlink" title="Suggestions when “unknown command” happens"></a>Suggestions when “unknown command” happens</h3><p>出现 “unknown command” 错误时,Cobra 将打印建议.发生错字时,Cobra 的行为类似于 git 命令.例如:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ hugo srever</span><br><span class="line">Error: unknown command &quot;srever&quot; for &quot;hugo&quot;</span><br><span class="line"></span><br><span class="line">Did you mean this?</span><br><span class="line">        server</span><br><span class="line"></span><br><span class="line">Run &#39;hugo --help&#39; for usage.</span><br></pre></td></tr></table></figure>
-
-<p>根据注册的每个子命令,建议都是自动生成的,并使用 <a href="http://en.wikipedia.org/wiki/Levenshtein_distance" target="_blank" rel="noopener">Levenshtein 距离</a>实现.每个匹配最小距离 2(忽略大小写)的已注册命令都将显示建议.</p>
-<p>如果要禁用建议或在命令中调整字符串距离,请使用:</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">command.DisableSuggestions = <span class="literal">true</span></span><br><span class="line"><span class="comment">// 或</span></span><br><span class="line">command.SuggestionsMinimumDistance = <span class="number">1</span></span><br></pre></td></tr></table></figure>
-
-<p>您还可以使用 <code>SuggestFor</code> 属性来显式设置为给定命令建议的名称,这样就可以针对字符串提出建议,对于您的命令集和不希望使用别名的命令都有意义.如:</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ kubectl remove</span><br><span class="line">Error: unknown command &quot;remove&quot; for &quot;kubectl&quot;</span><br><span class="line"></span><br><span class="line">Did you mean this?</span><br><span class="line">        delete</span><br><span class="line"></span><br><span class="line">Run &#39;kubectl help&#39; for usage.</span><br></pre></td></tr></table></figure>
-
 ]]></content>
       <categories>
         <category>go</category>
       </categories>
       <tags>
         <tag>go</tag>
-        <tag>3rd</tag>
       </tags>
   </entry>
   <entry>
@@ -5665,41 +5507,6 @@
       <tags>
         <tag>Python</tag>
         <tag>面试</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>GitLab CI 使用 SSH keys</title>
-    <url>/2022/12/10/gitlab-ci-using-ssh-keys/</url>
-    <content><![CDATA[<p>GitLab目前还没有在构建环境(GitLab Runner 运行的地方)中管理SSH密钥的内置支持。</p>
-<p>在以下场景中，您可能需要使用 SSH密钥:</p>
-<ul>
-<li>使用包管理器下载私有包。如 Bundler</li>
-<li>将应用程序部署到您自己的服务器上。如 Heroku</li>
-<li>从构建环境向远程服务器执行SSH命令</li>
-<li>将文件从构建环境 Rsync 到远程服务器</li>
-</ul>
-<p>目前使用最多的方法是通过扩展 <code>.gitlab-ci.yml</code> 将SSH密钥注入构建环境。它是一个适用于任何类型的 Runner (例如Docker或shell)的解决方案。</p>
-<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><ol>
-<li>使用 <code>ssh-keygen</code> 在本地创建新的 ssh 密钥对</li>
-<li>添加 private key 中的内容到 Gitlab 仓库的环境变量中，将公钥复制到您想要访问的服务器上(一般为 <code>~/.ssh/authorized_keys</code> 文件中 )，或者如果您正在访问私有的GitLab存储库，则将其添加为<a href="https://docs.gitlab.com/ee/user/project/deploy_keys/index.html" target="_blank" rel="noopener">部署密钥</a>。</li>
-<li>在 job 执行期间运行  <code>ssh-agent</code> 加载私钥</li>
-</ol>
-<p>可以在 <code>.gitlab-ci.yml</code> 中添加如下内容来运行 <code>ssh-agent</code> 加载私钥。</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">before_script:</span></span><br><span class="line">  <span class="comment">## 确认 ssh-agent 已经安装了，如果使用的是 rpm 格式的包，可以使用 yum 包管理器</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">'command -v ssh-agent &gt;/dev/null || ( apt-get update -y &amp;&amp; apt-get install openssh-client -y )'</span></span><br><span class="line">  <span class="comment">#- 'command -v ssh-agent &gt;/dev/null || ( yum update -y &amp;&amp; yum install openssh-client -y )'</span></span><br><span class="line">  </span><br><span class="line">  <span class="comment">## 运行 ssh-agent (inside the build environment)</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">eval</span> <span class="string">$(ssh-agent</span> <span class="string">-s)</span></span><br><span class="line">  </span><br><span class="line">  <span class="comment">## 将保存在 SSH_PRIVATE_KEY 变量中的 SSH 密钥添加到 ssh-agent 中</span></span><br><span class="line">  <span class="comment">## 我们使用 tr 删除行结束符，使 ed25519 加密密钥没有额外的 base64 编码: https://gitlab.com/gitlab-examples/ssh-private-key/issues/1#note_48526556</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">echo</span> <span class="string">"$SSH_PRIVATE_KEY"</span> <span class="string">|</span> <span class="string">tr</span> <span class="string">-d</span> <span class="string">'\r'</span> <span class="string">|</span> <span class="string">ssh-add</span> <span class="bullet">-</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">## 创建 ~/.ssh 目录，并配置正确的权限</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">mkdir</span> <span class="string">-p</span> <span class="string">~/.ssh</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">chmod</span> <span class="number">700</span> <span class="string">~/.ssh</span></span><br><span class="line">  </span><br><span class="line">  <span class="comment">## 可选的 git 配置</span></span><br><span class="line">  <span class="comment"># - git config --global user.email "user@example.com"</span></span><br><span class="line">  <span class="comment"># - git config --global user.name "User name"</span></span><br><span class="line">  <span class="comment">## </span></span><br><span class="line">  <span class="comment">## 如果配置了 SSH_KNOWN_HOSTS，则可以取消对下面两行的注释。</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">echo</span> <span class="string">"$SSH_KNOWN_HOSTS"</span> <span class="string">&gt;&gt;</span> <span class="string">~/.ssh/known_hosts</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">chmod</span> <span class="number">644</span> <span class="string">~/.ssh/known_hosts</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">##</span></span><br><span class="line">  <span class="comment">## Alternatively, use ssh-keyscan to scan the keys of your private server.</span></span><br><span class="line">  <span class="comment">## Replace example.com with your private server's domain name. Repeat that</span></span><br><span class="line">  <span class="comment">## command if you have more than one server to connect to.</span></span><br><span class="line">  <span class="comment">##</span></span><br><span class="line">  <span class="comment"># - ssh-keyscan example.com &gt;&gt; ~/.ssh/known_hosts</span></span><br><span class="line">  <span class="comment"># - chmod 644 ~/.ssh/known_hosts</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">##</span></span><br><span class="line">  <span class="comment">## You can optionally disable host key checking. Be aware that by adding that</span></span><br><span class="line">  <span class="comment">## you are susceptible to man-in-the-middle attacks.</span></span><br><span class="line">  <span class="comment">## WARNING: Use this only with the Docker executor, if you use it with shell</span></span><br><span class="line">  <span class="comment">## you will overwrite your user's SSH config.</span></span><br><span class="line">  <span class="comment">##</span></span><br><span class="line">  <span class="comment"># - '[[ -f /.dockerenv ]] &amp;&amp; echo -e "Host *\n\tStrictHostKeyChecking no\n\n" &gt;&gt; ~/.ssh/config'</span></span><br></pre></td></tr></table></figure>
-
-<p>在 ssh 登录时有时需要对远程主机添加信任。GitLab 提供了以下3种方式，可以补充在 <code>.gitlab-ci.yml</code> 中以保证 ci 流程正确执行</p>
-<figure class="highlight clean"><table><tr><td class="code"><pre><span class="line">before_script:</span><br><span class="line">  ## 方式<span class="number">1.</span> 如果配置了 SSH_KNOWN_HOSTS，则可以使用如下方式完善 known_hosts 文件</span><br><span class="line">  ## 其中 SSH_KNOWN_HOSTS 变量内容可 通过 `ssh-keyscan remote-server` 获得</span><br><span class="line">  - echo <span class="string">"$SSH_KNOWN_HOSTS"</span> &gt;&gt; ~/.ssh/known_hosts</span><br><span class="line">  - chmod <span class="number">644</span> ~/.ssh/known_hosts</span><br><span class="line">  </span><br><span class="line">  ## 方式<span class="number">2.</span> 直接执行 `ssh-keyscan remote-server` 将生成的密钥保存到 known_hosts 文件中</span><br><span class="line">  # - ssh-keyscan example1.com &gt;&gt; ~/.ssh/known_hosts</span><br><span class="line">  # - ssh-keyscan example2.com &gt;&gt; ~/.ssh/known_hosts</span><br><span class="line">  # - chmod <span class="number">644</span> ~/.ssh/known_hosts</span><br><span class="line">  </span><br><span class="line">  ## 方式<span class="number">3.</span> 可以直接禁用主机密钥的校验。要注意这种方式容易受到中间人攻击</span><br><span class="line">  ## 警告: 请只在 Docker executor 中使用这种方式，否则这种方式可能会修改本地的 ssh config</span><br><span class="line">  # - <span class="string">'[[ -f /.dockerenv ]] &amp;&amp; echo -e "Host *\n\tStrictHostKeyChecking no\n\n" &gt;&gt; ~/.ssh/config'</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
-<li><a href="https://docs.gitlab.com/ee/ci/ssh_keys/" target="_blank" rel="noopener">Using SSH keys with GitLab CI/CD</a></li>
-</ul>
-]]></content>
-      <categories>
-        <category>CI/CD</category>
-      </categories>
-      <tags>
-        <tag>GitLab</tag>
-        <tag>CI/CD</tag>
       </tags>
   </entry>
   <entry>
@@ -6120,6 +5927,41 @@
       </tags>
   </entry>
   <entry>
+    <title>GitLab CI 使用 SSH keys</title>
+    <url>/2022/12/10/gitlab-ci-using-ssh-keys/</url>
+    <content><![CDATA[<p>GitLab目前还没有在构建环境(GitLab Runner 运行的地方)中管理SSH密钥的内置支持。</p>
+<p>在以下场景中，您可能需要使用 SSH密钥:</p>
+<ul>
+<li>使用包管理器下载私有包。如 Bundler</li>
+<li>将应用程序部署到您自己的服务器上。如 Heroku</li>
+<li>从构建环境向远程服务器执行SSH命令</li>
+<li>将文件从构建环境 Rsync 到远程服务器</li>
+</ul>
+<p>目前使用最多的方法是通过扩展 <code>.gitlab-ci.yml</code> 将SSH密钥注入构建环境。它是一个适用于任何类型的 Runner (例如Docker或shell)的解决方案。</p>
+<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><ol>
+<li>使用 <code>ssh-keygen</code> 在本地创建新的 ssh 密钥对</li>
+<li>添加 private key 中的内容到 Gitlab 仓库的环境变量中，将公钥复制到您想要访问的服务器上(一般为 <code>~/.ssh/authorized_keys</code> 文件中 )，或者如果您正在访问私有的GitLab存储库，则将其添加为<a href="https://docs.gitlab.com/ee/user/project/deploy_keys/index.html" target="_blank" rel="noopener">部署密钥</a>。</li>
+<li>在 job 执行期间运行  <code>ssh-agent</code> 加载私钥</li>
+</ol>
+<p>可以在 <code>.gitlab-ci.yml</code> 中添加如下内容来运行 <code>ssh-agent</code> 加载私钥。</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">before_script:</span></span><br><span class="line">  <span class="comment">## 确认 ssh-agent 已经安装了，如果使用的是 rpm 格式的包，可以使用 yum 包管理器</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">'command -v ssh-agent &gt;/dev/null || ( apt-get update -y &amp;&amp; apt-get install openssh-client -y )'</span></span><br><span class="line">  <span class="comment">#- 'command -v ssh-agent &gt;/dev/null || ( yum update -y &amp;&amp; yum install openssh-client -y )'</span></span><br><span class="line">  </span><br><span class="line">  <span class="comment">## 运行 ssh-agent (inside the build environment)</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">eval</span> <span class="string">$(ssh-agent</span> <span class="string">-s)</span></span><br><span class="line">  </span><br><span class="line">  <span class="comment">## 将保存在 SSH_PRIVATE_KEY 变量中的 SSH 密钥添加到 ssh-agent 中</span></span><br><span class="line">  <span class="comment">## 我们使用 tr 删除行结束符，使 ed25519 加密密钥没有额外的 base64 编码: https://gitlab.com/gitlab-examples/ssh-private-key/issues/1#note_48526556</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">echo</span> <span class="string">"$SSH_PRIVATE_KEY"</span> <span class="string">|</span> <span class="string">tr</span> <span class="string">-d</span> <span class="string">'\r'</span> <span class="string">|</span> <span class="string">ssh-add</span> <span class="bullet">-</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">## 创建 ~/.ssh 目录，并配置正确的权限</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">mkdir</span> <span class="string">-p</span> <span class="string">~/.ssh</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">chmod</span> <span class="number">700</span> <span class="string">~/.ssh</span></span><br><span class="line">  </span><br><span class="line">  <span class="comment">## 可选的 git 配置</span></span><br><span class="line">  <span class="comment"># - git config --global user.email "user@example.com"</span></span><br><span class="line">  <span class="comment"># - git config --global user.name "User name"</span></span><br><span class="line">  <span class="comment">## </span></span><br><span class="line">  <span class="comment">## 如果配置了 SSH_KNOWN_HOSTS，则可以取消对下面两行的注释。</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">echo</span> <span class="string">"$SSH_KNOWN_HOSTS"</span> <span class="string">&gt;&gt;</span> <span class="string">~/.ssh/known_hosts</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">chmod</span> <span class="number">644</span> <span class="string">~/.ssh/known_hosts</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">##</span></span><br><span class="line">  <span class="comment">## Alternatively, use ssh-keyscan to scan the keys of your private server.</span></span><br><span class="line">  <span class="comment">## Replace example.com with your private server's domain name. Repeat that</span></span><br><span class="line">  <span class="comment">## command if you have more than one server to connect to.</span></span><br><span class="line">  <span class="comment">##</span></span><br><span class="line">  <span class="comment"># - ssh-keyscan example.com &gt;&gt; ~/.ssh/known_hosts</span></span><br><span class="line">  <span class="comment"># - chmod 644 ~/.ssh/known_hosts</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">##</span></span><br><span class="line">  <span class="comment">## You can optionally disable host key checking. Be aware that by adding that</span></span><br><span class="line">  <span class="comment">## you are susceptible to man-in-the-middle attacks.</span></span><br><span class="line">  <span class="comment">## WARNING: Use this only with the Docker executor, if you use it with shell</span></span><br><span class="line">  <span class="comment">## you will overwrite your user's SSH config.</span></span><br><span class="line">  <span class="comment">##</span></span><br><span class="line">  <span class="comment"># - '[[ -f /.dockerenv ]] &amp;&amp; echo -e "Host *\n\tStrictHostKeyChecking no\n\n" &gt;&gt; ~/.ssh/config'</span></span><br></pre></td></tr></table></figure>
+
+<p>在 ssh 登录时有时需要对远程主机添加信任。GitLab 提供了以下3种方式，可以补充在 <code>.gitlab-ci.yml</code> 中以保证 ci 流程正确执行</p>
+<figure class="highlight clean"><table><tr><td class="code"><pre><span class="line">before_script:</span><br><span class="line">  ## 方式<span class="number">1.</span> 如果配置了 SSH_KNOWN_HOSTS，则可以使用如下方式完善 known_hosts 文件</span><br><span class="line">  ## 其中 SSH_KNOWN_HOSTS 变量内容可 通过 `ssh-keyscan remote-server` 获得</span><br><span class="line">  - echo <span class="string">"$SSH_KNOWN_HOSTS"</span> &gt;&gt; ~/.ssh/known_hosts</span><br><span class="line">  - chmod <span class="number">644</span> ~/.ssh/known_hosts</span><br><span class="line">  </span><br><span class="line">  ## 方式<span class="number">2.</span> 直接执行 `ssh-keyscan remote-server` 将生成的密钥保存到 known_hosts 文件中</span><br><span class="line">  # - ssh-keyscan example1.com &gt;&gt; ~/.ssh/known_hosts</span><br><span class="line">  # - ssh-keyscan example2.com &gt;&gt; ~/.ssh/known_hosts</span><br><span class="line">  # - chmod <span class="number">644</span> ~/.ssh/known_hosts</span><br><span class="line">  </span><br><span class="line">  ## 方式<span class="number">3.</span> 可以直接禁用主机密钥的校验。要注意这种方式容易受到中间人攻击</span><br><span class="line">  ## 警告: 请只在 Docker executor 中使用这种方式，否则这种方式可能会修改本地的 ssh config</span><br><span class="line">  # - <span class="string">'[[ -f /.dockerenv ]] &amp;&amp; echo -e "Host *\n\tStrictHostKeyChecking no\n\n" &gt;&gt; ~/.ssh/config'</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="https://docs.gitlab.com/ee/ci/ssh_keys/" target="_blank" rel="noopener">Using SSH keys with GitLab CI/CD</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>CI/CD</category>
+      </categories>
+      <tags>
+        <tag>GitLab</tag>
+        <tag>CI/CD</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>go channel 详解</title>
     <url>/2021/03/11/go-channel-details/</url>
     <content><![CDATA[<h2 id="channel-介绍"><a href="#channel-介绍" class="headerlink" title="channel 介绍"></a>channel 介绍</h2><p>channel 通常与 goroutine 一起使用,是 goroutine 之间通信的一种方式</p>
@@ -6325,6 +6167,164 @@
         <tag>go</tag>
         <tag>源码阅读</tag>
         <tag>http</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>cobra-quick-start</title>
+    <url>/2020/06/23/cobra-quick-start/</url>
+    <content><![CDATA[<p><a href="https://github.com/spf13/cobra" target="_blank" rel="noopener"><code>Cobra</code></a> 是一个可以创建功能强大的现代 CLI 应用程序的库,又是一个可以用于生成应用程序和命令文件的程序.</p>
+<p>Cobra 被应用于很多项目中,如 <a href="http://kubernetes.io/" target="_blank" rel="noopener">Kubernetes</a>, <a href="https://gohugo.io" target="_blank" rel="noopener">Hugo</a>, 和 <a href="https://github.com/cli/cli" target="_blank" rel="noopener">Github CLI</a> 等.<a href="https://github.com/spf13/cobra/blob/master/projects_using_cobra.md" target="_blank" rel="noopener">此列表</a> 包含了使用 Cobra 项目的列表.</p>
+<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>Cobra 是一个库,它提供了简单易用的接口,用于创建功能强大的现代 CLI 接口,如 git &amp; go tool.</p>
+<p>Cobra 也是一个程序(工具),它可以生成基于 Cobra 的应用程序的代码结构以便于快速开发.</p>
+<p>Cobra 提供了以下功能:</p>
+<ul>
+<li>简单的子命令行模式: <code>app server</code>, <code>app fetch</code> 等</li>
+<li>完全兼容 POSIX 标志(长短版本均支持)</li>
+<li>嵌套子命令</li>
+<li>全局,局部和级联标志</li>
+<li>使用 <code>cobra init appname</code> 或 <code>cobra add cmdname</code> 轻松生成应用程序或命令</li>
+<li>智能建议(如, <code>app srver</code>… 您是指 <code>app server</code>)</li>
+<li>自动生成命令和标志的帮助</li>
+<li>自动帮助标志识别,如 <code>-h</code>, <code>--help</code> 等</li>
+<li>自动为您的应用生成 bash 自动完成</li>
+<li>自动为您的应用生成帮助手册</li>
+<li>支持命令别名</li>
+<li>灵活地自定义帮助,用法等.</li>
+<li>可选的与 viper 紧密集成,可用于 12-factor 应用.</li>
+</ul>
+<h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p>Cobra 建立在 commands(命令), arguments(参数), flags(标志) 之上.</p>
+<p><strong>Commands</strong> 表示要执行的操作, <strong>Args</strong> 和 <strong>Flags</strong> 是这些操作的修饰符.</p>
+<p>应用程序遵循的命令行模式应该是 <code>APPNAME COMMAND ARG --FLAG</code>.</p>
+<p>如下示例中, <code>server</code> 是一个命令,<code>port</code> 是一个标志, <code>1313</code> 是参数:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hugo server --port=1313</span><br></pre></td></tr></table></figure>
+
+<h3 id="Commands-命令"><a href="#Commands-命令" class="headerlink" title="Commands 命令"></a>Commands 命令</h3><p>命令是应用程序的核心.应用程序支持的每个交互动作都将包含在命令中.命令可以有子命令,还可以执行操作.</p>
+<p>在如上示例中,<code>server</code> 是一个命令.</p>
+<p>有关命令的更多内容,请参见 <a href="https://godoc.org/github.com/spf13/cobra#Command" target="_blank" rel="noopener">cobra.Command</a>.</p>
+<h3 id="Flags-标志"><a href="#Flags-标志" class="headerlink" title="Flags 标志"></a>Flags 标志</h3><p>标志是一种改变命令行为的方法.Cobra 支持 POSIX 风格的标志以及 Go <a href="https://golang.org/pkg/flag/" target="_blank" rel="noopener">flag</a>.Cobra 命令可以定义子命令同样适用的标志和仅用于该命令的标志.</p>
+<p>在上面的示例中,<code>port</code> 是一个标志</p>
+<p>标志相关功能由 <a href="https://github.com/spf13/pflag" target="_blank" rel="noopener"><code>pflag</code></a> 库提供,该库是 flag 标准库的一个分支,它包含相同的接口,并添加了 POSIX 风格标志的兼容性.</p>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>Cobra 的使用非常简单.首先,使用 <code>go get</code> 安装最新版的库.如下命令将安装 <code>cobra</code> 及其依赖项并生成可执行文件:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#export GO111MODULE=on</span></span><br><span class="line"><span class="comment">#export GOPROXY=https://goproxy.cn</span></span><br><span class="line">go get -u github.com/spf13/cobra</span><br></pre></td></tr></table></figure>
+
+<p>然后,在你的应用中导入 Cobra</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">"github.com/spf13/cobra"</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="快速开始"><a href="#快速开始" class="headerlink" title="快速开始"></a>快速开始</h2><h3 id="使用-cobra-命令行工具生成代码"><a href="#使用-cobra-命令行工具生成代码" class="headerlink" title="使用 cobra 命令行工具生成代码"></a>使用 cobra 命令行工具生成代码</h3><p>安装 <code>cobra</code> 后会在 <code>$GOPATH/bin</code> 中生成 <code>cobra</code> 可执行文件,可以使用它来生成大体代码</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># cobra -h</span><br><span class="line"></span><br><span class="line">Usage:</span><br><span class="line">  cobra [command]</span><br><span class="line"></span><br><span class="line">Available Commands:</span><br><span class="line">  add         Add a command to a Cobra Application  # 添加子命令</span><br><span class="line">  help        Help about any command    # 帮助信息</span><br><span class="line">  init        Initialize a Cobra Application    # 初始化一个命令</span><br><span class="line"></span><br><span class="line">Flags:</span><br><span class="line">  -a, --author string    author name for copyright attribution (default &quot;YOUR NAME&quot;)    # 指定作者</span><br><span class="line">      --config string    config file (default is $HOME&#x2F;.cobra.yaml) # 指定配置文件</span><br><span class="line">  -h, --help             help for cobra</span><br><span class="line">  -l, --license string   name of license for the project    # 指定项目的 license,默认基于 Apache 2.0</span><br><span class="line">      --viper            use Viper for configuration (default true)</span><br></pre></td></tr></table></figure>
+
+<p>可以使用 <code>cobra init &lt;appName&gt;</code> 自动创建应用程序.如 <code>cobra init cli</code>. 基于 Cobra 的应用程序通常会遵循以下组织结构:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">▾ cli&#x2F;</span><br><span class="line">▾ cmd&#x2F;</span><br><span class="line">    root.go</span><br><span class="line">  main.go</span><br></pre></td></tr></table></figure>
+
+<p>在 Cobra 应用程序中,通常 <code>main.go</code> 文件非常简单,它只有一个目的: 初识化 Cobra.</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">"&#123;pathToYourApp&#125;/cmd"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  cmd.Execute()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>查看 <code>cmd/root.go</code> 可以发现由 <code>cobra</code> 自动生成的代码, 其中包含自动生成的帮助信息</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// rootCmd represents the base command when called without any subcommands</span></span><br><span class="line"><span class="keyword">var</span> rootCmd = &amp;cobra.Command&#123;</span><br><span class="line">    Use:   <span class="string">"cli"</span>,</span><br><span class="line">    Short: <span class="string">"A brief description of your application"</span>,</span><br><span class="line">    Long: <span class="string">`A longer description that spans multiple lines and likely contains</span></span><br><span class="line"><span class="string">examples and usage of using your application.`</span>,</span><br><span class="line">    <span class="comment">// Uncomment the following line if your bare application</span></span><br><span class="line">    <span class="comment">// has an action associated with it:</span></span><br><span class="line">    <span class="comment">// Run: func(cmd *cobra.Command, args []string) &#123; &#125;,</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Execute adds all child commands to the root command and sets flags appropriately.</span></span><br><span class="line"><span class="comment">// This is called by main.main(). It only needs to happen once to the rootCmd.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Execute</span><span class="params">()</span></span> &#123;</span><br><span class="line">    cobra.CheckErr(rootCmd.Execute())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可通过 <code>cobra add &lt;subcommand&gt;</code> 添加子命令,如 <code>cobra add app</code>.</p>
+<p>cobra 会自动生成 app 子命令的相关代码.</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> appCmd = &amp;cobra.Command&#123;</span><br><span class="line">  Use:   <span class="string">"app"</span>,</span><br><span class="line">  Short: <span class="string">"A brief description of your command"</span>,</span><br><span class="line">  Long: <span class="string">`A longer description that spans multiple lines and likely contains examples</span></span><br><span class="line"><span class="string">and usage of using your command.`</span>,</span><br><span class="line">  Run: <span class="function"><span class="keyword">func</span><span class="params">(cmd *cobra.Command, args []<span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">    fmt.Println(<span class="string">"app called"</span>)</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 在 init() 中 rootCmd 添加了 appCmd 子命令. AddCommand 可以在父命令中添加子命令</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">  rootCmd.AddCommand(appCmd)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>下面,我们在 app 子命令下继续添加子命令 remove, 结构如下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cli</span><br><span class="line">|----app</span><br><span class="line">      |----remove</span><br></pre></td></tr></table></figure>
+
+<p>而 <code>cobra add remove</code> 实际生成的代码将会是如下结构,因此需要手动修改 <code>remove.go</code> 里的代码</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cli</span><br><span class="line">|----app</span><br><span class="line">|----remove</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// remove.go</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">  rootCmd.AddCommand(removeCmd)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 需要修改为</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">  appCmd.AddCommand(removeCmd)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>此时,可以看到 remove 子命令在 app 命令下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Usage:</span><br><span class="line">  cli app [flags]</span><br><span class="line">  cli app [command]</span><br><span class="line"></span><br><span class="line">Available Commands:</span><br><span class="line">  remove      A brief description of your command</span><br><span class="line"></span><br><span class="line">Flags:</span><br><span class="line">  -h, --help   help for app</span><br><span class="line"></span><br><span class="line">Global Flags:</span><br><span class="line">      --config string   config file (default is $HOME&#x2F;.cli.yaml)</span><br><span class="line"></span><br><span class="line">Use &quot;cli app [command] --help&quot; for more information about a command.</span><br></pre></td></tr></table></figure>
+
+<p>此时,文件目录结构如下:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">▾ cli&#x2F;</span><br><span class="line">▾ cmd&#x2F;</span><br><span class="line">    app.go</span><br><span class="line">    remove.go</span><br><span class="line">    root.go</span><br><span class="line">  main.go</span><br></pre></td></tr></table></figure>
+
+<p>为了规范化,命令及子命令的目录结构,将子命令放在同一包下,如:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">▾ cli&#x2F;</span><br><span class="line">▾ cmd&#x2F;</span><br><span class="line">    ▾ app1&#x2F;</span><br><span class="line">        app1.go</span><br><span class="line">        remove.go</span><br><span class="line">    ▾ app2&#x2F;</span><br><span class="line">        app2.go</span><br><span class="line">        remove.go</span><br><span class="line">    root.go</span><br><span class="line">  main.go</span><br></pre></td></tr></table></figure>
+
+<p>则需要进行如下操作</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1. 将 app 声明为其他包可访问的变量. var appCmd 变更为 var AppCmd</span><br><span class="line">2. 在 app.go 中的 init() 函数中使用 AppCmd.AddCommand() 函数添加 remove 子命令</span><br><span class="line">3. 在 root.go 中的 init() 函数中使用 rootCmd.AddCommand() 函数添加多个 app 子命令</span><br></pre></td></tr></table></figure>
+
+<h4 id="Command的常见字段"><a href="#Command的常见字段" class="headerlink" title="Command的常见字段"></a>Command的常见字段</h4><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> Command <span class="keyword">struct</span> &#123;</span><br><span class="line">    Use       <span class="keyword">string</span>   <span class="comment">// 单行的用法信息,可以理解为为命令名称</span></span><br><span class="line">    Aliases   []<span class="keyword">string</span> <span class="comment">// 命令别名</span></span><br><span class="line">    Short     <span class="keyword">string</span>   <span class="comment">// 短帮助信息</span></span><br><span class="line">    Long      <span class="keyword">string</span>   <span class="comment">// 长帮助信息</span></span><br><span class="line">    Example   <span class="keyword">string</span>   <span class="comment">// 命令的用法示例</span></span><br><span class="line">    ValidArgs []<span class="keyword">string</span> <span class="comment">// 命令行中传入非标志位参数的有效列表</span></span><br><span class="line">    <span class="comment">// ValidArgsFunction 用于判断命令行中传入非标志位参数是否有效</span></span><br><span class="line">    ValidArgsFunction      <span class="function"><span class="keyword">func</span><span class="params">(cmd *Command, args []<span class="keyword">string</span>, toComplete <span class="keyword">string</span>)</span> <span class="params">([]<span class="keyword">string</span>, ShellCompDirective)</span></span></span><br><span class="line">    Args                   PositionalArgs <span class="comment">// 限定命令行参数,见 Args 小节</span></span><br><span class="line">    BashCompletionFunction <span class="keyword">string</span>         <span class="comment">// 生成命令行补全命令的函数</span></span><br><span class="line">    Deprecated             <span class="keyword">string</span>         <span class="comment">// 过期命令执行时打印的内容</span></span><br><span class="line">    Version                <span class="keyword">string</span>         <span class="comment">// 定义命令版本内容,一般使用 cmd.SetVersionTemplate() 设置版本信息</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// *Run func(cmd *cobra.Command, args []string)</span></span><br><span class="line">    <span class="comment">// The *Run functions are executed in the following order:</span></span><br><span class="line">    <span class="comment">//   * PersistentPreRun()</span></span><br><span class="line">    <span class="comment">//   * PreRun()</span></span><br><span class="line">    <span class="comment">//   * Run()</span></span><br><span class="line">    <span class="comment">//   * PostRun()</span></span><br><span class="line">    <span class="comment">//   * PersistentPostRun()</span></span><br><span class="line">    <span class="comment">// All functions get the same args, the arguments after the command name.</span></span><br><span class="line"></span><br><span class="line">    TraverseChildren   <span class="keyword">bool</span> <span class="comment">// 是否继承父命令的标志位</span></span><br><span class="line">    Hidden             <span class="keyword">bool</span> <span class="comment">// 是否隐藏此命令</span></span><br><span class="line">    SilenceErrors      <span class="keyword">bool</span> <span class="comment">// 是否静默错误</span></span><br><span class="line">    SilenceUsage       <span class="keyword">bool</span> <span class="comment">// 是否在错误发生时静默用法信息,默认在发生错误时会打印用法信息</span></span><br><span class="line">    DisableSuggestions <span class="keyword">bool</span> <span class="comment">// 是否禁用命令建议</span></span><br><span class="line">    SuggestionsMinimumDistance  <span class="keyword">int</span> <span class="comment">// 最小 levenshtein 距离以显示建议</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Command的常见方法"><a href="#Command的常见方法" class="headerlink" title="Command的常见方法"></a>Command的常见方法</h4><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Command)</span> <span class="title">AddCommand</span><span class="params">(cmds ...*Command)</span>  // 添加子命令</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Command)</span> <span class="title">Execute</span><span class="params">()</span> <span class="title">error</span> // 运行命令树,并解析标志位</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Command)</span> <span class="title">Flags</span><span class="params">()</span> *<span class="title">flag</span>.<span class="title">FlagSet</span> // 获取命令的标志位</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Command)</span> <span class="title">GenBashCompletion</span><span class="params">(w io.Writer)</span> <span class="title">error</span>  // 生成 <span class="title">bash</span> 自动完成文件</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 打印帮助,用法,版本等信息</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Command)</span> <span class="title">Help</span><span class="params">()</span> <span class="title">error</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Command)</span> <span class="title">HelpFunc</span><span class="params">()</span> <span class="title">func</span><span class="params">(*Command, []<span class="keyword">string</span>)</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Command)</span> <span class="title">HelpTemplate</span><span class="params">()</span> <span class="title">string</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Command)</span> <span class="title">Usage</span><span class="params">()</span> <span class="title">error</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Command)</span> <span class="title">UsageFunc</span><span class="params">()</span> <span class="params">(f <span class="keyword">func</span>(*Command)</span> <span class="title">error</span>)</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Command)</span> <span class="title">UsageTemplate</span><span class="params">()</span> <span class="title">string</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Command)</span> <span class="title">VersionTemplate</span><span class="params">()</span> <span class="title">string</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 设置帮助,用法,版本等信息</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Command)</span> <span class="title">SetHelpFunc</span><span class="params">(f <span class="keyword">func</span>(*Command, []<span class="keyword">string</span>)</span>)</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Command)</span> <span class="title">SetHelpTemplate</span><span class="params">(s <span class="keyword">string</span>)</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Command)</span> <span class="title">SetUsageFunc</span><span class="params">(f <span class="keyword">func</span>(*Command)</span> <span class="title">error</span>)</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Command)</span> <span class="title">SetUsageTemplate</span><span class="params">(s <span class="keyword">string</span>)</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Command)</span> <span class="title">SetVersionTemplate</span><span class="params">(s <span class="keyword">string</span>)</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 验证参数</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Command)</span> <span class="title">ValidateArgs</span><span class="params">(args []<span class="keyword">string</span>)</span> <span class="title">error</span></span></span><br></pre></td></tr></table></figure>
+
+<h3 id="使用-Flags"><a href="#使用-Flags" class="headerlink" title="使用 Flags"></a>使用 Flags</h3><p>Flags 提供修饰符用于控制命令操作的方式.标志有两种不同的指配方式.</p>
+<h4 id="全局标志位与局部标志位"><a href="#全局标志位与局部标志位" class="headerlink" title="全局标志位与局部标志位"></a>全局标志位与局部标志位</h4><p>一个标志是 <code>persistent</code>,意味着该标志可用于指配给它的命令及该命令下的每个子命令.即全局标志.对于全局标志,将标志指配为 <code>rootcmd</code> 根命令上的持久标志.</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">rootCmd.PersistentFlags().BoolVarP(&amp;Verbose, <span class="string">"verbose"</span>, <span class="string">"v"</span>, <span class="literal">false</span>, <span class="string">"verbose output"</span>)   <span class="comment">// 全局标志位</span></span><br><span class="line">localCmd.Flags().StringVarP(&amp;Source, <span class="string">"source"</span>, <span class="string">"s"</span>, <span class="string">""</span>, <span class="string">"Source directory to read from"</span>)   <span class="comment">// 仅限于该命令使用的</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="标志位参数获取"><a href="#标志位参数获取" class="headerlink" title="标志位参数获取"></a>标志位参数获取</h4><p>由于标志位是不同位置定义和使用的,因此我们需要在外部定义一个具有正确作用域的变量以分配要使用的标志位.</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> Verbose <span class="keyword">bool</span></span><br><span class="line"><span class="keyword">var</span> Source <span class="keyword">string</span></span><br><span class="line"></span><br><span class="line">localCmd.Flags().StringVarP(&amp;Source, <span class="string">"source"</span>, <span class="string">"s"</span>, <span class="string">""</span>, <span class="string">"Source directory to read from"</span>)</span><br></pre></td></tr></table></figure>
+
+<p>其中,添加选项参数都是在 <code>init()</code> 函数里使用 <code>cmd.Flags()</code> 或者 <code>cmd.PersistentFlags()</code> 的方法,且具有以下使用规律</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">type    typeP</span><br><span class="line">typeVar typeVarP</span><br></pre></td></tr></table></figure>
+
+<p>有如下区别:</p>
+<ul>
+<li><code>typeP</code>,<code>typeVarP</code> 相对于 <code>type</code>, <code>typeVar</code> 多了一个短选项,而没有 P 的只能使用类似于 <code>--long-iotion</code> 格式的长选项.</li>
+<li><code>typeVar</code>, <code>typeVarP</code> 支持传入一个变量地址,从而将标志位传入的值直接传入到该变量中.而不需要使用 <code>GetType(&quot;optionName&quot;)</code>.</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">String(name <span class="keyword">string</span>, value <span class="keyword">string</span>, usage <span class="keyword">string</span>)</span><br><span class="line">StringP(name, shorthand <span class="keyword">string</span>, value <span class="keyword">string</span>, usage <span class="keyword">string</span>)</span><br><span class="line">StringVar(p *<span class="keyword">string</span>, name <span class="keyword">string</span>, value <span class="keyword">string</span>, usage <span class="keyword">string</span>)</span><br><span class="line">StringVarP(p *<span class="keyword">string</span>, name, shorthand <span class="keyword">string</span>, value <span class="keyword">string</span>, usage <span class="keyword">string</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// name: 标志位名称</span></span><br><span class="line"><span class="comment">// value: 默认值</span></span><br><span class="line"><span class="comment">// usage: 帮助信息</span></span><br><span class="line"><span class="comment">// shorthand: 短标志位名称</span></span><br><span class="line"><span class="comment">// p: 标志位获取到的值传入该参数</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="标志位继承"><a href="#标志位继承" class="headerlink" title="标志位继承"></a>标志位继承</h4><p>默认情况下,Cobra 仅解析目标命令上的局部标志,而忽略父命令上的任何局部标志.通过启用 <code>Command.TraverseChildren</code>,Cobra 将在执行目标命令之前解析每个命令上的局部标志.</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">command := cobra.Command&#123;</span><br><span class="line">    Use: <span class="string">"print [OPTIONS] [COMMANDS]"</span>,</span><br><span class="line">    TraverseChildren: <span class="literal">true</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="标志与配置绑定"><a href="#标志与配置绑定" class="headerlink" title="标志与配置绑定"></a>标志与配置绑定</h4><p>您还可以通过 <a href="https://github.com/spf13/viper" target="_blank" rel="noopener"><code>viper</code></a> 绑定标志:</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> author <span class="keyword">string</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">    rootCmd.PersistentFlags().StringVar(&amp;author, <span class="string">"author"</span>, <span class="string">"YOUR NAME"</span>, <span class="string">"Author name for copyright attribution"</span>)</span><br><span class="line">    viper.BindPFlag(<span class="string">"author"</span>, rootCmd.PersistentFlags().Lookup(<span class="string">"author"</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在如上示例中,持久标志 <code>author</code> 被 <code>viper</code> 绑定.注意,当用户没有指定 <code>--author</code> 标志时,<code>author</code> 变量不会被赋值.</p>
+<h4 id="必须的标志位"><a href="#必须的标志位" class="headerlink" title="必须的标志位"></a>必须的标志位</h4><p>标志默认是可选的.如果您希望命令在未设置标志时报错,请将其标记为 <code>required</code>:</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">rootCmd.Flags().StringVarP(&amp;Region, <span class="string">"region"</span>, <span class="string">"r"</span>, <span class="string">""</span>, <span class="string">"AWS region (required)"</span>)</span><br><span class="line">rootCmd.MarkFlagRequired(<span class="string">"region"</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="Args-自定义参数"><a href="#Args-自定义参数" class="headerlink" title="Args 自定义参数"></a>Args 自定义参数</h3><p>可以使用 <code>Command</code> 的 <code>Args</code> 字段指定参数的校验规则.</p>
+<p>Cobra 内置了如下校验规则:</p>
+<ul>
+<li><code>NoArgs</code> - 如果有任何参数,该命令将报错</li>
+<li><code>ArbitraryArgs</code> - 该命令接受任何参数</li>
+<li><code>OnlyValidArgs</code> - 如果有任何参数不在 <code>Command</code> 的 <code>ValidArgs</code> 字段中,则该命令将报错</li>
+<li><code>MinimumNArgs(int)</code> - 至少需要 N 个参数,否则将报错</li>
+<li><code>MaximumNArgs(int)</code> - 最多传入 N 个参数,否则将报错</li>
+<li><code>ExactArgs(int)</code> - 传入参数个数为 N,否则将报错</li>
+<li><code>ExactValidArgs(int)</code> - 传入参数个数为 N,且每个参数都在 <code>Command</code> 的 <code>ValidArgs</code> 字段中,否则将报错</li>
+<li><code>RangeArgs(min, max)</code> - 参数的数量在 min 和 max 之间,否则将报错</li>
+</ul>
+<p>如下是自定义参数验证的示例:</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> cmd = &amp;cobra.Command&#123;</span><br><span class="line">  Short: <span class="string">"hello"</span>,</span><br><span class="line">  Args: <span class="function"><span class="keyword">func</span><span class="params">(cmd *cobra.Command, args []<span class="keyword">string</span>)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(args) &lt; <span class="number">1</span> &#123;</span><br><span class="line">      <span class="keyword">return</span> errors.New(<span class="string">"requires a color argument"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> myapp.IsValidColor(args[<span class="number">0</span>]) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> fmt.Errorf(<span class="string">"invalid color specified: %s"</span>, args[<span class="number">0</span>])</span><br><span class="line">  &#125;,</span><br><span class="line">  Run: <span class="function"><span class="keyword">func</span><span class="params">(cmd *cobra.Command, args []<span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">    fmt.Println(<span class="string">"Hello, World!"</span>)</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="自定义帮助-用法-版本信息"><a href="#自定义帮助-用法-版本信息" class="headerlink" title="自定义帮助,用法,版本信息"></a>自定义帮助,用法,版本信息</h3><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 自定义帮助信息</span></span><br><span class="line">cmd.SetHelpCommand(cmd *Command)</span><br><span class="line">cmd.SetHelpFunc(f <span class="function"><span class="keyword">func</span><span class="params">(*Command, []<span class="keyword">string</span>)</span>)</span></span><br><span class="line">cmd.SetHelpTemplate(s <span class="keyword">string</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 自定义用法信息</span></span><br><span class="line">cmd.SetUsageFunc(f <span class="function"><span class="keyword">func</span><span class="params">(*Command)</span> <span class="title">error</span>)</span></span><br><span class="line">cmd.SetUsageTemplate(s <span class="keyword">string</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 自定义版本信息</span></span><br><span class="line">cmd.setVersionTemplate(s <span class="keyword">string</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="PreRun-and-PostRun-Hooks"><a href="#PreRun-and-PostRun-Hooks" class="headerlink" title="PreRun and PostRun Hooks"></a>PreRun and PostRun Hooks</h3><p>可以在根命令的 <code>Run</code> 函数之前或之后运行函数.其中, <code>PersistentPreRun</code> 和 <code>PreRun</code> 函数将在 <code>Run</code> 函数之前执行.<code>PersistentPostRun</code> 和 <code>PostRun</code> 将在 <code>Run</code> 函数之后执行.</p>
+<p>如果子命令没有定义 <code>Persistent*Run</code> 函数,它们将继承父命令的.这些函数按照以下顺序运行:</p>
+<ul>
+<li><code>PersistentPreRun</code></li>
+<li><code>PreRun</code></li>
+<li><code>Run</code></li>
+<li><code>PostRun</code></li>
+<li><code>PersistentPostRun</code></li>
+</ul>
+<p>下面是使用所有这些函数的两个命令的示例.子命令执行后,它将运行根命令的 <code>PersistentPreRun</code>,而不运行根命令的 <code>PersistentPostRun</code>:</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">  <span class="string">"fmt"</span></span><br><span class="line"></span><br><span class="line">  <span class="string">"github.com/spf13/cobra"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> rootCmd = &amp;cobra.Command&#123;</span><br><span class="line">    Use:   <span class="string">"root [sub]"</span>,</span><br><span class="line">    Short: <span class="string">"My root command"</span>,</span><br><span class="line">    PersistentPreRun: <span class="function"><span class="keyword">func</span><span class="params">(cmd *cobra.Command, args []<span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">      fmt.Printf(<span class="string">"Inside rootCmd PersistentPreRun with args: %v\n"</span>, args)</span><br><span class="line">    &#125;,</span><br><span class="line">    PreRun: <span class="function"><span class="keyword">func</span><span class="params">(cmd *cobra.Command, args []<span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">      fmt.Printf(<span class="string">"Inside rootCmd PreRun with args: %v\n"</span>, args)</span><br><span class="line">    &#125;,</span><br><span class="line">    Run: <span class="function"><span class="keyword">func</span><span class="params">(cmd *cobra.Command, args []<span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">      fmt.Printf(<span class="string">"Inside rootCmd Run with args: %v\n"</span>, args)</span><br><span class="line">    &#125;,</span><br><span class="line">    PostRun: <span class="function"><span class="keyword">func</span><span class="params">(cmd *cobra.Command, args []<span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">      fmt.Printf(<span class="string">"Inside rootCmd PostRun with args: %v\n"</span>, args)</span><br><span class="line">    &#125;,</span><br><span class="line">    PersistentPostRun: <span class="function"><span class="keyword">func</span><span class="params">(cmd *cobra.Command, args []<span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">      fmt.Printf(<span class="string">"Inside rootCmd PersistentPostRun with args: %v\n"</span>, args)</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">var</span> subCmd = &amp;cobra.Command&#123;</span><br><span class="line">    Use:   <span class="string">"sub [no options!]"</span>,</span><br><span class="line">    Short: <span class="string">"My subcommand"</span>,</span><br><span class="line">    PreRun: <span class="function"><span class="keyword">func</span><span class="params">(cmd *cobra.Command, args []<span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">      fmt.Printf(<span class="string">"Inside subCmd PreRun with args: %v\n"</span>, args)</span><br><span class="line">    &#125;,</span><br><span class="line">    Run: <span class="function"><span class="keyword">func</span><span class="params">(cmd *cobra.Command, args []<span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">      fmt.Printf(<span class="string">"Inside subCmd Run with args: %v\n"</span>, args)</span><br><span class="line">    &#125;,</span><br><span class="line">    PostRun: <span class="function"><span class="keyword">func</span><span class="params">(cmd *cobra.Command, args []<span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">      fmt.Printf(<span class="string">"Inside subCmd PostRun with args: %v\n"</span>, args)</span><br><span class="line">    &#125;,</span><br><span class="line">    PersistentPostRun: <span class="function"><span class="keyword">func</span><span class="params">(cmd *cobra.Command, args []<span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">      fmt.Printf(<span class="string">"Inside subCmd PersistentPostRun with args: %v\n"</span>, args)</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  rootCmd.AddCommand(subCmd)</span><br><span class="line"></span><br><span class="line">  rootCmd.SetArgs([]<span class="keyword">string</span>&#123;<span class="string">""</span>&#125;)</span><br><span class="line">  rootCmd.Execute()</span><br><span class="line">  fmt.Println()</span><br><span class="line">  rootCmd.SetArgs([]<span class="keyword">string</span>&#123;<span class="string">"sub"</span>, <span class="string">"arg1"</span>, <span class="string">"arg2"</span>&#125;)</span><br><span class="line">  rootCmd.Execute()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Inside rootCmd PersistentPreRun with args: []</span><br><span class="line">Inside rootCmd PreRun with args: []</span><br><span class="line">Inside rootCmd Run with args: []</span><br><span class="line">Inside rootCmd PostRun with args: []</span><br><span class="line">Inside rootCmd PersistentPostRun with args: []</span><br><span class="line"></span><br><span class="line">Inside rootCmd PersistentPreRun with args: [arg1 arg2]</span><br><span class="line">Inside subCmd PreRun with args: [arg1 arg2]</span><br><span class="line">Inside subCmd Run with args: [arg1 arg2]</span><br><span class="line">Inside subCmd PostRun with args: [arg1 arg2]</span><br><span class="line">Inside subCmd PersistentPostRun with args: [arg1 arg2]</span><br></pre></td></tr></table></figure>
+
+<h3 id="Suggestions-when-“unknown-command”-happens"><a href="#Suggestions-when-“unknown-command”-happens" class="headerlink" title="Suggestions when “unknown command” happens"></a>Suggestions when “unknown command” happens</h3><p>出现 “unknown command” 错误时,Cobra 将打印建议.发生错字时,Cobra 的行为类似于 git 命令.例如:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ hugo srever</span><br><span class="line">Error: unknown command &quot;srever&quot; for &quot;hugo&quot;</span><br><span class="line"></span><br><span class="line">Did you mean this?</span><br><span class="line">        server</span><br><span class="line"></span><br><span class="line">Run &#39;hugo --help&#39; for usage.</span><br></pre></td></tr></table></figure>
+
+<p>根据注册的每个子命令,建议都是自动生成的,并使用 <a href="http://en.wikipedia.org/wiki/Levenshtein_distance" target="_blank" rel="noopener">Levenshtein 距离</a>实现.每个匹配最小距离 2(忽略大小写)的已注册命令都将显示建议.</p>
+<p>如果要禁用建议或在命令中调整字符串距离,请使用:</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">command.DisableSuggestions = <span class="literal">true</span></span><br><span class="line"><span class="comment">// 或</span></span><br><span class="line">command.SuggestionsMinimumDistance = <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>您还可以使用 <code>SuggestFor</code> 属性来显式设置为给定命令建议的名称,这样就可以针对字符串提出建议,对于您的命令集和不希望使用别名的命令都有意义.如:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ kubectl remove</span><br><span class="line">Error: unknown command &quot;remove&quot; for &quot;kubectl&quot;</span><br><span class="line"></span><br><span class="line">Did you mean this?</span><br><span class="line">        delete</span><br><span class="line"></span><br><span class="line">Run &#39;kubectl help&#39; for usage.</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>go</category>
+      </categories>
+      <tags>
+        <tag>go</tag>
+        <tag>3rd</tag>
       </tags>
   </entry>
   <entry>
@@ -9557,7 +9557,8 @@
 <td align="left"></td>
 </tr>
 </tbody></table>
-<h3 id="解决"><a href="#解决" class="headerlink" title="解决"></a>解决</h3><figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="section">event</span> &#123;</span><br><span class="line">    <span class="attribute">accept_mutex</span> <span class="literal">on</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="解决"><a href="#解决" class="headerlink" title="解决"></a>解决</h3><p><code>accept_mutex</code> 参数配置为 on</p>
+<figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="section">event</span> &#123;</span><br><span class="line">    <span class="attribute">accept_mutex</span> <span class="literal">on</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h3 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h3><p>开启 <code>accept_mutex</code> 参数后，同一时刻只有一个 worker 进程处理新的连接请求。这就导致在高并发的场景下一定会有一些性能损耗。因此可以使用 <code>reuseport</code> 参数来开启多个 worker 进程监听同一个 socket 套接字。<a href="https://www.nginx.com/blog/socket-sharding-nginx-release-1-9-1/" target="_blank" rel="noopener">Socket Sharding in NGINX Release 1.9.1</a> 这里看起来开启 reuseport 性能会高不少。</p>
 <h3 id="参考-1"><a href="#参考-1" class="headerlink" title="参考"></a>参考</h3><ul>
@@ -9567,6 +9568,17 @@
 <li><a href="http://nginx.org/en/docs/ngx_core_module.html#accept_mutex" target="_blank" rel="noopener">nginx 官方文档 - accept_mutex</a></li>
 <li><a href="https://www.zhihu.com/question/51618274" target="_blank" rel="noopener">知乎 - reuseport</a></li>
 <li><a href="https://www.nginx.com/blog/socket-sharding-nginx-release-1-9-1/" target="_blank" rel="noopener">Socket Sharding in NGINX Release 1.9.1</a></li>
+</ul>
+<h2 id="nginx-POST-请求偶发-502"><a href="#nginx-POST-请求偶发-502" class="headerlink" title="nginx POST 请求偶发 502"></a>nginx POST 请求偶发 502</h2><h3 id="问题描述-2"><a href="#问题描述-2" class="headerlink" title="问题描述"></a>问题描述</h3><p>从 tengine-2.2.0 升级到 tengine-2.3.3 之后，nginx 错误日志中有如下报错，且发现 POST 请求会偶发 502，GET 请求没有 502</p>
+<figure class="highlight routeros"><table><tr><td class="code"><pre><span class="line">upstream prematurely closed<span class="built_in"> connection </span><span class="keyword">while</span> reading response header <span class="keyword">from</span> upstream, client: 2.2.2.2, server: xxx, request: <span class="string">"POST /path/to/post/uri HTTP/1.1"</span>, upstream: <span class="string">"http://1.1.1.1/path/to/post/uri"</span>, host: <span class="string">"xxx"</span></span><br></pre></td></tr></table></figure>
+
+<p>抓包后发现后端 upstream server 在接收到请求后，返回了 FIN、ACK 的 TCP 包，导致 nginx 与 upstream server 连接断开。POST 请求不会重发，GET 请求会复用其他连接重新发到下一个个可用的 upstream server。抓包截图如下：</p>
+<p><img src="/images/nginx-upstream-tcpdump-post.png" alt="502 POST 请求抓包"></p>
+<p><img src="/images/nginx-upstream-tcpdump-get.png" alt="GET 请求抓包"></p>
+<h3 id="原因-2"><a href="#原因-2" class="headerlink" title="原因"></a>原因</h3><p>tengine-2.2.0 升级到 tengine-2.3.3 后，对应 nginx 1.18.0，<a href="http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_next_upstream" target="_blank" rel="noopener">官方文档 proxy_next_upstream</a> 描述说在  1.9.13 之后的版本里添加了 <code>non_idempotent</code> 参数。对于非幂等的 POST, LOCK, PATCH 请求，需要显示打开此参数，nginx 才会帮忙转发。</p>
+<h3 id="解决-1"><a href="#解决-1" class="headerlink" title="解决"></a>解决</h3><p>在确认 POST 请求为幂等的情况下，<code>proxy_next_upstream</code> 参数显式配置为 <code>error timeout non_idempotent</code></p>
+<h3 id="参考-2"><a href="#参考-2" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_next_upstream" target="_blank" rel="noopener">nginx 官方文档 - proxy_next_upstream</a></li>
 </ul>
 ]]></content>
       <categories>
@@ -10841,6 +10853,356 @@
       </tags>
   </entry>
   <entry>
+    <title>Linux 之 systemd 的工作原理及使用</title>
+    <url>/2020/06/11/systemd-details/</url>
+    <content><![CDATA[<h2 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h2><ul>
+<li>兼容 SysVinit 和 LSB init scripts</li>
+<li>以并行方式启动,启动速度更快<ul>
+<li>尽可能启动更少的进程</li>
+<li>尽可能将更多进程并行启动</li>
+</ul>
+</li>
+<li>提供按需启动能力,只有在某个服务被真正请求的时候才启动它</li>
+<li>采用 Linux的 Cgroup 特性跟踪和管理进程的生命周期.Systemd 只需要简单地遍历指定的 CGroup 即可正确地找到所有的相关进程</li>
+<li>实现事务性依赖关系管理.系统启动过程是由很多的独立工作共同组成的,这些工作之间可能存在依赖关系.Systemd 维护一个”事务一致性”的概念,保证所有相关的服务都可以正常启动而不会出现互相依赖,以至于死锁的情况.</li>
+<li>使用 systemd-journald 提供日志服务.有便于管理,零维护,高性能,统一化的特点</li>
+<li>向后兼容 SysV 的服务脚本</li>
+</ul>
+<h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><h3 id="unit"><a href="#unit" class="headerlink" title="unit"></a>unit</h3><p>系统初始化需要做的事情非常多,如启动后台服务以及做一些配置工作.这个过程中的每一步都被 Systemd 抽象为一个配置单元,即 <code>unit</code>.它主要包含如下几种类型</p>
+<table>
+<thead>
+<tr>
+<th align="left">名称</th>
+<th align="left">文件扩展名</th>
+<th align="left">用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>service unit</code></td>
+<td align="left"><code>.service</code></td>
+<td align="left">用于定义系统类服务</td>
+</tr>
+<tr>
+<td align="left"><code>target unit</code></td>
+<td align="left"><code>.target</code></td>
+<td align="left">用于实现模拟”运行级别”</td>
+</tr>
+<tr>
+<td align="left"><code>mount unit</code></td>
+<td align="left"><code>.mount</code></td>
+<td align="left">用于定义文件系统挂载点</td>
+</tr>
+<tr>
+<td align="left"><code>socket unit</code></td>
+<td align="left"><code>.socket</code></td>
+<td align="left">用于标识进程间通信的 socket 文件</td>
+</tr>
+<tr>
+<td align="left"><code>snapshot unit</code></td>
+<td align="left"><code>.snapshot</code></td>
+<td align="left">管理系统快照</td>
+</tr>
+<tr>
+<td align="left"><code>swap unit</code></td>
+<td align="left"><code>.swap</code></td>
+<td align="left">用于标识 swap 设备</td>
+</tr>
+<tr>
+<td align="left"><code>automount unit</code></td>
+<td align="left"><code>.automount</code></td>
+<td align="left">文件系统自动挂载设备</td>
+</tr>
+<tr>
+<td align="left"><code>path unit</code></td>
+<td align="left"><code>.path</code></td>
+<td align="left">用于定义文件系统中的一个文件或目录</td>
+</tr>
+<tr>
+<td align="left"><code>timer unit</code></td>
+<td align="left"><code>.timer</code></td>
+<td align="left">用来定时触发用户定义的操作</td>
+</tr>
+</tbody></table>
+<h3 id="Target和运行级别的对应关系"><a href="#Target和运行级别的对应关系" class="headerlink" title="Target和运行级别的对应关系"></a>Target和运行级别的对应关系</h3><table>
+<thead>
+<tr>
+<th align="left">sysvinit</th>
+<th align="left">systemd target</th>
+<th align="left">备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">0</td>
+<td align="left">poweroff.target</td>
+<td align="left">关闭系统</td>
+</tr>
+<tr>
+<td align="left">1</td>
+<td align="left">rescue.target</td>
+<td align="left">单用户模式</td>
+</tr>
+<tr>
+<td align="left">2</td>
+<td align="left">multi-user.target</td>
+<td align="left">多用户模式,无网络</td>
+</tr>
+<tr>
+<td align="left">3</td>
+<td align="left">multi-user.target</td>
+<td align="left">多用户模式</td>
+</tr>
+<tr>
+<td align="left">4</td>
+<td align="left">-</td>
+<td align="left">没有用到</td>
+</tr>
+<tr>
+<td align="left">5</td>
+<td align="left">graphical.target</td>
+<td align="left">多用户,图形化界面</td>
+</tr>
+<tr>
+<td align="left">6</td>
+<td align="left">reboot.target</td>
+<td align="left">重启</td>
+</tr>
+</tbody></table>
+<h2 id="service-unit-file"><a href="#service-unit-file" class="headerlink" title="service unit file"></a>service unit file</h2><p>文件通常由三部分组成</p>
+<h3 id="Unit"><a href="#Unit" class="headerlink" title="[Unit]"></a>[Unit]</h3><p><code>Unit</code> 配置块通常是配置文件的第一个配置块,用来定义 Unit 的元数据,以及配置与其他 Unit 的依赖关系.它的主要字段如下:</p>
+<ul>
+<li><code>Description</code>: 简短描述</li>
+<li><code>Documentation</code>: 文档地址</li>
+<li><code>Requires</code>: 当前 Unit 依赖的其他 Unit,如果它们没有运行,当前 Unit 会启动失败</li>
+<li><code>Wants</code>: 与当前 Unit 配合的其他 Unit,如果它们没有运行,当前 Unit 不会启动失败</li>
+<li><code>BindsTo</code>: 与 Requires 类似,它指定的 Unit 如果退出,会导致当前 Unit 停止运行</li>
+<li><code>Before</code>: 当前 Unit 必须在指定的 Unit 之前启动</li>
+<li><code>After</code>: 当前 Unit 必须在指定的 Unit 之后启动</li>
+<li><code>Conflicts</code>: 这里指定的 Unit 不能与当前 Unit 同时运行</li>
+<li><code>Condition...</code>: 当前 Unit 运行必须满足的条件，否则不会运行</li>
+<li><code>Assert...</code>:当前 Unit 运行必须满足的条件，否则会报启动失败</li>
+</ul>
+<h3 id="Service"><a href="#Service" class="headerlink" title="[Service]"></a>[Service]</h3><p><code>Service</code> 配置块用来定义 Service 的属性,只有 Service 类型的 Unit 才有这个配置块.它的主要字段如下:</p>
+<ul>
+<li><code>Type</code>: 定义启动时的进程行为.可选值为<ul>
+<li><code>simple</code>: 默认值,执行 ExecStart 指定的命令,启动主进程</li>
+<li><code>forking</code>: 以 fork 方式从父进程创建子进程,创建后父进程会立即退出</li>
+<li><code>oneshot</code>: 一次性进程,Systemd 会等当前服务退出,再继续往下执行</li>
+<li><code>dbus</code>: 当前服务通过 D-Bus 启动</li>
+<li><code>notify</code>: 当前服务启动完毕,会通知 Systemd,再继续往下执行</li>
+<li><code>idle</code>: 若有其他任务执行完毕,当前服务才会运行</li>
+</ul>
+</li>
+<li><code>Environment</code>: 指定环境变量</li>
+<li><code>ExecStart</code>: 启动当前服务的命令</li>
+<li><code>ExecStartPre</code>: 启动当前服务之前执行的命令</li>
+<li><code>Restart</code>: 定义何种情况 Systemd 会自动重启当前服务.可选值为 <code>always</code>,<code>on-success</code>,<code>on-failure</code>,<code>on-abnormal</code>,<code>on-abort</code>,<code>on-watchdog</code></li>
+<li><code>ExecReload</code>: 重新加载当前服务时执行的命令</li>
+<li><code>ExecStop</code>: 停止当前服务时执行的命令</li>
+<li><code>ExecStartPost</code>: 启动当前服务之后执行的命令</li>
+<li><code>ExecStopPost</code>: 停止当其服务之后执行的命令</li>
+<li><code>RestartSec</code>: 自动重启当前服务间隔的秒数</li>
+<li><code>TimeoutSec</code>: 定义 Systemd 停止当前服务之前等待的秒数</li>
+</ul>
+<h3 id="Install"><a href="#Install" class="headerlink" title="[Install]"></a>[Install]</h3><p><code>Install</code> 配置块通常在文件最后,用来定义如何启动,以及是否开机启动.它的主要字段如下</p>
+<ul>
+<li><code>WantedBy</code>: 它的值是一个或多个 <code>Target</code>,当前 Unit enable 时(服务开机启动时),会在 <code>/etc/systemd/system</code> 目录及指定 <code>${target}.wants</code> 子目录下创建软链接</li>
+<li><code>RequiredBy</code>: 它的值是一个或多个 <code>Target</code>,当前 Unit enable 时(服务开机启动时),会在 <code>/etc/systemd/system</code> 目录及指定 <code>${target}.required</code> 子目录下创建软链接<br><code>Alias</code>: 当前 Unit 可用于启动的别名<br><code>Also</code>: 当前 Unit enable 时(服务开机启动时),同时激活的其他 Unit</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>systemd</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Prometheus 远程存储 VictoriaMetrics</title>
+    <url>/2021/11/04/victoriametrics-quick-start/</url>
+    <content><![CDATA[<p><a href="https://github.com/VictoriaMetrics/VictoriaMetrics" target="_blank" rel="noopener">VictoriaMetrics</a> 是一个快速、经济高效且可扩展的监控解决方案和时间序列数据库,不仅可以作为 <a href="https://github.com/prometheus/prometheus" target="_blank" rel="noopener">Prometheus</a> 的远程存储,还可以使用其组件完全替换 Prometheus.它主要有以下特性:</p>
+<ul>
+<li>支持 <a href="https://docs.victoriametrics.com/Single-server-VictoriaMetrics.html#prometheus-querying-api-usage" target="_blank" rel="noopener">Prometheus querying API</a>,<a href="https://docs.victoriametrics.com/Single-server-VictoriaMetrics.html#graphite-api-usage" target="_blank" rel="noopener">Graphite API</a>. 可以在 Grafana 中直接使用</li>
+<li>实现了基于 PromQL 的查询语言 - <a href="https://docs.victoriametrics.com/MetricsQL.html" target="_blank" rel="noopener">MetricsQL</a>,提供了一些高级功能</li>
+<li>提供了全局视图,支持多个 Prometheus 实例或任何其他数据源同时向 VictoriaMetrics 写入数据,查询时数据可以保证唯一</li>
+<li>占用资源少,且高性能.</li>
+<li>支持多种方式获取 metrics. 如:<ul>
+<li><a href="https://docs.victoriametrics.com/Single-server-VictoriaMetrics.html#how-to-scrape-prometheus-exporters-such-as-node-exporter" target="_blank" rel="noopener">从 exporter 直接获取</a>.与prometheus 完全兼容.除 <a href="https://prometheus.io/docs/prometheus/latest/configuration/configuration/#static_config" target="_blank" rel="noopener">static_config</a> 外,还支持多种服务发现方式,如:<ul>
+<li><a href="https://prometheus.io/docs/prometheus/latest/configuration/configuration/#file_sd_config" target="_blank" rel="noopener">file_sd_config</a></li>
+<li><a href="https://prometheus.io/docs/prometheus/latest/configuration/configuration/#kubernetes_sd_config" target="_blank" rel="noopener">kubernetes_sd_config</a></li>
+<li><a href="https://prometheus.io/docs/prometheus/latest/configuration/configuration/#consul_sd_config" target="_blank" rel="noopener">consul_sd_config</a></li>
+</ul>
+</li>
+<li><a href="https://docs.victoriametrics.com/Single-server-VictoriaMetrics.html#prometheus-setup" target="_blank" rel="noopener">通过 Prometheus 远程写入</a></li>
+<li><a href="https://docs.victoriametrics.com/Single-server-VictoriaMetrics.html#how-to-import-data-in-json-line-format" target="_blank" rel="noopener">通过 Post 请求将指定 JSON 格式的数据直接写入</a></li>
+</ul>
+</li>
+<li>支持 <a href="https://docs.victoriametrics.com/Single-server-VictoriaMetrics.html#relabeling" target="_blank" rel="noopener">metrics relabel</a>.与 prometheus 完全兼容</li>
+<li>支持单机模式与集群模式</li>
+</ul>
+<h2 id="单机模式"><a href="#单机模式" class="headerlink" title="单机模式"></a>单机模式</h2><p>单机模式比较简单,直接下载<a href="https://github.com/VictoriaMetrics/VictoriaMetrics/releases" target="_blank" rel="noopener">二进制</a>或 <a href="https://hub.docker.com/r/victoriametrics/victoria-metrics/" target="_blank" rel="noopener">Docker 镜像</a> 并使用指定的命令行启动.</p>
+<p>单机模式可能用到的组件.</p>
+<figure class="highlight asciidoc"><table><tr><td class="code"><pre><span class="line"><span class="bullet">- </span>victoria-metrics: metrics 数据抓取或存储</span><br><span class="line"><span class="bullet">- </span>vmalert: 按照指定的规则将 metrics 数据聚合或向 alertmanager 发送告警</span><br><span class="line"><span class="bullet">- </span>vmauth: 启用用户认证功能</span><br></pre></td></tr></table></figure>
+
+<p>以二进制为例,可以通过</p>
+<ul>
+<li><code>-storageDataPath</code> 参数指定数据存储的目录.默认为 <code>victoria-metrics-data</code></li>
+<li><code>-retentionPeriod</code> 参数指定数据保存的时长.默认为 <code>1 month</code></li>
+<li><code>-httpListenAddr</code> 参数指定监听的 HTTP 套接字.默认为 <code>:8428</code></li>
+<li><code>-loggerTimezon</code> 参数指定日志的时区,默认为 <code>UTC</code>.建议设置为 <code>Asia/Shanghai</code></li>
+<li><code>-maxInsertRequestSize</code> 参数限制 Prometheus remote_write API 的请求大小. 默认为 <code>33554432 byte</code>.支持可选的单位为 <code>KB, MB, GB, KiB, MiB, GiB</code></li>
+<li><code>-promscrape.config</code> 参数指定 Prometheus 配置文件路径.该配置文件只需要包含 <code>scrape_configs</code> 部分配置即可.(经测试  VictoriaMetrics 支持 <code>scrape_configs</code> 中的 <code>relabel_configs</code> 和 <code>metric_relabel_configs</code> )</li>
+<li><code>-promscrape.config.strictParse</code> 参数设置是否会严格校验 <code>-promscrape.config</code> 指定的配置文件.默认情况下,不支持的字段会跳过,兼容 Prometheus 的配置文件</li>
+<li><code>-promscrape.configCheckInterval</code> 参数设置检查 Prometheus 配置文件是否变更的时间间隔.若变更,则重新加载.默认关闭</li>
+<li><code>-relabelConfig</code> 参数指定 relabel 的规则.</li>
+<li><code>-relabelDebug</code> 参数指定日志中是否指定 relabel 前后的 metrics.多用于调试.</li>
+<li><code>-selfScrapeInstance</code> 参数设置抓取自身 metrics 时,<code>instance</code> 标签的值.默认 <code>self</code></li>
+<li><code>-selfScrapeInterval</code> 参数设置抓取自身 metrics 的时间间隔</li>
+<li><code>-selfScrapeJob</code> 参数设置设置抓取自身 metrics 时,<code>instance</code> 标签的值.默认 <code>victoria-metrics</code></li>
+</ul>
+<p>从参数看来,单机模式下的 <code>VictoriaMetrics</code> 可以</p>
+<ol>
+<li>作为  Prometheus 的远程存储</li>
+</ol>
+<p>启动 VictoriaMetrics 脚本如下:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># start_VictoriaMetrics.sh</span></span><br><span class="line"><span class="built_in">cd</span> <span class="variable">$&#123;victoria-metrics-home&#125;</span></span><br><span class="line">./victoria-metrics \</span><br><span class="line">  -storageDataPath &lt;storageDataPath&gt; \</span><br><span class="line">  -retentionPeriod &lt;dataKeepTime&gt; \</span><br><span class="line">  -maxInsertRequestSize &lt;req_size&gt; \</span><br><span class="line">  -httpListenAddr &lt;IP:port&gt; \</span><br><span class="line">  -loggerTimezon Asia/Shanghai &amp;&gt; victoria-metrics.log &amp;</span><br></pre></td></tr></table></figure>
+
+<p>Prometheus 远程写入相关配置如下:</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># prometheus.yml</span></span><br><span class="line"><span class="comment"># ...</span></span><br><span class="line"><span class="attr">remote_write:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">url:</span> <span class="string">http://&lt;victoriametrics-addr&gt;:8428/api/v1/write</span></span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>指定 <code>promscrape.config</code> 直接抓取并存储 metrics.</li>
+</ol>
+<p>这种方式启动与作为远程存储启动方式基本与存储方式大同小异,只需要指定对应配置文件即可.在直接抓取 metrics 过程中,VictoriaMetrics 需要一些其他的组件去实现 Prometheus 中的功能.比如</p>
+<ul>
+<li>Prometheus 中规则(包括 metrics 聚合规则与告警规则) 需要 <code>vmalert</code> 组件来实现.且 <code>vmalert</code> 只是发送告警到 <code>Alertmanager</code>.<code>vmalert</code> 支持的规则与 Prometheus 的规则一致.有关 <code>vmalert</code> 的使用,参见<a href="https://docs.victoriametrics.com/vmalert.html" target="_blank" rel="noopener">官方文档</a></li>
+<li>Prometheus 中认证相配置 需要 <code>vmauth</code> 组件来实现,参见<a href="https://docs.victoriametrics.com/vmauth.html" target="_blank" rel="noopener">官方文档</a></li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> <span class="variable">$&#123;victoria-metrics-home&#125;</span></span><br><span class="line"></span><br><span class="line">./victoria-metrics \</span><br><span class="line">  -storageDataPath &lt;storageDataPath&gt; \</span><br><span class="line">  -retentionPeriod &lt;dataKeepTime&gt; \</span><br><span class="line">  -maxInsertRequestSize &lt;req_size&gt; \</span><br><span class="line">  -httpListenAddr &lt;metrics_IP:port&gt; \</span><br><span class="line">  -promscrape.config &lt;prometheus.yml&gt; \</span><br><span class="line">  -promscrape.configCheckInterval 1m \</span><br><span class="line">  -loggerTimezon Asia/Shanghai &amp;&gt; victoria-metrics.log &amp;</span><br><span class="line"></span><br><span class="line">./vmalert \</span><br><span class="line">  -httpListenAddr <span class="string">":8880"</span> \</span><br><span class="line">  -rule &lt;record_rule_file or alert_rule_file&gt; \</span><br><span class="line">  -datasource.url &lt;metrics_IP:port&gt; \</span><br><span class="line">  -notifier.url &lt;AlertManager URL&gt; \ <span class="comment"># AlertManager URL</span></span><br><span class="line">  -remoteWrite.url &lt;metrics_IP:port&gt; \ <span class="comment"># 聚合后的 metrics 写入的位置,一般为 victoria-metrics 的端口</span></span><br><span class="line">  -remoteRead.url &lt;metrics_IP:port&gt; \</span><br><span class="line">  -external.label &lt;key=value&gt; <span class="comment"># 为聚合后的 metrics 添加标签</span></span><br><span class="line"></span><br><span class="line">./vmauth \</span><br><span class="line">  -httpListenAddr <span class="string">":8427"</span> \</span><br><span class="line">  -auth.config &lt;auth_config&gt;</span><br></pre></td></tr></table></figure>
+
+<p>为了加强数据的安全性,可以将 victoria-metrics 存储监听在 localhost.启用 auth. 配置一些自定义用户信息. <code>vmauth</code> 配置文件示例如下. Grafana 可使用该用户获取数据.</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">users:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">username:</span> <span class="string">"local-single-node"</span></span><br><span class="line">  <span class="attr">password:</span> <span class="string">"***"</span></span><br><span class="line">  <span class="attr">url_prefix:</span> <span class="string">"http://localhost:8428"</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="集群模式"><a href="#集群模式" class="headerlink" title="集群模式"></a>集群模式</h2><p>VictoriaMetrics 集群模式相对来说比较复杂.主要由 <code>vmstorage</code> ,<code>vminsert</code>,<code>vmselect</code> 三部分组成, 这三个组件每个组件都可以单独进行扩展.其中:</p>
+<ul>
+<li>vmstorage 负责提供数据存储服务</li>
+<li>vminsert 是数据存储 vmstorage 的代理,使用一致性 hash 算法进行写入分片</li>
+<li>vmselect 负责数据查询,根据输入的查询条件从 vmstorage 中查询数据</li>
+</ul>
+<p>vmstorage 采用 shared-nothing 架构,优点是 vmstorage 的节点相互之间无感知,相互之间无需通信,不共享任何数据,增加了集群的可用性,简化了集群的扩展的难度与运维工作.</p>
+<h3 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h3><p>VictoriaMetrics 集群模式支持</p>
+<ol>
+<li><a href="https://docs.victoriametrics.com/Cluster-VictoriaMetrics.html#cluster-resizing-and-scalability" target="_blank" rel="noopener">性能和容量水平扩展</a></li>
+</ol>
+<ul>
+<li><code>vminsert</code> 和 <code>vmselect</code> 是无状态的.可以随时添加/删除.添加更多的 <code>vminsert</code> 和 <code>vmselect</code> 节点可以扩展数据写入与查询的效率</li>
+<li><code>vmstorage</code> 节点保存抓取的数据,因此无法在不丢失数据的情况下删除它们.添加更多 <code>vmstorage</code> 节点可扩展集群容量.添加 <code>vmstorage</code> 的步骤如下:</li>
+</ul>
+<figure class="highlight haxe"><table><tr><td class="code"><pre><span class="line"><span class="number">1.</span> 使用与集群中现有节点相同的 -retentionPeriod 启动新的 vmstorage 节点</span><br><span class="line"><span class="number">2.</span> 使用包含 &lt;<span class="keyword">new</span><span class="type">_vmstorage_host</span>&gt; 的新 -storageNode 参数逐渐重新启动所有 vmselect 节点</span><br><span class="line"><span class="number">3.</span> 使用包含 &lt;<span class="keyword">new</span><span class="type">_vmstorage_host</span>&gt; 的新 -storageNode 参数逐渐重新启动所有 vminsert 节点</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><a href="https://docs.victoriametrics.com/Cluster-VictoriaMetrics.html#multitenancy" target="_blank" rel="noopener">支持时间序列数据的多个名称空间(租户)</a>.多个租户之间相互隔离</li>
+</ol>
+<p>VictoriaMetrics 集群支持多个独立的租户.租户由 <code>accountID</code> 或 <code>accountID:projectID</code> 标识,他们放在 url 中.如 <code>http://&lt;vminsert&gt;:8480/insert/&lt;accountID&gt;/&lt;suffix&gt;</code>,<code>http://&lt;vmselect&gt;:8481/select/&lt;accountID&gt;/prometheus/&lt;suffix&gt;</code> 等.</p>
+<ul>
+<li>每个 accountID 和 projectID 由范围 [0 .. 2^32) 中的任意 32 位整数标识.如果不指定,则默自动分配为 0.</li>
+<li>当第一个数据点写入给定租户时,会自动创建租户</li>
+<li>所有租户的数据均匀分布在可用的 vmstorage 节点中.这保证了当不同租户具有不同的数据量和不同的查询负载时,vmstorage 节点之间的负载均匀</li>
+<li>数据库性能依赖于租户的数量,主要取决于所有租户中活动的时间序列的总数.</li>
+<li>VictoriaMetrics 不支持在单个请求中查询多个租户</li>
+</ul>
+<ol start="3">
+<li><a href="https://docs.victoriametrics.com/Cluster-VictoriaMetrics.html#replication-and-data-safety" target="_blank" rel="noopener">支持数据副本</a></li>
+</ol>
+<p>默认情况下,VictoriaMetrics 将副本写入到 <code>-storageDataPath</code> 指向的底层存储.</p>
+<p>可以通过 <code>vminsert</code> 指定 <code>-replicationFactor=N</code> 标志位来启用数据副本.这保证在最多 <code>N-1</code> 个 vmstorage 节点不可用时,所有数据扔可用于查询.集群必须至少包含 <code>2*N-1</code> 个 vmstorage 节点.</p>
+<p>启用复制后,<code>vmselect</code> 必须指定 <code>-dedup.minScrapeInterval=1ms</code> 命令行标志.</p>
+<h3 id="快速部署"><a href="#快速部署" class="headerlink" title="快速部署"></a>快速部署</h3><p>使用 3 个节点部署相关服务.节点 IP 分别为 IP1, IP2, IP3</p>
+<p>在每个节点上运行如下脚本来启动 <code>vmstroage</code>,<code>vminsert</code>,<code>vmselect</code></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line">victoria_home=<span class="string">"/data1/victoria-metrics"</span></span><br><span class="line">bin=<span class="variable">$&#123;victoria_home&#125;</span>/bin</span><br><span class="line">conf=<span class="variable">$&#123;victoria_home&#125;</span>/conf</span><br><span class="line">data=<span class="variable">$&#123;victoria_home&#125;</span>/data</span><br><span class="line"><span class="built_in">log</span>=<span class="variable">$&#123;victoria_home&#125;</span>/<span class="built_in">log</span></span><br><span class="line"></span><br><span class="line">LOG_LEVEL=INFO</span><br><span class="line">TIMEZONE=<span class="string">"Asia/Shanghai"</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> <span class="variable">$&#123;victoria_home&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="variable">$&#123;bin&#125;</span>/vmstorage-prod \</span><br><span class="line">  -httpListenAddr <span class="string">"nodeIP:8482"</span> \</span><br><span class="line">  -storageDataPath <span class="variable">$&#123;data&#125;</span> \</span><br><span class="line">  -retentionPeriod 30d \</span><br><span class="line">  -vminsertAddr <span class="string">"nodeIP:8400"</span> \ 	<span class="comment"># insert 端口,由 vminsert 连接</span></span><br><span class="line">  -vmselectAddr <span class="string">"nodeIP:8401"</span> \   <span class="comment"># select 端口,由 vmselect 连接</span></span><br><span class="line">  -loggerTimezone <span class="variable">$&#123;TIMEZONE&#125;</span> \</span><br><span class="line">  -loggerLevel <span class="variable">$&#123;LOG_LEVEL&#125;</span> &amp;&gt; <span class="variable">$&#123;log&#125;</span>/storage.log &amp;</span><br><span class="line"></span><br><span class="line"><span class="variable">$&#123;bin&#125;</span>/vminsert-prod \</span><br><span class="line">  -httpListenAddr <span class="string">"nodeIP:8480"</span> \</span><br><span class="line">  -storageNode IP1:8400,IP2:8400,IP3:8400 \</span><br><span class="line">  -loggerTimezone <span class="variable">$&#123;TIMEZONE&#125;</span> \</span><br><span class="line">  -loggerLevel <span class="variable">$&#123;LOG_LEVEL&#125;</span> &amp;&gt; <span class="variable">$&#123;log&#125;</span>/insert.log &amp;</span><br><span class="line"></span><br><span class="line"><span class="variable">$&#123;bin&#125;</span>/vmselect-prod \</span><br><span class="line">  -httpListenAddr <span class="string">"nodeIP:8481"</span> \</span><br><span class="line">  -selectNode IP1:8481,IP2:8481,IP3:8481 \</span><br><span class="line">  -storageNode IP1:8401,IP2:8401,IP3:8401 \</span><br><span class="line">  -loggerTimezone <span class="variable">$&#123;TIMEZONE&#125;</span> \</span><br><span class="line">  -loggerLevel <span class="variable">$&#123;LOG_LEVEL&#125;</span> &amp;&gt; <span class="variable">$&#123;log&#125;</span>/select.log &amp;</span><br></pre></td></tr></table></figure>
+
+<p>启动后,可以分别配置 Prometheus 和 Grafana 对 metrics 数据写入读取.详见<a href="https://docs.victoriametrics.com/Cluster-VictoriaMetrics.html#url-format" target="_blank" rel="noopener">官方文档</a></p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># prometheus.yml</span></span><br><span class="line"><span class="attr">remote_write:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">url:</span> <span class="string">"http://&lt;vminsert&gt;:8480/insert/&lt;accountID&gt;/&lt;suffix&gt;"</span></span><br><span class="line">  	<span class="comment"># accountID 默认为 0</span></span><br><span class="line">  	<span class="comment"># suffix 可以为 `prometheus` 或 `prometheus/api/v1/write`</span></span><br><span class="line">    <span class="attr">write_relabel_configs:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">source_labels:</span> <span class="string">[__name__]</span></span><br><span class="line">        <span class="attr">regex:</span> <span class="string">'go_.*'</span></span><br><span class="line">        <span class="attr">action:</span> <span class="string">drop</span></span><br></pre></td></tr></table></figure>
+
+<p>Grafana 数据源地址可配置为 <code>http://&lt;vmselect&gt;:8481/select/&lt;accountID&gt;/prometheus</code>.此时 <code>accountID</code> 必须与 <code>prometheus.yml</code> 中配置的 <code>accountID</code> 一致.</p>
+<p>最后可使用 <code>vmauth</code> 对数据读取时进行验证,保证数据安全性.</p>
+<hr>
+<p>参考:</p>
+<ul>
+<li><a href="https://docs.victoriametrics.com/" target="_blank" rel="noopener">VictoriaMetrics 官方文档</a></li>
+<li><a href="https://github.com/VictoriaMetrics/VictoriaMetrics" target="_blank" rel="noopener">VictoriaMetrics/VictoriaMetrics(github.com)</a></li>
+<li><a href="https://zhuanlan.zhihu.com/p/368912946" target="_blank" rel="noopener">浅析下开源时序数据库VictoriaMetrics的存储机制 - 知乎 (zhihu.com)</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>Prometheus</category>
+      </categories>
+      <tags>
+        <tag>Prometheus</tag>
+        <tag>VictoriaMetrics</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>判断一个链表是否有环</title>
+    <url>/2020/06/28/whether-linkedlist-has-ring/</url>
+    <content><![CDATA[<h2 id="判断一个链表是否有环-如果有-则找到环的入口点"><a href="#判断一个链表是否有环-如果有-则找到环的入口点" class="headerlink" title="判断一个链表是否有环,如果有,则找到环的入口点"></a>判断一个链表是否有环,如果有,则找到环的入口点</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Node</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, value)</span>:</span></span><br><span class="line">        self.value = value</span><br><span class="line">        self.next = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__repr__</span><span class="params">(self)</span>:</span></span><br><span class="line">        retrun <span class="string">'%s'</span> % self.value</span><br><span class="line"></span><br><span class="line">node1 = Node(<span class="number">1</span>)</span><br><span class="line">node2 = Node(<span class="number">2</span>)</span><br><span class="line">node3 = Node(<span class="number">3</span>)</span><br><span class="line">node4 = Node(<span class="number">4</span>)</span><br><span class="line">node5 = Node(<span class="number">5</span>)</span><br><span class="line">node1.next = node2</span><br><span class="line">node2.next = node3</span><br><span class="line">node3.next = node4</span><br><span class="line">node4.next = node5</span><br><span class="line">node5.next = node2</span><br></pre></td></tr></table></figure>
+
+<h3 id="要求"><a href="#要求" class="headerlink" title="要求"></a>要求</h3><ul>
+<li>不允许修改链表结构</li>
+<li>时间复杂度O(n),空间复杂度O(1)</li>
+</ul>
+<h3 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h3><h4 id="集合"><a href="#集合" class="headerlink" title="集合"></a>集合</h4><p>创建一个存储节点 ID 为的集合,来存储曾经遍历过的节点.从头节点开始,依次遍历单链表的每一个节点.每遍历到一个新节点,就用新节点和集合当中存储的节点作比较,如果发现集合中存在相同节点 ID,则说明链表有环;否则存入新的节点.</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">whether_has_ring</span><span class="params">(node)</span>:</span></span><br><span class="line">    node_set = set()</span><br><span class="line">    <span class="keyword">while</span> node:</span><br><span class="line">        <span class="keyword">if</span> node <span class="keyword">in</span> node_set:</span><br><span class="line">            <span class="keyword">return</span> node</span><br><span class="line">        node_set.add(node)</span><br><span class="line">        node = node.next</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">None</span></span><br></pre></td></tr></table></figure>
+
+<p>或利用集合没有重复元素的特性,通过判断集合长度来判断链表是否具有环型结构</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">whether_has_ring</span><span class="params">(node)</span>:</span></span><br><span class="line">    node_set = set()</span><br><span class="line">    n = <span class="number">0</span></span><br><span class="line">    <span class="keyword">while</span> node:</span><br><span class="line">        node_set.add(node)</span><br><span class="line">        n += <span class="number">1</span></span><br><span class="line">        <span class="keyword">if</span> len(node_set) != n:</span><br><span class="line">            <span class="keyword">return</span> node</span><br><span class="line">        node = node.next</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">None</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>时间复杂度: O(n)</li>
+<li>空间复杂度: O(n)</li>
+</ul>
+<h4 id="快慢指针"><a href="#快慢指针" class="headerlink" title="快慢指针"></a>快慢指针</h4><p>使用 slow,fast 两个指针对链表进行遍历.slow 指针一次遍历 1个节点,fast 指针一次遍历 2 个节点.当快慢指针相交时,则表示链表有环.</p>
+<p>若有环,则使用一个指针指向链表头节点,一个指针指向第一次的交汇点,一起向后遍历,当两个指针相等时,此时相交的位置即为环的入口点.</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">whether_has_ring</span><span class="params">(node)</span>:</span></span><br><span class="line">    slow = node</span><br><span class="line">    fast = node</span><br><span class="line">    <span class="keyword">while</span> fast.next <span class="keyword">and</span> fast.next.next:</span><br><span class="line">        slow = slow.next</span><br><span class="line">        fast = fast.next.next</span><br><span class="line">        <span class="keyword">if</span> slow == fast: <span class="comment"># 如果快慢指针相交,则表示有环.并</span></span><br><span class="line">            slow = node</span><br><span class="line">            <span class="keyword">while</span> slow.next <span class="keyword">and</span> fast.next:</span><br><span class="line">                slow = slow.next <span class="comment"># 使慢从头开始遍历</span></span><br><span class="line">                fast = fast.next <span class="comment"># 快指针从相交位置开始遍历</span></span><br><span class="line">                <span class="keyword">if</span> slow == fast: <span class="comment"># 再次相交的位置为环的入口点</span></span><br><span class="line">                    <span class="keyword">return</span> slow</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">None</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>时间复杂度: O(n)</li>
+<li>空间复杂度: O(1)</li>
+</ul>
+<h2 id="判断两个单链表是否相交"><a href="#判断两个单链表是否相交" class="headerlink" title="判断两个单链表是否相交"></a>判断两个单链表是否相交</h2><h3 id="集合-1"><a href="#集合-1" class="headerlink" title="集合"></a>集合</h3><p>如果两个链表相交,那么它们一定会有公共的结点.</p>
+<p>创建一个存储节点 ID 为的集合,来存储链表 A 中节点.从链表 B 头节点开始,依次遍历单链表的每一个节点.每遍历到一个新节点,就用新节点和集合当中存储的节点作比较,如果发现集合中存在相同节点 ID,则说明链表相交;</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">whether_intersect</span><span class="params">(node1, node2)</span>:</span></span><br><span class="line">    node_set = set()</span><br><span class="line">    node = node1</span><br><span class="line">    <span class="keyword">while</span> node:</span><br><span class="line">        node_set.add(node)</span><br><span class="line">        node = node.next</span><br><span class="line">    node = node2</span><br><span class="line">    <span class="keyword">while</span> node:</span><br><span class="line">        <span class="keyword">if</span> node <span class="keyword">in</span> node_set:</span><br><span class="line">            <span class="keyword">return</span> node</span><br><span class="line">        node = node.next</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">None</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>时间复杂度: O(m + n) = O(n)</li>
+<li>空间复杂度: O(n)</li>
+</ul>
+<h3 id="尾节点法"><a href="#尾节点法" class="headerlink" title="尾节点法"></a>尾节点法</h3><p>如果两个链表相交,那么它们的最后一个节点一定相等.</p>
+<p>首先判断两个链表尾节点是否相等,并获得两个链表的长度,l1,l2.若相等,使长链表先遍历 l1-l2 的绝对值长度.然后长短链表依次遍历.节点相等则为链表相交的位置.</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">whether_intersect2</span><span class="params">(node1, node2)</span>:</span></span><br><span class="line">    l1 = <span class="number">1</span> <span class="comment"># l1 表示 node1 的长度</span></span><br><span class="line">    l2 = <span class="number">1</span> <span class="comment"># l1 表示 node2 的长度</span></span><br><span class="line">    node_a = node1 <span class="comment"># node_a 表示遍历 node1 的指针</span></span><br><span class="line">    node_b = node2 <span class="comment"># node_b 表示遍历 node2 的指针</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># node_a, node_b 分别遍历到结尾,并判断是否相等</span></span><br><span class="line">    <span class="keyword">while</span> node_a.next:</span><br><span class="line">        node_a = node_a.next</span><br><span class="line">        l1 += <span class="number">1</span></span><br><span class="line">    <span class="keyword">while</span> node_b.next:</span><br><span class="line">        node_b = node_b.next</span><br><span class="line">        l2 += <span class="number">1</span></span><br><span class="line">    <span class="keyword">if</span> node_a == node_b: <span class="comment"># 如果相等,则都从头开始</span></span><br><span class="line">        node_a = node1</span><br><span class="line">        node_b = node2</span><br><span class="line">        <span class="keyword">if</span> l1 &gt; l2: <span class="comment"># l1 &gt; l2,则 node_a 遍历 l1 -  l2 长度</span></span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> range(l1 - l2):</span><br><span class="line">                node_a = node_a.next</span><br><span class="line">        <span class="keyword">if</span> l1 &lt; l2: <span class="comment"># l1 &lt; l2,则 node_b 遍历 l2 -  l1 长度</span></span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> range(l2 - l1):</span><br><span class="line">                node_b = node_b.next</span><br><span class="line">        <span class="keyword">while</span> node_a <span class="keyword">and</span> node_b: <span class="comment"># 然后开始遍历,并判断是否相交</span></span><br><span class="line">            <span class="keyword">if</span> node_a == node_b:</span><br><span class="line">                <span class="keyword">return</span> node_a</span><br><span class="line">            node_a = node_a.next</span><br><span class="line">            node_b = node_b.next</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">None</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>时间复杂度: O(2(m+n)) = O(n)</li>
+<li>空间复杂度: O(1)</li>
+</ul>
+<h3 id="利用有环链表"><a href="#利用有环链表" class="headerlink" title="利用有环链表"></a>利用有环链表</h3><p>将其中一个链表首位相接,若相交,则剩下的结构为有环链表.利用判断是否是有环链表及获取有环链表的入口点即可解决问题</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">whether_intersect3</span><span class="params">(node1, node2)</span>:</span></span><br><span class="line">    <span class="comment"># 将 node1 转换为环</span></span><br><span class="line">    node_a = node1</span><br><span class="line">    <span class="keyword">while</span> node1.next:</span><br><span class="line">        node1 = node1.next</span><br><span class="line">    node1.next = node_a</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 调用上面的函数,判断 node2 是否有环</span></span><br><span class="line">    <span class="keyword">return</span> whether_has_ring(node2)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>时间复杂度: O(2(m+n)) = O(n)</li>
+<li>空间复杂度: O(1) 或 O(n)</li>
+</ul>
+]]></content>
+      <categories>
+        <category>算法与数据结构</category>
+      </categories>
+      <tags>
+        <tag>数据结构</tag>
+        <tag>算法</tag>
+        <tag>LinkedList</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>高性能日志库 zap</title>
     <url>/2021/11/17/zap/</url>
     <content><![CDATA[<p><a href="https://github.com/uber-go/zap" target="_blank" rel="noopener"><code>zap</code></a> 是 uber 开源的高性能日志库,提供了快速的、结构化的、可分级的日志记录.</p>
@@ -11009,356 +11371,6 @@
       </categories>
       <tags>
         <tag>Zookeeper</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>判断一个链表是否有环</title>
-    <url>/2020/06/28/whether-linkedlist-has-ring/</url>
-    <content><![CDATA[<h2 id="判断一个链表是否有环-如果有-则找到环的入口点"><a href="#判断一个链表是否有环-如果有-则找到环的入口点" class="headerlink" title="判断一个链表是否有环,如果有,则找到环的入口点"></a>判断一个链表是否有环,如果有,则找到环的入口点</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Node</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, value)</span>:</span></span><br><span class="line">        self.value = value</span><br><span class="line">        self.next = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__repr__</span><span class="params">(self)</span>:</span></span><br><span class="line">        retrun <span class="string">'%s'</span> % self.value</span><br><span class="line"></span><br><span class="line">node1 = Node(<span class="number">1</span>)</span><br><span class="line">node2 = Node(<span class="number">2</span>)</span><br><span class="line">node3 = Node(<span class="number">3</span>)</span><br><span class="line">node4 = Node(<span class="number">4</span>)</span><br><span class="line">node5 = Node(<span class="number">5</span>)</span><br><span class="line">node1.next = node2</span><br><span class="line">node2.next = node3</span><br><span class="line">node3.next = node4</span><br><span class="line">node4.next = node5</span><br><span class="line">node5.next = node2</span><br></pre></td></tr></table></figure>
-
-<h3 id="要求"><a href="#要求" class="headerlink" title="要求"></a>要求</h3><ul>
-<li>不允许修改链表结构</li>
-<li>时间复杂度O(n),空间复杂度O(1)</li>
-</ul>
-<h3 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h3><h4 id="集合"><a href="#集合" class="headerlink" title="集合"></a>集合</h4><p>创建一个存储节点 ID 为的集合,来存储曾经遍历过的节点.从头节点开始,依次遍历单链表的每一个节点.每遍历到一个新节点,就用新节点和集合当中存储的节点作比较,如果发现集合中存在相同节点 ID,则说明链表有环;否则存入新的节点.</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">whether_has_ring</span><span class="params">(node)</span>:</span></span><br><span class="line">    node_set = set()</span><br><span class="line">    <span class="keyword">while</span> node:</span><br><span class="line">        <span class="keyword">if</span> node <span class="keyword">in</span> node_set:</span><br><span class="line">            <span class="keyword">return</span> node</span><br><span class="line">        node_set.add(node)</span><br><span class="line">        node = node.next</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">None</span></span><br></pre></td></tr></table></figure>
-
-<p>或利用集合没有重复元素的特性,通过判断集合长度来判断链表是否具有环型结构</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">whether_has_ring</span><span class="params">(node)</span>:</span></span><br><span class="line">    node_set = set()</span><br><span class="line">    n = <span class="number">0</span></span><br><span class="line">    <span class="keyword">while</span> node:</span><br><span class="line">        node_set.add(node)</span><br><span class="line">        n += <span class="number">1</span></span><br><span class="line">        <span class="keyword">if</span> len(node_set) != n:</span><br><span class="line">            <span class="keyword">return</span> node</span><br><span class="line">        node = node.next</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">None</span></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>时间复杂度: O(n)</li>
-<li>空间复杂度: O(n)</li>
-</ul>
-<h4 id="快慢指针"><a href="#快慢指针" class="headerlink" title="快慢指针"></a>快慢指针</h4><p>使用 slow,fast 两个指针对链表进行遍历.slow 指针一次遍历 1个节点,fast 指针一次遍历 2 个节点.当快慢指针相交时,则表示链表有环.</p>
-<p>若有环,则使用一个指针指向链表头节点,一个指针指向第一次的交汇点,一起向后遍历,当两个指针相等时,此时相交的位置即为环的入口点.</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">whether_has_ring</span><span class="params">(node)</span>:</span></span><br><span class="line">    slow = node</span><br><span class="line">    fast = node</span><br><span class="line">    <span class="keyword">while</span> fast.next <span class="keyword">and</span> fast.next.next:</span><br><span class="line">        slow = slow.next</span><br><span class="line">        fast = fast.next.next</span><br><span class="line">        <span class="keyword">if</span> slow == fast: <span class="comment"># 如果快慢指针相交,则表示有环.并</span></span><br><span class="line">            slow = node</span><br><span class="line">            <span class="keyword">while</span> slow.next <span class="keyword">and</span> fast.next:</span><br><span class="line">                slow = slow.next <span class="comment"># 使慢从头开始遍历</span></span><br><span class="line">                fast = fast.next <span class="comment"># 快指针从相交位置开始遍历</span></span><br><span class="line">                <span class="keyword">if</span> slow == fast: <span class="comment"># 再次相交的位置为环的入口点</span></span><br><span class="line">                    <span class="keyword">return</span> slow</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">None</span></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>时间复杂度: O(n)</li>
-<li>空间复杂度: O(1)</li>
-</ul>
-<h2 id="判断两个单链表是否相交"><a href="#判断两个单链表是否相交" class="headerlink" title="判断两个单链表是否相交"></a>判断两个单链表是否相交</h2><h3 id="集合-1"><a href="#集合-1" class="headerlink" title="集合"></a>集合</h3><p>如果两个链表相交,那么它们一定会有公共的结点.</p>
-<p>创建一个存储节点 ID 为的集合,来存储链表 A 中节点.从链表 B 头节点开始,依次遍历单链表的每一个节点.每遍历到一个新节点,就用新节点和集合当中存储的节点作比较,如果发现集合中存在相同节点 ID,则说明链表相交;</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">whether_intersect</span><span class="params">(node1, node2)</span>:</span></span><br><span class="line">    node_set = set()</span><br><span class="line">    node = node1</span><br><span class="line">    <span class="keyword">while</span> node:</span><br><span class="line">        node_set.add(node)</span><br><span class="line">        node = node.next</span><br><span class="line">    node = node2</span><br><span class="line">    <span class="keyword">while</span> node:</span><br><span class="line">        <span class="keyword">if</span> node <span class="keyword">in</span> node_set:</span><br><span class="line">            <span class="keyword">return</span> node</span><br><span class="line">        node = node.next</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">None</span></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>时间复杂度: O(m + n) = O(n)</li>
-<li>空间复杂度: O(n)</li>
-</ul>
-<h3 id="尾节点法"><a href="#尾节点法" class="headerlink" title="尾节点法"></a>尾节点法</h3><p>如果两个链表相交,那么它们的最后一个节点一定相等.</p>
-<p>首先判断两个链表尾节点是否相等,并获得两个链表的长度,l1,l2.若相等,使长链表先遍历 l1-l2 的绝对值长度.然后长短链表依次遍历.节点相等则为链表相交的位置.</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">whether_intersect2</span><span class="params">(node1, node2)</span>:</span></span><br><span class="line">    l1 = <span class="number">1</span> <span class="comment"># l1 表示 node1 的长度</span></span><br><span class="line">    l2 = <span class="number">1</span> <span class="comment"># l1 表示 node2 的长度</span></span><br><span class="line">    node_a = node1 <span class="comment"># node_a 表示遍历 node1 的指针</span></span><br><span class="line">    node_b = node2 <span class="comment"># node_b 表示遍历 node2 的指针</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># node_a, node_b 分别遍历到结尾,并判断是否相等</span></span><br><span class="line">    <span class="keyword">while</span> node_a.next:</span><br><span class="line">        node_a = node_a.next</span><br><span class="line">        l1 += <span class="number">1</span></span><br><span class="line">    <span class="keyword">while</span> node_b.next:</span><br><span class="line">        node_b = node_b.next</span><br><span class="line">        l2 += <span class="number">1</span></span><br><span class="line">    <span class="keyword">if</span> node_a == node_b: <span class="comment"># 如果相等,则都从头开始</span></span><br><span class="line">        node_a = node1</span><br><span class="line">        node_b = node2</span><br><span class="line">        <span class="keyword">if</span> l1 &gt; l2: <span class="comment"># l1 &gt; l2,则 node_a 遍历 l1 -  l2 长度</span></span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> range(l1 - l2):</span><br><span class="line">                node_a = node_a.next</span><br><span class="line">        <span class="keyword">if</span> l1 &lt; l2: <span class="comment"># l1 &lt; l2,则 node_b 遍历 l2 -  l1 长度</span></span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> range(l2 - l1):</span><br><span class="line">                node_b = node_b.next</span><br><span class="line">        <span class="keyword">while</span> node_a <span class="keyword">and</span> node_b: <span class="comment"># 然后开始遍历,并判断是否相交</span></span><br><span class="line">            <span class="keyword">if</span> node_a == node_b:</span><br><span class="line">                <span class="keyword">return</span> node_a</span><br><span class="line">            node_a = node_a.next</span><br><span class="line">            node_b = node_b.next</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">None</span></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>时间复杂度: O(2(m+n)) = O(n)</li>
-<li>空间复杂度: O(1)</li>
-</ul>
-<h3 id="利用有环链表"><a href="#利用有环链表" class="headerlink" title="利用有环链表"></a>利用有环链表</h3><p>将其中一个链表首位相接,若相交,则剩下的结构为有环链表.利用判断是否是有环链表及获取有环链表的入口点即可解决问题</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">whether_intersect3</span><span class="params">(node1, node2)</span>:</span></span><br><span class="line">    <span class="comment"># 将 node1 转换为环</span></span><br><span class="line">    node_a = node1</span><br><span class="line">    <span class="keyword">while</span> node1.next:</span><br><span class="line">        node1 = node1.next</span><br><span class="line">    node1.next = node_a</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 调用上面的函数,判断 node2 是否有环</span></span><br><span class="line">    <span class="keyword">return</span> whether_has_ring(node2)</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>时间复杂度: O(2(m+n)) = O(n)</li>
-<li>空间复杂度: O(1) 或 O(n)</li>
-</ul>
-]]></content>
-      <categories>
-        <category>算法与数据结构</category>
-      </categories>
-      <tags>
-        <tag>数据结构</tag>
-        <tag>算法</tag>
-        <tag>LinkedList</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Prometheus 远程存储 VictoriaMetrics</title>
-    <url>/2021/11/04/victoriametrics-quick-start/</url>
-    <content><![CDATA[<p><a href="https://github.com/VictoriaMetrics/VictoriaMetrics" target="_blank" rel="noopener">VictoriaMetrics</a> 是一个快速、经济高效且可扩展的监控解决方案和时间序列数据库,不仅可以作为 <a href="https://github.com/prometheus/prometheus" target="_blank" rel="noopener">Prometheus</a> 的远程存储,还可以使用其组件完全替换 Prometheus.它主要有以下特性:</p>
-<ul>
-<li>支持 <a href="https://docs.victoriametrics.com/Single-server-VictoriaMetrics.html#prometheus-querying-api-usage" target="_blank" rel="noopener">Prometheus querying API</a>,<a href="https://docs.victoriametrics.com/Single-server-VictoriaMetrics.html#graphite-api-usage" target="_blank" rel="noopener">Graphite API</a>. 可以在 Grafana 中直接使用</li>
-<li>实现了基于 PromQL 的查询语言 - <a href="https://docs.victoriametrics.com/MetricsQL.html" target="_blank" rel="noopener">MetricsQL</a>,提供了一些高级功能</li>
-<li>提供了全局视图,支持多个 Prometheus 实例或任何其他数据源同时向 VictoriaMetrics 写入数据,查询时数据可以保证唯一</li>
-<li>占用资源少,且高性能.</li>
-<li>支持多种方式获取 metrics. 如:<ul>
-<li><a href="https://docs.victoriametrics.com/Single-server-VictoriaMetrics.html#how-to-scrape-prometheus-exporters-such-as-node-exporter" target="_blank" rel="noopener">从 exporter 直接获取</a>.与prometheus 完全兼容.除 <a href="https://prometheus.io/docs/prometheus/latest/configuration/configuration/#static_config" target="_blank" rel="noopener">static_config</a> 外,还支持多种服务发现方式,如:<ul>
-<li><a href="https://prometheus.io/docs/prometheus/latest/configuration/configuration/#file_sd_config" target="_blank" rel="noopener">file_sd_config</a></li>
-<li><a href="https://prometheus.io/docs/prometheus/latest/configuration/configuration/#kubernetes_sd_config" target="_blank" rel="noopener">kubernetes_sd_config</a></li>
-<li><a href="https://prometheus.io/docs/prometheus/latest/configuration/configuration/#consul_sd_config" target="_blank" rel="noopener">consul_sd_config</a></li>
-</ul>
-</li>
-<li><a href="https://docs.victoriametrics.com/Single-server-VictoriaMetrics.html#prometheus-setup" target="_blank" rel="noopener">通过 Prometheus 远程写入</a></li>
-<li><a href="https://docs.victoriametrics.com/Single-server-VictoriaMetrics.html#how-to-import-data-in-json-line-format" target="_blank" rel="noopener">通过 Post 请求将指定 JSON 格式的数据直接写入</a></li>
-</ul>
-</li>
-<li>支持 <a href="https://docs.victoriametrics.com/Single-server-VictoriaMetrics.html#relabeling" target="_blank" rel="noopener">metrics relabel</a>.与 prometheus 完全兼容</li>
-<li>支持单机模式与集群模式</li>
-</ul>
-<h2 id="单机模式"><a href="#单机模式" class="headerlink" title="单机模式"></a>单机模式</h2><p>单机模式比较简单,直接下载<a href="https://github.com/VictoriaMetrics/VictoriaMetrics/releases" target="_blank" rel="noopener">二进制</a>或 <a href="https://hub.docker.com/r/victoriametrics/victoria-metrics/" target="_blank" rel="noopener">Docker 镜像</a> 并使用指定的命令行启动.</p>
-<p>单机模式可能用到的组件.</p>
-<figure class="highlight asciidoc"><table><tr><td class="code"><pre><span class="line"><span class="bullet">- </span>victoria-metrics: metrics 数据抓取或存储</span><br><span class="line"><span class="bullet">- </span>vmalert: 按照指定的规则将 metrics 数据聚合或向 alertmanager 发送告警</span><br><span class="line"><span class="bullet">- </span>vmauth: 启用用户认证功能</span><br></pre></td></tr></table></figure>
-
-<p>以二进制为例,可以通过</p>
-<ul>
-<li><code>-storageDataPath</code> 参数指定数据存储的目录.默认为 <code>victoria-metrics-data</code></li>
-<li><code>-retentionPeriod</code> 参数指定数据保存的时长.默认为 <code>1 month</code></li>
-<li><code>-httpListenAddr</code> 参数指定监听的 HTTP 套接字.默认为 <code>:8428</code></li>
-<li><code>-loggerTimezon</code> 参数指定日志的时区,默认为 <code>UTC</code>.建议设置为 <code>Asia/Shanghai</code></li>
-<li><code>-maxInsertRequestSize</code> 参数限制 Prometheus remote_write API 的请求大小. 默认为 <code>33554432 byte</code>.支持可选的单位为 <code>KB, MB, GB, KiB, MiB, GiB</code></li>
-<li><code>-promscrape.config</code> 参数指定 Prometheus 配置文件路径.该配置文件只需要包含 <code>scrape_configs</code> 部分配置即可.(经测试  VictoriaMetrics 支持 <code>scrape_configs</code> 中的 <code>relabel_configs</code> 和 <code>metric_relabel_configs</code> )</li>
-<li><code>-promscrape.config.strictParse</code> 参数设置是否会严格校验 <code>-promscrape.config</code> 指定的配置文件.默认情况下,不支持的字段会跳过,兼容 Prometheus 的配置文件</li>
-<li><code>-promscrape.configCheckInterval</code> 参数设置检查 Prometheus 配置文件是否变更的时间间隔.若变更,则重新加载.默认关闭</li>
-<li><code>-relabelConfig</code> 参数指定 relabel 的规则.</li>
-<li><code>-relabelDebug</code> 参数指定日志中是否指定 relabel 前后的 metrics.多用于调试.</li>
-<li><code>-selfScrapeInstance</code> 参数设置抓取自身 metrics 时,<code>instance</code> 标签的值.默认 <code>self</code></li>
-<li><code>-selfScrapeInterval</code> 参数设置抓取自身 metrics 的时间间隔</li>
-<li><code>-selfScrapeJob</code> 参数设置设置抓取自身 metrics 时,<code>instance</code> 标签的值.默认 <code>victoria-metrics</code></li>
-</ul>
-<p>从参数看来,单机模式下的 <code>VictoriaMetrics</code> 可以</p>
-<ol>
-<li>作为  Prometheus 的远程存储</li>
-</ol>
-<p>启动 VictoriaMetrics 脚本如下:</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># start_VictoriaMetrics.sh</span></span><br><span class="line"><span class="built_in">cd</span> <span class="variable">$&#123;victoria-metrics-home&#125;</span></span><br><span class="line">./victoria-metrics \</span><br><span class="line">  -storageDataPath &lt;storageDataPath&gt; \</span><br><span class="line">  -retentionPeriod &lt;dataKeepTime&gt; \</span><br><span class="line">  -maxInsertRequestSize &lt;req_size&gt; \</span><br><span class="line">  -httpListenAddr &lt;IP:port&gt; \</span><br><span class="line">  -loggerTimezon Asia/Shanghai &amp;&gt; victoria-metrics.log &amp;</span><br></pre></td></tr></table></figure>
-
-<p>Prometheus 远程写入相关配置如下:</p>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># prometheus.yml</span></span><br><span class="line"><span class="comment"># ...</span></span><br><span class="line"><span class="attr">remote_write:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">url:</span> <span class="string">http://&lt;victoriametrics-addr&gt;:8428/api/v1/write</span></span><br></pre></td></tr></table></figure>
-
-<ol start="2">
-<li>指定 <code>promscrape.config</code> 直接抓取并存储 metrics.</li>
-</ol>
-<p>这种方式启动与作为远程存储启动方式基本与存储方式大同小异,只需要指定对应配置文件即可.在直接抓取 metrics 过程中,VictoriaMetrics 需要一些其他的组件去实现 Prometheus 中的功能.比如</p>
-<ul>
-<li>Prometheus 中规则(包括 metrics 聚合规则与告警规则) 需要 <code>vmalert</code> 组件来实现.且 <code>vmalert</code> 只是发送告警到 <code>Alertmanager</code>.<code>vmalert</code> 支持的规则与 Prometheus 的规则一致.有关 <code>vmalert</code> 的使用,参见<a href="https://docs.victoriametrics.com/vmalert.html" target="_blank" rel="noopener">官方文档</a></li>
-<li>Prometheus 中认证相配置 需要 <code>vmauth</code> 组件来实现,参见<a href="https://docs.victoriametrics.com/vmauth.html" target="_blank" rel="noopener">官方文档</a></li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> <span class="variable">$&#123;victoria-metrics-home&#125;</span></span><br><span class="line"></span><br><span class="line">./victoria-metrics \</span><br><span class="line">  -storageDataPath &lt;storageDataPath&gt; \</span><br><span class="line">  -retentionPeriod &lt;dataKeepTime&gt; \</span><br><span class="line">  -maxInsertRequestSize &lt;req_size&gt; \</span><br><span class="line">  -httpListenAddr &lt;metrics_IP:port&gt; \</span><br><span class="line">  -promscrape.config &lt;prometheus.yml&gt; \</span><br><span class="line">  -promscrape.configCheckInterval 1m \</span><br><span class="line">  -loggerTimezon Asia/Shanghai &amp;&gt; victoria-metrics.log &amp;</span><br><span class="line"></span><br><span class="line">./vmalert \</span><br><span class="line">  -httpListenAddr <span class="string">":8880"</span> \</span><br><span class="line">  -rule &lt;record_rule_file or alert_rule_file&gt; \</span><br><span class="line">  -datasource.url &lt;metrics_IP:port&gt; \</span><br><span class="line">  -notifier.url &lt;AlertManager URL&gt; \ <span class="comment"># AlertManager URL</span></span><br><span class="line">  -remoteWrite.url &lt;metrics_IP:port&gt; \ <span class="comment"># 聚合后的 metrics 写入的位置,一般为 victoria-metrics 的端口</span></span><br><span class="line">  -remoteRead.url &lt;metrics_IP:port&gt; \</span><br><span class="line">  -external.label &lt;key=value&gt; <span class="comment"># 为聚合后的 metrics 添加标签</span></span><br><span class="line"></span><br><span class="line">./vmauth \</span><br><span class="line">  -httpListenAddr <span class="string">":8427"</span> \</span><br><span class="line">  -auth.config &lt;auth_config&gt;</span><br></pre></td></tr></table></figure>
-
-<p>为了加强数据的安全性,可以将 victoria-metrics 存储监听在 localhost.启用 auth. 配置一些自定义用户信息. <code>vmauth</code> 配置文件示例如下. Grafana 可使用该用户获取数据.</p>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">users:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">username:</span> <span class="string">"local-single-node"</span></span><br><span class="line">  <span class="attr">password:</span> <span class="string">"***"</span></span><br><span class="line">  <span class="attr">url_prefix:</span> <span class="string">"http://localhost:8428"</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="集群模式"><a href="#集群模式" class="headerlink" title="集群模式"></a>集群模式</h2><p>VictoriaMetrics 集群模式相对来说比较复杂.主要由 <code>vmstorage</code> ,<code>vminsert</code>,<code>vmselect</code> 三部分组成, 这三个组件每个组件都可以单独进行扩展.其中:</p>
-<ul>
-<li>vmstorage 负责提供数据存储服务</li>
-<li>vminsert 是数据存储 vmstorage 的代理,使用一致性 hash 算法进行写入分片</li>
-<li>vmselect 负责数据查询,根据输入的查询条件从 vmstorage 中查询数据</li>
-</ul>
-<p>vmstorage 采用 shared-nothing 架构,优点是 vmstorage 的节点相互之间无感知,相互之间无需通信,不共享任何数据,增加了集群的可用性,简化了集群的扩展的难度与运维工作.</p>
-<h3 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h3><p>VictoriaMetrics 集群模式支持</p>
-<ol>
-<li><a href="https://docs.victoriametrics.com/Cluster-VictoriaMetrics.html#cluster-resizing-and-scalability" target="_blank" rel="noopener">性能和容量水平扩展</a></li>
-</ol>
-<ul>
-<li><code>vminsert</code> 和 <code>vmselect</code> 是无状态的.可以随时添加/删除.添加更多的 <code>vminsert</code> 和 <code>vmselect</code> 节点可以扩展数据写入与查询的效率</li>
-<li><code>vmstorage</code> 节点保存抓取的数据,因此无法在不丢失数据的情况下删除它们.添加更多 <code>vmstorage</code> 节点可扩展集群容量.添加 <code>vmstorage</code> 的步骤如下:</li>
-</ul>
-<figure class="highlight haxe"><table><tr><td class="code"><pre><span class="line"><span class="number">1.</span> 使用与集群中现有节点相同的 -retentionPeriod 启动新的 vmstorage 节点</span><br><span class="line"><span class="number">2.</span> 使用包含 &lt;<span class="keyword">new</span><span class="type">_vmstorage_host</span>&gt; 的新 -storageNode 参数逐渐重新启动所有 vmselect 节点</span><br><span class="line"><span class="number">3.</span> 使用包含 &lt;<span class="keyword">new</span><span class="type">_vmstorage_host</span>&gt; 的新 -storageNode 参数逐渐重新启动所有 vminsert 节点</span><br></pre></td></tr></table></figure>
-
-<ol start="2">
-<li><a href="https://docs.victoriametrics.com/Cluster-VictoriaMetrics.html#multitenancy" target="_blank" rel="noopener">支持时间序列数据的多个名称空间(租户)</a>.多个租户之间相互隔离</li>
-</ol>
-<p>VictoriaMetrics 集群支持多个独立的租户.租户由 <code>accountID</code> 或 <code>accountID:projectID</code> 标识,他们放在 url 中.如 <code>http://&lt;vminsert&gt;:8480/insert/&lt;accountID&gt;/&lt;suffix&gt;</code>,<code>http://&lt;vmselect&gt;:8481/select/&lt;accountID&gt;/prometheus/&lt;suffix&gt;</code> 等.</p>
-<ul>
-<li>每个 accountID 和 projectID 由范围 [0 .. 2^32) 中的任意 32 位整数标识.如果不指定,则默自动分配为 0.</li>
-<li>当第一个数据点写入给定租户时,会自动创建租户</li>
-<li>所有租户的数据均匀分布在可用的 vmstorage 节点中.这保证了当不同租户具有不同的数据量和不同的查询负载时,vmstorage 节点之间的负载均匀</li>
-<li>数据库性能依赖于租户的数量,主要取决于所有租户中活动的时间序列的总数.</li>
-<li>VictoriaMetrics 不支持在单个请求中查询多个租户</li>
-</ul>
-<ol start="3">
-<li><a href="https://docs.victoriametrics.com/Cluster-VictoriaMetrics.html#replication-and-data-safety" target="_blank" rel="noopener">支持数据副本</a></li>
-</ol>
-<p>默认情况下,VictoriaMetrics 将副本写入到 <code>-storageDataPath</code> 指向的底层存储.</p>
-<p>可以通过 <code>vminsert</code> 指定 <code>-replicationFactor=N</code> 标志位来启用数据副本.这保证在最多 <code>N-1</code> 个 vmstorage 节点不可用时,所有数据扔可用于查询.集群必须至少包含 <code>2*N-1</code> 个 vmstorage 节点.</p>
-<p>启用复制后,<code>vmselect</code> 必须指定 <code>-dedup.minScrapeInterval=1ms</code> 命令行标志.</p>
-<h3 id="快速部署"><a href="#快速部署" class="headerlink" title="快速部署"></a>快速部署</h3><p>使用 3 个节点部署相关服务.节点 IP 分别为 IP1, IP2, IP3</p>
-<p>在每个节点上运行如下脚本来启动 <code>vmstroage</code>,<code>vminsert</code>,<code>vmselect</code></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line">victoria_home=<span class="string">"/data1/victoria-metrics"</span></span><br><span class="line">bin=<span class="variable">$&#123;victoria_home&#125;</span>/bin</span><br><span class="line">conf=<span class="variable">$&#123;victoria_home&#125;</span>/conf</span><br><span class="line">data=<span class="variable">$&#123;victoria_home&#125;</span>/data</span><br><span class="line"><span class="built_in">log</span>=<span class="variable">$&#123;victoria_home&#125;</span>/<span class="built_in">log</span></span><br><span class="line"></span><br><span class="line">LOG_LEVEL=INFO</span><br><span class="line">TIMEZONE=<span class="string">"Asia/Shanghai"</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> <span class="variable">$&#123;victoria_home&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="variable">$&#123;bin&#125;</span>/vmstorage-prod \</span><br><span class="line">  -httpListenAddr <span class="string">"nodeIP:8482"</span> \</span><br><span class="line">  -storageDataPath <span class="variable">$&#123;data&#125;</span> \</span><br><span class="line">  -retentionPeriod 30d \</span><br><span class="line">  -vminsertAddr <span class="string">"nodeIP:8400"</span> \ 	<span class="comment"># insert 端口,由 vminsert 连接</span></span><br><span class="line">  -vmselectAddr <span class="string">"nodeIP:8401"</span> \   <span class="comment"># select 端口,由 vmselect 连接</span></span><br><span class="line">  -loggerTimezone <span class="variable">$&#123;TIMEZONE&#125;</span> \</span><br><span class="line">  -loggerLevel <span class="variable">$&#123;LOG_LEVEL&#125;</span> &amp;&gt; <span class="variable">$&#123;log&#125;</span>/storage.log &amp;</span><br><span class="line"></span><br><span class="line"><span class="variable">$&#123;bin&#125;</span>/vminsert-prod \</span><br><span class="line">  -httpListenAddr <span class="string">"nodeIP:8480"</span> \</span><br><span class="line">  -storageNode IP1:8400,IP2:8400,IP3:8400 \</span><br><span class="line">  -loggerTimezone <span class="variable">$&#123;TIMEZONE&#125;</span> \</span><br><span class="line">  -loggerLevel <span class="variable">$&#123;LOG_LEVEL&#125;</span> &amp;&gt; <span class="variable">$&#123;log&#125;</span>/insert.log &amp;</span><br><span class="line"></span><br><span class="line"><span class="variable">$&#123;bin&#125;</span>/vmselect-prod \</span><br><span class="line">  -httpListenAddr <span class="string">"nodeIP:8481"</span> \</span><br><span class="line">  -selectNode IP1:8481,IP2:8481,IP3:8481 \</span><br><span class="line">  -storageNode IP1:8401,IP2:8401,IP3:8401 \</span><br><span class="line">  -loggerTimezone <span class="variable">$&#123;TIMEZONE&#125;</span> \</span><br><span class="line">  -loggerLevel <span class="variable">$&#123;LOG_LEVEL&#125;</span> &amp;&gt; <span class="variable">$&#123;log&#125;</span>/select.log &amp;</span><br></pre></td></tr></table></figure>
-
-<p>启动后,可以分别配置 Prometheus 和 Grafana 对 metrics 数据写入读取.详见<a href="https://docs.victoriametrics.com/Cluster-VictoriaMetrics.html#url-format" target="_blank" rel="noopener">官方文档</a></p>
-<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># prometheus.yml</span></span><br><span class="line"><span class="attr">remote_write:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">url:</span> <span class="string">"http://&lt;vminsert&gt;:8480/insert/&lt;accountID&gt;/&lt;suffix&gt;"</span></span><br><span class="line">  	<span class="comment"># accountID 默认为 0</span></span><br><span class="line">  	<span class="comment"># suffix 可以为 `prometheus` 或 `prometheus/api/v1/write`</span></span><br><span class="line">    <span class="attr">write_relabel_configs:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">source_labels:</span> <span class="string">[__name__]</span></span><br><span class="line">        <span class="attr">regex:</span> <span class="string">'go_.*'</span></span><br><span class="line">        <span class="attr">action:</span> <span class="string">drop</span></span><br></pre></td></tr></table></figure>
-
-<p>Grafana 数据源地址可配置为 <code>http://&lt;vmselect&gt;:8481/select/&lt;accountID&gt;/prometheus</code>.此时 <code>accountID</code> 必须与 <code>prometheus.yml</code> 中配置的 <code>accountID</code> 一致.</p>
-<p>最后可使用 <code>vmauth</code> 对数据读取时进行验证,保证数据安全性.</p>
-<hr>
-<p>参考:</p>
-<ul>
-<li><a href="https://docs.victoriametrics.com/" target="_blank" rel="noopener">VictoriaMetrics 官方文档</a></li>
-<li><a href="https://github.com/VictoriaMetrics/VictoriaMetrics" target="_blank" rel="noopener">VictoriaMetrics/VictoriaMetrics(github.com)</a></li>
-<li><a href="https://zhuanlan.zhihu.com/p/368912946" target="_blank" rel="noopener">浅析下开源时序数据库VictoriaMetrics的存储机制 - 知乎 (zhihu.com)</a></li>
-</ul>
-]]></content>
-      <categories>
-        <category>Prometheus</category>
-      </categories>
-      <tags>
-        <tag>Prometheus</tag>
-        <tag>VictoriaMetrics</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux 之 systemd 的工作原理及使用</title>
-    <url>/2020/06/11/systemd-details/</url>
-    <content><![CDATA[<h2 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h2><ul>
-<li>兼容 SysVinit 和 LSB init scripts</li>
-<li>以并行方式启动,启动速度更快<ul>
-<li>尽可能启动更少的进程</li>
-<li>尽可能将更多进程并行启动</li>
-</ul>
-</li>
-<li>提供按需启动能力,只有在某个服务被真正请求的时候才启动它</li>
-<li>采用 Linux的 Cgroup 特性跟踪和管理进程的生命周期.Systemd 只需要简单地遍历指定的 CGroup 即可正确地找到所有的相关进程</li>
-<li>实现事务性依赖关系管理.系统启动过程是由很多的独立工作共同组成的,这些工作之间可能存在依赖关系.Systemd 维护一个”事务一致性”的概念,保证所有相关的服务都可以正常启动而不会出现互相依赖,以至于死锁的情况.</li>
-<li>使用 systemd-journald 提供日志服务.有便于管理,零维护,高性能,统一化的特点</li>
-<li>向后兼容 SysV 的服务脚本</li>
-</ul>
-<h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><h3 id="unit"><a href="#unit" class="headerlink" title="unit"></a>unit</h3><p>系统初始化需要做的事情非常多,如启动后台服务以及做一些配置工作.这个过程中的每一步都被 Systemd 抽象为一个配置单元,即 <code>unit</code>.它主要包含如下几种类型</p>
-<table>
-<thead>
-<tr>
-<th align="left">名称</th>
-<th align="left">文件扩展名</th>
-<th align="left">用途</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>service unit</code></td>
-<td align="left"><code>.service</code></td>
-<td align="left">用于定义系统类服务</td>
-</tr>
-<tr>
-<td align="left"><code>target unit</code></td>
-<td align="left"><code>.target</code></td>
-<td align="left">用于实现模拟”运行级别”</td>
-</tr>
-<tr>
-<td align="left"><code>mount unit</code></td>
-<td align="left"><code>.mount</code></td>
-<td align="left">用于定义文件系统挂载点</td>
-</tr>
-<tr>
-<td align="left"><code>socket unit</code></td>
-<td align="left"><code>.socket</code></td>
-<td align="left">用于标识进程间通信的 socket 文件</td>
-</tr>
-<tr>
-<td align="left"><code>snapshot unit</code></td>
-<td align="left"><code>.snapshot</code></td>
-<td align="left">管理系统快照</td>
-</tr>
-<tr>
-<td align="left"><code>swap unit</code></td>
-<td align="left"><code>.swap</code></td>
-<td align="left">用于标识 swap 设备</td>
-</tr>
-<tr>
-<td align="left"><code>automount unit</code></td>
-<td align="left"><code>.automount</code></td>
-<td align="left">文件系统自动挂载设备</td>
-</tr>
-<tr>
-<td align="left"><code>path unit</code></td>
-<td align="left"><code>.path</code></td>
-<td align="left">用于定义文件系统中的一个文件或目录</td>
-</tr>
-<tr>
-<td align="left"><code>timer unit</code></td>
-<td align="left"><code>.timer</code></td>
-<td align="left">用来定时触发用户定义的操作</td>
-</tr>
-</tbody></table>
-<h3 id="Target和运行级别的对应关系"><a href="#Target和运行级别的对应关系" class="headerlink" title="Target和运行级别的对应关系"></a>Target和运行级别的对应关系</h3><table>
-<thead>
-<tr>
-<th align="left">sysvinit</th>
-<th align="left">systemd target</th>
-<th align="left">备注</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">0</td>
-<td align="left">poweroff.target</td>
-<td align="left">关闭系统</td>
-</tr>
-<tr>
-<td align="left">1</td>
-<td align="left">rescue.target</td>
-<td align="left">单用户模式</td>
-</tr>
-<tr>
-<td align="left">2</td>
-<td align="left">multi-user.target</td>
-<td align="left">多用户模式,无网络</td>
-</tr>
-<tr>
-<td align="left">3</td>
-<td align="left">multi-user.target</td>
-<td align="left">多用户模式</td>
-</tr>
-<tr>
-<td align="left">4</td>
-<td align="left">-</td>
-<td align="left">没有用到</td>
-</tr>
-<tr>
-<td align="left">5</td>
-<td align="left">graphical.target</td>
-<td align="left">多用户,图形化界面</td>
-</tr>
-<tr>
-<td align="left">6</td>
-<td align="left">reboot.target</td>
-<td align="left">重启</td>
-</tr>
-</tbody></table>
-<h2 id="service-unit-file"><a href="#service-unit-file" class="headerlink" title="service unit file"></a>service unit file</h2><p>文件通常由三部分组成</p>
-<h3 id="Unit"><a href="#Unit" class="headerlink" title="[Unit]"></a>[Unit]</h3><p><code>Unit</code> 配置块通常是配置文件的第一个配置块,用来定义 Unit 的元数据,以及配置与其他 Unit 的依赖关系.它的主要字段如下:</p>
-<ul>
-<li><code>Description</code>: 简短描述</li>
-<li><code>Documentation</code>: 文档地址</li>
-<li><code>Requires</code>: 当前 Unit 依赖的其他 Unit,如果它们没有运行,当前 Unit 会启动失败</li>
-<li><code>Wants</code>: 与当前 Unit 配合的其他 Unit,如果它们没有运行,当前 Unit 不会启动失败</li>
-<li><code>BindsTo</code>: 与 Requires 类似,它指定的 Unit 如果退出,会导致当前 Unit 停止运行</li>
-<li><code>Before</code>: 当前 Unit 必须在指定的 Unit 之前启动</li>
-<li><code>After</code>: 当前 Unit 必须在指定的 Unit 之后启动</li>
-<li><code>Conflicts</code>: 这里指定的 Unit 不能与当前 Unit 同时运行</li>
-<li><code>Condition...</code>: 当前 Unit 运行必须满足的条件，否则不会运行</li>
-<li><code>Assert...</code>:当前 Unit 运行必须满足的条件，否则会报启动失败</li>
-</ul>
-<h3 id="Service"><a href="#Service" class="headerlink" title="[Service]"></a>[Service]</h3><p><code>Service</code> 配置块用来定义 Service 的属性,只有 Service 类型的 Unit 才有这个配置块.它的主要字段如下:</p>
-<ul>
-<li><code>Type</code>: 定义启动时的进程行为.可选值为<ul>
-<li><code>simple</code>: 默认值,执行 ExecStart 指定的命令,启动主进程</li>
-<li><code>forking</code>: 以 fork 方式从父进程创建子进程,创建后父进程会立即退出</li>
-<li><code>oneshot</code>: 一次性进程,Systemd 会等当前服务退出,再继续往下执行</li>
-<li><code>dbus</code>: 当前服务通过 D-Bus 启动</li>
-<li><code>notify</code>: 当前服务启动完毕,会通知 Systemd,再继续往下执行</li>
-<li><code>idle</code>: 若有其他任务执行完毕,当前服务才会运行</li>
-</ul>
-</li>
-<li><code>Environment</code>: 指定环境变量</li>
-<li><code>ExecStart</code>: 启动当前服务的命令</li>
-<li><code>ExecStartPre</code>: 启动当前服务之前执行的命令</li>
-<li><code>Restart</code>: 定义何种情况 Systemd 会自动重启当前服务.可选值为 <code>always</code>,<code>on-success</code>,<code>on-failure</code>,<code>on-abnormal</code>,<code>on-abort</code>,<code>on-watchdog</code></li>
-<li><code>ExecReload</code>: 重新加载当前服务时执行的命令</li>
-<li><code>ExecStop</code>: 停止当前服务时执行的命令</li>
-<li><code>ExecStartPost</code>: 启动当前服务之后执行的命令</li>
-<li><code>ExecStopPost</code>: 停止当其服务之后执行的命令</li>
-<li><code>RestartSec</code>: 自动重启当前服务间隔的秒数</li>
-<li><code>TimeoutSec</code>: 定义 Systemd 停止当前服务之前等待的秒数</li>
-</ul>
-<h3 id="Install"><a href="#Install" class="headerlink" title="[Install]"></a>[Install]</h3><p><code>Install</code> 配置块通常在文件最后,用来定义如何启动,以及是否开机启动.它的主要字段如下</p>
-<ul>
-<li><code>WantedBy</code>: 它的值是一个或多个 <code>Target</code>,当前 Unit enable 时(服务开机启动时),会在 <code>/etc/systemd/system</code> 目录及指定 <code>${target}.wants</code> 子目录下创建软链接</li>
-<li><code>RequiredBy</code>: 它的值是一个或多个 <code>Target</code>,当前 Unit enable 时(服务开机启动时),会在 <code>/etc/systemd/system</code> 目录及指定 <code>${target}.required</code> 子目录下创建软链接<br><code>Alias</code>: 当前 Unit 可用于启动的别名<br><code>Also</code>: 当前 Unit enable 时(服务开机启动时),同时激活的其他 Unit</li>
-</ul>
-]]></content>
-      <categories>
-        <category>Linux</category>
-      </categories>
-      <tags>
-        <tag>Linux</tag>
-        <tag>systemd</tag>
       </tags>
   </entry>
 </search>
