@@ -150,6 +150,7 @@ tengine 与 nginx版本对应如下:
 
 ### 解决
 
+`accept_mutex` 参数配置为 on
 ```
 event {
     accept_mutex on;
@@ -169,3 +170,30 @@ event {
 - [知乎 - reuseport](https://www.zhihu.com/question/51618274)
 - [Socket Sharding in NGINX Release 1.9.1](https://www.nginx.com/blog/socket-sharding-nginx-release-1-9-1/)
 
+## nginx POST 请求偶发 502
+
+### 问题描述
+
+从 tengine-2.2.0 升级到 tengine-2.3.3 之后，nginx 错误日志中有如下报错，且发现 POST 请求会偶发 502，GET 请求没有 502
+
+```
+upstream prematurely closed connection while reading response header from upstream, client: 2.2.2.2, server: xxx, request: "POST /path/to/post/uri HTTP/1.1", upstream: "http://1.1.1.1/path/to/post/uri", host: "xxx"
+```
+
+抓包后发现后端 upstream server 在接收到请求后，返回了 FIN、ACK 的 TCP 包，导致 nginx 与 upstream server 连接断开。POST 请求不会重发，GET 请求会复用其他连接重新发到下一个个可用的 upstream server。抓包截图如下：
+
+![502 POST 请求抓包](/images/nginx-upstream-tcpdump-post.png)
+
+![GET 请求抓包](/images/nginx-upstream-tcpdump-get.png)
+
+### 原因
+
+tengine-2.2.0 升级到 tengine-2.3.3 后，对应 nginx 1.18.0，[官方文档 proxy_next_upstream](http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_next_upstream) 描述说在  1.9.13 之后的版本里添加了 `non_idempotent` 参数。对于非幂等的 POST, LOCK, PATCH 请求，需要显示打开此参数，nginx 才会帮忙转发。
+
+### 解决
+
+在确认 POST 请求为幂等的情况下，`proxy_next_upstream` 参数显式配置为 `error timeout non_idempotent`
+
+### 参考
+
+- [nginx 官方文档 - proxy_next_upstream](http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_next_upstream)
