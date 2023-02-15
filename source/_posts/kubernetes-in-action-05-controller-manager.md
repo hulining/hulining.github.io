@@ -184,6 +184,7 @@ metadata:
 spec:
   completions: # 定义 Job 完成期望的数量
   parallelism: # 定义 Job 的并行数量
+  backoffLimit: # 定义 Job 的重试次数
   
   template: # Pod 模版
     spec:
@@ -212,7 +213,7 @@ spec:
   schedule:  # Cron 格式的作业调度运行时间点,必须字段
   jobTemplate:  # Job 控制器模版,生成 Job 对象,必须字段
     # ... Job ...
-  concurrencyPolicy:  # 并发执行策略,可选值有 "Allow","Forbid","Replace"
+  concurrencyPolicy:  Allow # 并发执行策略,可选值有 "Allow","Forbid","Replace",默认为 Allow
   failedJobHistoryLimit: 1 # 失败记录保留历史记录数,默认为1
   successfulJobHistoryLimit: 3 # 成功记录保留历史记录数,默认为3
   startDeadlineSeconds:  # 记录启动的超时时长
