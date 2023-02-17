@@ -219,13 +219,16 @@ Pod 对象终止后是否应该被重建取决于重启策略 `pod.spec.restartP
 
 目前来说,资源隔离尚属于容器级别,CPU 和内存资源的配置需要在 Pod 中的容器上进行,可由 `pod.spec.containers.resources.requests` 确保资源的可用值,`pod.spec.containers.resources.limits` 限制资源可能的最大值.
 
-根据 Pod 对象的 `requests` 和 `limits` 属性,Kubernetes 将 Pod 对象归类到 `BestEffort`,`Burstable` 和 `Guaranteed` 三个服务质量类别下:
+根据 Pod 对象的 `requests` 和 `limits` 属性,Kubernetes 将 Pod 对象归类到 `BestEffort`,`Burstable` 和 `Guaranteed` 三个服务质量(QoS)类别下:
 
 - `Guaranteed`: 每个容器都为 CPU 和内存设置了相同值的 requests 和 limits 属性,这类 Pod 具有最高优先级
 - `Burstable`: 至少设置了 CPU 或内存资源的 requests 属性,但不满足 Guaranteed 条件的 Pod 资源,具有中等优先级
-- `BestEffort`: 没有为任何一个容器设置 requests 或 limits 属性的 Pod 资源,具有最低优先级
+- `BestEffort`: 没有为任何一个容器设置 requests 或 limits 属性的 Pod 资源,具有最低优先级.
 
-在内存资源紧缺时,`BestEffort` 类别的容器首先被终止,因为系统不为其提供任何资源级别的保证.`Guaranteed` 类别最后被终止.同时,同等级别的 Pod 资源,与自身的 requests 属性相比,内存使用率越高的对象越先被杀死.
+不同 QoS 的 Pod 有以下不同：
+
+- CPU 调度按照 request 资源划分权重，`Guaranteed` 类型的 Pod 会绑定 CPU 核心，`Burstable` 与`BestEffort` 类型的 Pod 共享该节点上剩余的 CPU 资源核心。
+- Memory 按照 QoS 划分 OOMScore，`Guaranteed` 类型的 Pod 为 -998，`BestEffort` 类型的 Pod 为 1000，`Burstable` 类型的 Pod 会根据内存申请的大小和节点内存的关系分配 2-999 的 OOMScore。因此在内存资源紧缺时,`BestEffort` 类别的容器首先被终止，因为系统不为其提供任何资源级别的保证。`Guaranteed` 类别最后被终止。同时，同等级别的 Pod 资源，与自身的 requests 属性相比，内存使用率越高的对象越先被杀死。
 
 ## Pod 资源定义清单文件
 

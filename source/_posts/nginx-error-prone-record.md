@@ -180,7 +180,7 @@ event {
 upstream prematurely closed connection while reading response header from upstream, client: 2.2.2.2, server: xxx, request: "POST /path/to/post/uri HTTP/1.1", upstream: "http://1.1.1.1/path/to/post/uri", host: "xxx"
 ```
 
-抓包后发现后端 upstream server 在接收到请求后，返回了 FIN、ACK 的 TCP 包，导致 nginx 与 upstream server 连接断开。POST 请求不会重发，GET 请求会复用其他连接重新发到下一个个可用的 upstream server。抓包截图如下：
+抓包后发现后端 upstream server 在接收到请求后，返回了 FIN、ACK 的 TCP 包，导致 nginx 与 upstream server 连接断开。POST 请求不会重发，GET 请求会复用其他连接重新发到下一个可用的 upstream server。抓包截图如下：
 
 ![502 POST 请求抓包](/images/nginx-upstream-tcpdump-post.png)
 
