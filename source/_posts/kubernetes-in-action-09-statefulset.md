@@ -59,11 +59,15 @@ metadata:
   lables:
     app: prometheus
 spec:
+  podManagementPolicy: "Parallel" # 指定创建/删除 Pod 时的策略,可选值为 "OrderedReady"(默认),"Parallel".分别表示串行和并行(无需等待)创建/删除 Pod 
+  revisionHistoryLimit: 10 # 保留历史 ControllerRevision 的数量
+  updateStrategy:
+    type: "RollingUpdate" # 指定升级策略,可选值为 RollingUpdate 与 OnDelete(用户必须手动删除Pod)
+    rollingUpdate:
+      partition:  # RollingUpdate 时,保留旧版本 Pod 的数量
+  
   serviceName: "prometheus" # 指定 headless Service 服务名称
   replicas: 1 # 指定 Pod 副本数
-  podManagementPolicy: "Parallel" # 指定创建/删除 Pod 时的策略,可选值为 "OrderedReady"(默认),"Parallel".分别表示串行和并行(无需等待)创建/删除 Pod 
-  updateStrategy:
-    type: "RollingUpdate" # 指定升级策略,与 Deployment 相同
   selector:
     matchLabels:
       app: prometheus-pod

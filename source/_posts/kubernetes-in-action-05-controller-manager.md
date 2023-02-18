@@ -98,13 +98,15 @@ spec:
     matchLabels:
   
   ##### 升级策略 #####
+  revisionHistoryLimit: 10 # 旧版本记录个数,默认为10
   strategy:
     type: RollingUpdate # 更新类型,可选参数为 Recreate 和 RollingUpdate,默认滚动更新
     rollingUpdate:
       maxSurge: 1 # 最多允许同时创建几个 Pod
       maxUnavailable: 0 # 最多允许几个 Pod 同时不可用
       
-  resverionHistoryLimit: # 旧版本记录个数,默认为最大值,意味着全部记录
+  minReadySeconds: 0 # 指定 Pod 正常启动多少秒后才会被认为是就绪状态
+  progressDeadlineSeconds: 600 # 指定 Pod 启动过程中超过多少秒会认为是失败状态
   
   template: # Pod 的模版,详见 Pod yaml
     metadata:
@@ -146,7 +148,7 @@ spec:
     matchLabels:
     
   ##### 升级策略 #####
-  reversionHistoryLimit:  # 旧版本记录个数,默认为最大值,意味着全部记录
+  revisionHistoryLimit: 10  # 旧版本记录个数,默认为10
   strategy:
     type: RollingUpdate # 更新类型,可选参数为 Recreate 和 RollingUpdate,默认滚动更新
     rollingUpdate:

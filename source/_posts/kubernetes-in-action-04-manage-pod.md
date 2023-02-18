@@ -258,6 +258,8 @@ spec:
     - "foo.local"
   
   ##### 镜像相关 #####
+  initContainers: # 与 containers 支持的字段相同
+  # ...
   containers:
   - name: 
     image: 
