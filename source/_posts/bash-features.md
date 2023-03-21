@@ -21,6 +21,19 @@ description: 汇总常见的 Bash 特性,以作备忘
 [[ expression ]] # 多用于条件判断
 ```
 
+### 带有空格的文件名处理
+
+```
+find . -type f -name "*[[:space:]]*" -print | 
+while read name ;do
+  new=`echo $name | sed s'@[[:space:]]@_@'g`;
+  echo "mv $name $new" ;
+  mv "$name" $new;
+done
+
+# rename
+```
+
 ## Parameter
 
 ### 位置参数
