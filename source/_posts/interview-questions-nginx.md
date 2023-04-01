@@ -101,13 +101,47 @@ upstream bakend {
 # 可选的 `two` 参数随机选择两个后端服务器,然后使用指定的 `method` 选择一个后端服务器.默认方法是 `least_conn`,将请求传递给活动连接数最少的服务器
 ```
 
+## Nginx 请求处理有哪些阶段
+
+1. `POST_READ`: 读取请求头之后的第一个阶段,该阶段很少用. `http_realip_module` 模块工作在这个阶段,该模块可以将客户端地址更改为指定报头字段中发送的地址.
+2. `SERVER_REWRITE`: 主要用于 server 级别的 uri 重写,主要作用于 server {} 配置块中,location 配置块外.`ngx_http_rewrite_module` 可以工作在这个阶段,主要提供 `rewrite`、`set` 等指令
+3. `FIND_CONFIG`: 该阶段主要寻找 location 配置,使用重写后的 uri 来查找对应的 location
+4. `REWRITE`: 该阶段是 location 级别的 uri 重写阶段,该阶段执行 location {} 配置块内的重写指令,同样也可能被指定多次
+5. `POST_REWRITE`: 该阶段是 location 级别重写的后一个阶段,用来检查上阶段是否有 uri 重写,并根据结果跳转到合适的阶段(FIND_CONFIG)
+6. `PREACCESS`: 该阶段是访问权限控制的前一阶段,预控制阶段.工作在该阶段的模块主要有 `ngx_http_limit_conn_module`、`ngx_http_limit_req_module`,对请求速率或连接做出限制
+7. `ACCESS`: 该阶段是访问控制阶段.工作在该阶段的模块主要有 `ngx_http_access_module`、`ngx_http_auth_basic_module`、`ngx_http_auth_request_module` 用于对请求做出访问控制
+8. `POST_ACCESS`: 访问控制的最后一个阶段,主要配合 `ACCESS` 阶段实现后续处理.工作在该阶段的指令有 `satisfy`,该指令用于处理前面两个阶段的与或关系来判断请求是否可以被放行(`all` 表示所有都满足才可以访问,`any` 表示任意一个满足则放行)
+9. `PRECONTENT`: 生成内容的前一个阶段,主要用于 `try_files` 指令的处理
+10. `CONTENT`: 生成内容阶段,该阶段主要负责内容生成,输出 http 响应.主要指令 `proxy_pass`、`return`、`echo`(第三方模块)
+11. `LOG`: 记录日志阶段.根据日志相关配置将日志写入对应的文件
+
+## openresty 工作流程
+
+主要包含如下阶段
+
+1. `init_by_lua*`: master 进程加载配置时执行,通常用于初始化全局配置或预加载 lua 模块
+2. `init_worker_by_lua*`: worker 进程启动时执行,通常用于定时拉取配置/数据或者后端服务的健康检查
+3. `ssl_certficate_by_lua*`: 主要用于处理 ssl 相关逻辑
+4. `set_by_lua*`: 主要用于处理配置变量相关逻辑
+5. `rewrite_by_lua*`: 主要用于处理 uri 重写&跳转相关逻辑
+6. `access_by_lua*`: 主要用于处理访问控制相关逻辑
+7. `balancer_by_lua*`: 如果有后端服务,还会有 balancer 阶段,主要用于处理负载均衡相关逻辑
+8. `hedaer_filter_by_lua*`: 主要用于处理请求&响应头过滤相关逻辑
+9. `body_filter_by_lua*`: 主要用于处理请求或响应 body 过滤相关逻辑
+10. `content_by_lua*`: 主要用于处理响应相关逻辑
+11. `log_by_lua*`: 主要用于处理日志&计数相关逻辑
+
+流程图如下:
+
+![openresty 工作流程](/images/openresty-work-process.png)
+
 ## Nginx location 匹配的顺序是什么
 
 Nginx location 按照如下优先级顺序进行匹配
 
 - 精确匹配: `location = /path`
 - 以某个常规字符串开头: `location ^~ /prefix_path`,且 `prefix_path` 路径长者优先匹配
-- 以正则表达式进行匹配: `location ~ regex_path` 或 `location ~* regex_path`(`~*` 表示忽略大小写).不管正则表达式如何进行锚定匹配,首先按照定义的顺序进行匹配.见如下示例
+- 以正则表达式进行匹配: `location ~ regex_path` 或 `location ~* regex_path`(`~*` 表示忽略大小写).不管正则表达式如何进行锚定匹配,首先按照定义的顺序进行匹配.见如下示例:
 
 ```conf
 # 如下情况 uri=/image/.jpg 返回 /image
@@ -138,7 +172,7 @@ location ~ /image {
 5. listen 指定的 default server_name
 6. http 模块下的第一个server配置块中的server_name
 
-## nginx 重新加载配置文件的流程是什么
+## Nginx 重新加载配置文件的流程是什么
 
 1. 向 master 发送 reload信号
 2. master 校验配置文件语法
@@ -376,3 +410,6 @@ kill -QUIT 30818
 参考
 
 - [Nginx 调优](https://www.cnblogs.com/zhichaoma/p/7989655.html)
+- [nginx/nginx (github.com)](https://github.com/nginx/nginx/blob/master/src/http/ngx_http_core_module.h#L107-L126)
+- [Nginx 的 11 个执行阶段详解](https://zhuanlan.zhihu.com/p/379210150)
+- [OpenResty 执行流程阶段](https://www.cnblogs.com/fly-kaka/p/11102849.html)
