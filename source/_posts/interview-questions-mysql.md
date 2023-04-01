@@ -220,15 +220,15 @@ mysqld --正常启动测试
 
 1. 大量插入数据
 
-- 使用多个值的 insert 语句,避免连接关闭等消耗
-- 使用 `insert delayed` 获取更高速度
-- 使用 `load data infile` 代替 `insert`
-- 将索引文件和数据文件放在不通磁盘上,增大数据写入速率
+   - 使用多个值的 insert 语句,避免连接关闭等消耗
+   - 使用 `insert delayed` 获取更高速度
+   - 使用 `load data infile` 代替 `insert`
+   - 将索引文件和数据文件放在不通磁盘上,增大数据写入速率
 
 2. 创建合适的索引,并按照索引顺序进行查询
 
-- 考虑在 where 及 order by 列上创建索引
-- 避免在 where 字句中进行空值判断,或使用 `!=`,`<>`,`or`,`not in`,`like '%xxx'`,函数/计算,否则将导致放弃使用索引而进行全表扫描
+   - 考虑在 where 及 order by 列上创建索引
+   - 避免在 where 字句中进行空值判断,或使用 `!=`,`<>`,`or`,`not in`,`like '%xxx'`,函数/计算,否则将导致放弃使用索引而进行全表扫描
 
 ### drop,delete,truncate 的区别
 

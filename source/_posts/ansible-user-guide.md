@@ -728,7 +728,7 @@ facts 是由正在通信的远程目标主机发回的信息,这些信息被保�
 
 ##### 注册变量
 
-可在 Task 中运行命令并通过 `register` 关键字将该命令的结果注册为变量,供以后使用(多用于[条件判断](#条件判断)中).
+可在 Task 中运行命令并通过 `register` 关键字将该命令的结果注册为变量,供以后使用(多用于[条件判断](#`when` 条件判断)中).
 
 如下为注册变量使用示例
 
@@ -792,7 +792,7 @@ ansible-playbook release.yml --extra-vars "@some_file.yml"
     app_path: "{{ base_path }}/22"
 ```
 
-更多使用方式,参见[模版(Jinja2)](#模版(Jinja2))部分.
+更多使用方式,参见[模版(Jinja2)](#模版jinja2)部分.
 
 Jinja2 filter 可以在模版表达式中转换变量的值.Jinja2 包含了许多[内置过滤器](http://jinja.pocoo.org/docs/templates/#builtin-filters),同时 Ansible 提供了更多过滤器,参见官方文档 - [Filters](https://docs.ansible.com/ansible/latest/user_guide/playbooks_filters.html)
 
@@ -989,7 +989,7 @@ tasks:
 
 > 在 ansible 2.5 之后,引入了 `loop` 关键字,并作为官方推荐的迭代关键字选择.
 
-关于迭代的高级功能,详见官方文档 - [Loops](https://docs.ansible.com/ansible/latest/user_guide/playbooks_loops.html),或后面的章节 [循环与迭代 Loops](#循环与迭代-Loops)
+关于迭代的高级功能,详见官方文档 - [Loops](https://docs.ansible.com/ansible/latest/user_guide/playbooks_loops.html),或后面的章节 [循环与迭代 Loops](#循环与迭代-loops)
 
 ### `when` 条件判断
 
@@ -1056,7 +1056,7 @@ HP-UX, Mandrake, RedHat, SGML, Slackware, Solaris, Suse, Windows
 - `with_<lookup>` 关键字依赖于 [Lookup Plugins](https://docs.ansible.com/ansible/latest/plugins/lookup.html#lookup-plugins)
 - `loop` 关键字等价于 `with_list`,是简单循环最好的选择
 - `loop` 关键字不支持字符串作为输入,参见 [loop 中 query 与 lookup 函数比较](#loop-中-query-与-lookup-函数比较)或官方文档 - [Ensuring list input for loop: query vs. lookup](https://docs.ansible.com/ansible/latest/user_guide/playbooks_loops.html#query-vs-lookup) 或.
-- 一般来说,[后文](#with_X-转换为-loop)(官方文档 - [Migrating from with_X to loop](https://docs.ansible.com/ansible/latest/user_guide/playbooks_loops.html#migrating-from-with-x-to-loop))中包含的 `with_*` 均可以转换为 `loop`.
+- 一般来说,[后文](#with_x-转换为-loop)(官方文档 - [Migrating from with_X to loop](https://docs.ansible.com/ansible/latest/user_guide/playbooks_loops.html#migrating-from-with-x-to-loop))中包含的 `with_*` 均可以转换为 `loop`.
 - 对于 `with_items` 带有列表嵌套的场景,需要对 `loop` 内容使用 `flatten(1)` 过滤器来得到相同的结果.如 `with_items: [1, [2, 3], 4]` 可转换为 {% raw %}`loop: "{{ [1, [2,3] ,4] | flatten(1) }}"`{% endraw %}.
 
 #### loop 中 query 与 lookup 函数比较

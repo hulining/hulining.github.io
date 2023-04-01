@@ -49,7 +49,7 @@ before_script:
   ## 可选的 git 配置
   # - git config --global user.email "user@example.com"
   # - git config --global user.name "User name"
-	## 
+  ##
   ## 如果配置了 SSH_KNOWN_HOSTS，则可以取消对下面两行的注释。
   - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
   - chmod 644 ~/.ssh/known_hosts
@@ -76,7 +76,7 @@ before_script:
 
 在 ssh 登录时有时需要对远程主机添加信任。GitLab 提供了以下3种方式，可以补充在 `.gitlab-ci.yml` 中以保证 ci 流程正确执行
 
-```
+```yaml
 before_script:
   ## 方式1. 如果配置了 SSH_KNOWN_HOSTS，则可以使用如下方式完善 known_hosts 文件
   ## 其中 SSH_KNOWN_HOSTS 变量内容可 通过 `ssh-keyscan remote-server` 获得

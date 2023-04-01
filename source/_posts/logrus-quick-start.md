@@ -13,7 +13,7 @@ description: logrus 日志库快速开始,了解该第三方库的常用使用�
 
 ## 概述
 
-`logrus` 的使用非常简单,与标准库log类似.但 `logrus` 支持更多的日志级别: `Trace`,`Debug`,`Info`,`Warn`,`Error`,`Fatal`,`Panic`.默认为`Info`. 
+`logrus` 的使用非常简单,与标准库log类似.但 `logrus` 支持更多的日志级别: `Trace`,`Debug`,`Info`,`Warn`,`Error`,`Fatal`,`Panic`.默认为`Info`.
 
 ```go
 package main
@@ -37,6 +37,7 @@ FATA[0000] fatal msg
 exit status 1
  */
 ```
+
 可以看到输出内容很简陋.因此我们可以对 `logrus`进行定制.
 
 ## 常用函数
@@ -103,7 +104,7 @@ TextFormatter{
 
 同时,对于输出位置来说,我们可以使用  `SetOutput` 函数进行修改,将日志输出到文件中.如下
 
-```
+```go
 import (
   "bytes"
   "io"
@@ -129,7 +130,7 @@ func main() {
 
 有时,我们会添加一字段到日志中
 
-```
+```go
 import (
   "github.com/sirupsen/logrus"
 )
@@ -193,7 +194,7 @@ type Entry struct {
 }
 ```
 
-## hooks 
+## hooks
 
 有这么一种需求,对不同的级别的日志,我希望能够输出到不同的位置.该怎么实现呢? `logrus` 提供了对日志级别的 `hooks` 机制.它可以对不同级别日志添加不同的 `hooks`.从而实现不同的需求.
 
@@ -272,7 +273,6 @@ func main() {
   }
 }
 ```
-
 
 其它类似的 `hooks` 还有
 

@@ -91,7 +91,7 @@ go build [-o output] [-i] [build flags] [packages]
 `-x` | 打印命令
 `-asm` |
 `-buildmode mode` | 构建的模式选择, 可选模式为 `archive`, `c-archive`, `c-shared`, `default`, `shared`, `exe`, `pie`, `plugin`. 详见 `go help buildmode`
-`-compiler name` | 编译器的名称 如 `runtime.Compiler`(gccgo 或 gc) 
+`-compiler name` | 编译器的名称 如 `runtime.Compiler`(gccgo 或 gc)
 `-ldflags -X arg=value` | 传递编译过程中调用的参数. 如在编译时将代码的 `git` 等信息作为参数值传入到代码变量中.见下面示例
 `-mod mode` | 模块的下载模式: readonly 或 vendor
 `-pkgdir dir` | 从指定目录安装和加载所有软件包, 在非标准配置进行构建时, 使用 -pkgdir 将生成的软件包保存在单独的位置

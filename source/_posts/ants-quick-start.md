@@ -31,31 +31,31 @@ ants 有以下特性:
 package main
 
 import (
-	"fmt"
-	"sync"
-	"time"
-	
-	"github.com/panjf2000/ants/v2"
+ "fmt"
+ "sync"
+ "time"
+ 
+ "github.com/panjf2000/ants/v2"
 )
 
 func main() {
-	// 执行结束后,需要释放 ants goroutine 池
-	defer ants.Release()
-	runTimes := 1000
-	var wg sync.WaitGroup
-	doSomthing := func() {
-		defer wg.Done()
-		time.Sleep(10 * time.Millisecond)
-		fmt.Println("Hello World!")
-	}
-	for i := 0; i < runTimes; i++ {
-		wg.Add(1)
-		// Use the default pool.
-		_ = ants.Submit(doSomthing)
-	}
-	wg.Wait()
-	fmt.Printf("running goroutines: %d\n", ants.Running())
-	fmt.Printf("finish all tasks.\n")
+ // 执行结束后,需要释放 ants goroutine 池
+ defer ants.Release()
+ runTimes := 1000
+ var wg sync.WaitGroup
+ doSomthing := func() {
+  defer wg.Done()
+  time.Sleep(10 * time.Millisecond)
+  fmt.Println("Hello World!")
+ }
+ for i := 0; i < runTimes; i++ {
+  wg.Add(1)
+  // Use the default pool.
+  _ = ants.Submit(doSomthing)
+ }
+ wg.Wait()
+ fmt.Printf("running goroutines: %d\n", ants.Running())
+ fmt.Printf("finish all tasks.\n")
 }
 ```
 
@@ -65,16 +65,16 @@ func main() {
 
 ```go
 func main() {
-	// ... 省略部分代码
-	// 创建一个自定义大小的 goroutine 池
-	p, _ := ants.NewPool(10)
-	defer p.Release()
-	for i := 0; i < runTimes; i++ {
-		wg.Add(1)
-		_ = p.Submit(doSomthing)
-	}
-	wg.Wait()
-	fmt.Printf("running goroutines: %d\n", p.Running())
+ // ... 省略部分代码
+ // 创建一个自定义大小的 goroutine 池
+p, _ := ants.NewPool(10)
+ defer p.Release()
+ for i := 0; i < runTimes; i++ {
+  wg.Add(1)
+  _ = p.Submit(doSomthing)
+ }
+ wg.Wait()
+ fmt.Printf("running goroutines: %d\n", p.Running())
 }
 ```
 
@@ -84,37 +84,37 @@ func main() {
 package main
 
 import (
-	"fmt"
-	"sync"
-	"sync/atomic"
-	
-	"github.com/panjf2000/ants/v2"
+ "fmt"
+ "sync"
+ "sync/atomic"
+ 
+ "github.com/panjf2000/ants/v2"
 )
 
 var sum int32
 
 func doSomthing(i interface{}) {
-	n, _ := i.(int32)
-	atomic.AddInt32(&sum, n)
-	fmt.Printf("run with %d\n", sum)
+ n, _ := i.(int32)
+ atomic.AddInt32(&sum, n)
+ fmt.Printf("run with %d\n", sum)
 }
 
 func main() {
-	var wg sync.WaitGroup
-	runTimes := 1000
-	// 创建一个带参数的 goroutine 池
-	p, _ := ants.NewPoolWithFunc(10, func(i interface{}) {
-		doSomthing(i)
-		wg.Done()
-	})
-	defer p.Release()
-	// 提交任务
-	for i := 0; i < runTimes; i++ {
-		wg.Add(1)
-		_ = p.Invoke(int32(i))
-	}
-	wg.Wait()
-	fmt.Printf("running goroutines: %d\n", p.Running())
+ var wg sync.WaitGroup
+ runTimes := 1000
+ // 创建一个带参数的 goroutine 池
+ p, _ := ants.NewPoolWithFunc(10, func(i interface{}) {
+  doSomthing(i)
+  wg.Done()
+ })
+ defer p.Release()
+ // 提交任务
+ for i := 0; i < runTimes; i++ {
+  wg.Add(1)
+  _ = p.Invoke(int32(i))
+ }
+ wg.Wait()
+ fmt.Printf("running goroutines: %d\n", p.Running())
 }
 ```
 
@@ -123,8 +123,6 @@ func main() {
 ## 常用函数
 
 下面总结一下,`ants`包及其对象中常用的函数/方法.
-
-### 
 
 ```go
 // 创建 goroutine 池
@@ -161,7 +159,7 @@ func (p *PoolWithFunc) Invoke(args interface{}) error
 ---
 
 参考:
+
 - [panjf2000/ants (github.com)](https://github.com/panjf2000/ants)
 - [ants - pkg.go.dev](https://pkg.go.dev/github.com/panjf2000/ants/v2)
 - [GMP 并发调度器深度解析之手撸一个高性能 goroutine pool - Strike Freedom](https://strikefreedom.top/high-performance-implementation-of-goroutine-pool)
-

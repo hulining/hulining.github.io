@@ -12,7 +12,7 @@ description: 参考 https://github.com/avelino/awesome-go 汇总自己学习的 
 
 ### Standard CLI
 
-- [cobra](https://github.com/spf13/cobra) - Commander for modern Go CLI interactions. 跳转 {% post_link cobra-quick-start 'cobra 快速开始' %} 
+- [cobra](https://github.com/spf13/cobra) - Commander for modern Go CLI interactions. 跳转 {% post_link cobra-quick-start 'cobra 快速开始' %}
 
 ## 日志
 

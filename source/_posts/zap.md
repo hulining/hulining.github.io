@@ -23,28 +23,28 @@ description: zap 是 uber 开源的高性能日志库.本文主要介绍 zap 库
 package main
 
 import (
-	"time"
-	"go.uber.org/zap"
+ "time"
+ "go.uber.org/zap"
 )
 
 func main() {
-	sugar := zap.NewExample().Sugar()
-	defer sugar.Sync()
-	sugar.Infow("failed to fetch URL",
-		"url", "http://example.com",
-		"attempt", 3,
-		"backoff", time.Second,
-	)
-	sugar.Infof("failed to fetch URL: %s", "http://example.com")
+ sugar := zap.NewExample().Sugar()
+ defer sugar.Sync()
+ sugar.Infow("failed to fetch URL",
+  "url", "http://example.com",
+  "attempt", 3,
+  "backoff", time.Second,
+ )
+ sugar.Infof("failed to fetch URL: %s", "http://example.com")
 
-	logger := zap.NewExample()
-	defer logger.Sync()
-	logger.Info("failed to fetch URL",
-	  // 需要使用 zap 内置的 Field 对象来强制定义字段的类型
-		zap.String("url", "http://example.com"),
-		zap.Int("attempt", 3),
-		zap.Duration("backoff", time.Second),
-	)
+ logger := zap.NewExample()
+ defer logger.Sync()
+ logger.Info("failed to fetch URL",
+   // 需要使用 zap 内置的 Field 对象来强制定义字段的类型
+  zap.String("url", "http://example.com"),
+  zap.Int("attempt", 3),
+  zap.Duration("backoff", time.Second),
+ )
 }
 ```
 
@@ -75,13 +75,13 @@ func main() {
 
 ```go
 func log(logger *zap.Logger, msg string) () {
-	logger.Info(msg)
+ logger.Info(msg)
 }
 
 func main() {
-	logger, _ := zap.NewProduction(zap.AddCaller())
-	defer logger.Sync()
-	log(logger, "hello world")
+ logger, _ := zap.NewProduction(zap.AddCaller())
+ defer logger.Sync()
+ log(logger, "hello world")
 }
 // 输出
 // {"level":"info","ts":1637302670.685756,"caller":"zap/main.go:8","msg":"hello world"}
@@ -91,13 +91,13 @@ func main() {
 
 ```go
 func log(logger *zap.Logger, msg string) () {
-	logger.Info(msg)
+ logger.Info(msg)
 }
 
 func main() {
-	logger, _ := zap.NewProduction(zap.AddCaller(),zap.AddCallerSkip(1))
-	defer logger.Sync()
-	log(logger, "hello world")
+ logger, _ := zap.NewProduction(zap.AddCaller(),zap.AddCallerSkip(1))
+ defer logger.Sync()
+ log(logger, "hello world")
 }
 // 输出
 // {"level":"info","ts":1637302912.6387358,"caller":"zap/main.go:14","msg":"hello world"}
@@ -111,13 +111,13 @@ func main() {
 
 ```go
 func log(logger *zap.Logger, msg string) () {
-	logger.Error(msg)
+ logger.Error(msg)
 }
 
 func main() {
-	logger, _ := zap.NewProduction(zap.AddCallerSkip(1), zap.AddStacktrace(zapcore.ErrorLevel))
-	defer logger.Sync()
-	log(logger, "hello world")
+ logger, _ := zap.NewProduction(zap.AddCallerSkip(1), zap.AddStacktrace(zapcore.ErrorLevel))
+ defer logger.Sync()
+ log(logger, "hello world")
 }
 // 输出了调用栈信息
 // {"level":"error","ts":1637303198.4552681,"caller":"zap/main.go:15","msg":"hello world","stacktrace":"main.main\n\t//code/go/src/go-notes/zap/main.go:15\nruntime.main\n\t/usr/local/go/src/runtime/proc.go:255"}
@@ -139,24 +139,24 @@ func Bools(key string, bs []bool) Field
 
 ```go
 type Config struct {
-	// 日志级别
-	Level AtomicLevel `json:"level" yaml:"level"`
-	// 是否是开发环境
-	Development bool `json:"development" yaml:"development"`
-	// 是否禁用 caller 记录
-	DisableCaller bool `json:"disableCaller" yaml:"disableCaller"`
-	// 是否禁用调用栈
-	DisableStacktrace bool `json:"disableStacktrace" yaml:"disableStacktrace"`
-	// 日志输出格式
-	Encoding string `json:"encoding" yaml:"encoding"`
-	// 编码配置
-	EncoderConfig zapcore.EncoderConfig `json:"encoderConfig" yaml:"encoderConfig"`
-	// 日志输出位置,可以定义多个,多用于文件路径和 stdout
-	OutputPaths []string `json:"outputPaths" yaml:"outputPaths"`
-	// 错误输出位置
-	ErrorOutputPaths []string `json:"errorOutputPaths" yaml:"errorOutputPaths"`
-	// 初始化字段,每条日志中都会包含这个字段
-	InitialFields map[string]interface{} `json:"initialFields" yaml:"initialFields"`
+ // 日志级别
+ Level AtomicLevel `json:"level" yaml:"level"`
+ // 是否是开发环境
+ Development bool `json:"development" yaml:"development"`
+ // 是否禁用 caller 记录
+ DisableCaller bool `json:"disableCaller" yaml:"disableCaller"`
+ // 是否禁用调用栈
+ DisableStacktrace bool `json:"disableStacktrace" yaml:"disableStacktrace"`
+ // 日志输出格式
+ Encoding string `json:"encoding" yaml:"encoding"`
+ // 编码配置
+ EncoderConfig zapcore.EncoderConfig `json:"encoderConfig" yaml:"encoderConfig"`
+ // 日志输出位置,可以定义多个,多用于文件路径和 stdout
+ OutputPaths []string `json:"outputPaths" yaml:"outputPaths"`
+ // 错误输出位置
+ ErrorOutputPaths []string `json:"errorOutputPaths" yaml:"errorOutputPaths"`
+ // 初始化字段,每条日志中都会包含这个字段
+ InitialFields map[string]interface{} `json:"initialFields" yaml:"initialFields"`
 }
 ```
 
@@ -164,7 +164,7 @@ type Config struct {
 
 ```go
 func main() {
-	rawJSON := []byte(`{
+ rawJSON := []byte(`{
     "level":"debug",
     "encoding":"json",
     "outputPaths": ["stdout", "server.log"],
@@ -177,17 +177,17 @@ func main() {
     }
   }`)
 
-	var cfg zap.Config
-	if err := json.Unmarshal(rawJSON, &cfg); err != nil {
-		panic(err)
-	}
-	logger, err := cfg.Build()
-	if err != nil {
-		panic(err)
-	}
-	defer logger.Sync()
+ var cfg zap.Config
+ if err := json.Unmarshal(rawJSON, &cfg); err != nil {
+  panic(err)
+ }
+ logger, err := cfg.Build()
+ if err != nil {
+  panic(err)
+ }
+ defer logger.Sync()
 
-	logger.Info("server start work successfully!")
+ logger.Info("server start work successfully!")
 }
 ```
 
@@ -199,16 +199,16 @@ func main() {
 
 ## 搭配标准日志库
 
-如果项目一开始使用的是标准日志库 `log`,后面想转为 `zap`.我们可以调用 `zap.NewStdLog(l *Logger) *log.Logger `返回一个标准的 `log.Logger`,内部实际上写入的还是我们之前创建的 `zap.Logger`.如下:
+如果项目一开始使用的是标准日志库 `log`,后面想转为 `zap`.我们可以调用 `zap.NewStdLog(l *Logger) *log.Logger`返回一个标准的 `log.Logger`,内部实际上写入的还是我们之前创建的 `zap.Logger`.如下:
 
 ```go
 func main() {
-	logger := zap.NewExample()
-	defer logger.Sync()
-	
-	// NewStdLog 返回包装后的 *log.Logger 对象
-	std := zap.NewStdLog(logger)
-	std.Print("standard logger wrapper")
+ logger := zap.NewExample()
+ defer logger.Sync()
+ 
+ // NewStdLog 返回包装后的 *log.Logger 对象
+ std := zap.NewStdLog(logger)
+ std.Print("standard logger wrapper")
 }
 ```
 
@@ -271,8 +271,8 @@ func Bools(key string, bs []bool) Field
 ---
 
 参考:
+
 - [uber-go/zap (github.com)](https://github.com/uber-go/zap)
 - [zap - pkg.go.dev](https://pkg.go.dev/go.uber.org/zap)
 - [Go 每日一库之 zap](https://segmentfault.com/a/1190000022461706)
 - [深度 | 从Go高性能日志库zap看如何实现高性能Go组件](https://mp.weixin.qq.com/s/i0bMh_gLLrdnhAEWlF-xDw)
-

@@ -16,7 +16,7 @@ description: 总结整理 Nginx 使用过程中的容易出错&踩坑记录
 
 按照如下方式配置 keepalive 之后发现 nginx 与 upstream server 的长连接并没有开启.
 
-```
+```conf
 upstream test {
     keepalive 16;
     ip_hash;
@@ -45,7 +45,7 @@ server {
 
 修正后配置如下
 
-```
+```conf
 upstream test {
     ip_hash;
     server 1.1.1.1:80;
@@ -77,7 +77,7 @@ server {
 
 从 tengine-2.2.0 升级到 tengine-2.3.3 之后，发现升级之后 sys cpu 使用及平均负载会相较于之前高很多。同时,通过 `top` 可以看到 nginx worker 进程的 cpu 使用率也很高。
 
-```
+```conf
 worker_processes  16;
 worker_cpu_affinity auto;
 worker_rlimit_nofile 655360;
@@ -95,7 +95,7 @@ http {
 
 使用 `strace -C -T -ttt -p ${nginx_pid}  -o /tmp/strac.log` 后可以观察到如下日志:
 
-```
+```log
 1670466059.603682 write(116, "{\"@timestamp\": \"2022-12-08T10:20"..., 568) = 568 <0.000014>
 1670466059.603716 sendto(43, "<190>Dec  8 10:20:59 bx-slb-10-1"..., 616, 0, NULL, 0) = 616 <0.000018>
 1670466059.603766 setsockopt(309, SOL_TCP, TCP_NODELAY, [1], 4) = 0 <0.000021>
@@ -127,7 +127,7 @@ http {
 
 使用 `sar -w` 可以看到如下内容，上下文切换要高很多，这也是 worker 进程占用高的原因
 
-```
+```text
 11:00:01 AM    proc/s   cswch/s
 Average:        21.96  132824.27`
 ```
@@ -151,7 +151,8 @@ tengine 与 nginx版本对应如下:
 ### 解决
 
 `accept_mutex` 参数配置为 on
-```
+
+```conf
 event {
     accept_mutex on;
 }
@@ -176,7 +177,7 @@ event {
 
 从 tengine-2.2.0 升级到 tengine-2.3.3 之后，nginx 错误日志中有如下报错，且发现 POST 请求会偶发 502，GET 请求没有 502
 
-```
+```log
 upstream prematurely closed connection while reading response header from upstream, client: 2.2.2.2, server: xxx, request: "POST /path/to/post/uri HTTP/1.1", upstream: "http://1.1.1.1/path/to/post/uri", host: "xxx"
 ```
 

@@ -367,4 +367,3 @@ func (c *valueCtx) Value(key interface{}) interface{} {
 
 - `WithValue()` 函数传入的 `key` 必须是可比较的,并且不能为字符串类型或任何其他内置类型,以避免在上下文之间发生冲突.
 - 用户应定义自己的 `key` 类型,`key` 通常是具体的的 `struct{}` 结构体.
-

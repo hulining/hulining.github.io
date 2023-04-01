@@ -31,11 +31,9 @@ description: 在使用 Prometheus 过程中, 发现将数据保存到 PostgreSQL
 
 单机模式可能用到的组件.
 
-```
 - victoria-metrics: metrics 数据抓取或存储
 - vmalert: 按照指定的规则将 metrics 数据聚合或向 alertmanager 发送告警
 - vmauth: 启用用户认证功能
-```
 
 以二进制为例,可以通过
 
@@ -140,7 +138,7 @@ VictoriaMetrics 集群模式支持
 - `vminsert` 和 `vmselect` 是无状态的.可以随时添加/删除.添加更多的 `vminsert` 和 `vmselect` 节点可以扩展数据写入与查询的效率
 - `vmstorage` 节点保存抓取的数据,因此无法在不丢失数据的情况下删除它们.添加更多 `vmstorage` 节点可扩展集群容量.添加 `vmstorage` 的步骤如下:
 
-```
+```text
 1. 使用与集群中现有节点相同的 -retentionPeriod 启动新的 vmstorage 节点
 2. 使用包含 <new_vmstorage_host> 的新 -storageNode 参数逐渐重新启动所有 vmselect 节点
 3. 使用包含 <new_vmstorage_host> 的新 -storageNode 参数逐渐重新启动所有 vminsert 节点
@@ -188,7 +186,7 @@ ${bin}/vmstorage-prod \
   -httpListenAddr "nodeIP:8482" \
   -storageDataPath ${data} \
   -retentionPeriod 30d \
-  -vminsertAddr "nodeIP:8400" \ 	# insert 端口,由 vminsert 连接
+  -vminsertAddr "nodeIP:8400" \  # insert 端口,由 vminsert 连接
   -vmselectAddr "nodeIP:8401" \   # select 端口,由 vmselect 连接
   -loggerTimezone ${TIMEZONE} \
   -loggerLevel ${LOG_LEVEL} &> ${log}/storage.log &
@@ -213,8 +211,8 @@ ${bin}/vmselect-prod \
 # prometheus.yml
 remote_write:
   - url: "http://<vminsert>:8480/insert/<accountID>/<suffix>"
-  	# accountID 默认为 0
-  	# suffix 可以为 `prometheus` 或 `prometheus/api/v1/write`
+   # accountID 默认为 0
+   # suffix 可以为 `prometheus` 或 `prometheus/api/v1/write`
     write_relabel_configs:
       - source_labels: [__name__]
         regex: 'go_.*'
@@ -232,4 +230,3 @@ Grafana 数据源地址可配置为 `http://<vmselect>:8481/select/<accountID>/p
 - [VictoriaMetrics 官方文档](https://docs.victoriametrics.com/)
 - [VictoriaMetrics/VictoriaMetrics(github.com)](https://github.com/VictoriaMetrics/VictoriaMetrics)
 - [浅析下开源时序数据库VictoriaMetrics的存储机制 - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/368912946)
-

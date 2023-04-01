@@ -156,19 +156,20 @@ cobra 会自动生成 app 子命令的相关代码.
 
 ```go
 var appCmd = &cobra.Command{
-	Use:   "app",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
+  Use:   "app",
+  Short: "A brief description of your command",
+  Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("app called")
-	},
+  Run: func(cmd *cobra.Command, args []string) {
+    fmt.Println("app called")
+  },
 }
 // 在 init() 中 rootCmd 添加了 appCmd 子命令. AddCommand 可以在父命令中添加子命令
 func init() {
-	rootCmd.AddCommand(appCmd)
+  rootCmd.AddCommand(appCmd)
 }
 ```
+
 下面,我们在 app 子命令下继续添加子命令 remove, 结构如下
 
 ```text
@@ -188,11 +189,11 @@ cli
 ```go
 // remove.go
 func init() {
-	rootCmd.AddCommand(removeCmd)
+  rootCmd.AddCommand(removeCmd)
 }
 // 需要修改为
 func init() {
-	appCmd.AddCommand(removeCmd)
+  appCmd.AddCommand(removeCmd)
 }
 ```
 
@@ -227,6 +228,7 @@ Use "cli app [command] --help" for more information about a command.
 ```
 
 为了规范化,命令及子命令的目录结构,将子命令放在同一包下,如:
+
 ```text
 ▾ cli/
 ▾ cmd/
@@ -570,4 +572,3 @@ Did you mean this?
 
 Run 'kubectl help' for usage.
 ```
-
