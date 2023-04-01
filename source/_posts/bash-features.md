@@ -23,7 +23,7 @@ description: 汇总常见的 Bash 特性,以作备忘
 
 ### 带有空格的文件名处理
 
-```
+```bash
 find . -type f -name "*[[:space:]]*" -print | 
 while read name ;do
   new=`echo $name | sed s'@[[:space:]]@_@'g`;
