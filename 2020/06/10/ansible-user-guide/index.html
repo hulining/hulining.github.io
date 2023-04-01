@@ -29,7 +29,7 @@
 <meta property="og:description" content="本文主要介绍 Ansible 的基本部署,相关概念及相关模块的基本使用.介绍了 ansible-playbook 的使用方式.">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-06-10T00:00:00.000Z">
-<meta property="article:modified_time" content="2023-03-21T12:02:49.878Z">
+<meta property="article:modified_time" content="2023-04-01T09:26:33.865Z">
 <meta property="article:author" content="纸盒人">
 <meta property="article:tag" content="Ansible">
 <meta name="twitter:card" content="summary">
@@ -488,7 +488,7 @@
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">example</span></span><br><span class="line">  <span class="attr">gather_facts:</span> <span class="literal">no</span></span><br></pre></td></tr></table></figure>
 
 <p>另外,可在<a href="#配置文件">配置文件</a>中查看有关变量缓存的相关配置.</p>
-<h5 id="注册变量"><a href="#注册变量" class="headerlink" title="注册变量"></a>注册变量</h5><p>可在 Task 中运行命令并通过 <code>register</code> 关键字将该命令的结果注册为变量,供以后使用(多用于<a href="#条件判断">条件判断</a>中).</p>
+<h5 id="注册变量"><a href="#注册变量" class="headerlink" title="注册变量"></a>注册变量</h5><p>可在 Task 中运行命令并通过 <code>register</code> 关键字将该命令的结果注册为变量,供以后使用(多用于[条件判断](#<code>when</code> 条件判断)中).</p>
 <p>如下为注册变量使用示例</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">web_servers</span></span><br><span class="line">  <span class="attr">tasks:</span></span><br><span class="line">     <span class="bullet">-</span> <span class="attr">shell:</span> <span class="string">/usr/bin/foo</span></span><br><span class="line">       <span class="attr">register:</span> <span class="string">foo_result</span></span><br><span class="line">       <span class="attr">ignore_errors:</span> <span class="literal">True</span></span><br><span class="line">     <span class="bullet">-</span> <span class="attr">shell:</span> <span class="string">/usr/bin/bar</span></span><br><span class="line">       <span class="attr">when:</span> <span class="string">foo_result.rc</span> <span class="string">==</span> <span class="number">5</span></span><br></pre></td></tr></table></figure>
 
@@ -514,7 +514,7 @@
 <p>如下是一个简单示例:</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">app_servers</span></span><br><span class="line">  <span class="attr">vars:</span></span><br><span class="line">    <span class="attr">app_path:</span> <span class="string">"<span class="template-variable">&#123;&#123; base_path &#125;&#125;</span>/22"</span></span><br></pre></td></tr></table></figure>
 
-<p>更多使用方式,参见<a href="#模版(Jinja2)">模版(Jinja2)</a>部分.</p>
+<p>更多使用方式,参见<a href="#模版jinja2">模版(Jinja2)</a>部分.</p>
 <p>Jinja2 filter 可以在模版表达式中转换变量的值.Jinja2 包含了许多<a href="http://jinja.pocoo.org/docs/templates/#builtin-filters" target="_blank" rel="noopener">内置过滤器</a>,同时 Ansible 提供了更多过滤器,参见官方文档 - <a href="https://docs.ansible.com/ansible/latest/user_guide/playbooks_filters.html" target="_blank" rel="noopener">Filters</a></p>
 <h4 id="变量的优先级"><a href="#变量的优先级" class="headerlink" title="变量的优先级"></a>变量的优先级</h4><p>以下为常见变量的优先级(从低到高,高优先级会覆盖低优先级):</p>
 <ol>
@@ -577,7 +577,7 @@
 <blockquote>
 <p>在 ansible 2.5 之后,引入了 <code>loop</code> 关键字,并作为官方推荐的迭代关键字选择.</p>
 </blockquote>
-<p>关于迭代的高级功能,详见官方文档 - <a href="https://docs.ansible.com/ansible/latest/user_guide/playbooks_loops.html" target="_blank" rel="noopener">Loops</a>,或后面的章节 <a href="#循环与迭代-Loops">循环与迭代 Loops</a></p>
+<p>关于迭代的高级功能,详见官方文档 - <a href="https://docs.ansible.com/ansible/latest/user_guide/playbooks_loops.html" target="_blank" rel="noopener">Loops</a>,或后面的章节 <a href="#循环与迭代-loops">循环与迭代 Loops</a></p>
 <h3 id="when-条件判断"><a href="#when-条件判断" class="headerlink" title="when 条件判断"></a><code>when</code> 条件判断</h3><p><code>when</code> 条件判断句用于在特定条件下做某些操作.如</p>
 <ul>
 <li>执行一个 Task</li>
@@ -609,7 +609,7 @@
 <li><code>with_&lt;lookup&gt;</code> 关键字依赖于 <a href="https://docs.ansible.com/ansible/latest/plugins/lookup.html#lookup-plugins" target="_blank" rel="noopener">Lookup Plugins</a></li>
 <li><code>loop</code> 关键字等价于 <code>with_list</code>,是简单循环最好的选择</li>
 <li><code>loop</code> 关键字不支持字符串作为输入,参见 <a href="#loop-中-query-与-lookup-函数比较">loop 中 query 与 lookup 函数比较</a>或官方文档 - <a href="https://docs.ansible.com/ansible/latest/user_guide/playbooks_loops.html#query-vs-lookup" target="_blank" rel="noopener">Ensuring list input for loop: query vs. lookup</a> 或.</li>
-<li>一般来说,<a href="#with_X-转换为-loop">后文</a>(官方文档 - <a href="https://docs.ansible.com/ansible/latest/user_guide/playbooks_loops.html#migrating-from-with-x-to-loop" target="_blank" rel="noopener">Migrating from with_X to loop</a>)中包含的 <code>with_*</code> 均可以转换为 <code>loop</code>.</li>
+<li>一般来说,<a href="#with_x-转换为-loop">后文</a>(官方文档 - <a href="https://docs.ansible.com/ansible/latest/user_guide/playbooks_loops.html#migrating-from-with-x-to-loop" target="_blank" rel="noopener">Migrating from with_X to loop</a>)中包含的 <code>with_*</code> 均可以转换为 <code>loop</code>.</li>
 <li>对于 <code>with_items</code> 带有列表嵌套的场景,需要对 <code>loop</code> 内容使用 <code>flatten(1)</code> 过滤器来得到相同的结果.如 <code>with_items: [1, [2, 3], 4]</code> 可转换为 `loop: "{{ [1, [2,3] ,4] | flatten(1) }}"`.</li>
 </ul>
 <h4 id="loop-中-query-与-lookup-函数比较"><a href="#loop-中-query-与-lookup-函数比较" class="headerlink" title="loop 中 query 与 lookup 函数比较"></a>loop 中 query 与 lookup 函数比较</h4><ul>

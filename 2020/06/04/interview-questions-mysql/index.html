@@ -29,7 +29,7 @@
 <meta property="og:description" content="总结整理常见 MySQL 面试题,以作备忘">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-06-04T00:00:00.000Z">
-<meta property="article:modified_time" content="2023-03-21T12:02:49.882Z">
+<meta property="article:modified_time" content="2023-04-01T09:26:33.869Z">
 <meta property="article:author" content="纸盒人">
 <meta property="article:tag" content="面试">
 <meta property="article:tag" content="MySQL">
@@ -421,21 +421,21 @@
 </li>
 </ol>
 <h3 id="常用-SQL-优化"><a href="#常用-SQL-优化" class="headerlink" title="常用 SQL 优化"></a>常用 SQL 优化</h3><ol>
-<li>大量插入数据</li>
-</ol>
+<li><p>大量插入数据</p>
 <ul>
 <li>使用多个值的 insert 语句,避免连接关闭等消耗</li>
 <li>使用 <code>insert delayed</code> 获取更高速度</li>
 <li>使用 <code>load data infile</code> 代替 <code>insert</code></li>
 <li>将索引文件和数据文件放在不通磁盘上,增大数据写入速率</li>
 </ul>
-<ol start="2">
-<li>创建合适的索引,并按照索引顺序进行查询</li>
-</ol>
+</li>
+<li><p>创建合适的索引,并按照索引顺序进行查询</p>
 <ul>
 <li>考虑在 where 及 order by 列上创建索引</li>
 <li>避免在 where 字句中进行空值判断,或使用 <code>!=</code>,<code>&lt;&gt;</code>,<code>or</code>,<code>not in</code>,<code>like &#39;%xxx&#39;</code>,函数/计算,否则将导致放弃使用索引而进行全表扫描</li>
 </ul>
+</li>
+</ol>
 <h3 id="drop-delete-truncate-的区别"><a href="#drop-delete-truncate-的区别" class="headerlink" title="drop,delete,truncate 的区别"></a>drop,delete,truncate 的区别</h3><ul>
 <li>drop 删除表有关的一切(数据,结构,约束,键),为 DDL 操作.<strong>不能回滚</strong></li>
 <li>delete 删除表中数据,可增加 where 语句,但每次从表中删除一行,较慢.<strong>每行删除操作都会记录 binlog,可以回滚</strong></li>
