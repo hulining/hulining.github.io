@@ -243,6 +243,7 @@ metadata:
   annotations:
     <anno_key>: <anno_value>
 spec:
+  shareProcessNamespace: false # pod 内容器是否共享 pid 名称空间。若共享，pause 进程的 pid 为 1
   hostNetwork: false # 是否与主机共享使用网络名称空间
   hostIPC: false # 是否与主机共享使用 IPC
   hostPID: false # 是否与主机共享使用 PID
