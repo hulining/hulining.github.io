@@ -32,7 +32,7 @@
 <meta property="og:image" content="https://hulining.github.io/images/go-func-process.jpeg">
 <meta property="og:image" content="https://hulining.github.io/images/life-cycle-of-scheduler.png">
 <meta property="article:published_time" content="2021-03-09T00:00:00.000Z">
-<meta property="article:modified_time" content="2023-04-01T15:50:21.982Z">
+<meta property="article:modified_time" content="2023-05-10T09:14:35.265Z">
 <meta property="article:author" content="纸盒人">
 <meta property="article:tag" content="go">
 <meta property="article:tag" content="goroutine">
@@ -244,7 +244,7 @@
           
             <span class="post-letters-count">
               &nbsp; | &nbsp;
-              <span>1k 字</span>
+              <span>1.1k 字</span>
               &nbsp; | &nbsp;
               <span>3 min</span>
              </span>
@@ -307,9 +307,9 @@
 <ol>
 <li>首先通过 go func() 来创建一个 goroutine</li>
 <li>有两个存储 G 的队列,一个是局部调度器 P 的本地队列,一个是全局 G 队列.新创建的 G 会先保存在 P 的本地队列中,如果 P 的本地队列已经满了就会保存在全局的队列中</li>
-<li>M 与 P 绑定后,会从 P 的本地队列弹出一个可执行状态的 G 来执行.如果 P 的本地队列为空,就会尝试从其他的 MP组合”偷”取一个可执行的 G 来执行</li>
-<li>当 M 执行某一个 G 时候如果发生了系统调用或则其余阻塞操作,M 会阻塞,如果当前有一些 G 在执行,<code>runtime</code> 会把这个线程 M 与 P 解绑(detach),然后再创建一个新的操作系统的线程(如果有空闲的线程可用就复用空闲线程)来服务于这个 P</li>
-<li>当 M 系统调用结束时候,这个 M 会尝试获取一个空闲的 P 执行,并放入到这个 P 的本地队列.如果获取不到 P,那么这个线程 M 变成休眠状态,加入到空闲线程中,进入休眠队列中.</li>
+<li>M 与 P 绑定后,会从 P 的本地队列弹出一个可执行状态的 G 来执行.如果 P 的本地队列为空,就会尝试从全局 G 队列中获取 G 来执行.如果全局队列中也没有 G,则会尝试从其他的 MP组合”偷”取一半可执行的 G 来执行</li>
+<li>当 M 执行某一个 G 时候如果发生了系统调用或则其余阻塞操作,M 会阻塞.如果当前有一些 G 在执行,<code>runtime</code> 会把这个线程 M 与 P 解绑(detach),然后再创建一个新的操作系统的线程(如果有空闲的线程可用就复用空闲线程)来服务于这个 P</li>
+<li>当 M 系统调用结束时候,这个 M 会尝试与 P 绑定,并从这个 P 的本地队列中获取 G 来执行.如果获取不到 P,那么这个线程 M 变成休眠状态,加入到空闲线程中,进入休眠队列中.</li>
 <li>重复上述过程,直到 P 的本地队列与全局队列中 G 为空</li>
 </ol>
 <p>调度器的生命周期可表示如下:</p>
